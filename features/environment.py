@@ -1,5 +1,6 @@
 import logging
 import os
+import subprocess
 import sys
 from logging import DEBUG, INFO
 
@@ -18,6 +19,12 @@ def before_all(context):
         setup_logging(level=INFO)
     context.base_url = BASE_URL
     logging.info("Using BASE_URL: '%s'", context.base_url)
+
+
+def after_all(context):
+    logging.info("Generating Allure report...")
+    generate_report_command = "allure generate --clean"
+    subprocess.run(generate_report_command, shell=True, check=False)
 
 
 def setup_logging(level: int = logging.INFO):
