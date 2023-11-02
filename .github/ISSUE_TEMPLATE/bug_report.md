@@ -35,5 +35,5 @@ A clear and concise description of what you expected to happen.
  - All headers
  - Detail of what you expected to see
 
-**Additional context**
-Add any other context about the problem here.
+**Additional Information**
+Add any other information about the problem here.
