@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "direct-care-api-regression-tests"
+name = "electronic-prescription-service-api-regression-tests"
 version = "0.1.0"
-description = "End to End automated regression tests for the Direct Care API using Behave"
-authors = ["Sean Steberis <sean.steberis@airelogic.com>"]
+description = ""
+authors = ["SeanSteberis <sean.steberis@airelogic.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.12"
 jsonschema = "^4.19.0"
 requests = "^2.31.0"
 assertpy = "^1.1"
@@ -14,8 +14,9 @@ behave = "^1.2.6"
 behave-cucumber-formatter = "^1.0.1"
 locust = "^2.16.1"
 lxml = "^4.9.3"
-minify-html = "^0.11.1"
 pyright = "^1.1.322"
+allure-behave = "^2.13.2"
+
 
 [build-system]
 requires = ["poetry-core"]
