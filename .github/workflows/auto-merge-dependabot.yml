@@ -1,0 +1,33 @@
+name: Pull Request Opened Actions
+
+on:
+  pull_request:
+    types:
+      - opened
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-approve-and-merge-dependabot:
+    runs-on: ubuntu-latest
+    if: ${{ github.actor == 'dependabot[bot]'}}
+    steps:
+      - name: Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v1.4.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Auto approve
+        uses: hmarr/auto-approve-action@v3.2.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable auto-merge for Dependabot PRs
+        run: gh pr merge --auto --merge "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
