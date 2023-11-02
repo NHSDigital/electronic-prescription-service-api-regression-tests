@@ -25,8 +25,11 @@ if __name__ == "__main__":
 
     # complete command
     command = (
-        f"behave{DEBUG} -f behave_cucumber_formatter:PrettyCucumberJSONFormatter"
+        f"behave{DEBUG}"
+        f" -f behave_cucumber_formatter:PrettyCucumberJSONFormatter"
         f" -o reports/cucumber_json.json"
+        f" -f allure_behave.formatter:AllureFormatter"
+        f" -o allure-results"
         f" -f pretty features"
         f" --no-logcapture --logging-level={LOGGING_LEVEL}{tags}"
     )
