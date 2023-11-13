@@ -2,58 +2,25 @@ name: Regression Tests
 
 on:
   pull_request:
-    branches: [ main ]
+    types: [opened, reopened]
   push:
     branches: [ main ]
   workflow_dispatch:
-      inputs:
-          environment:
-            description: 'Environment to run tests against'
-            type: environment
-            required: true
 
 jobs:
-  regression-test:
-    name: regression-test
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-region: eu-west-2
-          role-to-assume: arn:aws:iam::436014718090:role/github-role
-          role-session-name: github-actions
+    build:
+        name: build
+        uses: NHSDigital/electronic-prescription-service-api-regression-tests/.github/workflows/continuous-integration.yml
+    regression-test:
+        name: regression-test
+        runs-on: ubuntu-latest
+        permissions:
+          id-token: write
+          contents: read
+        steps:
+          - name: Regression testing
+            run: |
+              export BASE_URL=$(make get-url)
+              echo API base url = $BASE_URL
 
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 1
-
-      - name: Set up Python
-        id: setup_python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.12'
-
-      - name: cache virtualenv
-        uses: actions/cache@v3
-        id: cache-venv
-        with:
-          path: ./.venv/
-          key: ${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-venv-${{ hashFiles('pyproject.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-venv-
-
-      - name: Install dependencies
-        if: steps.cache-venv.outputs.cache-hit != 'true'
-        run: make install-requirements
-
-      - name: Regression testing
-        run: |
-          export BASE_URL=$(make get-url)
-          echo API base url = $BASE_URL
-
-          source .venv/bin/activate && python runner.py --tags ~bug
+              source .venv/bin/activate && python runner.py --tags ~bug

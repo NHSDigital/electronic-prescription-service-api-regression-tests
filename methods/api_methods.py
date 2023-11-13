@@ -5,7 +5,10 @@ from assertpy import assert_that as assertpy_assert  # type: ignore
 
 
 def assert_that(expected, context):
-    description = f"Actual Response: Status Code: {context.response.status_code}, Body: {context.response.content}"
+    description = (
+        f"Actual Response: Status Code: {context.response.status_code}, "
+        f"Body: {context.response.content}"
+    )
     return assertpy_assert(expected, description=description)
 
 
@@ -28,7 +31,7 @@ def get_default_headers():
     }
 
 
-def request_ping(context, **kwargs):
+def request_ping(context):
     url = context.base_url + "/_ping"
     context.response = requests.get(url=url)
     log_api_information(context)

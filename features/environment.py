@@ -21,7 +21,7 @@ def before_all(context):
     logging.info("Using BASE_URL: '%s'", context.base_url)
 
 
-def after_all(context):
+def after_all(context):  # pylint: disable=unused-argument
     logging.info("Generating Allure report...")
     generate_report_command = "allure generate --clean"
     subprocess.run(generate_report_command, shell=True, check=False)

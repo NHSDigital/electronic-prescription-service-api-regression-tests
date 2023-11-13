@@ -19,5 +19,3 @@ run-tests: guard-BASE_URL
 
 check-licenses:
 	scripts/check_python_licenses.sh
-
-

@@ -1,5 +1,6 @@
 name: Create Release
 on:
+  workflow_call:
   push:
     branches: [main]
     tags: [v**]
@@ -40,3 +41,29 @@ jobs:
         run: |
           export PATH="/home/runner/.asdf/installs/poetry/1.3.1/bin:$PATH"
           poetry install
+
+      - name: Set SPEC_VERSION env var for merges to main
+        run: echo "SPEC_VERSION=$(poetry run python scripts/calculate_version.py)" >> $GITHUB_ENV
+        if: github.ref == 'refs/heads/main'
+
+      - name: Set SPEC_VERSION env var for tags
+        run: echo "SPEC_VERSION=${{  github.ref_name }}" >> $GITHUB_ENV
+        if: github.ref != 'refs/heads/main'
+
+      - name: Create release (main only)
+        id: create-release
+        uses: actions/create-release@v1
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.SPEC_VERSION }}
+          release_name: ${{ env.SPEC_VERSION }}
+          body: |
+            ## Commit message
+            ${{ github.event.head_commit.message }}
+            ## Info
+            [See code diff](${{ github.event.compare }})
+            [Release workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+            It was initialized by [${{ github.event.sender.login }}](${{ github.event.sender.html_url }})

@@ -1,6 +1,5 @@
 # pylint: disable=no-member,no-name-in-module
 from behave import then, when  # type: ignore
-
 from methods import api_methods
 
 
