@@ -18,7 +18,4 @@ jobs:
         steps:
           - name: Regression testing
             run: |
-              export BASE_URL=$(make get-url)
-              echo API base url = $BASE_URL
-
-              source .venv/bin/activate && python runner.py --tags ~bug
+              python runner.py
