@@ -10,7 +10,7 @@ on:
 jobs:
     build:
         name: build
-        uses: NHSDigital/electronic-prescription-service-api-regression-tests/.github/workflows/continuous-integration.yml
+        uses: ./.github/workflows/continuous-integration.yml
     regression-test:
         name: regression-test
         runs-on: ubuntu-latest
