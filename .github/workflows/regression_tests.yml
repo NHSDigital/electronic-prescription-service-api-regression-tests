@@ -40,13 +40,6 @@ jobs:
           export PATH="/home/runner/.asdf/installs/poetry/1.7.0/bin:$PATH"
           poetry install
 
-  regression-test:
-    name: regression-test
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-      - name: Regression testing
+      - name: Regression Tests
         run: |
           python runner.py
