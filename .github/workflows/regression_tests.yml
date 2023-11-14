@@ -6,8 +6,16 @@ on:
 
 jobs:
     build:
-        name: build
-        uses: ./.github/workflows/build.yml
+        runs-on: ubuntu-latest
+        steps:
+          - name: build
+            uses: ./.github/workflows/build.yml
+
+          - name: Checkout
+            uses: actions/checkout@v4
+            with:
+              fetch-depth: 0  # This causes all history to be fetched, which is required for calculate-version to function
+
     regression-test:
         name: regression-test
         runs-on: ubuntu-latest

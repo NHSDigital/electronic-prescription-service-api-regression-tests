@@ -3,8 +3,7 @@ on:
   workflow_call:
 
 jobs:
-  create_release:
-    name: Build
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
