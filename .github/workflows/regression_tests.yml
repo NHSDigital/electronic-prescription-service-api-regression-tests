@@ -1,9 +1,8 @@
 name: Regression Tests
 on:
   pull_request:
-    types: [opened, reopened]
+    types: [opened, reopened, synchronize]
   push:
-      branches: [main]
   workflow_dispatch:
 
 jobs:
