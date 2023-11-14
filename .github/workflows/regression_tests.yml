@@ -1,28 +1,20 @@
 name: Regression Tests
 on:
   pull_request:
-    types: [opened, reopened, synchronize]
+    types: [ opened, reopened, synchronize ]
   workflow_dispatch:
 
 jobs:
-    build:
-        runs-on: ubuntu-latest
-        steps:
-#          - name: Checkout
-#            uses: actions/checkout@v4
-#            with:
-#              fetch-depth: 0  # This causes all history to be fetched, which is required for calculate-version to function
+  build:
+    uses: ./.github/workflows/build.yml
 
-          - name: build
-            uses: ./.github/workflows/build.yml
-
-    regression-test:
-        name: regression-test
-        runs-on: ubuntu-latest
-        permissions:
-          id-token: write
-          contents: read
-        steps:
-          - name: Regression testing
-            run: |
-              python runner.py
+  regression-test:
+    name: regression-test
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Regression testing
+        run: |
+          python runner.py
