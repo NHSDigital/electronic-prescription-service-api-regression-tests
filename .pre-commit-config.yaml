@@ -14,16 +14,6 @@ repos:
         name: Check pipelines configuration
         files: ^(.github)
 
-  - repo: https://github.com/psf/black
-    rev: "2a1c67e0b2f81df602ec1f6e7aeb030b9709dc7c" # release 23.11.0
-    hooks:
-      - id: black
-
-  - repo: https://github.com/pylint-dev/pylint
-    rev: "efee9618894795cc8847727108522aa79431ee25" # release 3.0.2
-    hooks:
-      - id: pylint
-
   - repo: local
     hooks:
     - id: run_black
@@ -41,7 +31,6 @@ repos:
       types: [python]
       args:
         [
-          "--errors-only",
           "--rcfile=.pylintrc", # Link to your config file
         ]
 
