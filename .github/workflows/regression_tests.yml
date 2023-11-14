@@ -3,12 +3,13 @@ on:
   pull_request:
     types: [opened, reopened]
   push:
+      branches: [main]
   workflow_dispatch:
 
 jobs:
     build:
         name: build
-        uses: ./.github/workflows/continuous-integration.yml
+        uses: ./.github/workflows/build.yml
     regression-test:
         name: regression-test
         runs-on: ubuntu-latest
