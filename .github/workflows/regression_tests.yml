@@ -31,11 +31,24 @@ jobs:
         env:
           PYTHON_CONFIGURE_OPTS: --enable-shared
 
-      - name: Install python packages
-        run: |
-          export PATH="/home/runner/.asdf/installs/poetry/1.7.0/bin:$PATH"
-          poetry install
+      - name: Cache Virtualenv
+        uses: actions/cache@v3
+        id: cache-venv
+        with:
+          path: ./.venv/
+          key: ${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-venv-${{ hashFiles('pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-venv-
+
+      - name: Install Dependencies
+        if: steps.cache-venv.outputs.cache-hit != 'true'
+        run: make install
+
+#      - name: Install python packages
+#        run: |
+#          export PATH="/home/runner/.asdf/installs/poetry/1.7.0/bin:$PATH"
+#          poetry install
 
       - name: Regression Tests
         run: |
-          python runner.py
+          source .venv/bin/activate && python runner.py
