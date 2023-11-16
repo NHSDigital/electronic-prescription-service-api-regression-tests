@@ -6,12 +6,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
-        with:
-          fetch-depth: 0  # This causes all history to be fetched, which is required for calculate-version to function
-
-      # using git commit sha for version of action to ensure we have stable version
+#      - name: Checkout
+#        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+#        with:
+#          fetch-depth: 0  # This causes all history to be fetched, which is required for calculate-version to function
+#
+#      # using git commit sha for version of action to ensure we have stable version
       - name: Install asdf
         uses: asdf-vm/actions/setup@05e0d2ed97b598bfce82fd30daf324ae0c4570e6
 
