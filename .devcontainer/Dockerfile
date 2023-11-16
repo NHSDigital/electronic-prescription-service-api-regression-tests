@@ -11,14 +11,6 @@ RUN apt-get update \
     libreadline-dev libsqlite3-dev wget llvm libncurses5-dev libncursesw5-dev \
     xz-utils tk-dev liblzma-dev netcat
 
-# install apigee get-token utility
-RUN wget -O /tmp/ssocli-bundle.zip https://login.apigee.com/resources/scripts/sso-cli/ssocli-bundle.zip && \
-    unzip /tmp/ssocli-bundle.zip -d /tmp/ssocli-bundle && \
-    cd /tmp/ssocli-bundle && \
-    ./install && \
-    rm /tmp/ssocli-bundle.zip && \
-    rm -rf /ssocli-bundle-cli
-
 USER vscode
 
 # Install ASDF

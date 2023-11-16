@@ -8,10 +8,14 @@ guard-%:
 
 install:
 	poetry install
-lint-format:
-	python -m black .
-	python -m pylint . --rcfile=tox.ini
 
+lint-black:
+	python -m black .
+
+lint-pylint:
+	python -m pylint . --rcfile=.pylintrc
+
+lint: lint-black lint-pylint
 
 run-tests: guard-BASE_URL
 	echo "Running Regression Tests"
