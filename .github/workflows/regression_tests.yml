@@ -14,6 +14,8 @@ jobs:
           fetch-depth: 0  # This causes all history to be fetched, which is required for calculate-version to function
       - name: build
         uses: ./.github/workflows/build.yml
+        with:
+          provision_status: "Success"
       - name: Regression Tests
         run: |
           export BASE_URL=Https://internal-qa.api.service.nhs.uk/electronic-prescriptions/
