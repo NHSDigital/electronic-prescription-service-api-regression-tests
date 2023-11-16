@@ -8,8 +8,9 @@ jobs:
   Tests:
     runs-on: ubuntu-latest
     steps:
-      - name: Regression Tests
+      - name: build
         uses: ./.github/workflows/build.yml
+      - name: Regression Tests
         run: |
           export BASE_URL=Https://internal-qa.api.service.nhs.uk/electronic-prescriptions/
           echo API base url = $BASE_URL
