@@ -45,7 +45,7 @@ jobs:
 
       - name: run check-licenses
         run: |
-          source .venv/bin/activate && make check-licenses
+          sudo make check-licenses
 
       - name: run lint
         run: make lint
