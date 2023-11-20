@@ -10,13 +10,13 @@ install:
 	poetry install
 
 lint-black:
-	python -m black .
+	poetry run black .
 
 lint-pyright:
-	python -m pyright .
+	poetry run pyright .
 
 lint-flake8:
-	python -m flake8 .
+	poetry run flake8 .
 
 lint: lint-black lint-pyright lint-flake8
 
