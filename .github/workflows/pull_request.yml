@@ -39,7 +39,8 @@ jobs:
               ).data[0].number;
             }
           result-encoding: string
-  Regression Tests:
+  regression_tests:
+    name: Regression Tests
     needs: quality_checks
     uses: ./.github/workflows/regression_tests.yml
 
