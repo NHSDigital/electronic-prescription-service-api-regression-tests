@@ -43,6 +43,9 @@ jobs:
           export PATH="/home/runner/.asdf/installs/poetry/1.7.0/bin:$PATH"
           make install
 
+      - name: activate virtual environment
+        run: source .venv/bin/activate
+
       - name: run check-licenses
         run: make check-licenses
 
