@@ -7,7 +7,7 @@ guard-%:
 	fi
 
 install:
-	poetry install --no-root
+	poetry install
 
 lint-black:
 	python -m black .
