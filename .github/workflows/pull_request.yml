@@ -1,4 +1,4 @@
-name: deploy_pr
+name: Pull Request
 
 on:
   pull_request:
@@ -39,6 +39,9 @@ jobs:
               ).data[0].number;
             }
           result-encoding: string
+  Regression Tests:
+    needs: quality_checks
+    uses: ./.github/workflows/regression_tests.yml
 
   get_commit_id:
     runs-on: ubuntu-latest
@@ -49,6 +52,3 @@ jobs:
         id: commit_id
         run: |
           echo "commit_id=${{ github.sha }}" >> "$GITHUB_OUTPUT"
-
-  regression_tests:
-    uses: ./.github/workflows/regression_tests.yml
