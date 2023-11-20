@@ -1,7 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
-LICENSES=$(poetry run pip-licenses)
+# known packages with dual licensing
+IGNORE_PACKAGES="PyGithub chardet text-unidecode pyzmq"
+LICENSES=$(poetry run pip-licenses  --ignore-packages ${IGNORE_PACKAGES})
 INCOMPATIBLE_LIBS=$(echo "$LICENSES" | grep 'GPL' || true)
 
 if [[ -z $INCOMPATIBLE_LIBS ]]; then
