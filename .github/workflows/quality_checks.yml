@@ -44,8 +44,7 @@ jobs:
           make install
 
       - name: run check-licenses
-        run: |
-          sudo make check-licenses
+        run: make check-licenses
 
       - name: run lint
         run: make lint
