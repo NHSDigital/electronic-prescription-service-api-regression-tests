@@ -1,5 +1,4 @@
-# pylint: disable=no-name-in-module
-from behave import then, when
+from behave import then, when  # pyright: ignore [reportGeneralTypeIssues]
 from methods import api_methods
 from methods.api_methods import assert_that
 

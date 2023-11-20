@@ -24,15 +24,20 @@ repos:
 
   - repo: local
     hooks:
-    - id: run_pylint
-      name: pylint
-      entry: pylint
+    - id: run_pyright
+      name: pyright
+      entry: pyright
       language: system
       types: [python]
-      args:
-        [
-          "--rcfile=.pylintrc", # Link to your config file
-        ]
+
+  - repo: local
+    hooks:
+    - id: run_flake8
+      name: flake8
+      entry: flake8
+      language: system
+      types: [python]
+
 
 fail_fast: true
 default_stages: [pre-commit, commit]

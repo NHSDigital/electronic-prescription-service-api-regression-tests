@@ -7,15 +7,18 @@ guard-%:
 	fi
 
 install:
-	poetry install
+	poetry install --no-root
 
 lint-black:
 	python -m black .
 
-lint-pylint:
-	python -m pylint . --rcfile=.pylintrc
+lint-pyright:
+	python -m pyright .
 
-lint: lint-black lint-pylint
+lint-flake8:
+	python -m flake8 .
+
+lint: lint-black lint-pyright lint-flake8
 
 run-tests: guard-BASE_URL
 	echo "Running Regression Tests"
