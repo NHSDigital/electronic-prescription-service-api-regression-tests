@@ -46,4 +46,4 @@ jobs:
         run: |
           export BASE_URL=Https://internal-qa.api.service.nhs.uk/electronic-prescriptions/
           echo API base url = $BASE_URL
-          source .venv/bin/activate && python runner.py
+          make run-tests

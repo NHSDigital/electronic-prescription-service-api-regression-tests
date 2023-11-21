@@ -22,7 +22,7 @@ lint: lint-black lint-pyright lint-flake8
 
 run-tests: guard-BASE_URL
 	echo "Running Regression Tests"
-	python runner.py
+	poetry run python ./runner.py
 
 check-licenses:
 	scripts/check_python_licenses.sh
