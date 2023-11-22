@@ -41,7 +41,7 @@ jobs:
         uses: asdf-vm/actions/setup@05e0d2ed97b598bfce82fd30daf324ae0c4570e6
         with:
           asdf_branch: v0.11.3
-  
+
       - name: Cache asdf
         uses: actions/cache@v3
         with:
@@ -56,8 +56,8 @@ jobs:
         with:
           asdf_branch: v0.11.3
         env:
-          PYTHON_CONFIGURE_OPTS: --enable-shared 
-  
+          PYTHON_CONFIGURE_OPTS: --enable-shared
+
       - name: Install python packages
         run: |
           export PATH="/home/runner/.asdf/installs/poetry/1.3.1/bin:$PATH"
@@ -93,147 +93,3 @@ jobs:
       - name: output SPEC_VERSION
         id: output_spec_version
         run: echo SPEC_VERSION=${{ env.SPEC_VERSION }} >> $GITHUB_OUTPUT
-
-  package_code:
-    needs: tag_release
-    uses: ./.github/workflows/sam_package_code.yml
-
-  release_dev:
-    needs: [tag_release, package_code, get_commit_id]
-    uses: ./.github/workflows/sam_release_code.yml
-    with:
-      ARTIFACT_BUCKET_PREFIX: ${{needs.tag_release.outputs.spec_version}}
-      STACK_NAME: dev-ci
-      TARGET_ENVIRONMENT: dev
-      ENABLE_MUTUAL_TLS: true
-      DEPLOY_SANDBOX: false
-      BUILD_ARTIFACT: packaged_code
-      TRUSTSTORE_FILE: truststore.pem
-      VERSION_NUMBER: ${{needs.tag_release.outputs.spec_version}}
-      COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}
-      LOG_LEVEL: DEBUG
-      LOG_RETENTION_DAYS: 30
-    secrets:
-      CLOUD_FORMATION_DEPLOY_ROLE: ${{ secrets.DEV_CLOUD_FORMATION_DEPLOY_ROLE }}
-      SPLUNK_HEC_TOKEN: ${{ secrets.DEV_SPLUNK_HEC_TOKEN }}
-      TARGET_SPINE_SERVER: ${{ secrets.DEV_TARGET_SPINE_SERVER }}
-
-  release_dev_sandbox:
-    needs: [tag_release, package_code, get_commit_id]
-    uses: ./.github/workflows/sam_release_code.yml
-    with:
-      ARTIFACT_BUCKET_PREFIX: ${{needs.tag_release.outputs.spec_version}}
-      STACK_NAME: dev-sandbox
-      TARGET_ENVIRONMENT: dev
-      ENABLE_MUTUAL_TLS: true
-      DEPLOY_SANDBOX: true
-      BUILD_ARTIFACT: packaged_sandbox_code
-      TRUSTSTORE_FILE: sandbox-truststore.pem
-      VERSION_NUMBER: ${{needs.tag_release.outputs.spec_version}}
-      COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}
-      LOG_LEVEL: DEBUG
-      LOG_RETENTION_DAYS: 30
-    secrets:
-      CLOUD_FORMATION_DEPLOY_ROLE: ${{ secrets.DEV_CLOUD_FORMATION_DEPLOY_ROLE }}
-      SPLUNK_HEC_TOKEN: ${{ secrets.DEV_SPLUNK_HEC_TOKEN }}
-      TARGET_SPINE_SERVER: sandbox
-
-  release_ref:
-    needs: [tag_release, release_dev, release_dev_sandbox, package_code, get_commit_id]
-    uses: ./.github/workflows/sam_release_code.yml
-    with:
-      ARTIFACT_BUCKET_PREFIX: ${{needs.tag_release.outputs.spec_version}}
-      STACK_NAME: ref-ci
-      TARGET_ENVIRONMENT: ref
-      ENABLE_MUTUAL_TLS: true
-      DEPLOY_SANDBOX: false
-      BUILD_ARTIFACT: packaged_code
-      TRUSTSTORE_FILE: truststore.pem
-      VERSION_NUMBER: ${{needs.tag_release.outputs.spec_version}}
-      COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}
-      LOG_LEVEL: DEBUG
-      LOG_RETENTION_DAYS: 30
-    secrets:
-      CLOUD_FORMATION_DEPLOY_ROLE: ${{ secrets.REF_CLOUD_FORMATION_DEPLOY_ROLE }}
-      SPLUNK_HEC_TOKEN: ${{ secrets.REF_SPLUNK_HEC_TOKEN }}
-      TARGET_SPINE_SERVER: ${{ secrets.REF_TARGET_SPINE_SERVER }}
-
-  release_qa:
-    needs: [tag_release, release_dev, release_dev_sandbox, package_code, get_commit_id]
-    uses: ./.github/workflows/sam_release_code.yml
-    with:
-      ARTIFACT_BUCKET_PREFIX: ${{needs.tag_release.outputs.spec_version}}
-      STACK_NAME: qa-ci
-      TARGET_ENVIRONMENT: qa
-      ENABLE_MUTUAL_TLS: true
-      DEPLOY_SANDBOX: false
-      BUILD_ARTIFACT: packaged_code
-      TRUSTSTORE_FILE: truststore.pem
-      VERSION_NUMBER: ${{needs.tag_release.outputs.spec_version}}
-      COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}
-      LOG_LEVEL: DEBUG
-      LOG_RETENTION_DAYS: 30
-    secrets:
-      CLOUD_FORMATION_DEPLOY_ROLE: ${{ secrets.QA_CLOUD_FORMATION_DEPLOY_ROLE }}
-      SPLUNK_HEC_TOKEN: ${{ secrets.QA_SPLUNK_HEC_TOKEN }}
-      TARGET_SPINE_SERVER: ${{ secrets.QA_TARGET_SPINE_SERVER }}
-
-  release_int:
-    needs: [tag_release, release_qa, package_code, get_commit_id]
-    uses: ./.github/workflows/sam_release_code.yml
-    with:
-      ARTIFACT_BUCKET_PREFIX: ${{needs.tag_release.outputs.spec_version}}
-      STACK_NAME: int-ci
-      TARGET_ENVIRONMENT: int
-      ENABLE_MUTUAL_TLS: true
-      DEPLOY_SANDBOX: false
-      BUILD_ARTIFACT: packaged_code
-      TRUSTSTORE_FILE: truststore.pem
-      VERSION_NUMBER: ${{needs.tag_release.outputs.spec_version}}
-      COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}
-      LOG_LEVEL: DEBUG
-      LOG_RETENTION_DAYS: 30
-    secrets:
-      CLOUD_FORMATION_DEPLOY_ROLE: ${{ secrets.INT_CLOUD_FORMATION_DEPLOY_ROLE }}
-      SPLUNK_HEC_TOKEN: ${{ secrets.INT_SPLUNK_HEC_TOKEN }}
-      TARGET_SPINE_SERVER: ${{ secrets.INT_TARGET_SPINE_SERVER }}
-
-  release_sandbox:
-    needs: [tag_release, release_qa, package_code, get_commit_id]
-    uses: ./.github/workflows/sam_release_code.yml
-    with:
-      ARTIFACT_BUCKET_PREFIX: ${{needs.tag_release.outputs.spec_version}}
-      STACK_NAME: int-sandox
-      TARGET_ENVIRONMENT: int
-      ENABLE_MUTUAL_TLS: true
-      DEPLOY_SANDBOX: true
-      BUILD_ARTIFACT: packaged_sandbox_code
-      TRUSTSTORE_FILE: sandbox-truststore.pem
-      VERSION_NUMBER: ${{needs.tag_release.outputs.spec_version}}
-      COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}
-      LOG_LEVEL: DEBUG
-      LOG_RETENTION_DAYS: 30
-    secrets:
-      CLOUD_FORMATION_DEPLOY_ROLE: ${{ secrets.INT_CLOUD_FORMATION_DEPLOY_ROLE }}
-      SPLUNK_HEC_TOKEN: ${{ secrets.INT_SPLUNK_HEC_TOKEN }}
-      TARGET_SPINE_SERVER: sandbox
-
-  release_prod:
-    needs: [tag_release, release_int, release_sandbox, package_code, get_commit_id]
-    uses: ./.github/workflows/sam_release_code.yml
-    with:
-      ARTIFACT_BUCKET_PREFIX: ${{needs.tag_release.outputs.spec_version}}
-      STACK_NAME: prod-ci
-      TARGET_ENVIRONMENT: prod
-      ENABLE_MUTUAL_TLS: true
-      DEPLOY_SANDBOX: false
-      BUILD_ARTIFACT: packaged_code
-      TRUSTSTORE_FILE: truststore.pem
-      VERSION_NUMBER: ${{needs.tag_release.outputs.spec_version}}
-      COMMIT_ID: ${{needs.get_commit_id.outputs.commit_id}}
-      LOG_LEVEL: INFO
-      LOG_RETENTION_DAYS: 731
-    secrets:
-      CLOUD_FORMATION_DEPLOY_ROLE: ${{ secrets.PROD_CLOUD_FORMATION_DEPLOY_ROLE }}
-      SPLUNK_HEC_TOKEN: ${{ secrets.PROD_SPLUNK_HEC_TOKEN }}
-      TARGET_SPINE_SERVER: ${{ secrets.PROD_TARGET_SPINE_SERVER }}
