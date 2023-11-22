@@ -1,4 +1,4 @@
-[![Regression Tests](https://github.com/NHSDigital/electronic-prescription-service-api-regression-tests/actions/workflows/regression_tests.yml/badge.svg?branch=main)](https://github.com/NHSDigital/direct-care-api-regression-tests/actions/workflows/regression_tests.yml)
+[![Regression Tests](https://github.com/NHSDigital/electronic-prescription-service-api-regression-tests/actions/workflows/regression_tests.yml/badge.svg?branch=main)](https://github.com/NHSDigital/electronic-prescription-service-api-regression-tests/actions/workflows/regression_tests.yml)
 
 # Regression Tests
 These tests will automate regression testing of the Electronic Prescription Service API
