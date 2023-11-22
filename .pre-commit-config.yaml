@@ -1,0 +1,43 @@
+default_language_version:
+    python: python3.12
+repos:   
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-merge-conflict
+        name: Check for merge conflict strings
+
+      - id: end-of-file-fixer
+        name: Fix missing newline at the end of files
+
+      - id: check-yaml
+        name: Check pipelines configuration
+        files: ^(.github)
+
+  - repo: local
+    hooks:
+    - id: run_black
+      name: black
+      entry: black .
+      language: system
+      types: [python]
+
+  - repo: local
+    hooks:
+    - id: run_pyright
+      name: pyright
+      entry: pyright
+      language: system
+      types: [python]
+
+  - repo: local
+    hooks:
+    - id: run_flake8
+      name: flake8
+      entry: flake8
+      language: system
+      types: [python]
+
+
+fail_fast: true
+default_stages: [pre-commit, commit]

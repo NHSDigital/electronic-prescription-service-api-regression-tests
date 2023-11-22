@@ -1,0 +1,55 @@
+name: Pull Request
+
+on:
+  pull_request:
+    branches: [main]
+
+env:
+  BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
+
+jobs:
+  quality_checks:
+    uses: ./.github/workflows/quality_checks.yml
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  get_issue_number:
+    runs-on: ubuntu-latest
+    needs: quality_checks
+    outputs:
+      issue_number: ${{steps.get_issue_number.outputs.result}}
+
+    steps:
+      - uses: actions/github-script@v6
+        name: get issue number
+        id: get_issue_number
+        with:
+          script: |
+            if (context.issue.number) {
+              // Return issue number if present
+              return context.issue.number;
+            } else {
+              // Otherwise return issue number from commit
+              return (
+                await github.rest.repos.listPullRequestsAssociatedWithCommit({
+                  commit_sha: context.sha,
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                })
+              ).data[0].number;
+            }
+          result-encoding: string
+  regression_tests:
+    name: Regression Tests
+    needs: quality_checks
+    uses: ./.github/workflows/regression_tests.yml
+
+  get_commit_id:
+    runs-on: ubuntu-latest
+    outputs:
+      commit_id: ${{ steps.commit_id.outputs.commit_id }}
+    steps:
+      - name: Get Commit ID
+        id: commit_id
+        run: |
+          echo "commit_id=${{ github.sha }}" >> "$GITHUB_OUTPUT"

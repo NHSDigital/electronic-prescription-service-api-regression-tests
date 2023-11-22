@@ -1,0 +1,44 @@
+[tool.poetry]
+name = "electronic-prescription-service-api-regression-tests"
+version = "0.1.0"
+description = ""
+authors = ["SeanSteberis <sean.steberis@airelogic.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+jsonschema = "^4.19.0"
+requests = "^2.31.0"
+assertpy = "^1.1"
+behave = "^1.2.6"
+behave-cucumber-formatter = "^1.0.1"
+locust = "^2.16.1"
+lxml = "^4.9.3"
+pyright = "^1.1.333"
+allure-behave = "^2.13.2"
+black = "^23.11.0"
+semver = "^3.0.2"
+gitpython = "^3.1.40"
+pip-licenses = "^4.3.3"
+flake8 = "^6.1.0"
+
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^3.5.0"
+
+[tool.pyright]
+include = ["src"]
+exclude = ["**/.*",
+    "**/__pycache__",
+    "**/venv",
+    "**/.venv"
+]
+defineConstant = { DEBUG = true }
+reportMissingImports = true
+
+pythonVersion = "3.12"
+pythonPlatform = "Linux"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
