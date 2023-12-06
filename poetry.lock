@@ -927,26 +927,26 @@ referencing = ">=0.28.0"
 
 [[package]]
 name = "locust"
-version = "2.18.0"
+version = "2.19.1"
 description = "Developer friendly load testing framework"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "locust-2.18.0-py3-none-any.whl", hash = "sha256:55036b2601ad7a2725885ceafb28f90390128a9a5dc631809da462f53b37cd56"},
-    {file = "locust-2.18.0.tar.gz", hash = "sha256:f8d668c2c33518c705664bc869791d58fc98ba8f1aadbf2335be36e4e681feae"},
+    {file = "locust-2.19.1-py3-none-any.whl", hash = "sha256:152d6c9b1d8b842422a9ef352d13529d337d5c4e1e0c0a3e0827c1b5eafb903d"},
+    {file = "locust-2.19.1.tar.gz", hash = "sha256:5c21609b1395833dc0b4bb3ddaaf709a88f6e70950aefce86e11eb5944fe9217"},
 ]
 
 [package.dependencies]
-ConfigArgParse = ">=1.0"
+ConfigArgParse = ">=1.5.5"
 flask = ">=2.0.0"
 Flask-BasicAuth = ">=0.2.0"
 Flask-Cors = ">=3.0.10"
-gevent = ">=20.12.1"
-geventhttpclient = ">=2.0.2"
-msgpack = ">=0.6.2"
-psutil = ">=5.6.7"
+gevent = ">=22.10.2"
+geventhttpclient = ">=2.0.11"
+msgpack = ">=1.0.0"
+psutil = ">=5.9.1"
 pywin32 = {version = "*", markers = "platform_system == \"Windows\""}
-pyzmq = ">=22.2.1,<23.0.0 || >23.0.0"
+pyzmq = ">=25.0.0"
 requests = ">=2.23.0"
 roundrobin = ">=0.0.2"
 Werkzeug = ">=2.0.0"
@@ -1971,4 +1971,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "511b7c286c7778ad59a93a1f7f748f1c0056484fbcdc5a6c6e84b0f85a120a7f"
+content-hash = "a50c32f4d1c39e19f1631c32f35976f3bf1bc502128eda63374c61c8a89f517e"
