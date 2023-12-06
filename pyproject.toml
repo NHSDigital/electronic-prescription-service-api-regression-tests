@@ -6,7 +6,7 @@ authors = ["SeanSteberis <sean.steberis@airelogic.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.11"
 jsonschema = "^4.19.0"
 requests = "^2.31.0"
 assertpy = "^1.1"
