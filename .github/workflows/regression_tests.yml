@@ -49,12 +49,14 @@ jobs:
           echo API base url = $BASE_URL
           make run-tests
 
-      - name: Upload results
+      - name: checkout github page repo
         uses: actions/checkout@v4
         with:
           repository: NHSDigital/eps-test-reports
           token: ${{ secrets.REGRESSION_TESTS_PAT }}
           path: ${{ GITHUB_REF_NAME }}
+
+      - name: Commit results to GitHub Pages Repo
         run: |
           date > generated.txt
           git config user.name github-actions
