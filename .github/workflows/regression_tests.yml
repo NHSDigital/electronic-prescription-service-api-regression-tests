@@ -74,4 +74,4 @@ jobs:
           git config user.email github-actions@github.com
           git add .
           git commit allure-results -m "allure-results uploaded"
-          git push
+          git push --set-upstream origin regression-tests
