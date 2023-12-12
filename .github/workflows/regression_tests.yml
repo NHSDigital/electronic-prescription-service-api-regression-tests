@@ -49,12 +49,23 @@ jobs:
           echo API base url = $BASE_URL
           make run-tests
 
+      - uses: actions/upload-artifact@v3
+        with:
+          name: allure-results
+          path: allure-results
+          if-no-files-found: error
+
       - name: checkout github page repo
         uses: actions/checkout@v4
         with:
           repository: NHSDigital/eps-test-reports
           token: ${{ secrets.REGRESSION_TESTS_PAT }}
           path: ${{ env.GITHUB_REF_NAME }}
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: allure-results
+          path: allure-results
 
       - name: Commit results to GitHub Pages Repo
         run: |
