@@ -48,3 +48,17 @@ jobs:
           export BASE_URL=Https://internal-qa.api.service.nhs.uk/electronic-prescriptions/
           echo API base url = $BASE_URL
           make run-tests
+
+      - name: Upload results
+        uses: actions/checkout@v4
+        with:
+          repository: NHSDigital/eps-test-reports
+          token: ${{ secrets.REGRESSION_TESTS_PAT }}
+          path: ${{ GITHUB_REF_NAME }}
+        run: |
+          date > generated.txt
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add allure-results
+          git commit -m "allure-results uploaded"
+          git push
