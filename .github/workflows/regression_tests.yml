@@ -58,7 +58,7 @@ jobs:
 
       - name: Commit results to GitHub Pages Repo
         run: |
-          git checkout ${{ env.GITHUB_REF_NAME }}
+          git checkout regression-tests
           git config user.name github-actions
           git config user.email github-actions@github.com
           git commit allure-results -m "allure-results uploaded"
