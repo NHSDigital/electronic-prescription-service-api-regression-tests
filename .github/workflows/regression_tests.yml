@@ -61,6 +61,5 @@ jobs:
           date > generated.txt
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add allure-results
-          git commit -m "allure-results uploaded"
+          git commit allure-results -m "allure-results uploaded"
           git push
