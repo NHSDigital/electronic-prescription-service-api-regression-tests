@@ -22,7 +22,9 @@ def before_all(context):
 
 
 def after_all(context):
+    return
     # Add anything you want to happen after all the tests have completed here
+
 
 def setup_logging(level: int = logging.INFO):
     handlers = [logging.StreamHandler(sys.stdout)]
