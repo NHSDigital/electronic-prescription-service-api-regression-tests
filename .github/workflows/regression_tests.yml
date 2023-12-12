@@ -54,7 +54,7 @@ jobs:
         with:
           repository: NHSDigital/eps-test-reports
           token: ${{ secrets.REGRESSION_TESTS_PAT }}
-          path: ${{ GITHUB_REF_NAME }}
+          path: ${{ env.GITHUB_REF_NAME }}
 
       - name: Commit results to GitHub Pages Repo
         run: |
