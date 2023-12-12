@@ -21,11 +21,8 @@ def before_all(context):
     logging.info("Using BASE_URL: '%s'", context.base_url)
 
 
-# def after_all(context):
-#     logging.info("Generating Allure report...")
-#     generate_report_command = "allure generate --clean"
-#     subprocess.run(generate_report_command, shell=True, check=False)
-
+def after_all(context):
+    # Add anything you want to happen after all the tests have completed here
 
 def setup_logging(level: int = logging.INFO):
     handlers = [logging.StreamHandler(sys.stdout)]
