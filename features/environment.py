@@ -1,6 +1,5 @@
 import logging
 import os
-import subprocess
 import sys
 from logging import DEBUG, INFO
 
@@ -22,9 +21,8 @@ def before_all(context):
 
 
 def after_all(context):
-    logging.info("Generating Allure report...")
-    generate_report_command = "allure generate --clean"
-    subprocess.run(generate_report_command, shell=True, check=False)
+    return
+    # Add anything you want to happen after all the tests have completed here
 
 
 def setup_logging(level: int = logging.INFO):

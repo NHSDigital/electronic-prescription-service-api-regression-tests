@@ -26,3 +26,18 @@ run-tests: guard-BASE_URL
 
 check-licenses:
 	scripts/check_python_licenses.sh
+
+deep-clean-install:
+	rm -f -d -r .venv/
+	asdf uninstall poetry
+	asdf uninstall python
+	asdf plugin remove poetry
+	asdf plugin remove python
+	asdf plugin add python
+	asdf install python
+	asdf plugin add poetry
+	asdf install poetry
+	poetry install
+
+pre-commit:
+	poetry run pre-commit run --all-files
