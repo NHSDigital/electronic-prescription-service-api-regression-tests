@@ -1,7 +1,6 @@
 name: Regression Tests
 on:
   workflow_dispatch:
-  workflow_call:
 
 jobs:
   regression_tests:
@@ -31,7 +30,7 @@ jobs:
           PYTHON_CONFIGURE_OPTS: --enable-shared
 
       - name: Cache Virtualenv
-        uses: actions/cache@v3
+        uses: actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84
         id: cache-venv
         with:
           path: ./.venv/
@@ -49,29 +48,30 @@ jobs:
           echo API base url = $BASE_URL
           make run-tests
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32
         with:
           name: allure-results
           path: allure-results
           if-no-files-found: error
 
       - name: checkout github page repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
         with:
           repository: NHSDigital/eps-test-reports
           token: ${{ secrets.REGRESSION_TESTS_PAT }}
           path: ${{ env.GITHUB_REF_NAME }}
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
         with:
           name: allure-results
           path: allure-results
 
       - name: Commit results to GitHub Pages Repo
         run: |
-          git checkout -b regression-tests
+          DATE_TIME=`date +"%Y-%m-%d_%T"`
+          git checkout -b regression-tests-$DATE_TIME
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add .
-          git commit allure-results -m "allure-results uploaded"
-          git push --set-upstream origin regression-tests
+          git add allure-results/*
+          git commit -m "regression-tests-$DATE_TIME"
+          git push --set-upstream origin regression-tests-$DATE_TIME
