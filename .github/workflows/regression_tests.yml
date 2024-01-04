@@ -4,13 +4,13 @@ on:
     inputs:
           tags:
             description: 'Test scenario tags'
-            required: false
+            required: true
             type: string
             default: "@regression"
           environment:
             description: 'Environment to run tests against'
             type: environment
-            required: false
+            required: true
             default: "INT"
 jobs:
   regression_tests:
