@@ -56,7 +56,7 @@ jobs:
         env:
           BASE_URL: ${{ vars.BASE_URL }}
         run: |
-          export BASE_URL = $BASE_URL
+          export BASE_URL=$BASE_URL
           echo API base url = $BASE_URL
           poetry run python ./runner.py --tags ${{ inputs.tags }}
 
