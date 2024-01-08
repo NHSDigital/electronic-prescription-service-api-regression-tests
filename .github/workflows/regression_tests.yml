@@ -1,10 +1,21 @@
 name: Regression Tests
 on:
   workflow_dispatch:
-
+    inputs:
+          tags:
+            description: 'Test scenario tags'
+            required: true
+            type: string
+            default: "@regression"
+          environment:
+            description: 'Environment to run tests against'
+            type: environment
+            required: true
+            default: "INT"
 jobs:
   regression_tests:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
@@ -43,10 +54,12 @@ jobs:
         run: make install
 
       - name: Regression Tests
+        env:
+          BASE_URL: ${{ vars.BASE_URL }}
         run: |
-          export BASE_URL=Https://internal-qa.api.service.nhs.uk/electronic-prescriptions/
+          export BASE_URL=$BASE_URL
           echo API base url = $BASE_URL
-          make run-tests
+          poetry run python ./runner.py --tags ${{ inputs.tags }}
 
       - uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392
         with:
