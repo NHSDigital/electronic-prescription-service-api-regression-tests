@@ -65,6 +65,7 @@ jobs:
         with:
           name: allure-results
           path: allure-results
+          if: always()
           if-no-files-found: error
 
       - name: checkout github page repo
