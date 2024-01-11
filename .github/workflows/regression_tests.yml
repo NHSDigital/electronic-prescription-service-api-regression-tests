@@ -62,11 +62,11 @@ jobs:
           poetry run python ./runner.py --tags ${{ inputs.tags }}
 
       - uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392
+        if: always()
         with:
           name: allure-results
           path: allure-results
-          if: always()
-#          if-no-files-found: error
+          if-no-files-found: error
 
       - name: checkout github page repo
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
