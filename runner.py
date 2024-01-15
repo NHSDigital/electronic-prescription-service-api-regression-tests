@@ -29,7 +29,7 @@ if __name__ == "__main__":
         f" -f behave_cucumber_formatter:PrettyCucumberJSONFormatter"
         f" -o reports/cucumber_json.json"
         f" -f allure_behave.formatter:AllureFormatter"
-        f" -o not-allure-results"
+        f" -o allure-results"
         f" -f pretty features"
         f" --no-logcapture --logging-level={LOGGING_LEVEL}{tags}"
     )
