@@ -72,7 +72,7 @@ jobs:
 
       - name: checkout github page repo
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
-        if: ${{ success() }}
+        if: success()
         with:
           repository: NHSDigital/eps-test-reports
           token: ${{ secrets.REGRESSION_TESTS_PAT }}
@@ -80,13 +80,13 @@ jobs:
 
       - name: Download Artifact
         uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935
-        if: ${{ success() }}
+        if: success()
         with:
           name: allure-results
           path: allure-results
 
       - name: Commit results to GitHub Pages Repo
-        if: ${{ success() }}
+        if: success()
         run: |
           DATE_TIME=`date +"%Y%m%d%H%M%S"`
           git checkout -b regression-tests-$DATE_TIME
