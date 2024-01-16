@@ -25,6 +25,9 @@ jobs:
         with:
           fetch-depth: 0  # This causes all history to be fetched, which is required for calculate-version to function
 
+      - name: ${{github.event.inputs.id}}
+        run: echo run identifier ${{ inputs.id }}
+
       # using git commit sha for version of action to ensure we have stable version
       - name: Install asdf
         uses: asdf-vm/actions/setup@05e0d2ed97b598bfce82fd30daf324ae0c4570e6
