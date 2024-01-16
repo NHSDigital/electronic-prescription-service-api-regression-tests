@@ -12,6 +12,9 @@ on:
             type: environment
             required: true
             default: "DEV"
+          id:
+            description: 'unique run identifier (Ignore if not known)'
+            required: false
 jobs:
   regression_tests:
     runs-on: ubuntu-latest
