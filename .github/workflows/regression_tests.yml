@@ -54,6 +54,7 @@ jobs:
         run: make install
 
       - name: Regression Tests
+        id: tests
         continue-on-error: true
         env:
           BASE_URL: ${{ vars.BASE_URL }}
@@ -91,3 +92,8 @@ jobs:
           git add allure-results/*
           git commit -m "regression-tests-$DATE_TIME"
           git push --set-upstream origin regression-tests-$DATE_TIME
+
+      - name: Report failure on test failure
+        if: steps.tests.outcome != 'success'
+        run: |
+          exit 1
