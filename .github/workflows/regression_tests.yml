@@ -96,4 +96,5 @@ jobs:
       - name: Report failure on test failure
         if: steps.tests.outcome != 'success'
         run: |
+          echo The regression tests step failed, this likely means there are test failures.
           exit 1
