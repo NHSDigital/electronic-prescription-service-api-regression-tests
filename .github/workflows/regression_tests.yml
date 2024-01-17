@@ -13,8 +13,9 @@ on:
             required: true
             default: "DEV"
           id:
-            description: 'unique run identifier (Ignore if not known)'
+            description: 'Unique run identifier (Leave this as default)'
             required: false
+            default: "Manually Triggered Run"
 jobs:
   regression_tests:
     runs-on: ubuntu-latest
@@ -26,7 +27,6 @@ jobs:
           fetch-depth: 0  # This causes all history to be fetched, which is required for calculate-version to function
 
       - name: ${{github.event.inputs.id}}
-        if: ${{github.event.inputs.id}}
         run: echo run identifier ${{ inputs.id }}
 
       # using git commit sha for version of action to ensure we have stable version
