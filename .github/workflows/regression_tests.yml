@@ -13,7 +13,7 @@ on:
             required: true
             default: "DEV"
           id:
-            description: 'Unique run identifier (Leave this as default)'
+            description: 'Unique run identifier (Do not change this)'
             required: false
             default: "Manually Triggered Run"
 jobs:
