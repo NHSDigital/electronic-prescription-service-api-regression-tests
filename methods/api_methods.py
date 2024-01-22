@@ -32,7 +32,9 @@ def get_default_headers():
 
 
 def request_ping(context):
-    url = f"{context.base_url}electronic-prescriptions{context.pull_request_id}/_ping"
+    pull_request_id_value = f"-pr-{context.pull_request_id}" if context.pull_request_id else ""
+    full_url = f"{context.base_url}electronic-prescriptions{pull_request_id_value}"
+    url = f"{full_url}/_ping"
     context.response = requests.get(url=url)
     log_api_information(context)
 
