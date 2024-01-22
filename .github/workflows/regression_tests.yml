@@ -16,10 +16,11 @@ on:
             description: 'Unique run identifier (Do not change this)'
             required: false
             default: "Manually Triggered Run"
-          url:
-            description: 'The url of the environment'
+          pull_request_id:
+            description: 'The ID of the pull request'
             required: false
             default: ""
+
 jobs:
   regression_tests:
     runs-on: ubuntu-latest
@@ -58,7 +59,7 @@ jobs:
           path: ./.venv/
           key: ${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-venv-${{ hashFiles('pyproject.toml') }}
           restore-keys: |
-            ${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-venv-
+            ${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-venv- 
 
       - name: Install Dependencies
         if: steps.cache-venv.outputs.cache-hit != 'true'
@@ -69,10 +70,13 @@ jobs:
         continue-on-error: true
         env:
           BASE_URL: ${{ vars.BASE_URL }}
+          PULL_REQUEST_ID: ${{ vars.PULL_REQUEST_ID }}
         run: |
-          export BASE_URL=$BASE_URL
-          echo API base url = $BASE_URL
-          poetry run python ./runner.py --tags ${{ inputs.tags }}
+            export BASE_URL=$BASE_URL
+            export PULL_REQUEST_ID=$PULL_REQUEST_ID
+            echo API base url = $BASE_URL
+            echo Pull request ID = $PULL_REQUEST_ID
+            poetry run python ./runner.py --tags ${{ inputs.tags }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@694cdabd8bdb0f10b2cea11669e1bf5453eed0a6
