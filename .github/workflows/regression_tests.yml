@@ -16,6 +16,10 @@ on:
             description: 'Unique run identifier (Do not change this)'
             required: false
             default: "Manually Triggered Run"
+          url:
+            description: 'The url of the environment'
+            required: false
+            default: ""
 jobs:
   regression_tests:
     runs-on: ubuntu-latest
