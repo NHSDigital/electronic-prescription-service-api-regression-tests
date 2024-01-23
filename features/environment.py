@@ -54,3 +54,11 @@ def is_debug(context):
 def build_pull_request_id(id):
     pr_suffix = f"-pr-{id}" if id else ""
     return pr_suffix
+    
+# create .env with base url values for each environment
+# on runner.py add an --env argument 
+# create a method to determine which base url to use based on input parameter --env 
+# add logic on before all to check the existence of PR ID and enforce internal dev base url if it exists
+# regression test yaml remove BASE URL usage from github
+# check if it works
+# if so call Anth to confirm changes on EPS repo 
