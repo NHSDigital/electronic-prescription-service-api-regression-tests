@@ -8,8 +8,8 @@ if not os.getenv("BASE_URL"):
         """BASE_URL environment variable is not set on this machine. Tests will not run.
         See 'readme.md' for more information on how to set this variable"""
     )
-EPS_BASE_URL = os.getenv("BASE_URL")
-EPS_PULL_REQUEST_ID = os.getenv("PULL_REQUEST_ID")
+BASE_URL = os.getenv("BASE_URL")
+PULL_REQUEST_ID = os.getenv("PULL_REQUEST_ID")
 
 
 def before_all(context):
@@ -18,9 +18,12 @@ def before_all(context):
     else:
         setup_logging(level=INFO)
         
-    eps_pr_suffix = build_pull_request_id(EPS_PULL_REQUEST_ID)
+    eps_pr_suffix = build_pull_request_id(PULL_REQUEST_ID)
+    
+    if eps_pr_suffix:
+        BASE_URL == "Https://internal-dev.api.service.nhs.uk/"
 
-    context.base_url = EPS_BASE_URL + "electronic-prescriptions" + eps_pr_suffix
+    context.base_url = BASE_URL + "electronic-prescriptions" + eps_pr_suffix
     
     logging.info("Using BASE_URL: '%s'", context.base_url)
 
