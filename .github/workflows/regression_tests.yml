@@ -30,13 +30,16 @@ jobs:
           ENVIRONMENT: ${{ inputs.environment }}
           PR_ID: ${{ inputs.pull_request_id }}
         run: |
-          ENVIRONMENT_VALUE=$ENVIRONMENT
+          ENVIRONMENT_VALUE=''
           if [[ $PR_ID != '' ]]; then
             ENVIRONMENT_VALUE= 'DEV'
           elif [[ $PR_ID == '' ]]; then
             ENVIRONMENT_VALUE='$ENVIRONMENT
           fi
           echo "ENVIRONMENT_VALUE=$ENVIRONMENT_VALUE" >> $GITHUB_ENV
+      
+      - name: Runs on selected environment
+        run:  ${{ inputs.environment == env.ENVIRONMENT_VALUE }}
 
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
