@@ -1,10 +1,14 @@
 import logging
 import uuid
+
+import allure
 import requests
 from assertpy import assert_that as assertpy_assert  # type: ignore
 
 
 def assert_that(expected, context):
+    allure.attach(expected, "Expected", allure.attachment_type.TEXT)
+    allure.attach(context.actual, "Actual", allure.attachment_type.TEXT)
     description = (
         f"Actual Response: Status Code: {context.response.status_code}, "
         f"Body: {context.response.content}"
