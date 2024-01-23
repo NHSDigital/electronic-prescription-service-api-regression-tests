@@ -21,7 +21,6 @@ def before_all(context):
     context.base_url = EPS_BASE_URL + "electronic-prescriptions" + EPS_PULL_REQUEST_ID
     
     logging.info("Using BASE_URL: '%s'", context.base_url)
-    logging.info("Using PULL_REQUEST_ID: '%s'", context.pull_request_id)
 
 
 def after_all(context):
