@@ -69,7 +69,6 @@ jobs:
       - name: Regression Tests
         id: tests
         continue-on-error: true
-        if: ${{inputs.pull_request_id != '' && inputs.environment == 'DEV' || inputs.environment == inputs.environment}}
         env:
           BASE_URL: ${{ vars.BASE_URL }}
           PULL_REQUEST_ID: ${{ inputs.pull_request_id }}
