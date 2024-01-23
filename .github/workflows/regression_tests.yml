@@ -26,8 +26,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     steps:
-      - name: Set env
-        if: ${{inputs.pull_request_id }}
+      - name: Reassign environment from pull request ID
+        if: ${{inputs.pull_request_id !='' }}
         run: ${{ inputs.environment == 'DEV' }}
 
       - name: Checkout
