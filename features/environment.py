@@ -18,9 +18,9 @@ def before_all(context):
     else:
         setup_logging(level=INFO)
         
-    eps_pr_suffix = build_pull_request_id(PULL_REQUEST_ID)
+    #eps_pr_suffix = build_pull_request_id(PULL_REQUEST_ID)
 
-    context.base_url = BASE_URL + "electronic-prescriptions" + eps_pr_suffix
+    context.base_url = BASE_URL + "electronic-prescriptions"
     
     logging.info("Using BASE_URL: '%s'", context.base_url)
 
