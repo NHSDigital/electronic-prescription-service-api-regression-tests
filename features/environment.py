@@ -19,9 +19,6 @@ def before_all(context):
         setup_logging(level=INFO)
         
     eps_pr_suffix = build_pull_request_id(PULL_REQUEST_ID)
-    
-    if eps_pr_suffix:
-        BASE_URL == "Https://internal-dev.api.service.nhs.uk/"
 
     context.base_url = BASE_URL + "electronic-prescriptions" + eps_pr_suffix
     
