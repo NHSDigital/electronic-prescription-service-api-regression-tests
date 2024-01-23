@@ -30,7 +30,7 @@ jobs:
           ENVIRONMENT: ${{ inputs.environment }}
           PR_ID: ${{ inputs.pull_request_id }}
         run: |
-          ENVIRONMENT_VALUE=''
+          local ENVIRONMENT_VALUE=''
           if [[ $PR_ID != '' ]]; then
             ENVIRONMENT_VALUE= 'DEV'
           elif [[ $PR_ID == '' ]]; then
