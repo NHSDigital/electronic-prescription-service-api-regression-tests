@@ -17,11 +17,12 @@ def before_all(context):
         setup_logging(level=DEBUG)
     else:
         setup_logging(level=INFO)
+        
+    eps_pr_suffix = build_pull_request_id(EPS_PULL_REQUEST_ID)
 
-    context.base_url = EPS_BASE_URL + "electronic-prescriptions" + EPS_PULL_REQUEST_ID
+    context.base_url = EPS_BASE_URL + "electronic-prescriptions" + eps_pr_suffix
     
     logging.info("Using BASE_URL: '%s'", context.base_url)
-
 
 def after_all(context):
     return
@@ -49,3 +50,7 @@ def is_debug(context):
         return True
     print("Running in Normal mode")
     return False
+
+def build_pull_request_id(id):
+    pr_suffix = f"-pr-{id}" if id else ""
+    return pr_suffix

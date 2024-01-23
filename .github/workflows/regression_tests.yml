@@ -25,6 +25,7 @@ jobs:
   regression_tests:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
+    # keep env default to internal when a pr is provided even if someone selects different env
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
