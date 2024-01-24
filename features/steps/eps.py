@@ -1,4 +1,4 @@
-from behave import then, when  # pyright: ignore [reportGeneralTypeIssues]
+from behave import then, when  # pyright: ignore [reportAttributeAccessIssue]
 from methods import api_methods
 from methods.api_methods import assert_that
 
