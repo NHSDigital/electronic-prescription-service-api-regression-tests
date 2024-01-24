@@ -6,11 +6,7 @@ from logging import DEBUG, INFO
 
 load_dotenv()
 
-if not os.getenv("BASE_URL"):
-    raise EnvironmentError(
-        """BASE_URL environment variable is not set on this machine. Tests will not run.
-        See 'readme.md' for more information on how to set this variable"""
-    )
+
 DEV_BASE_URL = os.getenv("DEV_BASE_URL")
 QA_BASE_URL = os.getenv("QA_BASE_URL")
 INT_BASE_URL = os.getenv("INT_BASE_URL")
