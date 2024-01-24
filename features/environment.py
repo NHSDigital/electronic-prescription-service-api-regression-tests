@@ -15,6 +15,8 @@ ENVS = {
 }
 
 PULL_REQUEST_ID = os.getenv("PULL_REQUEST_ID")
+EPS_SUFFIX = "electronic-prescriptions"
+
 
 def before_all(context):
     env = context.config.userdata["env"]
@@ -23,12 +25,10 @@ def before_all(context):
     else:
         setup_logging(level=INFO)
 
-    eps_pr_suffix = "electronic-prescriptions" + build_pull_request_id(PULL_REQUEST_ID)
     base_url = select_base_url(env)
+    context.base_url = base_url + EPS_SUFFIX
     if PULL_REQUEST_ID:
-        context.base_url = DEV_BASE_URL + eps_pr_suffix
-
-    context.base_url = base_url + eps_pr_suffix
+        context.base_url = DEV_BASE_URL + EPS_SUFFIX + build_pull_request_id(PULL_REQUEST_ID)
 
     logging.info("Using BASE_URL: '%s'", context.base_url)
 
