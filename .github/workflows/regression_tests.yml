@@ -72,9 +72,7 @@ jobs:
           BASE_URL: ${{ vars.BASE_URL }}
           PULL_REQUEST_ID: ${{ inputs.pull_request_id }}
         run: |
-            export BASE_URL=$BASE_URL
             export PULL_REQUEST_ID=$PULL_REQUEST_ID
-            echo API base url = $BASE_URL
             echo Pull request ID = $PULL_REQUEST_ID
             poetry run python ./runner.py --tags ${{ inputs.tags }}
 

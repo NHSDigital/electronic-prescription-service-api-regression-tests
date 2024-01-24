@@ -1,16 +1,27 @@
 import logging
 import os
 import sys
+from dotenv import load_dotenv
 from logging import DEBUG, INFO
+
+load_dotenv()
 
 if not os.getenv("BASE_URL"):
     raise EnvironmentError(
         """BASE_URL environment variable is not set on this machine. Tests will not run.
         See 'readme.md' for more information on how to set this variable"""
     )
-BASE_URL = os.getenv("BASE_URL")
-PULL_REQUEST_ID = os.getenv("PULL_REQUEST_ID")
+DEV_BASE_URL = os.getenv("DEV_BASE_URL")
+QA_BASE_URL = os.getenv("QA_BASE_URL")
+INT_BASE_URL = os.getenv("INT_BASE_URL")
 
+ENVS = {
+    "DEV": DEV_BASE_URL,
+    "QA": QA_BASE_URL,
+    "INT": INT_BASE_URL,
+}
+
+PULL_REQUEST_ID = os.getenv("PULL_REQUEST_ID")
 
 def before_all(context):
     if is_debug(context):
@@ -18,9 +29,13 @@ def before_all(context):
     else:
         setup_logging(level=INFO)
         
-    eps_pr_suffix = build_pull_request_id(PULL_REQUEST_ID)
+    eps_pr_suffix = "electronic-prescriptions" + build_pull_request_id(PULL_REQUEST_ID)
+    base_url = select_base_url()
     
-    context.base_url = BASE_URL + "electronic-prescriptions" + eps_pr_suffix
+    if PULL_REQUEST_ID:
+        context.base_url = DEV_BASE_URL + eps_pr_suffix
+    
+    context.base_url = base_url + eps_pr_suffix
     
     logging.info("Using BASE_URL: '%s'", context.base_url)
 
@@ -54,11 +69,14 @@ def is_debug(context):
 def build_pull_request_id(id):
     pr_suffix = f"-pr-{id}" if id else ""
     return pr_suffix
-    
-# create .env with base url values for each environment
-# on runner.py add an --env argument 
-# create a method to determine which base url to use based on input parameter --env 
+
+def select_base_url(env):
+    if env in ENVS:
+        return ENVS[env]
+    else:
+        raise ValueError(f"Unknown environment or missing base URL for: {env} .")
+
+
 # add logic on before all to check the existence of PR ID and enforce internal dev base url if it exists
-# regression test yaml remove BASE URL usage from github
 # check if it works
-# if so call Anth to confirm changes on EPS repo 
+# if so call Anth to confirm changes on EPS repo

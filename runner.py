@@ -6,6 +6,11 @@ if __name__ == "__main__":
 
     # commandline arguments
     parser.add_argument(
+        "--env",
+        required=True,
+        help="The environment the tests are going to run in.",
+    )
+    parser.add_argument(
         "--tags",
         required=False,
         help="Tags to include or exclude. use ~tag_name to exclude tags",
