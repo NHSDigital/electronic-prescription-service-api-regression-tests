@@ -69,12 +69,11 @@ jobs:
         id: tests
         continue-on-error: true
         env:
-          BASE_URL: ${{ vars.BASE_URL }}
           PULL_REQUEST_ID: ${{ inputs.pull_request_id }}
         run: |
             export PULL_REQUEST_ID=$PULL_REQUEST_ID
             echo Pull request ID = $PULL_REQUEST_ID
-            poetry run python ./runner.py --tags ${{ inputs.tags }}
+            poetry run python ./runner.py --env ${{ inputs.environment }} --tags ${{ inputs.tags }}
 
       - name: Upload Artifact
         uses: actions/upload-artifact@694cdabd8bdb0f10b2cea11669e1bf5453eed0a6
