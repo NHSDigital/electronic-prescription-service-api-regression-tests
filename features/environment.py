@@ -1,15 +1,12 @@
 import logging
 import os
 import sys
-from dotenv import load_dotenv
 from logging import DEBUG, INFO
 
-load_dotenv()
 
-
-DEV_BASE_URL = os.getenv("DEV_BASE_URL")
-QA_BASE_URL = os.getenv("QA_BASE_URL")
-INT_BASE_URL = os.getenv("INT_BASE_URL")
+QA_BASE_URL="Https://internal-qa.api.service.nhs.uk/"
+DEV_BASE_URL="Https://internal-dev.api.service.nhs.uk/"
+INT_BASE_URL="Https://int.api.service.nhs.uk/"
 
 ENVS = {
     "DEV": DEV_BASE_URL,
@@ -20,7 +17,7 @@ ENVS = {
 PULL_REQUEST_ID = os.getenv("PULL_REQUEST_ID")
 
 def before_all(context):
-    env = context.config.userdata.get("env")
+    env = context.config.userdata["env"]
     if is_debug(context):
         setup_logging(level=DEBUG)
     else:
@@ -28,7 +25,6 @@ def before_all(context):
 
     eps_pr_suffix = "electronic-prescriptions" + build_pull_request_id(PULL_REQUEST_ID)
     base_url = select_base_url(env)
-
     if PULL_REQUEST_ID:
         context.base_url = DEV_BASE_URL + eps_pr_suffix
 
