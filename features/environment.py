@@ -4,9 +4,9 @@ import sys
 from logging import DEBUG, INFO
 
 
-QA_BASE_URL="Https://internal-qa.api.service.nhs.uk/"
-DEV_BASE_URL="Https://internal-dev.api.service.nhs.uk/"
-INT_BASE_URL="Https://int.api.service.nhs.uk/"
+QA_BASE_URL = "Https://internal-qa.api.service.nhs.uk/"
+DEV_BASE_URL = "Https://internal-dev.api.service.nhs.uk/"
+INT_BASE_URL = "Https://int.api.service.nhs.uk/"
 
 ENVS = {
     "DEV": DEV_BASE_URL,
@@ -25,12 +25,12 @@ def before_all(context):
     else:
         setup_logging(level=INFO)
 
-    base_url = select_base_url(env)
-    context.base_url = base_url + EPS_SUFFIX
+    context.base_url = select_base_url(env) + EPS_SUFFIX
     if PULL_REQUEST_ID:
-        context.base_url = DEV_BASE_URL + EPS_SUFFIX + build_pull_request_id(PULL_REQUEST_ID)
+        context.base_url = DEV_BASE_URL + EPS_SUFFIX + build_pull_request_id()
 
     logging.info("Using BASE_URL: '%s'", context.base_url)
+
 
 def after_all(context):
     return
@@ -59,17 +59,14 @@ def is_debug(context):
     print("Running in Normal mode")
     return False
 
-def build_pull_request_id(id):
-    pr_suffix = f"-pr-{id}" if id else ""
+
+def build_pull_request_id():
+    pr_suffix = f"-pr-{PULL_REQUEST_ID}" if PULL_REQUEST_ID else ""
     return pr_suffix
+
 
 def select_base_url(env):
     if env in ENVS:
         return ENVS[env]
     else:
         raise ValueError(f"Unknown environment or missing base URL for: {env} .")
-
-
-# add logic on before all to check the existence of PR ID and enforce internal dev base url if it exists
-# check if it works
-# if so call Anth to confirm changes on EPS repo
