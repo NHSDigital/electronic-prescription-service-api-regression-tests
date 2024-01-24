@@ -26,11 +26,12 @@ if __name__ == "__main__":
     # Convert to behave commandline args
     tags = f" --tags {argument.tags} " if argument.tags else ""
     DEBUG = " -D debug=True" if argument.debug else " -D debug=False"
+    ENV = f" -D env={argument.env}"
     LOGGING_LEVEL = "DEBUG" if argument.debug else "INFO"
 
     # complete command
     command = (
-        f"behave{DEBUG}"
+        f"behave{ENV}"
         f" -f behave_cucumber_formatter:PrettyCucumberJSONFormatter"
         f" -o reports/cucumber_json.json"
         f" -f allure_behave.formatter:AllureFormatter"

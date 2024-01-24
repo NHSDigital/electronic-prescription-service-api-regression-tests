@@ -20,7 +20,7 @@ ENVS = {
 PULL_REQUEST_ID = os.getenv("PULL_REQUEST_ID")
 
 def before_all(context):
-    env = context.config.userdata.get("env")
+    env = context.config.userdata["env"]
     if is_debug(context):
         setup_logging(level=DEBUG)
     else:
