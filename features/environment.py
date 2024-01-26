@@ -4,13 +4,13 @@ import sys
 from logging import DEBUG, INFO
 
 
-QA_BASE_URL = "Https://internal-qa.api.service.nhs.uk/"
+INTERNAL_QA_BASE_URL = "Https://internal-qa.api.service.nhs.uk/"
 INTERNAL_DEV_BASE_URL = "Https://internal-dev.api.service.nhs.uk/"
 INT_BASE_URL = "Https://int.api.service.nhs.uk/"
 
 ENVS = {
     "INTERNAL-DEV": INTERNAL_DEV_BASE_URL,
-    "QA": QA_BASE_URL,
+    "INTERNAL-QA": INTERNAL_QA_BASE_URL,
     "INT": INT_BASE_URL,
 }
 
