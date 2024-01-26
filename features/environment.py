@@ -7,11 +7,17 @@ from logging import DEBUG, INFO
 INTERNAL_QA_BASE_URL = "Https://internal-qa.api.service.nhs.uk/"
 INTERNAL_DEV_BASE_URL = "Https://internal-dev.api.service.nhs.uk/"
 INT_BASE_URL = "Https://int.api.service.nhs.uk/"
+SANDBOX_DEV_BASE_URL = "Https://internal-dev-sandbox.api.service.nhs.uk/"
+SANDBOX_INT_BASE_URL = "Https://sandbox.api.service.nhs.uk/"
+REF_BASE_URL = "Https://ref.api.service.nhs.uk/"
 
 ENVS = {
     "INTERNAL-DEV": INTERNAL_DEV_BASE_URL,
     "INTERNAL-QA": INTERNAL_QA_BASE_URL,
     "INT": INT_BASE_URL,
+    "REF": REF_BASE_URL,
+    "SANDBOX_DEV": SANDBOX_DEV_BASE_URL,
+    "SANDBOX_INT": SANDBOX_INT_BASE_URL,
 }
 
 PULL_REQUEST_ID = os.getenv("PULL_REQUEST_ID")
