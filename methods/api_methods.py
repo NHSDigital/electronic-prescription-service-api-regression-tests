@@ -32,7 +32,7 @@ def get_default_headers():
 
 
 def request_ping(context):
-    url = f"{context.base_url}/_ping"
+    url = f"{context.fhir_base_url}/_ping"
     print(f"going to {url}")
     context.response = requests.get(url=url)
     log_api_information(context)
