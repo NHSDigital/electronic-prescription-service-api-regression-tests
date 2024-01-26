@@ -5,11 +5,11 @@ from logging import DEBUG, INFO
 
 
 QA_BASE_URL = "Https://internal-qa.api.service.nhs.uk/"
-DEV_BASE_URL = "Https://internal-dev.api.service.nhs.uk/"
+INTERNAL_DEV_BASE_URL = "Https://internal-dev.api.service.nhs.uk/"
 INT_BASE_URL = "Https://int.api.service.nhs.uk/"
 
 ENVS = {
-    "DEV": DEV_BASE_URL,
+    "INTERNAL-DEV": INTERNAL_DEV_BASE_URL,
     "QA": QA_BASE_URL,
     "INT": INT_BASE_URL,
 }
@@ -27,7 +27,7 @@ def before_all(context):
 
     context.base_url = select_base_url(env) + EPS_SUFFIX
     if PULL_REQUEST_ID:
-        context.base_url = DEV_BASE_URL + EPS_SUFFIX + build_pull_request_id()
+        context.base_url = INTERNAL_DEV_BASE_URL + EPS_SUFFIX + build_pull_request_id()
 
     logging.info("Using BASE_URL: '%s'", context.base_url)
 
