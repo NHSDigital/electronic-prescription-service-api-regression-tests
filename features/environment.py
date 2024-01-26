@@ -35,7 +35,9 @@ def before_all(context):
     context.fhir_base_url = select_base_url(env) + EPS_SUFFIX
     # This will need rework when the pack includes additional products to test
     if PULL_REQUEST_ID:
-        context.fhir_base_url = INTERNAL_DEV_BASE_URL + EPS_SUFFIX + build_pull_request_id()
+        context.fhir_base_url = (
+            INTERNAL_DEV_BASE_URL + EPS_SUFFIX + build_pull_request_id()
+        )
 
     logging.info("Using BASE_URL: '%s'", context.fhir_base_url)
 
