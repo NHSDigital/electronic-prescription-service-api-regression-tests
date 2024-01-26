@@ -6,6 +6,11 @@ if __name__ == "__main__":
 
     # commandline arguments
     parser.add_argument(
+        "--env",
+        required=True,
+        help="The environment the tests are going to run in.",
+    )
+    parser.add_argument(
         "--tags",
         required=False,
         help="Tags to include or exclude. use ~tag_name to exclude tags",
@@ -21,11 +26,12 @@ if __name__ == "__main__":
     # Convert to behave commandline args
     tags = f" --tags {argument.tags} " if argument.tags else ""
     DEBUG = " -D debug=True" if argument.debug else " -D debug=False"
+    ENV = f" -D env={argument.env}"
     LOGGING_LEVEL = "DEBUG" if argument.debug else "INFO"
 
     # complete command
     command = (
-        f"behave{DEBUG}"
+        f"behave{ENV}"
         f" -f behave_cucumber_formatter:PrettyCucumberJSONFormatter"
         f" -o reports/cucumber_json.json"
         f" -f allure_behave.formatter:AllureFormatter"
