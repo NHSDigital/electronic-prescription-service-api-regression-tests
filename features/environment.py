@@ -71,7 +71,12 @@ def is_debug(context):
 
 
 def build_pull_request_id():
-    pr_suffix = f"-pr-{PULL_REQUEST_ID}" if PULL_REQUEST_ID else ""
+    pr_suffix = ""
+    if PULL_REQUEST_ID:
+        if "pr-" in str({PULL_REQUEST_ID}):
+            pr_suffix = f"-{PULL_REQUEST_ID}"
+        else:
+            pr_suffix = f"-pr-{PULL_REQUEST_ID}"
     return pr_suffix
 
 
