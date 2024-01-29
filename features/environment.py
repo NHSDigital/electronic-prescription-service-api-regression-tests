@@ -71,18 +71,6 @@ def is_debug(context):
 
 
 def build_pull_request_id():
-    pr_suffix = f"-pr-{PULL_REQUEST_ID}" if PULL_REQUEST_ID else ""
-    return pr_suffix
-
-
-def select_base_url(env):
-    if env in ENVS:
-        return ENVS[env]
-    else:
-        raise ValueError(f"Unknown environment or missing base URL for: {env} .")
-
-
-def build_pull_request_id():
     pr_suffix = ""
     if PULL_REQUEST_ID:
         if "pr-" in str({PULL_REQUEST_ID}):
