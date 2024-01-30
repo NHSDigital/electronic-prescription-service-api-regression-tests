@@ -12,12 +12,12 @@ SANDBOX_INT_BASE_URL = "Https://sandbox.api.service.nhs.uk/"
 REF_BASE_URL = "Https://ref.api.service.nhs.uk/"
 
 ENVS = {
-    "INTERNAL-DEV": INTERNAL_DEV_BASE_URL,
-    "INTERNAL-QA": INTERNAL_QA_BASE_URL,
-    "INT": INT_BASE_URL,
-    "REF": REF_BASE_URL,
-    "SANDBOX-DEV": SANDBOX_DEV_BASE_URL,
-    "SANDBOX-INT": SANDBOX_INT_BASE_URL,
+    "internal-dev": INTERNAL_DEV_BASE_URL,
+    "internal-qa": INTERNAL_QA_BASE_URL,
+    "int": INT_BASE_URL,
+    "ref": REF_BASE_URL,
+    "internal-dev-sandbox": SANDBOX_DEV_BASE_URL,
+    "sandbox": SANDBOX_INT_BASE_URL,
 }
 
 # This will need rework when the pack includes additional products to test
