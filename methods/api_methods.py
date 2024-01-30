@@ -15,23 +15,15 @@ def assert_that(expected, context):
 
 
 def attach_api_information(context):
-    allure.attach("REQUEST:", allure.attachment_type.TEXT)
-    allure.attach(
-        "Headers: %s ", context.response.request.headers, allure.attachment_type.TEXT
-    )
-    allure.attach(
-        "Method: %s ", context.response.request.method, allure.attachment_type.TEXT
-    )
-    allure.attach("URL: %s ", context.response.request.url, allure.attachment_type.TEXT)
-    allure.attach(
-        "Body: %s ", context.response.request.body, allure.attachment_type.TEXT
-    )
-    allure.attach("RESPONSE:", allure.attachment_type.TEXT)
-    allure.attach(
-        "Status Code: %s ", context.response.status_code, allure.attachment_type.TEXT
-    )
-    allure.attach("Headers: %s ", context.response.headers, allure.attachment_type.TEXT)
-    allure.attach("Body: %s ", context.response.content, allure.attachment_type.TEXT)
+    allure.attach("REQUEST", allure.attachment_type.TEXT)
+    allure.attach(context.response.request.headers, "Headers", allure.attachment_type.TEXT)
+    allure.attach(context.response.request.method, "Method", allure.attachment_type.TEXT)
+    allure.attach(context.response.request.url, "URL", allure.attachment_type.TEXT)
+    allure.attach(context.response.request.body, "Body", allure.attachment_type.TEXT    )
+    allure.attach("RESPONSE", allure.attachment_type.TEXT)
+    allure.attach(context.response.status_code, "Status Code", allure.attachment_type.TEXT)
+    allure.attach(context.response.headers, "Headers", allure.attachment_type.TEXT)
+    allure.attach(context.response.content, "Body", allure.attachment_type.TEXT)
 
 
 def get_default_headers():

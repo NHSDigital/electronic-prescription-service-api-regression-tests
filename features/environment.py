@@ -1,7 +1,6 @@
 import logging
 import os
 import sys
-from logging import DEBUG, INFO
 
 
 INTERNAL_QA_BASE_URL = "Https://internal-qa.api.service.nhs.uk/"
