@@ -16,6 +16,11 @@ on:
             description: 'Unique run identifier (Do not change this)'
             required: false
             default: "Manually Triggered Run"
+          pull_request_id:
+            description: 'The ID of the pull request'
+            required: false
+            default: ""
+
 jobs:
   regression_tests:
     runs-on: ubuntu-latest
@@ -34,7 +39,7 @@ jobs:
         uses: asdf-vm/actions/setup@05e0d2ed97b598bfce82fd30daf324ae0c4570e6
 
       - name: Cache asdf
-        uses: actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84
+        uses: actions/cache@a2ed59d39b352305bdd2f628719a53b2cc4f9613
         with:
           path: |
             ~/.asdf
@@ -48,13 +53,13 @@ jobs:
           PYTHON_CONFIGURE_OPTS: --enable-shared
 
       - name: Cache Virtualenv
-        uses: actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84
+        uses: actions/cache@a2ed59d39b352305bdd2f628719a53b2cc4f9613
         id: cache-venv
         with:
           path: ./.venv/
           key: ${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-venv-${{ hashFiles('pyproject.toml') }}
           restore-keys: |
-            ${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-venv-
+            ${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-venv- 
 
       - name: Install Dependencies
         if: steps.cache-venv.outputs.cache-hit != 'true'
@@ -64,14 +69,14 @@ jobs:
         id: tests
         continue-on-error: true
         env:
-          BASE_URL: ${{ vars.BASE_URL }}
+          PULL_REQUEST_ID: ${{ inputs.pull_request_id }}
         run: |
-          export BASE_URL=$BASE_URL
-          echo API base url = $BASE_URL
-          poetry run python ./runner.py --tags ${{ inputs.tags }}
+            export PULL_REQUEST_ID=$PULL_REQUEST_ID
+            echo Pull request ID = $PULL_REQUEST_ID
+            poetry run python ./runner.py --env ${{ inputs.environment }} --tags ${{ inputs.tags }}
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392
+        uses: actions/upload-artifact@26f96dfa697d77e81fd5907df203aa23a56210a8
         with:
           name: allure-results
           path: allure-results
