@@ -16,12 +16,20 @@ def assert_that(expected, context):
 
 def attach_api_information(context):
     allure.attach("REQUEST:", allure.attachment_type.TEXT)
-    allure.attach("Headers: %s ", context.response.request.headers, allure.attachment_type.TEXT)
-    allure.attach("Method: %s ", context.response.request.method, allure.attachment_type.TEXT)
+    allure.attach(
+        "Headers: %s ", context.response.request.headers, allure.attachment_type.TEXT
+    )
+    allure.attach(
+        "Method: %s ", context.response.request.method, allure.attachment_type.TEXT
+    )
     allure.attach("URL: %s ", context.response.request.url, allure.attachment_type.TEXT)
-    allure.attach("Body: %s ", context.response.request.bod, allure.attachment_type.TEXT)
+    allure.attach(
+        "Body: %s ", context.response.request.body, allure.attachment_type.TEXT
+    )
     allure.attach("RESPONSE:", allure.attachment_type.TEXT)
-    allure.attach("Status Code: %s ", context.response.status_code, allure.attachment_type.TEXT)
+    allure.attach(
+        "Status Code: %s ", context.response.status_code, allure.attachment_type.TEXT
+    )
     allure.attach("Headers: %s ", context.response.headers, allure.attachment_type.TEXT)
     allure.attach("Body: %s ", context.response.content, allure.attachment_type.TEXT)
 
