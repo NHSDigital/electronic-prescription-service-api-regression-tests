@@ -14,20 +14,20 @@ def assert_that(expected, context):
 
 def attach_api_information(context):
     allure.attach(
-        str(context.response.request.headers),
+        context.response.request.headers,
         "REQUEST Headers",
-        allure.attachment_type.TEXT,
+        allure.attachment_type.JSON,
     )
     allure.attach(
-        str(context.response.request.method),
+        context.response.request.method,
         "REQUEST Method",
-        allure.attachment_type.TEXT,
+        allure.attachment_type.JSON,
     )
     allure.attach(
-        str(context.response.request.url), "REQUEST URL", allure.attachment_type.TEXT
+        context.response.request.url, "REQUEST URL", allure.attachment_type.JSON
     )
     allure.attach(
-        str(context.response.request.body), "REQUEST Body", allure.attachment_type.JSON
+        context.response.request.body, "REQUEST Body", allure.attachment_type.JSON
     )
     allure.attach(
         str(context.response.status_code),
@@ -35,10 +35,10 @@ def attach_api_information(context):
         allure.attachment_type.TEXT,
     )
     allure.attach(
-        str(context.response.headers), "RESPONSE Headers", allure.attachment_type.TEXT
+        context.response.headers, "RESPONSE Headers", allure.attachment_type.JSON
     )
     allure.attach(
-        str(context.response.content), "RESPONSE Body", allure.attachment_type.JSON
+        context.response.content, "RESPONSE Body", allure.attachment_type.JSON
     )
 
 
