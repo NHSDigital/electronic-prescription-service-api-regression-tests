@@ -6,7 +6,7 @@ from assertpy import assert_that as assertpy_assert  # type: ignore
 
 def assert_that(expected, context):
     allure.attach(expected, "Expected", allure.attachment_type.TEXT)
-    allure.attach(context.actual, "Actual", allure.attachment_type.TEXT)
+    allure.attach(context.response, "Actual", allure.attachment_type.TEXT)
     description = (
         f"Actual Response: Status Code: {context.response.status_code}, "
         f"Body: {context.response.content}"
@@ -19,7 +19,7 @@ def attach_api_information(context):
     allure.attach(context.response.request.headers, "Headers", allure.attachment_type.TEXT)
     allure.attach(context.response.request.method, "Method", allure.attachment_type.TEXT)
     allure.attach(context.response.request.url, "URL", allure.attachment_type.TEXT)
-    allure.attach(context.response.request.body, "Body", allure.attachment_type.TEXT    )
+    allure.attach(context.response.request.body, "Body", allure.attachment_type.TEXT)
     allure.attach("RESPONSE", allure.attachment_type.TEXT)
     allure.attach(context.response.status_code, "Status Code", allure.attachment_type.TEXT)
     allure.attach(context.response.headers, "Headers", allure.attachment_type.TEXT)
