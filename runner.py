@@ -20,7 +20,6 @@ if __name__ == "__main__":
     # Convert to behave commandline args
     tags = f" --tags {argument.tags} " if argument.tags else ""
     ENV = f" -D env={argument.env}"
-    LOGGING_LEVEL = "DEBUG"
 
     # complete command
     command = (
@@ -30,7 +29,7 @@ if __name__ == "__main__":
         f" -f allure_behave.formatter:AllureFormatter"
         f" -o allure-results"
         f" -f pretty features"
-        f" --no-logcapture --logging-level={LOGGING_LEVEL}{tags}"
+        f" --no-logcapture --logging-level=DEBUG{tags}"
     )
     print(f"Running subprocess with command: '{command}'")
     subprocess.run(command, shell=True, check=True)
