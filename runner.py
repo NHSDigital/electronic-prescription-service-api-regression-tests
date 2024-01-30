@@ -15,19 +15,12 @@ if __name__ == "__main__":
         required=False,
         help="Tags to include or exclude. use ~tag_name to exclude tags",
     )
-    parser.add_argument(
-        "--debug",
-        required=False,
-        action="store_true",
-        help="Run in debug mode. The browser will not be headless and logging will be set to DEBUG",
-    )
     argument = parser.parse_args()
 
     # Convert to behave commandline args
     tags = f" --tags {argument.tags} " if argument.tags else ""
-    DEBUG = " -D debug=True" if argument.debug else " -D debug=False"
     ENV = f" -D env={argument.env}"
-    LOGGING_LEVEL = "DEBUG" if argument.debug else "INFO"
+    LOGGING_LEVEL = "DEBUG"
 
     # complete command
     command = (

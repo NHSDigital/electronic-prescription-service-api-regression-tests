@@ -27,10 +27,6 @@ EPS_SUFFIX = "electronic-prescriptions"
 
 def before_all(context):
     env = context.config.userdata["env"]
-    if is_debug(context):
-        setup_logging(level=DEBUG)
-    else:
-        setup_logging(level=INFO)
 
     context.fhir_base_url = select_base_url(env) + EPS_SUFFIX
     # This will need rework when the pack includes additional products to test
@@ -55,19 +51,6 @@ def setup_logging(level: int = logging.INFO):
         level=level,
         handlers=handlers,
     )
-
-
-def is_debug(context):
-    try:
-        debug = context.config.userdata["debug"]
-    except KeyError:
-        print("Running in Normal mode")
-        return False
-    if str(debug) == "True":
-        print("Running in DEBUG mode")
-        return True
-    print("Running in Normal mode")
-    return False
 
 
 def build_pull_request_id():
