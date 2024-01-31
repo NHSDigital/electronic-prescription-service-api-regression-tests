@@ -45,17 +45,6 @@ If your IDE supports it, you can directly run the .feature files within `/featur
 Run the tests by running `behave` in a command prompt or terminal window.
 * This will run the tests and print the results to console
 
-## Debug mode
-##### This is intended for developers and testers who want to change the code or diagnose why tests are failing. You can run in debug mode in the following ways:
-### Method 1:
-via `runner.py` include `--debug` as a parameter.
-#### Example: `python runner.py --tags critical --debug`
-### Method 2:
-via behave. Include `-D debug=True` as a parameter.
-#### Example: `behave -D debug=True`
-When running in debug mode, the logging level is set to DEBUG and will start printing debug messages to the console
-
-
 ### Setting the BASE_URL
 To run the tests from your IDE it is necessary to set the BASE_URL environment variable.
 <br /> If running via GitHub actions this will default to `INT` and currently cannot be changed
