@@ -25,7 +25,7 @@ EPS_SUFFIX = "electronic-prescriptions"
 
 
 def before_all(context):
-    env = context.config.userdata["env"]
+    env = context.config.userdata["env"].lower()
 
     context.fhir_base_url = select_base_url(env) + EPS_SUFFIX
     # This will need rework when the pack includes additional products to test
