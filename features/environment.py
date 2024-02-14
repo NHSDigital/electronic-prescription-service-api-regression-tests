@@ -19,6 +19,10 @@ ENVS = {
     "SANDBOX": SANDBOX_INT_BASE_URL,
 }
 
+REPOS = {
+    "EPS-FHIR": "https://github.com/NHSDigital/electronic-prescription-service-api"
+}
+
 # This will need rework when the pack includes additional products to test
 PULL_REQUEST_ID = os.getenv("PULL_REQUEST_ID")
 EPS_SUFFIX = "electronic-prescriptions"
@@ -41,9 +45,12 @@ def after_all(context):
     # Add anything you want to happen after all the tests have completed here
     env = context.config.userdata["env"].upper()
     product = context.config.userdata["product"].upper()
+    properties_dict = {"PRODUCT": product, "ENV": env}
     if PULL_REQUEST_ID:
-            env = os.path.join("PULL_REQUEST", PULL_REQUEST_ID)
-    properties_dict = {"PRODUCT": product, "ENV": env, "PR_ID": PULL_REQUEST_ID}
+            env = os.path.join("PULL-REQUEST", PULL_REQUEST_ID)
+            pull_request_link = os.path.joint(select_repository_base_url(product), "pulls", PULL_REQUEST_ID.upper().replace("PR-", ""))
+            properties_dict = {"PRODUCT": product, "ENV": env, "PULL-REQUEST": pull_request_link}
+    
 
     file_path = "./allure-results/environment.properties"
     write_properties_file(file_path, properties_dict)
@@ -66,6 +73,12 @@ def select_base_url(env):
     else:
         raise ValueError(f"Unknown environment or missing base URL for: {env} .")
 
+
+def select_repository_base_url(product):
+    if product in REPOS:
+        return REPOS[product]
+    else:
+        raise ValueError(f"Unknown product or missing base URL for: {product} .")
 
 def write_properties_file(file_path, properties_dict):
     if os.path.exists(file_path):
