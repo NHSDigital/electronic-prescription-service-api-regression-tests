@@ -11,6 +11,11 @@ if __name__ == "__main__":
         help="The environment the tests are going to run in.",
     )
     parser.add_argument(
+        "--product",
+        required=True,
+        help="The product under test",
+    )
+    parser.add_argument(
         "--tags",
         required=False,
         help="Tags to include or exclude. use ~tag_name to exclude tags",
@@ -19,11 +24,12 @@ if __name__ == "__main__":
 
     # Convert to behave commandline args
     tags = f" --tags {argument.tags} " if argument.tags else ""
+    PRODUCT = f" -D product={argument.product}"
     ENV = f" -D env={argument.env}"
 
     # complete command
     command = (
-        f"behave{ENV}"
+        f"behave{PRODUCT}{ENV}"
         f" -f behave_cucumber_formatter:PrettyCucumberJSONFormatter"
         f" -o reports/cucumber_json.json"
         f" -f allure_behave.formatter:AllureFormatter"
