@@ -6,8 +6,13 @@ guard-%:
 		exit 1; \
 	fi
 
-install:
+install: install-python install-hooks
+
+install-python:
 	poetry install
+
+install-hooks: install-python
+	poetry run pre-commit install --install-hooks --overwrite
 
 lint-black:
 	poetry run black .
