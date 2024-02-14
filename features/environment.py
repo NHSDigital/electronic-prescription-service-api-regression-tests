@@ -78,14 +78,14 @@ def select_base_url(env):
     if env in ENVS:
         return ENVS[env]
     else:
-        raise ValueError(f"Unknown environment or missing repository URL for: {env} .")
+        raise ValueError(f"Unknown environment or missing base URL for: {env} .")
 
 
 def select_repository_base_url(product):
     if product in REPOS:
         return REPOS[product]
     else:
-        raise ValueError(f"Unknown product or missing base URL for: {product} .")
+        raise ValueError(f"Unknown product or missing repository URL for: {product} .")
 
 
 def write_properties_file(file_path, properties_dict):
