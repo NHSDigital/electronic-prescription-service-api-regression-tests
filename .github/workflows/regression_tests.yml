@@ -24,7 +24,7 @@ on:
         required: false
         default: "Manually Triggered Run"
       pull_request_id:
-        description: 'The ID of the pull request'
+        description: 'The ID of the pull request. This should be in the format pr-xxxx where xxxx is the pull request id'
         required: false
         default: ""
 
