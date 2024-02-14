@@ -78,7 +78,7 @@ def select_base_url(env):
     if env in ENVS:
         return ENVS[env]
     else:
-        raise ValueError(f"Unknown environment or missing base URL for: {env} .")
+        raise ValueError(f"Unknown environment or missing repository URL for: {env} .")
 
 
 def select_repository_base_url(product):
