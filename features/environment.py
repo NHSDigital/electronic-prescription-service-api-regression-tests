@@ -34,8 +34,8 @@ def before_all(context):
     context.fhir_base_url = os.path.join(select_base_url(env), EPS_SUFFIX)
     # This will need rework when the pack includes additional products to test
     if PULL_REQUEST_ID:
-        context.fhir_base_url = (
-            os.path.join(INTERNAL_DEV_BASE_URL, f"{EPS_SUFFIX}-{PULL_REQUEST_ID}")
+        context.fhir_base_url = os.path.join(
+            INTERNAL_DEV_BASE_URL, f"{EPS_SUFFIX}-{PULL_REQUEST_ID}"
         )
 
     logging.info("Using BASE_URL: '%s'", context.fhir_base_url)
@@ -47,10 +47,17 @@ def after_all(context):
     product = context.config.userdata["product"].upper()
     properties_dict = {"PRODUCT": product, "ENV": env}
     if PULL_REQUEST_ID:
-            env = os.path.join("PULL-REQUEST", PULL_REQUEST_ID)
-            pull_request_link = os.path.join(select_repository_base_url(product), "pull", PULL_REQUEST_ID.upper().replace("PR-", ""))
-            properties_dict = {"PRODUCT": product, "ENV": env, "PULL-REQUEST": pull_request_link}
-    
+        env = os.path.join("PULL-REQUEST", PULL_REQUEST_ID)
+        pull_request_link = os.path.join(
+            select_repository_base_url(product),
+            "pull",
+            PULL_REQUEST_ID.upper().replace("PR-", ""),
+        )
+        properties_dict = {
+            "PRODUCT": product,
+            "ENV": env,
+            "PULL-REQUEST": pull_request_link,
+        }
 
     file_path = "./allure-results/environment.properties"
     write_properties_file(file_path, properties_dict)
@@ -79,6 +86,7 @@ def select_repository_base_url(product):
         return REPOS[product]
     else:
         raise ValueError(f"Unknown product or missing base URL for: {product} .")
+
 
 def write_properties_file(file_path, properties_dict):
     if os.path.exists(file_path):
