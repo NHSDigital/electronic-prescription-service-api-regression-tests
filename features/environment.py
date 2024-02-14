@@ -41,6 +41,8 @@ def after_all(context):
     # Add anything you want to happen after all the tests have completed here
     env = context.config.userdata["env"].upper()
     product = context.config.userdata["product"].upper()
+    if PULL_REQUEST_ID:
+            env = f"PULL_REQUEST/PR-{PULL_REQUEST_ID}"
     properties_dict = {"PRODUCT": product, "ENV": env, "PR_ID": PULL_REQUEST_ID}
 
     file_path = "./allure-results/environment.properties"
