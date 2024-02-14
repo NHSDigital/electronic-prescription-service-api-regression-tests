@@ -3,12 +3,12 @@ import os
 import sys
 
 
-INTERNAL_QA_BASE_URL = "Https://internal-qa.api.service.nhs.uk/"
-INTERNAL_DEV_BASE_URL = "Https://internal-dev.api.service.nhs.uk/"
-INT_BASE_URL = "Https://int.api.service.nhs.uk/"
-SANDBOX_DEV_BASE_URL = "Https://internal-dev-sandbox.api.service.nhs.uk/"
-SANDBOX_INT_BASE_URL = "Https://sandbox.api.service.nhs.uk/"
-REF_BASE_URL = "Https://ref.api.service.nhs.uk/"
+INTERNAL_QA_BASE_URL = "https://internal-qa.api.service.nhs.uk/"
+INTERNAL_DEV_BASE_URL = "https://internal-dev.api.service.nhs.uk/"
+INT_BASE_URL = "https://int.api.service.nhs.uk/"
+SANDBOX_DEV_BASE_URL = "https://internal-dev-sandbox.api.service.nhs.uk/"
+SANDBOX_INT_BASE_URL = "https://sandbox.api.service.nhs.uk/"
+REF_BASE_URL = "https://ref.api.service.nhs.uk/"
 
 ENVS = {
     "INTERNAL-DEV": INTERNAL_DEV_BASE_URL,
@@ -27,11 +27,11 @@ EPS_SUFFIX = "electronic-prescriptions"
 def before_all(context):
     env = context.config.userdata["env"].upper()
 
-    context.fhir_base_url = select_base_url(env) + EPS_SUFFIX
+    context.fhir_base_url = os.path.join(select_base_url(env), EPS_SUFFIX)
     # This will need rework when the pack includes additional products to test
     if PULL_REQUEST_ID:
         context.fhir_base_url = (
-            INTERNAL_DEV_BASE_URL + EPS_SUFFIX + build_pull_request_id()
+            os.path.join(INTERNAL_DEV_BASE_URL, f"{EPS_SUFFIX}-{PULL_REQUEST_ID}")
         )
 
     logging.info("Using BASE_URL: '%s'", context.fhir_base_url)
@@ -42,7 +42,7 @@ def after_all(context):
     env = context.config.userdata["env"].upper()
     product = context.config.userdata["product"].upper()
     if PULL_REQUEST_ID:
-            env = f"PULL_REQUEST/{PULL_REQUEST_ID}"
+            env = os.path.joint("PULL_REQUEST", PULL_REQUEST_ID)
     properties_dict = {"PRODUCT": product, "ENV": env, "PR_ID": PULL_REQUEST_ID}
 
     file_path = "./allure-results/environment.properties"
@@ -58,16 +58,6 @@ def setup_logging(level: int = logging.INFO):
         level=level,
         handlers=handlers,
     )
-
-
-def build_pull_request_id():
-    pr_suffix = ""
-    if PULL_REQUEST_ID:
-        if "pr-" in str({PULL_REQUEST_ID}):
-            pr_suffix = f"-{PULL_REQUEST_ID}"
-        else:
-            pr_suffix = f"-pr-{PULL_REQUEST_ID}"
-    return pr_suffix
 
 
 def select_base_url(env):
