@@ -48,7 +48,7 @@ def after_all(context):
     properties_dict = {"PRODUCT": product, "ENV": env}
     if PULL_REQUEST_ID:
             env = os.path.join("PULL-REQUEST", PULL_REQUEST_ID)
-            pull_request_link = os.path.joint(select_repository_base_url(product), "pulls", PULL_REQUEST_ID.upper().replace("PR-", ""))
+            pull_request_link = os.path.join(select_repository_base_url(product), "pulls", PULL_REQUEST_ID.upper().replace("PR-", ""))
             properties_dict = {"PRODUCT": product, "ENV": env, "PULL-REQUEST": pull_request_link}
     
 
