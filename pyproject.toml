@@ -21,12 +21,12 @@ semver = "^3.0.2"
 gitpython = "^3.1.42"
 pip-licenses = "^4.3.4"
 flake8 = "^7.0.0"
-pre-commit = "^3.6.1"
+pre-commit = "^3.6.2"
 isort = "^5.13.1"
 
 
 [tool.poetry.group.dev.dependencies]
-pre-commit = "^3.6.1"
+pre-commit = "^3.6.2"
 
 [tool.pyright]
 include = ["src"]
