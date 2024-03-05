@@ -1,6 +1,6 @@
 import uuid
 import requests
-from methods import common
+from methods.shared import common
 
 
 def get_default_headers():
@@ -11,6 +11,6 @@ def get_default_headers():
 
 
 def request_ping(context):
-    url = f"{context.eps_fhir_base_url}/_ping"
+    url = f"{context.pfp_apigee_base_url}/_ping"
     context.response = requests.get(url=url)
     common.attach_api_information(context)
