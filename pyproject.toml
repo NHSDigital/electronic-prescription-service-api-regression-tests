@@ -6,7 +6,7 @@ authors = ["SeanSteberis <sean.steberis@airelogic.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.12"
 jsonschema = "^4.21.1"
 requests = "^2.31.0"
 assertpy = "^1.1"
@@ -14,7 +14,6 @@ behave = "^1.2.6"
 behave-cucumber-formatter = "^1.0.1"
 locust = "^2.23.1"
 lxml = "^5.1.0"
-pyright = "^1.1.350"
 allure-behave = "^2.13.2"
 black = "^24.2.0"
 semver = "^3.0.2"
@@ -23,6 +22,7 @@ pip-licenses = "^4.3.4"
 flake8 = "^7.0.0"
 pre-commit = "^3.6.2"
 isort = "^5.13.1"
+pyright = "^1.1.352"
 
 
 [tool.poetry.group.dev.dependencies]

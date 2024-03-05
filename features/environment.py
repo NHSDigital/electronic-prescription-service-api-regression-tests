@@ -2,7 +2,6 @@ import logging
 import os
 import sys
 
-
 INTERNAL_QA_BASE_URL = "https://internal-qa.api.service.nhs.uk/"
 INTERNAL_DEV_BASE_URL = "https://internal-dev.api.service.nhs.uk/"
 INT_BASE_URL = "https://int.api.service.nhs.uk/"
@@ -20,25 +19,31 @@ ENVS = {
 }
 
 REPOS = {
-    "EPS-FHIR": "https://github.com/NHSDigital/electronic-prescription-service-api"
+    "EPS-FHIR": "https://github.com/NHSDigital/electronic-prescription-service-api",
+    "PFP-APIGEE": "https://github.com/NHSDigital/prescriptions-for-patients",
 }
 
 # This will need rework when the pack includes additional products to test
 PULL_REQUEST_ID = os.getenv("PULL_REQUEST_ID")
-EPS_SUFFIX = "electronic-prescriptions"
+EPS_FHIR_SUFFIX = "electronic-prescriptions"
+PFP_APIGEE_SUFFIX = "prescriptions-for-patients"
 
 
 def before_all(context):
     env = context.config.userdata["env"].upper()
 
-    context.fhir_base_url = os.path.join(select_base_url(env), EPS_SUFFIX)
+    context.eps_fhir_base_url = os.path.join(select_base_url(env), EPS_FHIR_SUFFIX)
+    context.pfp_apigee_base_url = os.path.join(select_base_url(env), PFP_APIGEE_SUFFIX)
     # This will need rework when the pack includes additional products to test
     if PULL_REQUEST_ID:
-        context.fhir_base_url = os.path.join(
-            INTERNAL_DEV_BASE_URL, f"{EPS_SUFFIX}-{PULL_REQUEST_ID}"
+        context.eps_fhir_base_url = os.path.join(
+            INTERNAL_DEV_BASE_URL, f"{EPS_FHIR_SUFFIX}-{PULL_REQUEST_ID}"
+        )
+        context.pfp_apigee_base_url = os.path.join(
+            INTERNAL_DEV_BASE_URL, f"{PFP_APIGEE_SUFFIX}-{PULL_REQUEST_ID}"
         )
 
-    logging.info("Using BASE_URL: '%s'", context.fhir_base_url)
+    logging.info("Using BASE_URL: '%s'", context.eps_fhir_base_url)
 
 
 def after_all(context):

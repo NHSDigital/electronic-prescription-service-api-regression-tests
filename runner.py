@@ -23,7 +23,11 @@ if __name__ == "__main__":
     argument = parser.parse_args()
 
     # Convert to behave commandline args
-    tags = f" --tags {argument.tags} " if argument.tags else ""
+    product_tag = argument.product.lower().replace("-", "_")
+    if argument.tags:
+        tags = f" --tags {product_tag} --tags {argument.tags} "
+    else:
+        tags = f" --tags {product_tag}"
     PRODUCT = f" -D product={argument.product}"
     ENV = f" -D env={argument.env}"
 
@@ -35,7 +39,7 @@ if __name__ == "__main__":
         f" -f allure_behave.formatter:AllureFormatter"
         f" -o allure-results"
         f" -f pretty features"
-        f" --no-logcapture --logging-level=DEBUG{tags}"
+        f" --no-logcapture --no-skipped --logging-level=DEBUG{tags}"
     )
     print(f"Running subprocess with command: '{command}'")
     subprocess.run(command, shell=True, check=True)
