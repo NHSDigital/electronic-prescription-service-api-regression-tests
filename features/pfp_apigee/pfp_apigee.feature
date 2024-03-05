@@ -1,6 +1,6 @@
 @pfp_apigee
 @smoke @regression @ping @blocker
-@allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-3563
+@allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-3822
 Feature: I can ping the PFP APIGEE API
 
   Scenario: I can ping the API
