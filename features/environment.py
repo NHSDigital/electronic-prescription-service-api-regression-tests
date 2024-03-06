@@ -43,8 +43,6 @@ def before_all(context):
             INTERNAL_DEV_BASE_URL, f"{PFP_APIGEE_SUFFIX}-{PULL_REQUEST_ID}"
         )
 
-    logging.info("Using BASE_URL: '%s'", context.eps_fhir_base_url)
-
 
 def after_all(context):
     # Add anything you want to happen after all the tests have completed here
