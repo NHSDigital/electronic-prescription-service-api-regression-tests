@@ -18,7 +18,8 @@ on:
         options:
           - EPS-FHIR
           - PFP-APIGEE
-        required: true
+        required: false
+        default: EPS-FHIR
       id:
         description: 'Unique run identifier (Do not change this)'
         required: false
