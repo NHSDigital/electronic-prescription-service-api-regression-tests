@@ -1,7 +1,5 @@
 import json
-import uuid
 import allure
-import requests
 from assertpy import assert_that as assertpy_assert  # type: ignore
 
 
@@ -48,19 +46,6 @@ def attach_api_information(context):
         "RESPONSE Body",
         allure.attachment_type.JSON,
     )
-
-
-def get_default_headers():
-    return {
-        "x-request-id": str(uuid.uuid4()),
-        "x-user-org-code": "Auto001",
-    }
-
-
-def request_ping(context):
-    url = f"{context.fhir_base_url}/_ping"
-    context.response = requests.get(url=url)
-    attach_api_information(context)
 
 
 def the_expected_response_code_is_returned(context, expected_response_code: int):
