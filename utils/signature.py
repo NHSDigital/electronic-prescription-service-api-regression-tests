@@ -1,7 +1,11 @@
 import base64
+from Crypto.Cipher import PKCS1_v1_5
+from Crypto.Hash import SHA1
+from Crypto.PublicKey import RSA
 from datetime import time
 import json
 import os
+
 
 # get ENV
 url = os.environ["PACT_PROVIDER_URL"]
@@ -61,6 +65,10 @@ def get_signed_signature(digest, valid):
         # get no namespace replace(`<SignedInfo xmlns="http://www.w3.org/2000/09/xmldsig#">`, `<SignedInfo>`)
         digest_without_namespace = digest_buffer.replace('<SignedInfo xmlns="http://www.w3.org/2000/09/xmldsig#">', '<SignedInfo>')
         # get signed_signature
+        sha = SHA1.new(digest_buffer)
+        rsa_key = RSA.importKey(private_key_path)
+        signature = PKCS1_v1_5.new(rsa_key).sign(sha)
+        signed_signature = base64.b64encode(signature).decode("utf-8")
         # get certificate
         certificate = get_path(x509_certificate_path)
         # x509?? - certificate
