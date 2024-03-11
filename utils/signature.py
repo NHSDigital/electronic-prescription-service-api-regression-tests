@@ -77,7 +77,7 @@ def get_signed_signature(digest, valid):
     signed_signature = private_key.sign(
         digest_buffer,
         padding.PKCS1v15(),
-        hashes.SHA1()
+        hashes.SHA256()
     )
     
     # get certificate
