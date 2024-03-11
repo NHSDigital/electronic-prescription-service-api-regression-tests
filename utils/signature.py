@@ -1,10 +1,12 @@
 import base64
-from Crypto.Cipher import PKCS1_v1_5
-from Crypto.Hash import SHA1
-from Crypto.PublicKey import RSA
-from datetime import time
+from datetime import datetime, time
 import json
 import os
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.x509 import load_pem_x509_certificate
 
 
 # get ENV
@@ -57,45 +59,57 @@ def get_signed_signature(digest, valid):
     cert_placeholder = "{{cert}}"
     
     # assign signature dummy if key and cert doesnt exist
-    if not private_key_exists or not x509_cert_exists:
-        signature = dummy_signature
-    else:
-        # get buffer - decode
-        digest_buffer = base64.b64decode(digest, "utf-8").decode("utf-8")
-        # get no namespace replace(`<SignedInfo xmlns="http://www.w3.org/2000/09/xmldsig#">`, `<SignedInfo>`)
-        digest_without_namespace = digest_buffer.replace('<SignedInfo xmlns="http://www.w3.org/2000/09/xmldsig#">', '<SignedInfo>')
-        # get signed_signature
-        sha = SHA1.new(digest_buffer)
-        rsa_key = RSA.importKey(private_key_path)
-        signature = PKCS1_v1_5.new(rsa_key).sign(sha)
-        signed_signature = base64.b64encode(signature).decode("utf-8")
-        # get certificate
-        certificate = get_path(x509_certificate_path)
-        # x509?? - certificate
-        # check if cert has expired
+    if not private_key_exists and x509_cert_exists:
+        return dummy_signature
+    
+    # get buffer - decode
+    digest_buffer = base64.b64decode(digest, "utf-8").decode("utf-8")
+    # get no namespace replace(`<SignedInfo xmlns="http://www.w3.org/2000/09/xmldsig#">`, `<SignedInfo>`)
+    digest_without_namespace = digest_buffer.replace('<SignedInfo xmlns="http://www.w3.org/2000/09/xmldsig#">', '<SignedInfo>')
+    
+    # get private key to use for signature
+    private_key = serialization.load_pem_private_key(
+        get_path(private_key_path),
+        password=None,
+        backend=default_backend()
+    )
+    # get signed_signature
+    signed_signature = private_key.sign(
+        digest_buffer,
+        padding.PKCS1v15(),
+        hashes.SHA1()
+    )
+    
+    # get certificate
+    cert_data = get_path(x509_certificate_path)
+    # x509?? - certificate
+    cert = load_pem_x509_certificate(cert_data, default_backend())
+    # check if cert has expired
+    if cert.not_valid_after < datetime.now():
         # raise an Exception if it has
-        # get the raw value to certificate_value???
-        # assign signData to template file 
-        sign_data = get_path("./util/signature.txt") # change file path
-        # get the signData for replace("{{digest}}", digestWithoutNamespace)
-        sign_data = sign_data.replace(digest_placeholder, digest_without_namespace)
-        # if valid signData = signData.replace("{{signature}}", signedSignature)
-        if valid:
-            sign_data = sign_data.replace(signature_placeholder, signed_signature)
-        # else signData = signData.replace("{{signature}}", `${signedSignature}TVV3WERxSU0xV0w4ODdRRTZ3O`)
-        else:
-            sign_data = sign_data.replace(signature_placeholder, f"{signed_signature}TVV3WERxSU0xV0w4ODdRRTZ3O")
-        # outside of else signData = signData.replace("{{cert}}", certificateValue)
-        sign_data = sign_data.replace(cert_placeholder, certificate_value)
-        
-        #get signature - decode
-        signature = base64.b64encode(sign_data, "utf-8").decode("utf-8")
-        return signature
+        raise ValueError("Signing certificate has expired")
+    # get the raw value to certificate_value???
+    certificate_value = base64.b64encode(cert_data).decode()
+    # assign signData to template file 
+    sign_data = get_path("./util/signature.txt") # change file path
+    # get the signData for replace("{{digest}}", digestWithoutNamespace)
+    sign_data = sign_data.replace(digest_placeholder, digest_without_namespace)
+    # if valid signData = signData.replace("{{signature}}", signedSignature)
+    if valid:
+        sign_data = sign_data.replace(signature_placeholder, signed_signature)
+    # else signData = signData.replace("{{signature}}", `${signedSignature}TVV3WERxSU0xV0w4ODdRRTZ3O`)
+    else:
+        sign_data = sign_data.replace(signature_placeholder, f"{signed_signature}TVV3WERxSU0xV0w4ODdRRTZ3O")
+    # outside of else signData = signData.replace("{{cert}}", certificateValue)
+    sign_data = sign_data.replace(cert_placeholder, certificate_value)
+    
+    #get signature - decode
+    signature = base64.b64encode(sign_data, "utf-8").decode("utf-8")
+    return signature
         
     
     
-
 def get_path(path):
-    with open(path, "r") as f:
+    with open(path, "rb") as f:
         doc = f.read()
     return doc
