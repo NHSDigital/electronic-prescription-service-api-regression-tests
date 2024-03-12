@@ -44,8 +44,11 @@ def get_signature(digest: str, valid: bool):
 
     # load signature template and replace {{placeholders}}
     sign_data = get_path("./util/signature.txt")
+    
+    # decodes digest to xml
+    decoded_digest = base64.b64decode(digest).decode("utf-8")
 
-    digest_without_namespace = digest.replace('<SignedInfo xmlns="http://www.w3.org/2000/09/xmldsig#">', '<SignedInfo>')
+    digest_without_namespace = decoded_digest.replace('<SignedInfo xmlns="http://www.w3.org/2000/09/xmldsig#">', '<SignedInfo>')
     sign_data = sign_data.replace(DIGEST_PLACEHOLDER, digest_without_namespace)
 
     if valid:
@@ -56,6 +59,9 @@ def get_signature(digest: str, valid: bool):
     # get the raw value to certificate_value???
     certificate_value = base64.b64encode(cert_data).decode()
     sign_data = sign_data.replace(CERT_PLACEHOLDER, certificate_value)
+    
+    # this might be a breaking change
+    signature = base64.b64encode(sign_data, "utf-8")
     
     return signature
     
