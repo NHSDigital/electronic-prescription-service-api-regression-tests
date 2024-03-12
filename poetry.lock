@@ -2,28 +2,28 @@
 
 [[package]]
 name = "allure-behave"
-version = "2.13.2"
+version = "2.13.3"
 description = "Allure behave integration"
 optional = false
 python-versions = "*"
 files = [
-    {file = "allure-behave-2.13.2.tar.gz", hash = "sha256:9b15dbefed6dbdfe449956c3e9e3a619fcdaf650236c4568c5664149e6663f14"},
-    {file = "allure_behave-2.13.2-py3-none-any.whl", hash = "sha256:23593d3f245c47abfa4b9ee561d5ec7d5391d854bd234e6b239a7e2ee3ccb636"},
+    {file = "allure-behave-2.13.3.tar.gz", hash = "sha256:9d44db789e1c1d994ff6fa3b86246e037720460464d2ddb06879da0675a3e30e"},
+    {file = "allure_behave-2.13.3-py3-none-any.whl", hash = "sha256:49c36b691076d3807c6a4d8e5e7dc3ee039a07d8e55acb36cdaafa6528c18c7e"},
 ]
 
 [package.dependencies]
-allure-python-commons = "2.13.2"
+allure-python-commons = "2.13.3"
 behave = ">=1.2.5"
 
 [[package]]
 name = "allure-python-commons"
-version = "2.13.2"
-description = "Common module for integrate allure with python-based frameworks"
+version = "2.13.3"
+description = "('Contains the API for end users as well as helper functions and classes to build Allure adapters for Python test frameworks',)"
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "allure-python-commons-2.13.2.tar.gz", hash = "sha256:8a03681330231b1deadd86b97ff68841c6591320114ae638570f1ed60d7a2033"},
-    {file = "allure_python_commons-2.13.2-py3-none-any.whl", hash = "sha256:2bb3646ec3fbf5b36d178a5e735002bc130ae9f9ba80f080af97d368ba375051"},
+    {file = "allure-python-commons-2.13.3.tar.gz", hash = "sha256:2a22c6071bd3700bb380bf5288d8a81697ba3e8e4918836aa4cc4b4b17a99a7e"},
+    {file = "allure_python_commons-2.13.3-py3-none-any.whl", hash = "sha256:ee890a6ad6b820819ec11e702bb9fb64dd855de5e57925a2601ac66de65ef5f1"},
 ]
 
 [package.dependencies]
@@ -1038,4 +1038,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "aed52b686839e1ab2d368572337d6020f7e14e308ecd46df87731f1a93e842a9"
+content-hash = "9826c7b7d8d4ffc0f2fdc5266ce4e587a32974eddc5ccb13f84a351bf856357c"
