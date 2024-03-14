@@ -26,33 +26,33 @@ X509_CERT_EXISTS = exists(X509_CERT_PATH)
 def get_signature(value_string: str, valid: bool):
     if not PRIVATE_KEY_EXISTS and X509_CERT_EXISTS:
         return DUMMY_SIGNATURE
-    
+
     # load x509 and check it hasn't expired
     cert_bytes = load_file(X509_CERT_PATH)
     x509_cert = load_pem_x509_certificate(cert_bytes)
 
     if x509_cert.not_valid_after < datetime.today():
-        raise Exception('Signing certificate has expired')
+        raise Exception("Signing certificate has expired")
 
     # load private key and generate signature
     key_bytes = load_file(PRIVATE_KEY_PATH)
-    private_key = load_pem_private_key(key_bytes,password=None)
+    private_key = load_pem_private_key(key_bytes, password=None)
 
-    digest = base64.b64decode(value_string).decode('utf-8')
+    digest = base64.b64decode(value_string).decode("utf-8")
 
     signature_raw = private_key.sign(
-        digest.encode('utf-8'),
-        padding.PKCS1v15(),
-        hashes.SHA1()
+        digest.encode("utf-8"), padding.PKCS1v15(), hashes.SHA1()
     )
 
     # align format of signature with equivalent ts code
-    signature = base64.b64encode(signature_raw).decode('ASCII')
+    signature = base64.b64encode(signature_raw).decode("ASCII")
 
     # prepare values for insertion into xml signature
-    digest_without_namespace = digest.replace(' xmlns="http://www.w3.org/2000/09/xmldsig#"', '')
+    digest_without_namespace = digest.replace(
+        ' xmlns="http://www.w3.org/2000/09/xmldsig#"', ""
+    )
     cert_public_bytes = x509_cert.public_bytes(encoding=Encoding.DER)
-    cert_string = base64.b64encode(cert_public_bytes).decode('utf-8')
+    cert_string = base64.b64encode(cert_public_bytes).decode("utf-8")
 
     # load template and insert prepared values
     xml_d_sig = f"""
@@ -68,12 +68,12 @@ def get_signature(value_string: str, valid: bool):
 """
 
     # match returned signature data with that from equivalent ts code
-    signature_data = base64.b64encode(xml_d_sig.encode('utf-8')).decode('utf-8')
+    signature_data = base64.b64encode(xml_d_sig.encode("utf-8")).decode("utf-8")
 
     return signature_data
 
 
-def load_file(path, mode='rb'):
+def load_file(path, mode="rb"):
     with open(path, mode) as f:
         doc = f.read()
     return doc
