@@ -1,21 +1,53 @@
 import random
-import os
+import string
+
+# Prescription ID check digits use a modified version of the ISO 7064, MOD 37-2 algorithm with "+" substituted for "*".
+CHECK_DIGIT_VALUES = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ+"
 
 
-def get_new_prescription_id():
-    random_bytes = os.urandom(6)
-    hex_string = random_bytes.hex().upper()
-    id_str = str(hex_string) + "A830082EFE3"
-    id_str += calculate_check_digit(id_str)
-    return f"{id_str[:6]}-{id_str[6:12]}-{id_str[12:22]}"
+def generate_short_form_id_from_existing(original_short_form_id: str) -> str:
+    prescriber_ods_code = original_short_form_id[7:13]
+    return generate_short_form_id(prescriber_ods_code)
 
 
-def calculate_check_digit(input_str):
-    check_digit_values = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ+"
-    total = calculate_total_for_check_digit(input_str)
+def generate_short_form_id(prescriber_ods_code: str) -> str:
+    a = generate_random_hex_string(6)
+    b = prescriber_ods_code.zfill(6)
+    c = generate_random_hex_string(5)
+    check_digit = calculate_check_digit(a + b + c)
+    return f"{a}-{b}-{c}{check_digit}"
+
+
+def validate_short_form_id(input_: str) -> bool:
+    input_without_delimiters = input_.replace("-", "")
+    input_without_check_digit = input_without_delimiters[:-1]
+    check_digit = input_without_delimiters[-1]
+    return validate_check_digit(input_without_check_digit, check_digit)
+
+
+def generate_random_hex_string(length: int) -> str:
+    return "".join(random.choices(string.hexdigits[:-6], k=length)).upper()
+
+
+def calculate_check_digit(input_: str) -> str:
+    total = calculate_total_for_check_digit(input_)
     check_digit_index = (38 - total) % 37
-    return check_digit_values[check_digit_index]
+    return CHECK_DIGIT_VALUES[check_digit_index]
 
 
-def calculate_total_for_check_digit(input_str):
-    return sum(int(char, 36) for char in input_str) * 2 % 37
+def validate_check_digit(input_: str, check_digit: str) -> bool:
+    total = calculate_total_for_check_digit(input_)
+    check_digit_value = CHECK_DIGIT_VALUES.index(check_digit)
+    return (total + check_digit_value) % 37 == 1
+
+
+def calculate_total_for_check_digit(input_: str) -> int:
+    return sum(int(charStr, 36) for charStr in input_) % 37
+
+
+if __name__ == "__main__":
+    # Example usage:
+    ods_code = "X26"
+    generated_id = generate_short_form_id(ods_code)
+    print("Generated Short Form ID:", generated_id)
+    print("Is Valid:", validate_short_form_id(generated_id))
