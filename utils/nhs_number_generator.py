@@ -1,9 +1,8 @@
-"""Generate 10-digit NHS numbers with optional formatting.
+"""Generate 10-digit NHS numbers
 """
 
 from __future__ import unicode_literals
 
-from argparse import ArgumentParser
 from random import choice, randint
 
 check_digit_weights = {0: 10, 1: 9, 2: 8, 3: 7, 4: 6, 5: 5, 6: 4, 7: 3, 8: 2}
@@ -41,47 +40,6 @@ def calculate_check_digit(nhs_number):
     return eleven_minus_remainder
 
 
-def deterministic_nhs_number_generator(
-    ranges=((500000000, 599999999), (900000000, 999999999))
-):
-    """Returns a generator for a predictable sequence of 10-digit NHS numbers.
-
-    The default ranges are the ones currently issued in England, Wales and the Isle of Man.
-    Numbers outside of this range may be valid but could conflict with identifiers used in
-    Northern Ireland and Scotland. See https://en.wikipedia.org/wiki/NHS_number
-
-        Args:
-        ranges [(int, int), ...]: Specify the ranges for the sequence.
-          You must exclude the check digits.
-
-    """
-    for _range in ranges:
-        if _range[1] < _range[0]:
-            raise ValueError(
-                "The high end of the range should not be lower than the low end."
-            )
-
-        if (_range[1] - _range[0]) == 0:
-            only_possible_check_digit = calculate_check_digit(
-                "{:09d}".format(_range[0])
-            )
-            if only_possible_check_digit == 10:
-                raise ValueError("{:09d} is not a valid NHS number.".format(_range[0]))
-
-    for _range in ranges:
-        i = _range[0]
-
-        while i <= _range[1]:
-            candidate_number = "{:09d}".format(i)
-
-            check_digit = calculate_check_digit(candidate_number)
-
-            if check_digit != 10:
-                yield candidate_number + str(check_digit)
-
-            i += 1
-
-
 def random_nhs_number_generator(
     ranges=((500000000, 599999999), (900000000, 999999999))
 ):
@@ -116,19 +74,7 @@ def random_nhs_number_generator(
         check_digit = calculate_check_digit(candidate_number)
 
         if check_digit != 10:
-            yield candidate_number + str(check_digit)
-
-
-def add_separators(nhs_number, separator=" "):
-    """Returns the NHS number in 3-3-4 format with a separator in between (a space by default)."""
-    return nhs_number[0:3] + separator + nhs_number[3:6] + separator + nhs_number[6:10]
-
-
-def remove_separators(nhs_number):
-    """Remove separators, if there are any, to go from e.g. 123-456-7890 to 1234567890."""
-    if not nhs_number[3].isnumeric() and not nhs_number[7].isnumeric():
-        return nhs_number[0:3] + nhs_number[4:7] + nhs_number[8:]
-    return nhs_number
+            return candidate_number + str(check_digit)
 
 
 def is_valid_nhs_number(nhs_number):
@@ -153,50 +99,5 @@ def is_valid_nhs_number(nhs_number):
     return str(check_digit) == nhs_number[9]
 
 
-def main():
-    """Generate 10-digit NHS numbers from the command line."""
-
-    # Define our command line options with sensible defaults and help messages
-    parser = ArgumentParser(description="Generate 10-digit NHS numbers.")
-    parser.add_argument(
-        "-n", required=False, type=int, help="the amount to generate", default=10
-    )
-    parser.add_argument(
-        "-d",
-        "--deterministic",
-        action="store_const",
-        const=True,
-        default=False,
-        help="whether to generate predictably, starting at 4000000004",
-    )
-    parser.add_argument(
-        "-f",
-        "--format",
-        action="store_const",
-        const=True,
-        default=False,
-        help="whether to format using spaces e.g. 565 228 3297",
-    )
-
-    arguments = parser.parse_args()
-
-    if arguments.deterministic:
-        generator = deterministic_nhs_number_generator()
-    else:
-        generator = random_nhs_number_generator()
-
-    if arguments.format:
-        formatter = add_separators
-    else:
-
-        def identity(an_argument):
-            return an_argument
-
-        formatter = identity
-
-    for _ in range(arguments.n):
-        print(formatter(next(generator)))
-
-
 if __name__ == "__main__":
-    main()  # pragma: no cover
+    print(random_nhs_number_generator())

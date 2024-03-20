@@ -5,11 +5,6 @@ import string
 CHECK_DIGIT_VALUES = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ+"
 
 
-def generate_short_form_id_from_existing(original_short_form_id: str) -> str:
-    prescriber_ods_code = original_short_form_id[7:13]
-    return generate_short_form_id(prescriber_ods_code)
-
-
 def generate_short_form_id(prescriber_ods_code: str) -> str:
     a = generate_random_hex_string(6)
     b = prescriber_ods_code.zfill(6)
@@ -47,7 +42,7 @@ def calculate_total_for_check_digit(input_: str) -> int:
 
 if __name__ == "__main__":
     # Example usage:
-    ods_code = "X26"
+    ods_code = "X2602"
     generated_id = generate_short_form_id(ods_code)
-    print("Generated Short Form ID:", generated_id)
+    print("Original Short Form ID:", generated_id)
     print("Is Valid:", validate_short_form_id(generated_id))
