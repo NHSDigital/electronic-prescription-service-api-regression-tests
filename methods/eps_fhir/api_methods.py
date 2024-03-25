@@ -32,7 +32,7 @@ def get_auth():
     # 4. Use the token and confirm is valid
     headers = {"Authorization": f"Bearer {token}"}
     resp = requests.get(
-        f"https://int.api.service.nhs.uk/mock-jwks/test-auth/nhs-cis2/aal3",
+        "https://int.api.service.nhs.uk/mock-jwks/test-auth/nhs-cis2/aal3",
         headers=headers,
     )
     assert resp.status_code == 200

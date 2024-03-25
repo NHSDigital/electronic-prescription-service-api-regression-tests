@@ -1,12 +1,10 @@
 import uuid
-from requests import get as api_get_request
-from methods.shared import common
-from utils.prescription_id_generator import generate_short_form_id
 
 
 def create_fhir_bundle(**kwargs):
     practitioner_role = kwargs["practitioner_role"]
     practitioner = kwargs["practitioner"]
+    patient = kwargs["patient"]
     medication_request = kwargs["medication_request"]
     bundle_id = uuid.uuid4()
     fhir_bundle = {
@@ -22,15 +20,17 @@ def create_fhir_bundle(**kwargs):
         fhir_bundle.update(practitioner_role)
     if practitioner:
         fhir_bundle.update(practitioner)
+    if patient:
+        fhir_bundle.update(patient)
     if medication_request:
         fhir_bundle.update(medication_request)
 
 
 def generate_message_header(**kwargs):
-    bundle_id = kwargs.get("bundle_id")
-    sender_ods_code = kwargs.get("sender_ods_code")
-    focus = kwargs.get("focus")
-    destination = kwargs.get("destination")
+    bundle_id = kwargs["bundle_id"]
+    sender_ods_code = kwargs["sender_ods_code"]
+    focus = kwargs["focus"]
+    destination = kwargs["destination"]
     message_header = {
         "fullUrl": f"urn:uuid:{bundle_id}",
         "resource": {
@@ -65,13 +65,13 @@ def generate_practitioner_role(**kwargs):
             "resourceType": "PractitionerRole",
             "identifier": [
                 {
-                    "system" : "https://fhir.nhs.uk/Id/sds-role-profile-id",
-                    "value" : "100102238986"
+                    "system": "https://fhir.nhs.uk/Id/sds-role-profile-id",
+                    "value": "100102238986",
                 },
                 {
-                    "system" : "https://fhir.hl7.org.uk/Id/nhsbsa-spurious-code",
-                    "value" : "12A3456B"
-                }
+                    "system": "https://fhir.hl7.org.uk/Id/nhsbsa-spurious-code",
+                    "value": "12A3456B",
+                },
             ],
             "organization": {
                 "reference": "urn:uuid:3b4b03a5-52ba-4ba6-9b82-70350aa109d8"
@@ -92,10 +92,9 @@ def generate_practitioner(**kwargs):
                     "value": "555086689106",
                 },
                 {
-                    "system" : "https://fhir.hl7.org.uk/Id/nmc-number",
-                    "value" : "12A3456B"
-                }
-                ,
+                    "system": "https://fhir.hl7.org.uk/Id/nmc-number",
+                    "value": "12A3456B",
+                },
             ],
             "name": [{"family": "BOIN", "given": ["C"], "prefix": ["DR"]}],
         },
@@ -103,9 +102,50 @@ def generate_practitioner(**kwargs):
     return practitioner
 
 
+def generate_patient(**kwargs):
+    patient = {
+        "fullUrl": "urn:uuid:78d3c2eb-009e-4ec8-a358-b042954aa9b2",
+        "resource": {
+            "resourceType": "Patient",
+            "identifier": [
+                {
+                    "system": "https://fhir.nhs.uk/Id/nhs-number",
+                    "value": "9285669565",
+                }
+            ],
+            "name": [
+                {
+                    "use": "usual",
+                    "family": "CORY",
+                    "given": ["ETTA"],
+                    "prefix": ["MISS"],
+                }
+            ],
+            "gender": "female",
+            "birthDate": "1999-01-04",
+            "address": [
+                {
+                    "use": "home",
+                    "line": ["123 Dale Avenue", "Long Eaton", "Nottingham"],
+                    "postalCode": "NG10 1NP",
+                }
+            ],
+            "generalPractitioner": [
+                {
+                    "identifier": {
+                        "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                        "value": "B81001",
+                    }
+                }
+            ],
+        },
+    }
+    return patient
+
+
 # def prepare_new_prescription_body(**kwargs):
 #     managing_organisation_ods_code = kwargs["managing_organisation_ods_code"]
-#     primary_care_ods_id = kwargs.get("primary_care_ods_id")
+#     primary_care_ods_id = kwargs["primary_care_ods_id")
 #     gp_ods_code = kwargs["gp_ods_code"]
 #     destination_ods_code = kwargs["destination_ods_code"]
 #     order_item_1_number = uuid.uuid4()
