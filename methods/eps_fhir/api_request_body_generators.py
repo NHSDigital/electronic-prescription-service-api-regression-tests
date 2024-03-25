@@ -106,6 +106,7 @@ def generate_practitioner(**kwargs):
 
 
 def generate_patient(**kwargs):
+    nhs_number = kwargs["nhs_number"]
     patient = {
         "fullUrl": "urn:uuid:78d3c2eb-009e-4ec8-a358-b042954aa9b2",
         "resource": {
@@ -113,7 +114,7 @@ def generate_patient(**kwargs):
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/nhs-number",
-                    "value": "9285669565",
+                    "value": nhs_number,
                 }
             ],
             "name": [
