@@ -5,7 +5,7 @@ def create_fhir_bundle(**kwargs):
     practitioner_role = kwargs["practitioner_role"]
     practitioner = kwargs["practitioner"]
     patient = kwargs["patient"]
-    organisation = kwargs["organisation"]
+    organization = kwargs["organization"]
     medication_request = kwargs["medication_request"]
     bundle_id = uuid.uuid4()
     fhir_bundle = {
@@ -23,8 +23,8 @@ def create_fhir_bundle(**kwargs):
         fhir_bundle.update(practitioner)
     if patient:
         fhir_bundle.update(patient)
-    if organisation:
-        fhir_bundle.update(organisation)
+    if organization:
+        fhir_bundle.update(organization)
     if medication_request:
         fhir_bundle.update(medication_request)
 
@@ -146,8 +146,8 @@ def generate_patient(**kwargs):
     return patient
 
 
-def generate_organisation(**kwargs):
-    organisation = {
+def generate_organization(**kwargs):
+    organization = {
         "fullUrl": "urn:uuid:3b4b03a5-52ba-4ba6-9b82-70350aa109d8",
         "resource": {
             "resourceType": "Organization",
@@ -165,11 +165,11 @@ def generate_organisation(**kwargs):
             },
         },
     }
-    return organisation
+    return organization
 
 
 # def prepare_new_prescription_body(**kwargs):
-#     managing_organisation_ods_code = kwargs["managing_organisation_ods_code"]
+#     managing_organization_ods_code = kwargs["managing_organization_ods_code"]
 #     primary_care_ods_id = kwargs["primary_care_ods_id")
 #     gp_ods_code = kwargs["gp_ods_code"]
 #     destination_ods_code = kwargs["destination_ods_code"]
@@ -199,13 +199,13 @@ def generate_organisation(**kwargs):
 #                     "sender": {
 #                         "identifier": {
 #                             "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-#                             "value": managing_organisation_ods_code,
+#                             "value": managing_organization_ods_code,
 #                         },
 #                         "reference": "urn:uuid:56166769-c1c4-4d07-afa8-132b5dfca666",
 #                         "display": "RAZIA|ALI",
 #                     },
 #                     "source": {
-#                         "endpoint": f"urn:nhs-uk:addressing:ods:{managing_organisation_ods_code}"
+#                         "endpoint": f"urn:nhs-uk:addressing:ods:{managing_organization_ods_code}"
 #                     },
 #                     "destination": [
 #                         {
@@ -489,7 +489,7 @@ def generate_organisation(**kwargs):
 #                     "partOf": {
 #                         "identifier": {
 #                             "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-#                             "value": managing_organisation_ods_code,
+#                             "value": managing_organization_ods_code,
 #                         },
 #                         "display": "TAUNTON AND SOMERSET NHS FOUNDATION TRUST",
 #                     },
