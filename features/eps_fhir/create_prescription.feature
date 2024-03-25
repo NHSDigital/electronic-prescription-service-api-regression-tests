@@ -13,4 +13,3 @@ Feature: I can can create prescriptions using the EPS FHIR API
       |Type|
       |nominated|
       |non-nominated|
-

@@ -9,10 +9,10 @@ def get_auth():
     # 1. Set your app config
     config = AuthorizationCodeConfig(
         environment="int",
-        identity_service_base_url=f"https://int.api.service.nhs.uk/oauth2-mock",
-        callback_url="https://example.org/",
-        client_id="4foToJR1dlX2Vs90pxRD1D48SaZMAwAY", # INT
-        client_secret="2NeQe6P6ObWPfILl", # INT
+        identity_service_base_url="https://int.api.service.nhs.uk/oauth2-mock",  # pyright: ignore [reportArgumentType]
+        callback_url="https://example.org/",  # pyright: ignore [reportArgumentType]
+        client_id="4foToJR1dlX2Vs90pxRD1D48SaZMAwAY",  # INT
+        client_secret="2NeQe6P6ObWPfILl",  # INT
         # client_id="tU1NHdDCHGrOi94pXdjCsXJOuZkOH8XA", # INTERNAL-DEV
         # client_secret="OLeZoP6Fb0BKbeYN", # INTERNAL-DEV
         scope="nhs-cis2",
@@ -20,7 +20,9 @@ def get_auth():
     )
 
     # 2. Pass the config to the Authenticator
-    authenticator = AuthorizationCodeAuthenticator(config=config)
+    authenticator = AuthorizationCodeAuthenticator(
+        config=config  # pyright: ignore [reportArgumentType]
+    )
 
     # 3. Get your token
     token_response = authenticator.get_token()
@@ -35,6 +37,8 @@ def get_auth():
     )
     assert resp.status_code == 200
     print("Successfully Authenticated")
+    return token
+
 
 if __name__ == "__main__":
     get_auth()
