@@ -5,6 +5,7 @@ def create_fhir_bundle(**kwargs):
     practitioner_role = kwargs["practitioner_role"]
     practitioner = kwargs["practitioner"]
     patient = kwargs["patient"]
+    organisation = kwargs["organisation"]
     medication_request = kwargs["medication_request"]
     bundle_id = uuid.uuid4()
     fhir_bundle = {
@@ -22,6 +23,8 @@ def create_fhir_bundle(**kwargs):
         fhir_bundle.update(practitioner)
     if patient:
         fhir_bundle.update(patient)
+    if organisation:
+        fhir_bundle.update(organisation)
     if medication_request:
         fhir_bundle.update(medication_request)
 
@@ -141,6 +144,28 @@ def generate_patient(**kwargs):
         },
     }
     return patient
+
+
+def generate_organisation(**kwargs):
+    organisation = {
+        "fullUrl": "urn:uuid:3b4b03a5-52ba-4ba6-9b82-70350aa109d8",
+        "resource": {
+            "resourceType": "Organization",
+            "identifier": [
+                {
+                    "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                    "value": "A99968",
+                }
+            ],
+            "partOf": {
+                "identifier": {
+                    "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                    "value": "RBA",
+                }
+            },
+        },
+    }
+    return organisation
 
 
 # def prepare_new_prescription_body(**kwargs):
