@@ -65,33 +65,17 @@ def generate_practitioner_role(**kwargs):
             "resourceType": "PractitionerRole",
             "identifier": [
                 {
-                    "system": "https://fhir.nhs.uk/Id/sds-role-profile-id",
-                    "value": "200102238987",
+                    "system" : "https://fhir.nhs.uk/Id/sds-role-profile-id",
+                    "value" : "100102238986"
+                },
+                {
+                    "system" : "https://fhir.hl7.org.uk/Id/nhsbsa-spurious-code",
+                    "value" : "12A3456B"
                 }
             ],
-            "practitioner": {
-                "reference": "urn:uuid:a8c85454-f8cb-498d-9629-78e2cb5fa47a"
-            },
             "organization": {
                 "reference": "urn:uuid:3b4b03a5-52ba-4ba6-9b82-70350aa109d8"
             },
-            "code": [
-                {
-                    "coding": [
-                        {
-                            "system": "https://fhir.nhs.uk/CodeSystem/NHSDigital-SDS-JobRoleCode",
-                            "code": "R8000",
-                            "display": "Clinical Practitioner Access Role",
-                        },
-                        {
-                            "system": "https://fhir.hl7.org.uk/CodeSystem/UKCore-SDSJobRoleName",
-                            "code": "R8000",
-                            "display": "Clinical Practitioner Access Role",
-                        },
-                    ]
-                }
-            ],
-            "telecom": [{"system": "phone", "use": "work", "value": "01234567890"}],
         },
     }
     return practitioner_role
@@ -107,8 +91,11 @@ def generate_practitioner(**kwargs):
                     "system": "https://fhir.nhs.uk/Id/sds-user-id",
                     "value": "555086689106",
                 },
-                {"system": "https://fhir.hl7.org.uk/Id/gmc-number", "value": "6095103"},
-                {"system": "https://fhir.hl7.org.uk/Id/din-number", "value": "977677"},
+                {
+                    "system" : "https://fhir.hl7.org.uk/Id/nmc-number",
+                    "value" : "12A3456B"
+                }
+                ,
             ],
             "name": [{"family": "BOIN", "given": ["C"], "prefix": ["DR"]}],
         },
