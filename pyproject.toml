@@ -13,28 +13,29 @@ assertpy = "^1.1"
 behave = "^1.2.6"
 behave-cucumber-formatter = "^1.0.1"
 lxml = "^4.9.1"
-allure-behave = "^2.13.3"
-black = "^24.2.0"
+allure-behave = "^2.13.4"
+black = "^24.3.0"
 semver = "^3.0.2"
 gitpython = "^3.1.42"
 pip-licenses = "^4.3.4"
 flake8 = "^7.0.0"
-pre-commit = "^3.6.2"
+pre-commit = "^3.7.0"
 isort = "^5.13.1"
-pyright = "^1.1.354"
+pyright = "^1.1.355"
 pytest-nhsd-apim = "^3.3.12"
 cryptography = "^42.0.5"
 
 
 [tool.poetry.group.dev.dependencies]
-pre-commit = "^3.6.2"
+pre-commit = "^3.7.0"
 
 [tool.pyright]
 include = ["src"]
 exclude = ["**/.*",
     "**/__pycache__",
     "**/venv",
-    "**/.venv"
+    "**/.venv",
+    "**/node_modules"
 ]
 defineConstant = { DEBUG = true }
 reportMissingImports = true
