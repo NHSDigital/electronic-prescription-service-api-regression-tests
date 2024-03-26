@@ -1,4 +1,4 @@
-name: release workflow
+name: merge to main workflow
 
 on:
   push:
@@ -83,8 +83,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Output next release notes
-        id: output_next_release_notes
+      - name: Output next release details
+        id: output_next_release_details
         run: |
           npx semantic-release --dry-run
         env:
