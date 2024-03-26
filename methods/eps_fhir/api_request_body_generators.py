@@ -62,6 +62,8 @@ def generate_message_header(**kwargs):
 
 
 def generate_medication_request(**kwargs):
+    short_prescription_id = kwargs["short_prescription_id"]
+    long_prescription_id = uuid.uuid4()
     medication_request = {
         "fullUrl": "urn:uuid:a54219b8-f741-4c47-b662-e4f8dfa49ab6",
         "resource": {
@@ -100,11 +102,11 @@ def generate_medication_request(**kwargs):
                 "extension": [
                     {
                         "valueIdentifier": {
-                            "value": "1dfb1898-70dd-42df-ace4-aa0fd83a501a"
+                            "value": long_prescription_id
                         }
                     }  # long form prescription ID
                 ],
-                "value": "18A2D3-0X2602-B942ET",  # short from prescription ID
+                "value": short_prescription_id,  # short from prescription ID
             },
             "courseOfTherapyType": {
                 "coding": [
