@@ -1,3 +1,4 @@
+import json
 import uuid
 
 
@@ -27,6 +28,7 @@ def create_fhir_bundle(**kwargs):
         fhir_bundle.update(organization)
     if medication_request:
         fhir_bundle.update(medication_request)
+    return json.dumps(fhir_bundle)
 
 
 def generate_message_header(**kwargs):
@@ -63,7 +65,8 @@ def generate_message_header(**kwargs):
 
 def generate_medication_request(**kwargs):
     short_prescription_id = kwargs["short_prescription_id"]
-    long_prescription_id = uuid.uuid4()
+    long_prescription_id = kwargs["long_prescription_id"]
+
     medication_request = {
         "fullUrl": "urn:uuid:a54219b8-f741-4c47-b662-e4f8dfa49ab6",
         "resource": {
@@ -71,7 +74,7 @@ def generate_medication_request(**kwargs):
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/prescription-order-item-number",
-                    "value": "a9586fe5-b83d-4027-97a6-fe4821608640",
+                    "value": "a9586fe5-b83d-4027-97a6-fe4821608640",  # TODO generate new one
                 }
             ],
             "status": "active",  # must be consistent
@@ -81,7 +84,8 @@ def generate_medication_request(**kwargs):
                     "coding": [
                         {
                             "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
-                            "code": "outpatient",  # primary-care : "community"
+                            "code": "outpatient",
+                            # primary-care : "community"
                             # but secondary-care: "inpatient"/"outpatient"
                         }  # must be consistent
                     ]
@@ -93,8 +97,8 @@ def generate_medication_request(**kwargs):
                 ]
             },
             "subject": {
-                "reference": "urn:uuid:78d3c2eb-009e-4ec8-a358-b042954aa9b2"
-            },  # patient
+                "reference": "urn:uuid:78d3c2eb-009e-4ec8-a358-b042954aa9b2"  # patient
+            },
             "requester": {
                 "reference": "urn:uuid:56166769-c1c4-4d07-afa8-132b5dfca666"  # practitioner_role id
             },
@@ -102,9 +106,9 @@ def generate_medication_request(**kwargs):
                 "extension": [
                     {
                         "valueIdentifier": {
-                            "value": long_prescription_id
+                            "value": long_prescription_id  # long form prescription ID
                         }
-                    }  # long form prescription ID
+                    }
                 ],
                 "value": short_prescription_id,  # short from prescription ID
             },
@@ -153,6 +157,7 @@ def generate_medication_request(**kwargs):
                     ],
                 }
             ],
+            # TODO generate this field for nominated/non-nominated (performer added if nominated, extension)
             "dispenseRequest": {
                 "quantity": {
                     "value": 1,
@@ -605,3 +610,7 @@ def generate_organization(**kwargs):
 #         ],
 #     }
 #     return data
+
+if __name__ == "__main__":
+    medication_request = generate_medication_request()
+    print(create_fhir_bundle(medication_request=medication_request))
