@@ -33,7 +33,8 @@ include = ["src"]
 exclude = ["**/.*",
     "**/__pycache__",
     "**/venv",
-    "**/.venv"
+    "**/.venv",
+    "**/node_modules"
 ]
 defineConstant = { DEBUG = true }
 reportMissingImports = true
