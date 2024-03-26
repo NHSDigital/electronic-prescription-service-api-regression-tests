@@ -110,13 +110,13 @@ def generate_medication_request(**kwargs):
                     {
                         "url": "https://fhir.nhs.uk/StructureDefinition/Extension-DM-PrescriptionId",  # mandatory value
                         "valueIdentifier": {
-                            # "system": "https://fhir.nhs.uk/Id/prescription",
+                            "system": "https://fhir.nhs.uk/Id/prescription",
                             # mandatory value minimum required = 1, but only found 0
                             "value": long_prescription_id,  # long form prescription ID
                         },
                     }
                 ],
-                # "system": "https://fhir.nhs.uk/Id/prescription-order-number",
+                "system": "https://fhir.nhs.uk/Id/prescription-order-number",
                 # also mandatory minimum required = 1, but only found 0
                 "value": short_prescription_id,  # short from prescription ID
             },
@@ -185,7 +185,7 @@ def generate_medication_request(**kwargs):
                         "url": "https://fhir.nhs.uk/StructureDefinition/Extension-DM-PerformerSiteType",
                         "valueCoding": {
                             "system": "https://fhir.nhs.uk/CodeSystem/dispensing-site-preference",
-                            "code": {code},
+                            "code": code,
                         },
                     }
                 ],
@@ -232,7 +232,7 @@ def generate_practitioner_role():
             ],
             "practitioner": {
                 "reference": "urn:uuid:a8c85454-f8cb-498d-9629-78e2cb5fa47a"
-            },  # mandatory if there is a patient
+            },  # mandatory if there is a practitioner
             "organization": {
                 "reference": "urn:uuid:3b4b03a5-52ba-4ba6-9b82-70350aa109d8"
             },
@@ -364,3 +364,6 @@ if __name__ == "__main__":
         patient=patnt,
     )
     print(bundle)
+
+# TO DO add focus with practitioner role and med red
+# compare the example with the bundle to find out what is wrong with system
