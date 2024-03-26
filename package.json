@@ -3,7 +3,6 @@
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/release-notes-generator": "^13.0.0",
     "conventional-changelog-eslint": "^5.0.0",
-    "pyright": "^1.1.355",
     "semantic-release": "^23.0.6"
   }
 }
