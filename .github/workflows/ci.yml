@@ -83,9 +83,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Create next release
+      - name: Output next release notes
         id: output_next_release_notes
         run: |
-          npx semantic-release
+          npx semantic-release --dry-run
         env:
           GITHUB_TOKEN: ${{ github.token }}          
