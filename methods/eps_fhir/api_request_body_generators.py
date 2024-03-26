@@ -108,9 +108,10 @@ def generate_medication_request(**kwargs):
             "groupIdentifier": {
                 "extension": [
                     {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-DM-PrescriptionId",  # mandatory value
                         "valueIdentifier": {
                             "value": long_prescription_id  # long form prescription ID
-                        }
+                        },
                     }
                 ],
                 "value": short_prescription_id,  # short from prescription ID
