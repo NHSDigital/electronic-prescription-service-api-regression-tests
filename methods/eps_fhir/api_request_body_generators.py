@@ -110,10 +110,14 @@ def generate_medication_request(**kwargs):
                     {
                         "url": "https://fhir.nhs.uk/StructureDefinition/Extension-DM-PrescriptionId",  # mandatory value
                         "valueIdentifier": {
-                            "value": long_prescription_id  # long form prescription ID
+                            # "system": "https://fhir.nhs.uk/Id/prescription",
+                            # mandatory value minimum required = 1, but only found 0
+                            "value": long_prescription_id,  # long form prescription ID
                         },
                     }
                 ],
+                # "system": "https://fhir.nhs.uk/Id/prescription-order-number",
+                # also mandatory minimum required = 1, but only found 0
                 "value": short_prescription_id,  # short from prescription ID
             },
             "courseOfTherapyType": {
@@ -223,9 +227,12 @@ def generate_practitioner_role():
                 },
                 {
                     "system": "https://fhir.hl7.org.uk/Id/nhsbsa-spurious-code",
-                    "value": "12A3456B",
+                    "value": "G6123456",  # needs to be of G6NNNNNN or G7NNNNNN
                 },
             ],
+            "practitioner": {
+                "reference": "urn:uuid:a8c85454-f8cb-498d-9629-78e2cb5fa47a"
+            },  # mandatory if there is a patient
             "organization": {
                 "reference": "urn:uuid:3b4b03a5-52ba-4ba6-9b82-70350aa109d8"
             },
@@ -312,7 +319,8 @@ def generate_organization():
                 "identifier": {
                     "system": "https://fhir.nhs.uk/Id/ods-organization-code",
                     "value": "RBA",
-                }
+                },
+                "display": "TAUNTON AND SOMERSET NHS FOUNDATION TRUST",  # mandatory
             },
         },
     }
