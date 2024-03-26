@@ -41,6 +41,7 @@ jobs:
       - name: make install
         run: |
           export PATH="/home/runner/.asdf/installs/poetry/1.7.0/bin:$PATH"
+          asdf reshim nodejs
           make install
 
       - name: run check-licenses
