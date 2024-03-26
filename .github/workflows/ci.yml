@@ -3,7 +3,6 @@ name: merge to main workflow
 on:
   push:
     branches: [main]
-    tags: [v**]
 
 env:
   BRANCH_NAME: ${{ github.event.ref.BRANCH_NAME }}
