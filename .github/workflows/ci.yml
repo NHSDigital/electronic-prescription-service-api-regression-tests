@@ -1,7 +1,8 @@
-name: release workflow
+name: merge to main workflow
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [main]
 
 env:
   BRANCH_NAME: ${{ github.event.ref.BRANCH_NAME }}
@@ -81,9 +82,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Create next release
-        id: output_next_release_notes
+      - name: Output next release details
+        id: output_next_release_details
         run: |
-          npx semantic-release
+          npx semantic-release --dry-run
         env:
           GITHUB_TOKEN: ${{ github.token }}          

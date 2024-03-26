@@ -6,7 +6,7 @@ guard-%:
 		exit 1; \
 	fi
 
-install: install-python install-hooks
+install: install-python install-hooks install-node
 
 install-python:
 	poetry install
@@ -14,11 +14,14 @@ install-python:
 install-hooks: install-python
 	poetry run pre-commit install --install-hooks --overwrite
 
+install-node:
+	npm ci
+
 lint-black:
 	poetry run black .
 
 lint-pyright:
-	poetry run pyright .
+	export PYRIGHT_PYTHON_GLOBAL_NODE=on; poetry run pyright .
 
 lint-flake8:
 	poetry run flake8 .
