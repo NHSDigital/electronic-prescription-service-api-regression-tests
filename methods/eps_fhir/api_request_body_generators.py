@@ -61,6 +61,110 @@ def generate_message_header(**kwargs):
         message_header.update(focus)
 
 
+def generate_medication_request(**kwargs):
+    medication_request = {
+        "fullUrl": "urn:uuid:a54219b8-f741-4c47-b662-e4f8dfa49ab6",
+        "resource": {
+            "resourceType": "MedicationRequest",
+            "identifier": [
+                {
+                    "system": "https://fhir.nhs.uk/Id/prescription-order-item-number",
+                    "value": "a9586fe5-b83d-4027-97a6-fe4821608640",
+                }
+            ],
+            "status": "active",  # must be consistent
+            "intent": "order",  # must be consistent
+            "category": [
+                {
+                    "coding": [
+                        {
+                            "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                            "code": "outpatient",  # primary-care : "community"
+                            # but secondary-care: "inpatient"/"outpatient"
+                        }  # must be consistent
+                    ]
+                }
+            ],
+            "medicationCodeableConcept": {
+                "coding": [
+                    {"system": "http://snomed.info/sct", "code": "15517911000001104"}
+                ]
+            },
+            "subject": {
+                "reference": "urn:uuid:78d3c2eb-009e-4ec8-a358-b042954aa9b2"
+            },  # patient
+            "requester": {
+                "reference": "urn:uuid:56166769-c1c4-4d07-afa8-132b5dfca666"  # practitioner_role id
+            },
+            "groupIdentifier": {
+                "extension": [
+                    {
+                        "valueIdentifier": {
+                            "value": "1dfb1898-70dd-42df-ace4-aa0fd83a501a"
+                        }
+                    }  # long form prescription ID
+                ],
+                "value": "{{prescription_id}}",  # to be generated
+            },
+            "courseOfTherapyType": {
+                "coding": [
+                    {
+                        "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-course-of-therapy",
+                        "code": "acute",
+                    }
+                ]
+            },
+            "dosageInstruction": [
+                {
+                    "text": "Inject 10 milligram - 5 times a day - Subcutaneous route - for 10 days",
+                    "timing": {
+                        "repeat": {
+                            "frequency": 5,
+                            "period": 1,
+                            "periodUnit": "d",
+                            "boundsDuration": {
+                                "value": 10,
+                                "unit": "day",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "d",
+                            },
+                        }
+                    },
+                    "route": {
+                        "coding": [
+                            {
+                                "system": "http://snomed.info/sct",
+                                "code": "34206005",
+                                "display": "Subcutaneous route",
+                            }
+                        ]
+                    },
+                    "doseAndRate": [
+                        {
+                            "doseQuantity": {
+                                "value": 10,
+                                "unit": "milligram",
+                                "system": "http://unitsofmeasure.org",
+                                "code": "mg",
+                            }
+                        }
+                    ],
+                }
+            ],
+            "dispenseRequest": {
+                "quantity": {
+                    "value": 1,
+                    "unit": "pre-filled disposable injection",
+                    "system": "http://snomed.info/sct",
+                    "code": "3318611000001103",
+                },
+            },
+            "substitution": {"allowedBoolean": False},
+        },
+    }
+    return medication_request
+
+
 def generate_practitioner_role(**kwargs):
     practitioner_role = {
         "fullUrl": "urn:uuid:56166769-c1c4-4d07-afa8-132b5dfca666",
