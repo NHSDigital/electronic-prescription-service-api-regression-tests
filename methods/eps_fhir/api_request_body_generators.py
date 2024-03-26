@@ -104,7 +104,7 @@ def generate_medication_request(**kwargs):
                         }
                     }  # long form prescription ID
                 ],
-                "value": "{{prescription_id}}",  # to be generated
+                "value": "18A2D3-0X2602-B942ET",  # short from prescription ID
             },
             "courseOfTherapyType": {
                 "coding": [
