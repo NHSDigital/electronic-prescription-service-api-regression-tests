@@ -55,6 +55,10 @@ def generate_message_header(**kwargs):
                 "display": "RAZIA|ALI",
             },
             "source": {"endpoint": f"urn:nhs-uk:addressing:ods:{sender_ods_code}"},
+            "focus": [
+                {"reference": "urn:uuid:56166769-c1c4-4d07-afa8-132b5dfca666"},
+                {"reference": "urn:uuid:a54219b8-f741-4c47-b662-e4f8dfa49ab6"},
+            ],
         },
     }
     # if destination:  # Nominated
@@ -74,6 +78,17 @@ def generate_medication_request(**kwargs):
         "fullUrl": "urn:uuid:a54219b8-f741-4c47-b662-e4f8dfa49ab6",
         "resource": {
             "resourceType": "MedicationRequest",
+            "extension": [
+                # adding it with the system fixed the unknown error caused by the addition of two initial systems
+                {
+                    "url": "https://fhir.nhs.uk/StructureDefinition/Extension-DM-PrescriptionType",
+                    "valueCoding": {
+                        "system": "https://fhir.nhs.uk/CodeSystem/prescription-type",
+                        "code": "1001",
+                        "display": "Outpatient Community Prescriber - Medical Prescriber",
+                    },
+                }
+            ],
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/prescription-order-item-number",
@@ -236,6 +251,7 @@ def generate_practitioner_role():
             "organization": {
                 "reference": "urn:uuid:3b4b03a5-52ba-4ba6-9b82-70350aa109d8"
             },
+            "telecom": [{"system": "phone", "value": "01234567890", "use": "work"}],
         },
     }
     return practitioner_role
@@ -315,6 +331,18 @@ def generate_organization():
                     "value": "A99968",
                 }
             ],
+            "name": "SOMERSET BOWEL CANCER SCREENING CENTRE",  # mandatory
+            "address": [
+                {
+                    "use": "work",
+                    "line": ["MUSGROVE PARK HOSPITAL"],
+                    "city": "TAUNTON",
+                    "postalCode": "TA1 5DA",
+                }
+            ],  # mandatory
+            "telecom": [
+                {"system": "phone", "value": "01823 333444", "use": "work"}
+            ],  # mandatory
             "partOf": {
                 "identifier": {
                     "system": "https://fhir.nhs.uk/Id/ods-organization-code",
