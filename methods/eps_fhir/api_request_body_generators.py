@@ -355,21 +355,6 @@ def generate_organization():
     return organization
 
 
-def find_sets(obj):
-    if isinstance(obj, dict):
-        for key, value in obj.items():
-            if isinstance(value, set):
-                print(f"Found set in {key}")
-            elif isinstance(value, (list, tuple)):
-                for item in value:
-                    find_sets(item)
-            elif isinstance(value, dict):
-                find_sets(value)
-    elif isinstance(obj, (list, tuple)):
-        for item in obj:
-            find_sets(item)
-
-
 if __name__ == "__main__":
     msg_header = generate_message_header(
         bundle_id="aef77afb-7e3c-427a-8657-2c427f71a271", sender_ods_code="RBA"
@@ -392,6 +377,3 @@ if __name__ == "__main__":
         patient=patnt,
     )
     print(bundle)
-
-# TO DO add focus with practitioner role and med red
-# compare the example with the bundle to find out what is wrong with system
