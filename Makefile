@@ -8,7 +8,7 @@ guard-%:
 
 install: install-python install-hooks install-node
 
-update: update-poetry update-node
+update: update-poetry update-node install
 
 update-node:
 	npm update
