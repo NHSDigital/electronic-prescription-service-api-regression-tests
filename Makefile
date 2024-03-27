@@ -8,6 +8,14 @@ guard-%:
 
 install: install-python install-hooks install-node
 
+update: update-poetry update-node
+
+update-node:
+	npm update
+
+update-poetry:
+	poetry update
+
 install-python:
 	poetry install
 
