@@ -2,28 +2,28 @@
 
 [[package]]
 name = "allure-behave"
-version = "2.13.4"
+version = "2.13.5"
 description = "Allure behave integration"
 optional = false
 python-versions = "*"
 files = [
-    {file = "allure-behave-2.13.4.tar.gz", hash = "sha256:b9cfecab3f824e9ff0a5d04d21de2ccb37acc218de184225dd83b9126f51300d"},
-    {file = "allure_behave-2.13.4-py3-none-any.whl", hash = "sha256:38539f5e79e1be49d65b4ab8a297df44048fcdc0fd4dc5baf7795f1dbb66cc15"},
+    {file = "allure-behave-2.13.5.tar.gz", hash = "sha256:338ca2cc7395d1ee3dd72f5d7d92d8920f1ade0e07ddebc637b38e61e06dc8dc"},
+    {file = "allure_behave-2.13.5-py3-none-any.whl", hash = "sha256:8b04291f435af536b46c3cbd20d33e61b27f5e25dd2fff2fdc1dc3fa2474e23e"},
 ]
 
 [package.dependencies]
-allure-python-commons = "2.13.4"
+allure-python-commons = "2.13.5"
 behave = ">=1.2.5"
 
 [[package]]
 name = "allure-python-commons"
-version = "2.13.4"
+version = "2.13.5"
 description = "('Contains the API for end users as well as helper functions and classes to build Allure adapters for Python test frameworks',)"
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "allure-python-commons-2.13.4.tar.gz", hash = "sha256:a4ace23f236f0ec32eb6ea316914d9e45500ba421fc6d80ed2fba08684e746a1"},
-    {file = "allure_python_commons-2.13.4-py3-none-any.whl", hash = "sha256:e8caca521bea21d045540bd36ce8f3af25ddc9b1ff0c54de4fd6c57fb919cf0e"},
+    {file = "allure-python-commons-2.13.5.tar.gz", hash = "sha256:a232e7955811f988e49a4c1dd6c16cce7e9b81d0ea0422b1e5654d3254e2caf3"},
+    {file = "allure_python_commons-2.13.5-py3-none-any.whl", hash = "sha256:8b0e837b6e32d810adec563f49e1d04127a5b6770e0232065b7cb09b9953980d"},
 ]
 
 [package.dependencies]
@@ -1440,4 +1440,4 @@ test = ["pytest (>=3.0.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "e228d32f58afd62848fab8ee1eab3a1943f859d44636ed1fbf617ed5f0272926"
+content-hash = "a872235f19b7efa58c0638b6cd845e000932ca5d1b36a7d921df09313346ea61"
