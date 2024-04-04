@@ -44,7 +44,7 @@ def get_auth(user, env):
 
 
 if __name__ == "__main__":
-    get_auth()
+    get_auth("123", "int")
 
 
 def assert_that(actual):

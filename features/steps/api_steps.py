@@ -1,8 +1,32 @@
-from behave import then, when  # pyright: ignore [reportAttributeAccessIssue]
+from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 
+from methods.eps_fhir.api_methods import prepare_prescription
 from methods.shared import common
 from methods.shared.api import request_ping
-from methods.shared.common import assert_that
+from methods.shared.common import assert_that, get_auth
+from utils.nhs_number_generator import random_nhs_number_generator
+
+
+@given("I am an authorised {user}")
+@when("I am an authorised {user}")
+def i_am_an_authorised_user(context, user):
+    env = context.config.userdata["env"]
+    context.auth_token = get_auth(user, env)
+
+
+@given("I successfully prepare, sign and send a {prescription_type} prescription")
+def i_prepare_sign_release_a_prescription(context, prescription_type):
+    i_prepare_a_new_prescription(context, prescription_type)
+    raise NotImplementedError(
+        "STEP: And I successfully prepare, sign and send a <Type> prescription"
+    )
+
+
+def i_prepare_a_new_prescription(context, prescription_type):
+    context.nhs_number = random_nhs_number_generator()
+    if prescription_type == "non-nominated":
+        context.nomination_code = "0004"
+    prepare_prescription(context)
 
 
 @when('I make a request to the "{product}" ping endpoint')
@@ -48,7 +72,7 @@ def i_see_commit_id_in_response(context):
 
 
 @then("I can see the ping information in the response")
-def step_impl(context):
+def i_can_see_the_ping_information(context):
     i_see_version_in_response(context)
     i_see_revision_in_response(context)
     i_see_release_id_in_response(context)

@@ -20,6 +20,7 @@ def get_default_headers():
     return {
         "x-request-id": str(uuid.uuid4()),
         "x-user-org-code": "Auto001",
+        "Content-Type": "application/json",
     }
 
 

@@ -70,7 +70,7 @@ def generate_message_header(**kwargs):
 
 def generate_medication_request(**kwargs):
     short_prescription_id = kwargs["short_prescription_id"]
-    long_prescription_id = kwargs["long_prescription_id"]
+    long_prescription_id = str(uuid.uuid4())
     code = kwargs["code"]
     identifier_value = str(uuid.uuid4())
 
@@ -79,13 +79,13 @@ def generate_medication_request(**kwargs):
         "resource": {
             "resourceType": "MedicationRequest",
             "extension": [
-                # adding it with the system fixed the unknown error caused by the addition of two initial systems
+                # mandatory
                 {
                     "url": "https://fhir.nhs.uk/StructureDefinition/Extension-DM-PrescriptionType",
                     "valueCoding": {
                         "system": "https://fhir.nhs.uk/CodeSystem/prescription-type",
                         "code": "1001",
-                        "display": "Outpatient Community Prescriber - Medical Prescriber",
+                        "display": "Primary Care Prescriber - Medical Prescriber",
                     },
                 }
             ],
@@ -102,7 +102,7 @@ def generate_medication_request(**kwargs):
                     "coding": [
                         {
                             "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
-                            "code": "outpatient",
+                            "code": "community",
                             # primary-care : "community"
                             # but secondary-care: "inpatient"/"outpatient"
                         }  # must be consistent
@@ -251,6 +251,22 @@ def generate_practitioner_role():
             "organization": {
                 "reference": "urn:uuid:3b4b03a5-52ba-4ba6-9b82-70350aa109d8"
             },
+            "code": [  # Mandatory???
+                {
+                    "coding": [
+                        {
+                            "system": "https://fhir.nhs.uk/CodeSystem/NHSDigital-SDS-JobRoleCode",
+                            "code": "R8000",
+                            "display": "Clinical Practitioner Access Role",
+                        },
+                        {
+                            "system": "https://fhir.hl7.org.uk/CodeSystem/UKCore-SDSJobRoleName",
+                            "code": "R8000",
+                            "display": "Clinical Practitioner Access Role",
+                        },
+                    ]
+                }
+            ],
             "telecom": [{"system": "phone", "value": "01234567890", "use": "work"}],
         },
     }
@@ -360,8 +376,7 @@ if __name__ == "__main__":
         bundle_id="aef77afb-7e3c-427a-8657-2c427f71a271", sender_ods_code="RBA"
     )
     med_request = generate_medication_request(
-        short_prescription_id="F9B761-0X2602-9691EI",
-        long_prescription_id="a9586fe5-b83d-4027-97a6-fe4821608640",
+        short_prescription_id="ECFEFD-A99968-488284",
         code="0004",
     )
     patnt = generate_patient(nhs_number="9282511006")
