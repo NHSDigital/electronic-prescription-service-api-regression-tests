@@ -369,26 +369,3 @@ def generate_organization():
         },
     }
     return organization
-
-
-if __name__ == "__main__":
-    msg_header = generate_message_header(
-        bundle_id="aef77afb-7e3c-427a-8657-2c427f71a271", sender_ods_code="RBA"
-    )
-    med_request = generate_medication_request(
-        short_prescription_id="ECFEFD-A99968-488284",
-        code="0004",
-    )
-    patnt = generate_patient(nhs_number="9282511006")
-    org = generate_organization()
-    pract_role = generate_practitioner_role()
-    pract = generate_practitioner()
-    bundle = create_fhir_bundle(
-        message_header=msg_header,
-        medication_request=med_request,
-        organization=org,
-        practitioner_role=pract_role,
-        practitioner=pract,
-        patient=patnt,
-    )
-    print(bundle)

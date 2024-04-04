@@ -1,6 +1,7 @@
 import json
 import allure
 import requests
+from features.environment import CIS2_USERS
 from assertpy import assert_that as assertpy_assert  # type: ignore
 from pytest_nhsd_apim.identity_service import (
     AuthorizationCodeConfig,
@@ -10,16 +11,15 @@ from pytest_nhsd_apim.identity_service import (
 
 def get_auth(user, env):
     # 1. Set your app config
+    url = f"https://{env.lower()}.api.service.nhs.uk/oauth2-mock"
     config = AuthorizationCodeConfig(
-        environment="int",
-        identity_service_base_url="https://int.api.service.nhs.uk/oauth2-mock",  # pyright: ignore [reportArgumentType]
+        environment=env.lower(),
+        identity_service_base_url=url,  # pyright: ignore [reportArgumentType]
         callback_url="https://example.org/",  # pyright: ignore [reportArgumentType]
-        client_id="4foToJR1dlX2Vs90pxRD1D48SaZMAwAY",  # INT
-        client_secret="2NeQe6P6ObWPfILl",  # INT
-        # client_id="tU1NHdDCHGrOi94pXdjCsXJOuZkOH8XA", # INTERNAL-DEV
-        # client_secret="OLeZoP6Fb0BKbeYN", # INTERNAL-DEV
+        client_id=CIS2_USERS[env]["client_id"],
+        client_secret=CIS2_USERS[env]["client_secret"],
         scope="nhs-cis2",
-        login_form={"username": "656005750104"},
+        login_form={"username": CIS2_USERS[env][user]},
     )
 
     # 2. Pass the config to the Authenticator

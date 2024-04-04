@@ -51,24 +51,28 @@ def i_get_a_status_code(context, status_code: int):
 def i_see_version_in_response(context):
     response = context.response.json()
     assert_that(response["version"]).is_not_none()
+    assert_that(response["version"]).is_not_empty()
 
 
 @then("I can see the revision information in the response")
 def i_see_revision_in_response(context):
     response = context.response.json()
     assert_that(response["revision"]).is_not_none()
+    assert_that(response["revision"]).is_not_empty()
 
 
 @then("I can see the releaseId information in the response")
 def i_see_release_id_in_response(context):
     response = context.response.json()
     assert_that(response["releaseId"]).is_not_none()
+    assert_that(response["releaseId"]).is_not_empty()
 
 
 @then("I can see the commitId information in the response")
 def i_see_commit_id_in_response(context):
     response = context.response.json()
     assert_that(response["commitId"]).is_not_none()
+    assert_that(response["commitId"]).is_not_empty()
 
 
 @then("I can see the ping information in the response")

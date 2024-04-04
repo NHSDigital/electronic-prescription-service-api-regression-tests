@@ -18,6 +18,21 @@ ENVS = {
     "SANDBOX": SANDBOX_INT_BASE_URL,
 }
 
+CIS2_USERS = {
+    "INT": {
+        "prescriber": "656005750104",
+        "dispenser": "555083343101",
+        "client_id": "4foToJR1dlX2Vs90pxRD1D48SaZMAwAY",
+        "client_secret": "2NeQe6P6ObWPfILl",
+    },
+    "INTERNAL-DEV": {
+        "prescriber": "656005750104",
+        "dispenser": "555083343101",
+        "client_id": "tU1NHdDCHGrOi94pXdjCsXJOuZkOH8XA",
+        "client_secret": "OLeZoP6Fb0BKbeYN",
+    },
+}
+
 REPOS = {
     "EPS-FHIR": "https://github.com/NHSDigital/electronic-prescription-service-api",
     "PFP-APIGEE": "https://github.com/NHSDigital/prescriptions-for-patients",

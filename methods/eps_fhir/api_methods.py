@@ -14,7 +14,7 @@ from methods.shared.api import post, get_default_headers
 from utils.prescription_id_generator import generate_short_form_id
 
 
-def generate_step_1_codename_blue(context):
+def create_new_prepare_body(context):
     context.bundle_id = uuid.uuid4()
     context.sender_ods_code = "RBA"
     context.prescription_id = generate_short_form_id(ods_code=context.sender_ods_code)
@@ -42,11 +42,9 @@ def generate_step_1_codename_blue(context):
 
 def prepare_prescription(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/$prepare"
-    body = generate_step_1_codename_blue(context)
+    body = create_new_prepare_body(context)
     headers = get_default_headers()
     headers.update({"Authorization": f"Bearer {context.auth_token}"})
-    post(data=body, url=url, context=context, headers=headers)
+    response = post(data=body, url=url, context=context, headers=headers)
     common.the_expected_response_code_is_returned(context, 200)
-    response = context.response.json()
-    context.digest = response["parameter"][0]["valueString"]
-    print(context.digest)
+    context.digest = response.json()["parameter"][0]["valueString"]
