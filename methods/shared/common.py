@@ -43,10 +43,6 @@ def get_auth(user, env):
     return token
 
 
-if __name__ == "__main__":
-    get_auth("123", "int")
-
-
 def assert_that(actual):
     allure.attach(
         body=str(actual), name="Actual", attachment_type=allure.attachment_type.TEXT
