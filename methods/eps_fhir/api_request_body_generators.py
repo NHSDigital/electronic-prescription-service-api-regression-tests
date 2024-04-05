@@ -31,6 +31,37 @@ def create_fhir_bundle(**kwargs):
     return json.dumps(fhir_bundle)
 
 
+def create_fhir_signed_bundle(**kwargs):
+    bundle_id = str(uuid.uuid4())
+    fhir_bundle = {
+        "resourceType": "Bundle",
+        "id": "aef77afb-7e3c-427a-8657-2c427f71a271",
+        "identifier": {
+            "system": "https://tools.ietf.org/html/rfc4122",
+            "value": bundle_id,
+        },
+        "type": "message",
+        "entry": [],
+    }
+
+    if kwargs.get("message_header"):
+        fhir_bundle["entry"].append(kwargs["message_header"])
+    if kwargs.get("practitioner_role"):
+        fhir_bundle["entry"].append(kwargs["practitioner_role"])
+    if kwargs.get("practitioner"):
+        fhir_bundle["entry"].append(kwargs["practitioner"])
+    if kwargs.get("patient"):
+        fhir_bundle["entry"].append(kwargs["patient"])
+    if kwargs.get("organization"):
+        fhir_bundle["entry"].append(kwargs["organization"])
+    if kwargs.get("medication_request"):
+        fhir_bundle["entry"].append(kwargs["medication_request"])
+    if kwargs.get("provenance"):
+        fhir_bundle["entry"].append(kwargs["provenance"])
+
+    return json.dumps(fhir_bundle)
+
+
 def generate_message_header(**kwargs):
     bundle_id = kwargs["bundle_id"]
     sender_ods_code = kwargs["sender_ods_code"]
@@ -369,3 +400,24 @@ def generate_organization():
         },
     }
     return organization
+
+
+def generate_provenance(**kwargs):
+    signature = kwargs["signature"]
+    provenance = {
+        "fullUrl": "urn:uuid:28828c55-8fa7-42d7-916f-fcf076e0c10e",
+        "resource": {
+            "resourceType": "Provenance",
+            "target": [{"reference": "urn:uuid:a54219b8-f741-4c47-b662-e4f8dfa49ab6"}],
+            "agent": [
+                {
+                    "who": {
+                        # practitioner-role
+                        "reference": "urn:uuid:56166769-c1c4-4d07-afa8-132b5dfca666"
+                    }
+                }
+            ],
+            "signature": [{"when": "2024-03-05T13:28:16+00:00", "data": signature}],
+        },
+    }
+    return provenance
