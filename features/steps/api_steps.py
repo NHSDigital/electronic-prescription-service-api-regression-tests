@@ -1,6 +1,9 @@
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 
-from methods.eps_fhir.api_methods import prepare_prescription
+from methods.eps_fhir.api_methods import (
+    prepare_prescription,
+    create_signed_prescription,
+)
 from methods.shared import common
 from methods.shared.api import request_ping
 from methods.shared.common import assert_that, get_auth
@@ -17,9 +20,10 @@ def i_am_an_authorised_user(context, user):
 @given("I successfully prepare, sign and send a {prescription_type} prescription")
 def i_prepare_sign_release_a_prescription(context, prescription_type):
     i_prepare_a_new_prescription(context, prescription_type)
-    raise NotImplementedError(
-        "STEP: And I successfully prepare, sign and send a <Type> prescription"
-    )
+    i_sign_a_new_prescription(context=context)
+    # raise NotImplementedError(
+    #     "STEP: And I successfully prepare, sign and send a <Type> prescription"
+    # )
 
 
 def i_prepare_a_new_prescription(context, prescription_type):
@@ -27,6 +31,10 @@ def i_prepare_a_new_prescription(context, prescription_type):
     if prescription_type == "non-nominated":
         context.nomination_code = "0004"
     prepare_prescription(context)
+
+
+def i_sign_a_new_prescription(context):
+    create_signed_prescription(context)
 
 
 @when('I make a request to the "{product}" ping endpoint')

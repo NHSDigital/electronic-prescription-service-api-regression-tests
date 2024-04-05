@@ -1,5 +1,3 @@
-import uuid
-
 from methods.eps_fhir.api_request_body_generators import (
     create_fhir_bundle,
     create_fhir_signed_bundle,
@@ -21,9 +19,7 @@ def create_new_prepare_body(context):
     # context.bundle_id = uuid.uuid4()
     context.sender_ods_code = "RBA"
     context.prescription_id = generate_short_form_id(ods_code=context.sender_ods_code)
-    message_header = generate_message_header(
-        bundle_id=uuid.uuid4(), sender_ods_code=context.sender_ods_code
-    )
+    message_header = generate_message_header(sender_ods_code=context.sender_ods_code)
     medication_request = generate_medication_request(
         short_prescription_id=context.prescription_id,
         code=context.nomination_code,
@@ -53,13 +49,10 @@ def prepare_prescription(context):
     context.digest = response.json()["parameter"][0]["valueString"]
 
 
-def create_new_digested_body(context):
-    context.sender_ods_code = "RBA"
+def create_new_signed_body(context):
     context.prescription_id = generate_short_form_id(ods_code=context.sender_ods_code)
     context.signature = get_signature(context.digest, True)
-    message_header = generate_message_header(
-        bundle_id=uuid.uuid4(), sender_ods_code=context.sender_ods_code
-    )
+    message_header = generate_message_header(sender_ods_code=context.sender_ods_code)
     medication_request = generate_medication_request(
         short_prescription_id=context.prescription_id,
         code=context.nomination_code,
@@ -68,7 +61,7 @@ def create_new_digested_body(context):
     organization = generate_organization()
     practitioner_role = generate_practitioner_role()
     practitioner = generate_practitioner()
-    provenance = generate_provenance(data=context.signature)
+    provenance = generate_provenance(signature=context.signature)
     body = create_fhir_signed_bundle(
         message_header=message_header,
         medication_request=medication_request,
@@ -83,7 +76,7 @@ def create_new_digested_body(context):
 
 def create_signed_prescription(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/$process-message#prescription-order"
-    body = create_new_digested_body(context)
+    body = create_new_signed_body(context)
     headers = get_default_headers()
     headers.update({"Authorization": f"Bearer {context.auth_token}"})
     post(data=body, url=url, context=context, headers=headers)

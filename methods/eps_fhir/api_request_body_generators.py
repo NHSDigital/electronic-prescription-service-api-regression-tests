@@ -63,7 +63,7 @@ def create_fhir_signed_bundle(**kwargs):
 
 
 def generate_message_header(**kwargs):
-    bundle_id = kwargs["bundle_id"]
+    bundle_id = uuid.uuid4()
     sender_ods_code = kwargs["sender_ods_code"]
     # focus = kwargs["focus"]
     # destination = kwargs["destination"]
