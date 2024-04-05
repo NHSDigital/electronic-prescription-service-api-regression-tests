@@ -246,3 +246,5 @@ node_modules
 
 # VSCODE specific
 .vscode
+# certs
+/certs/*
