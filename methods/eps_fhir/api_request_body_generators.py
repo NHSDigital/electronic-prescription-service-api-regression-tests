@@ -369,7 +369,7 @@ def generate_patient(**kwargs):
 
 def generate_organization():
     organization = {
-        "fullUrl": "urn:uuid:3b4b03a5-52ba-4ba6-9b82-70350aa109d8",
+        "fullUrl": "urn:uuid:3b4b03a5-52ba-4ba6-9b82-70350aa109d8",  # del
         "resource": {
             "resourceType": "Organization",
             "identifier": [
@@ -390,7 +390,7 @@ def generate_organization():
             "telecom": [
                 {"system": "phone", "value": "01823 333444", "use": "work"}
             ],  # mandatory
-            "partOf": {
+            "partOf": {  # del
                 "identifier": {
                     "system": "https://fhir.nhs.uk/Id/ods-organization-code",
                     "value": "RBA",
@@ -409,6 +409,7 @@ def generate_provenance(**kwargs):
         "resource": {
             "resourceType": "Provenance",
             "target": [{"reference": "urn:uuid:a54219b8-f741-4c47-b662-e4f8dfa49ab6"}],
+            "recorded": "2023-11-12T16:05:47+00:00",
             "agent": [
                 {
                     "who": {
@@ -417,7 +418,21 @@ def generate_provenance(**kwargs):
                     }
                 }
             ],
-            "signature": [{"when": "2024-03-05T13:28:16+00:00", "data": signature}],
+            "signature": [
+                {
+                    "type": [
+                        {
+                            "system": "urn:iso-astm:E1762-95:2013",
+                            "code": "1.2.840.10065.1.12.1.1",
+                        }
+                    ],
+                    "when": "2024-03-05T13:28:16+00:00",
+                    "who": {
+                        "reference": "urn:uuid:56166769-c1c4-4d07-afa8-132b5dfca666"
+                    },
+                    "data": signature,
+                }
+            ],
         },
     }
     return provenance

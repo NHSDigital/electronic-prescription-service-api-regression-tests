@@ -561,3 +561,102 @@ data = {
 #     ],
 # }
 #     return data
+
+# RELEASE
+# {
+#     "resourceType": "Parameters",
+#     "id": "854b706a-c6e5-11ec-9d64-0242ac120002",
+#     "parameter": [
+#         { //generate
+#             "name": "group-identifier",
+#             "valueIdentifier": {
+#                 "system": "https://fhir.nhs.uk/Id/prescription-order-number",
+#                 "value": "24F5DA-A83008-7EFE6Z" // get from short_perscription_id
+#             }
+#         },
+#         {
+#             "name": "owner", // add
+#             "resource": {
+#                 "resourceType": "Organization",
+#                 "identifier": [
+#                     {
+#                         "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+#                         "value": "VNE51" // performer from create or receiver from prepare
+#                     }#                 ],
+#                 "active": true, // add
+#                 "type": [
+#                     {
+#                         "coding": [
+#                             {
+#                                 "system": "https://fhir.nhs.uk/CodeSystem/organisation-role", // where is thi comming
+# from
+#                                 "code": "182", // and this
+#                                 "display": "PHARMACY"
+#                             }
+#                         ]
+#                     }
+#                 ],
+#                 "name": "The Simple Pharmacy",
+#                 "telecom": [
+#                     {
+#                         "system": "phone",
+#                         "value": "0113 3180277",
+#                         "use": "work"
+#                     }
+#                 ],
+#                 "address": [
+#                     {
+#                         "use": "work",
+#                         "line": [
+#                             "17 Austhorpe Road",
+#                             "Crossgates",
+#                             "Leeds"
+#                         ],
+#                         "city": "West Yorkshire",
+#                         "postalCode": "LS15 8BA"
+#                     }
+#                 ]
+#             }
+#         },
+#         { // to generate ? hardcode
+#             "name": "status",
+#             "valueCode": "accepted"
+#         },
+#         {
+#             "name": "agent",
+#             "resource": {
+#                 "resourceType": "PractitionerRole",
+#                 "id": "16708936-6397-4e03-b84f-4aaa790633e0",
+#                 "identifier": [
+#                     {
+#                         "system": "https://fhir.nhs.uk/Id/sds-role-profile-id",
+#                         "value": "555086415105"
+#                     } // dont need spurious
+#                 ],
+#                 "practitioner": {
+#                     "identifier": {
+#                         "system": "https://fhir.nhs.uk/Id/sds-user-id", // comes from practitioner
+#                         "value": "3415870201"
+#                     }
+#                 },
+#                 "code": [ //dont need jobrolename
+#                     {
+#                         "coding": [
+#                             {
+#                                 "system": "https://fhir.nhs.uk/CodeSystem/NHSDigital-SDS-JobRoleCode",
+#                                 "code": "R8000"
+#                             }
+#                         ]
+#                     }
+#                 ],
+#                 "telecom": [ //same
+#                     {
+#                         "system": "phone",
+#                         "value": "02380798431",
+#                         "use": "work"
+#                     }
+#                 ]
+#             }
+#         }
+#     ]
+# }

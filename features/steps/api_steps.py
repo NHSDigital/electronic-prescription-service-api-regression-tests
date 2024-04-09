@@ -3,6 +3,7 @@ from behave import given, when, then  # pyright: ignore [reportAttributeAccessIs
 from methods.eps_fhir.api_methods import (
     prepare_prescription,
     create_signed_prescription,
+    release_signed_prescription,
 )
 from methods.shared import common
 from methods.shared.api import request_ping
@@ -21,6 +22,7 @@ def i_am_an_authorised_user(context, user):
 def i_prepare_sign_release_a_prescription(context, prescription_type):
     i_prepare_a_new_prescription(context, prescription_type)
     i_sign_a_new_prescription(context=context)
+    i_release_a_prescription(context)  # is this correct here?
     # raise NotImplementedError(
     #     "STEP: And I successfully prepare, sign and send a <Type> prescription"
     # )
@@ -35,6 +37,10 @@ def i_prepare_a_new_prescription(context, prescription_type):
 
 def i_sign_a_new_prescription(context):
     create_signed_prescription(context)
+
+
+def i_release_a_prescription(context):
+    release_signed_prescription(context)
 
 
 @when('I make a request to the "{product}" ping endpoint')

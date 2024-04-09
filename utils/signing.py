@@ -16,8 +16,8 @@ from os.path import exists
 
 # PRIVATE_KEY_PATH = os.environ["SIGNING_PRIVATE_KEY_PATH"]
 # X509_CERT_PATH = os.environ["SIGNING_CERT_PATH"]
-PRIVATE_KEY_PATH = "../certs/cert.crt"
-X509_CERT_PATH = "../certs/x506.pem"
+PRIVATE_KEY_PATH = "./certs/cert.crt"
+X509_CERT_PATH = "./certs/x506.pem"
 DUMMY_SIGNATURE = """
 DQo8U2lnbmF0dXJlIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwLz\
 A5L3htbGRzaWcjIj4NCiAgICA8U2lnbmVkSW5mbz48Q2Fub25pY2FsaXph\
@@ -76,7 +76,6 @@ def get_signature(digest: str, valid: bool):
 
     # match returned signature data with that from equivalent ts code
     signature_data = base64.b64encode(xml_d_sig.encode("utf-8")).decode("utf-8")
-    print(signature_data)
     return signature_data
 
 

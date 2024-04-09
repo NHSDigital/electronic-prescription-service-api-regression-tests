@@ -74,9 +74,23 @@ def create_new_signed_body(context):
     return body
 
 
+def create_release_body(context):
+    pass
+
+
 def create_signed_prescription(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/$process-message#prescription-order"
     body = create_new_signed_body(context)
+    headers = get_default_headers()
+    headers.update({"Authorization": f"Bearer {context.auth_token}"})
+    # print(body)
+    post(data=body, url=url, context=context, headers=headers)
+    common.the_expected_response_code_is_returned(context, 200)
+
+
+def release_signed_prescription(context):
+    url = f"{context.eps_fhir_base_url}/FHIR/R4/Task/$release"
+    body = create_release_body(context)
     headers = get_default_headers()
     headers.update({"Authorization": f"Bearer {context.auth_token}"})
     post(data=body, url=url, context=context, headers=headers)
