@@ -4,6 +4,7 @@ from methods.eps_fhir.api_methods import (
     prepare_prescription,
     create_signed_prescription,
     release_signed_prescription,
+    indicate_success,
 )
 from methods.shared import common
 from methods.shared.api import request_ping
@@ -22,7 +23,6 @@ def i_am_an_authorised_user(context, user):
 def i_prepare_sign_release_a_prescription(context, prescription_type):
     i_prepare_a_new_prescription(context, prescription_type)
     i_sign_a_new_prescription(context=context)
-    i_release_a_prescription(context)  # is this correct here?
     # raise NotImplementedError(
     #     "STEP: And I successfully prepare, sign and send a <Type> prescription"
     # )
@@ -39,8 +39,14 @@ def i_sign_a_new_prescription(context):
     create_signed_prescription(context)
 
 
+@when("I release a prescription")
 def i_release_a_prescription(context):
     release_signed_prescription(context)
+
+
+@then("the response indicates success")
+def indicate_successfull_response(context):
+    indicate_success(context)
 
 
 @when('I make a request to the "{product}" ping endpoint')

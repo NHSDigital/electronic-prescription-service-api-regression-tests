@@ -1,6 +1,7 @@
 from methods.eps_fhir.api_request_body_generators import (
     create_fhir_bundle,
     create_fhir_signed_bundle,
+    create_fhir_parameter,
     generate_message_header,
     generate_medication_request,
     generate_patient,
@@ -8,6 +9,9 @@ from methods.eps_fhir.api_request_body_generators import (
     generate_practitioner_role,
     generate_practitioner,
     generate_provenance,
+    generate_agent,
+    generate_owner,
+    generate_group_identifier,
 )
 from methods.shared import common
 from methods.shared.api import post, get_default_headers
@@ -16,7 +20,6 @@ from utils.signing import get_signature
 
 
 def create_new_prepare_body(context):
-    # context.bundle_id = uuid.uuid4()
     context.sender_ods_code = "RBA"
     context.prescription_id = generate_short_form_id(ods_code=context.sender_ods_code)
     message_header = generate_message_header(sender_ods_code=context.sender_ods_code)
@@ -75,7 +78,16 @@ def create_new_signed_body(context):
 
 
 def create_release_body(context):
-    pass
+    prescription_order_number = context.prescription_id
+    agent = generate_agent()
+    owner = generate_owner()
+    group_identifier = generate_group_identifier(
+        prescription_order_number=prescription_order_number
+    )
+    body = create_fhir_parameter(
+        agent=agent, owner=owner, group_identifier=group_identifier
+    )
+    return body
 
 
 def create_signed_prescription(context):
@@ -94,4 +106,7 @@ def release_signed_prescription(context):
     headers = get_default_headers()
     headers.update({"Authorization": f"Bearer {context.auth_token}"})
     post(data=body, url=url, context=context, headers=headers)
+
+
+def indicate_success(context):
     common.the_expected_response_code_is_returned(context, 200)

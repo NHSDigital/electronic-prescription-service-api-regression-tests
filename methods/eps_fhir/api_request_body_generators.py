@@ -31,7 +31,7 @@ def create_fhir_bundle(**kwargs):
     return json.dumps(fhir_bundle)
 
 
-def create_fhir_signed_bundle(**kwargs):
+def create_fhir_signed_bundle(**kwargs):  # DRY it
     bundle_id = str(uuid.uuid4())
     fhir_bundle = {
         "resourceType": "Bundle",
@@ -60,6 +60,25 @@ def create_fhir_signed_bundle(**kwargs):
         fhir_bundle["entry"].append(kwargs["provenance"])
 
     return json.dumps(fhir_bundle)
+
+
+def create_fhir_parameter(**kwargs):
+    fhir_parameter = {
+        "resourceType": "Parameters",
+        "id": "854b706a-c6e5-11ec-9d64-0242ac120002",
+        "parameter": [
+            {"name": "status", "valueCode": "accepted"},
+        ],
+    }
+
+    if kwargs.get("group_indentifier"):
+        fhir_parameter["parameter"].append(kwargs["group_identifier"])
+    if kwargs.get("owner"):
+        fhir_parameter["parameter"].append(kwargs["owner"])
+    if kwargs.get("agent"):
+        fhir_parameter["parameter"].append(kwargs["agent"])
+    print(json.dumps(fhir_parameter))
+    return json.dumps(fhir_parameter)
 
 
 def generate_message_header(**kwargs):
@@ -436,3 +455,88 @@ def generate_provenance(**kwargs):
         },
     }
     return provenance
+
+
+def generate_owner():
+    owner = {
+        "name": "owner",
+        "resource": {
+            "resourceType": "Organization",
+            "identifier": [
+                {
+                    "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                    "value": "A99968",
+                }
+            ],
+            "active": True,
+            "type": [
+                {
+                    "coding": [
+                        {
+                            "system": "https://fhir.nhs.uk/CodeSystem/organisation-role",
+                            "code": "123",
+                        }
+                    ]
+                }
+            ],
+            "name": "SOMERSET BOWEL CANCER SCREENING CENTRE",  # mandatory
+            "address": [
+                {
+                    "use": "work",
+                    "line": ["MUSGROVE PARK HOSPITAL"],
+                    "city": "TAUNTON",
+                    "postalCode": "TA1 5DA",
+                }
+            ],  # mandatory
+            "telecom": [
+                {"system": "phone", "value": "01823 333444", "use": "work"}
+            ],  # mandatory
+        },
+    }
+    return owner
+
+
+def generate_agent():
+    agent = {
+        "name": "agent",
+        "resource": {
+            "resourceType": "PractitionerRole",
+            "identifier": [
+                {
+                    "system": "https://fhir.nhs.uk/Id/sds-role-profile-id",
+                    "value": "100102238986",
+                }
+            ],
+            "practitioner": {
+                "identifier": {
+                    "system": "https://fhir.nhs.uk/Id/sds-user-id",
+                    "value": "555086689106",
+                }
+            },
+            "code": [
+                {
+                    "coding": [
+                        {
+                            "system": "https://fhir.nhs.uk/CodeSystem/NHSDigital-SDS-JobRoleCode",
+                            "code": "R8000",
+                            "display": "Clinical Practitioner Access Role",
+                        }
+                    ]
+                }
+            ],
+            "telecom": [{"system": "phone", "value": "01234567890", "use": "work"}],
+        },
+    }
+    return agent
+
+
+def generate_group_identifier(**kwargs):
+    prescription_order_number = kwargs["prescription_order_number"]
+    group_identifier = {
+        "name": "group-identifier",
+        "valueIdentifier": {
+            "system": "https://fhir.nhs.uk/Id/prescription-order-number",
+            "value": prescription_order_number,
+        },
+    }
+    return group_identifier

@@ -588,10 +588,8 @@ data = {
 #                     {
 #                         "coding": [
 #                             {
-#                                 "system": "https://fhir.nhs.uk/CodeSystem/organisation-role", // where is thi comming
-# from
+#                                 "system": "https://fhir.nhs.uk/CodeSystem/organisation-role"
 #                                 "code": "182", // and this
-#                                 "display": "PHARMACY"
 #                             }
 #                         ]
 #                     }
