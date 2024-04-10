@@ -2,83 +2,76 @@ import json
 import uuid
 
 
+def create_fhir_resource(resource_type, main_keys, **kwargs):
+    resource_id = str(uuid.uuid4())
+    fhir_resource = {
+        "resourceType": resource_type,
+        "id": resource_id,
+    }
+
+    if resource_type == "Bundle":
+        fhir_resource.update(
+            {
+                "identifier": {
+                    "system": "https://tools.ietf.org/html/rfc4122",
+                    "value": resource_id,
+                },
+                "type": "message",
+                "entry": [],
+            }
+        )
+        main_key = "entry"
+    if resource_type == "Parameters":
+        fhir_resource["parameter"] = [
+            {"name": "status", "valueCode": "accepted"},
+        ]
+        main_key = "parameter"
+
+    for key in main_keys:
+        if kwargs.get(key):
+            fhir_resource[
+                main_key  # pyright: ignore[reportPossiblyUnboundVariable]
+            ].append(kwargs[key])
+    return json.dumps(fhir_resource)
+
+
 def create_fhir_bundle(**kwargs):
-    bundle_id = str(uuid.uuid4())
-    fhir_bundle = {
-        "resourceType": "Bundle",
-        "id": "aef77afb-7e3c-427a-8657-2c427f71a271",
-        "identifier": {
-            "system": "https://tools.ietf.org/html/rfc4122",
-            "value": bundle_id,
-        },
-        "type": "message",
-        "entry": [],
-    }
-
-    if kwargs.get("message_header"):
-        fhir_bundle["entry"].append(kwargs["message_header"])
-    if kwargs.get("practitioner_role"):
-        fhir_bundle["entry"].append(kwargs["practitioner_role"])
-    if kwargs.get("practitioner"):
-        fhir_bundle["entry"].append(kwargs["practitioner"])
-    if kwargs.get("patient"):
-        fhir_bundle["entry"].append(kwargs["patient"])
-    if kwargs.get("organization"):
-        fhir_bundle["entry"].append(kwargs["organization"])
-    if kwargs.get("medication_request"):
-        fhir_bundle["entry"].append(kwargs["medication_request"])
-
-    return json.dumps(fhir_bundle)
+    return create_fhir_resource(
+        "Bundle",
+        [
+            "message_header",
+            "practitioner_role",
+            "practitioner",
+            "patient",
+            "organization",
+            "medication_request",
+        ],
+        **kwargs,
+    )
 
 
-def create_fhir_signed_bundle(**kwargs):  # DRY it
-    bundle_id = str(uuid.uuid4())
-    fhir_bundle = {
-        "resourceType": "Bundle",
-        "id": "aef77afb-7e3c-427a-8657-2c427f71a271",
-        "identifier": {
-            "system": "https://tools.ietf.org/html/rfc4122",
-            "value": bundle_id,
-        },
-        "type": "message",
-        "entry": [],
-    }
-
-    if kwargs.get("message_header"):
-        fhir_bundle["entry"].append(kwargs["message_header"])
-    if kwargs.get("practitioner_role"):
-        fhir_bundle["entry"].append(kwargs["practitioner_role"])
-    if kwargs.get("practitioner"):
-        fhir_bundle["entry"].append(kwargs["practitioner"])
-    if kwargs.get("patient"):
-        fhir_bundle["entry"].append(kwargs["patient"])
-    if kwargs.get("organization"):
-        fhir_bundle["entry"].append(kwargs["organization"])
-    if kwargs.get("medication_request"):
-        fhir_bundle["entry"].append(kwargs["medication_request"])
-    if kwargs.get("provenance"):
-        fhir_bundle["entry"].append(kwargs["provenance"])
-
-    return json.dumps(fhir_bundle)
+def create_fhir_signed_bundle(**kwargs):
+    return create_fhir_resource(
+        "Bundle",
+        [
+            "message_header",
+            "practitioner_role",
+            "practitioner",
+            "patient",
+            "organization",
+            "medication_request",
+            "provenance",
+        ],
+        **kwargs,
+    )
 
 
 def create_fhir_parameter(**kwargs):
-    fhir_parameter = {
-        "resourceType": "Parameters",
-        "id": "854b706a-c6e5-11ec-9d64-0242ac120002",
-        "parameter": [
-            {"name": "status", "valueCode": "accepted"},
-        ],
-    }
-
-    if kwargs.get("group_identifier"):
-        fhir_parameter["parameter"].append(kwargs["group_identifier"])
-    if kwargs.get("owner"):
-        fhir_parameter["parameter"].append(kwargs["owner"])
-    if kwargs.get("agent"):
-        fhir_parameter["parameter"].append(kwargs["agent"])
-    print(json.dumps(fhir_parameter))
-    return json.dumps(fhir_parameter)
+    return create_fhir_resource(
+        "Parameters",
+        ["group_identifier", "agent", "owner"],
+        **kwargs,
+    )
 
 
 def generate_message_header(**kwargs):
