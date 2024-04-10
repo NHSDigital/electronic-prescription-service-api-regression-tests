@@ -71,7 +71,7 @@ def create_fhir_parameter(**kwargs):
         ],
     }
 
-    if kwargs.get("group_indentifier"):
+    if kwargs.get("group_identifier"):
         fhir_parameter["parameter"].append(kwargs["group_identifier"])
     if kwargs.get("owner"):
         fhir_parameter["parameter"].append(kwargs["owner"])
