@@ -84,7 +84,6 @@ def create_fhir_parameter(**kwargs):
 def generate_message_header(**kwargs):
     bundle_id = uuid.uuid4()
     sender_ods_code = kwargs["sender_ods_code"]
-    # focus = kwargs["focus"]
     # destination = kwargs["destination"]
     message_header = {
         "fullUrl": f"urn:uuid:{bundle_id}",
@@ -105,16 +104,11 @@ def generate_message_header(**kwargs):
                 "display": "RAZIA|ALI",
             },
             "source": {"endpoint": f"urn:nhs-uk:addressing:ods:{sender_ods_code}"},
-            # "focus": [
-            #     {"reference": "urn:uuid:56166769-c1c4-4d07-afa8-132b5dfca666"},
-            #     {"reference": "urn:uuid:a54219b8-f741-4c47-b662-e4f8dfa49ab6"},
-            # ],
         },
     }
     # if destination:  # Nominated
     #     message_header.update(destination)
-    # if focus:
-    #     message_header.update(focus)
+
     return message_header
 
 
