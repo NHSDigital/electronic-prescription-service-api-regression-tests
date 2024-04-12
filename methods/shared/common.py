@@ -40,6 +40,7 @@ def get_auth(user, env):
     )
     assert resp.status_code == 200
     print("Successfully Authenticated")
+    print(token)
     return token
 
 
@@ -91,3 +92,6 @@ def attach_api_information(context):
 def the_expected_response_code_is_returned(context, expected_response_code: int):
     actual_response_code = context.response.status_code
     assert_that(actual_response_code).is_equal_to(expected_response_code)
+
+if __name__ == "__main__":
+    get_auth("dispenser", "INT")
