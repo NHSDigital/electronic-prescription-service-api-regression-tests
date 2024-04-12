@@ -105,6 +105,8 @@ def release_signed_prescription(context):
     body = create_release_body(context)
     headers = get_default_headers()
     headers.update({"Authorization": f"Bearer {context.auth_token}"})
+    headers.update({"NHSD-Session-URID": "555083343101"})
+    print(body)
     post(data=body, url=url, context=context, headers=headers)
 
 

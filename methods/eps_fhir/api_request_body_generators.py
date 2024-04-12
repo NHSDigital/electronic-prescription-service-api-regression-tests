@@ -497,8 +497,9 @@ def generate_agent():
             "practitioner": {
                 "identifier": {
                     "system": "https://fhir.nhs.uk/Id/sds-user-id",
-                    "value": "555086689106",
-                }
+                    "value": "555083343101",
+                },
+                "display": "AutoTest Practitioner",
             },
             "code": [
                 {
