@@ -86,7 +86,7 @@ def load_file(path, mode="rb"):
 
 
 if __name__ == "__main__":
-    get_signature(
+    print(get_signature(
         "PFNpZ25lZEluZm8geG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvMDkveG1sZHNpZyMiPjxDYW5vbmljYWxpemF0aW9uTWV0aG9"
         "kIEFsZ29yaXRobT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS8xMC94bWwtZXhjLWMxNG4jIj48L0Nhbm9uaWNhbGl6YXRpb25NZXRob2Q+PFNp"
         "Z25hdHVyZU1ldGhvZCBBbGdvcml0aG09Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvMDkveG1sZHNpZyNyc2Etc2hhMSI+PC9TaWduYXR1cmVNZ"
@@ -95,4 +95,4 @@ if __name__ == "__main__":
         "vMDkveG1sZHNpZyNzaGExIj48L0RpZ2VzdE1ldGhvZD48RGlnZXN0VmFsdWU+RmtLUndhMkp6eGd1WjR0cFk4S1Q4LzdmeTVjPTwvRGlnZXN0"
         "VmFsdWU+PC9SZWZlcmVuY2U+PC9TaWduZWRJbmZvPg==",
         True,
-    )
+    ))

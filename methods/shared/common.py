@@ -40,7 +40,6 @@ def get_auth(user, env):
     )
     assert resp.status_code == 200
     print("Successfully Authenticated")
-    print(token)
     return token
 
 
@@ -95,4 +94,4 @@ def the_expected_response_code_is_returned(context, expected_response_code: int)
 
 
 if __name__ == "__main__":
-    get_auth("dispenser", "INT")
+    print(get_auth("dispenser", "INT"))
