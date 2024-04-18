@@ -17,7 +17,7 @@ update-poetry:
 	poetry update
 
 install-python:
-	poetry install
+	poetry install --no-root
 
 install-hooks: install-python
 	poetry run pre-commit install --install-hooks --overwrite

@@ -77,7 +77,7 @@ def create_fhir_parameter(**kwargs):
 def generate_message_header(**kwargs):
     bundle_id = uuid.uuid4()
     sender_ods_code = kwargs["sender_ods_code"]
-    # destination = kwargs["destination"]
+    receiver_ods_code = kwargs["receiver_ods_code"]
     message_header = {
         "fullUrl": f"urn:uuid:{bundle_id}",
         "resource": {
@@ -99,9 +99,23 @@ def generate_message_header(**kwargs):
             "source": {"endpoint": f"urn:nhs-uk:addressing:ods:{sender_ods_code}"},
         },
     }
-    # if destination:  # Nominated
-    #     message_header.update(destination)
 
+    if receiver_ods_code:  # Nominated
+        message_header["resource"].update(
+            {
+                "destination": [
+                    {
+                        "endpoint": "https://sandbox.api.service.nhs.uk/electronic-prescriptions/$post-message",
+                        "receiver": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                                "value": receiver_ods_code,
+                            }
+                        },
+                    }
+                ]
+            },
+        )
     return message_header
 
 

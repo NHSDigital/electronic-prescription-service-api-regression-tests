@@ -32,6 +32,8 @@ def i_prepare_a_new_prescription(context, prescription_type):
     context.nhs_number = random_nhs_number_generator()
     if prescription_type == "non-nominated":
         context.nomination_code = "0004"
+    if prescription_type == "nominated":
+        context.nomination_code = "P1"
     prepare_prescription(context)
 
 

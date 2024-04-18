@@ -13,7 +13,7 @@ from methods.eps_fhir.api_request_body_generators import (
     generate_owner,
     generate_group_identifier,
 )
-from methods.shared import common
+from methods.shared.common import the_expected_response_code_is_returned
 from methods.shared.api import post, get_default_headers
 from utils.prescription_id_generator import generate_short_form_id
 from utils.signing import get_signature
@@ -21,8 +21,12 @@ from utils.signing import get_signature
 
 def create_new_prepare_body(context):
     context.sender_ods_code = "RBA"
+    context.receiver_ods_code = "FH542"
     context.prescription_id = generate_short_form_id(ods_code=context.sender_ods_code)
-    message_header = generate_message_header(sender_ods_code=context.sender_ods_code)
+    message_header = generate_message_header(
+        sender_ods_code=context.sender_ods_code,
+        receiver_ods_code=context.receiver_ods_code,
+    )
     medication_request = generate_medication_request(
         short_prescription_id=context.prescription_id,
         code=context.nomination_code,
@@ -48,14 +52,17 @@ def prepare_prescription(context):
     headers = get_default_headers()
     headers.update({"Authorization": f"Bearer {context.auth_token}"})
     response = post(data=body, url=url, context=context, headers=headers)
-    common.the_expected_response_code_is_returned(context, 200)
+    print(f"Prep:{body}")
+    the_expected_response_code_is_returned(context, 200)
     context.digest = response.json()["parameter"][0]["valueString"]
 
 
 def create_new_signed_body(context):
-    context.prescription_id = generate_short_form_id(ods_code=context.sender_ods_code)
     context.signature = get_signature(context.digest, True)
-    message_header = generate_message_header(sender_ods_code=context.sender_ods_code)
+    message_header = generate_message_header(
+        sender_ods_code=context.sender_ods_code,
+        receiver_ods_code=context.receiver_ods_code,
+    )
     medication_request = generate_medication_request(
         short_prescription_id=context.prescription_id,
         code=context.nomination_code,
@@ -95,9 +102,9 @@ def create_signed_prescription(context):
     body = create_new_signed_body(context)
     headers = get_default_headers()
     headers.update({"Authorization": f"Bearer {context.auth_token}"})
-    # print(body)
     post(data=body, url=url, context=context, headers=headers)
-    common.the_expected_response_code_is_returned(context, 200)
+    print(f"Sign:{body}")
+    the_expected_response_code_is_returned(context, 200)
 
 
 def release_signed_prescription(context):
@@ -106,9 +113,9 @@ def release_signed_prescription(context):
     headers = get_default_headers()
     headers.update({"Authorization": f"Bearer {context.auth_token}"})
     headers.update({"NHSD-Session-URID": "555083343101"})
-    print(body)
     post(data=body, url=url, context=context, headers=headers)
+    print(f"Rel:{body}")
 
 
 def indicate_success(context):
-    common.the_expected_response_code_is_returned(context, 200)
+    the_expected_response_code_is_returned(context, 200)

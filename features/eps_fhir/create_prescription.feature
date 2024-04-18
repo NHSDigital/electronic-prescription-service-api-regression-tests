@@ -11,5 +11,5 @@ Feature: I can can create prescriptions using the EPS FHIR API
     Then the response indicates success
     Examples:
       | Type          |
-#      | nominated     |
-      | non-nominated |
+      | nominated     |
+      #| non-nominated |
