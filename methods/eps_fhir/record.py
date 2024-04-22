@@ -140,7 +140,7 @@ patient = {
             {
                 "identifier": {
                     "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-                    "value": "B81001",
+                    "value": "A99968",
                 }
             }
         ],

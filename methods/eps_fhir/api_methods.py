@@ -52,9 +52,11 @@ def prepare_prescription(context):
     headers = get_default_headers()
     headers.update({"Authorization": f"Bearer {context.auth_token}"})
     response = post(data=body, url=url, context=context, headers=headers)
-    print(f"Prep:{body}")
     the_expected_response_code_is_returned(context, 200)
     context.digest = response.json()["parameter"][0]["valueString"]
+    with open("prepare_prescription.json", "a") as f:
+        print(body, file=f)
+        print(f"DIGEST:{context.digest}")
 
 
 def create_new_signed_body(context):
@@ -72,6 +74,7 @@ def create_new_signed_body(context):
     practitioner_role = generate_practitioner_role()
     practitioner = generate_practitioner()
     provenance = generate_provenance(signature=context.signature)
+    # print(provenance)
     body = create_fhir_signed_bundle(
         message_header=message_header,
         medication_request=medication_request,
@@ -103,7 +106,8 @@ def create_signed_prescription(context):
     headers = get_default_headers()
     headers.update({"Authorization": f"Bearer {context.auth_token}"})
     post(data=body, url=url, context=context, headers=headers)
-    print(f"Sign:{body}")
+    with open("create_signed_prescription.json", "a") as f:
+        print(body, file=f)
     the_expected_response_code_is_returned(context, 200)
 
 
@@ -114,7 +118,8 @@ def release_signed_prescription(context):
     headers.update({"Authorization": f"Bearer {context.auth_token}"})
     headers.update({"NHSD-Session-URID": "555083343101"})
     post(data=body, url=url, context=context, headers=headers)
-    print(f"Rel:{body}")
+    with open("release_signed_prescription.json", "a") as f:
+        print(body, file=f)
 
 
 def indicate_success(context):

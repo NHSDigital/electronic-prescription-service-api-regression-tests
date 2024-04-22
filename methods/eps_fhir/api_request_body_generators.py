@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 import json
 import uuid
 
@@ -378,7 +379,7 @@ def generate_patient(**kwargs):
                 {
                     "identifier": {
                         "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-                        "value": "B81001",
+                        "value": "A99968",
                     }
                 }
             ],
@@ -429,7 +430,7 @@ def generate_provenance(**kwargs):
         "resource": {
             "resourceType": "Provenance",
             "target": [{"reference": "urn:uuid:a54219b8-f741-4c47-b662-e4f8dfa49ab6"}],
-            "recorded": "2023-11-12T16:05:47+00:00",
+            "recorded": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S+00:00"),
             "agent": [
                 {
                     "who": {
@@ -446,7 +447,9 @@ def generate_provenance(**kwargs):
                             "code": "1.2.840.10065.1.12.1.1",
                         }
                     ],
-                    "when": "2024-03-05T13:28:16+00:00",
+                    "when": datetime.now(timezone.utc).strftime(
+                        "%Y-%m-%dT%H:%M:%S+00:00"
+                    ),
                     "who": {
                         "reference": "urn:uuid:56166769-c1c4-4d07-afa8-132b5dfca666"
                     },
