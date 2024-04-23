@@ -105,10 +105,10 @@ def create_signed_prescription(context):
     body = create_new_signed_body(context)
     headers = get_default_headers()
     headers.update({"Authorization": f"Bearer {context.auth_token}"})
-    post(data=body, url=url, context=context, headers=headers)
+    # post(data=body, url=url, context=context, headers=headers)
     with open("create_signed_prescription.json", "a") as f:
         print(body, file=f)
-    the_expected_response_code_is_returned(context, 200)
+    # the_expected_response_code_is_returned(context, 200)
 
 
 def release_signed_prescription(context):

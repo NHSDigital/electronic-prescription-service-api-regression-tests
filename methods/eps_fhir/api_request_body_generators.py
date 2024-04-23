@@ -379,7 +379,7 @@ def generate_patient(**kwargs):
                 {
                     "identifier": {
                         "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-                        "value": "A99968",
+                        "value": "RBA",
                     }
                 }
             ],
@@ -396,7 +396,7 @@ def generate_organization():
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-                    "value": "A99968",
+                    "value": "RBA",
                 }
             ],
             "name": "SOMERSET BOWEL CANCER SCREENING CENTRE",  # mandatory
@@ -414,7 +414,7 @@ def generate_organization():
             "partOf": {  # del
                 "identifier": {
                     "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-                    "value": "RBA",
+                    "value": "84H",
                 },
                 "display": "TAUNTON AND SOMERSET NHS FOUNDATION TRUST",  # mandatory
             },
@@ -469,7 +469,7 @@ def generate_owner():
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-                    "value": "A99968",
+                    "value": "RBA",
                 }
             ],
             "active": True,
