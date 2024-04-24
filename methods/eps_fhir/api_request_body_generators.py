@@ -290,7 +290,7 @@ def generate_practitioner_role():
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/sds-role-profile-id",
-                    "value": "100102238986",
+                    "value": "555083343101",
                 },
                 {
                     "system": "https://fhir.hl7.org.uk/Id/nhsbsa-spurious-code",
@@ -333,7 +333,7 @@ def generate_practitioner():
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/sds-user-id",
-                    "value": "555086689106",
+                    "value": "555083343101",
                 },
                 {
                     "system": "https://fhir.hl7.org.uk/Id/nmc-number",
@@ -508,7 +508,7 @@ def generate_agent():
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/sds-role-profile-id",
-                    "value": "100102238986",
+                    "value": "555083343101",
                 }
             ],
             "practitioner": {
