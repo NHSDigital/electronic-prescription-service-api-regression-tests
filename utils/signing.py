@@ -16,7 +16,7 @@ from datetime import datetime, timezone
 from os.path import exists
 
 PRIVATE_KEY_PATH = "./certs/cert.crt"
-X509_CERT_PATH = "./certs/x506.pem"
+X509_CERT_PATH = "./certs/x509.pem"
 DUMMY_SIGNATURE = """
 DQo8U2lnbmF0dXJlIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwLz\
 A5L3htbGRzaWcjIj4NCiAgICA8U2lnbmVkSW5mbz48Q2Fub25pY2FsaXph\
@@ -35,6 +35,7 @@ def verify_certificate_valid_when_signed(signature_date, certificate):
 
 
 def get_signature(digest: str, valid: bool):
+    # Load X.509 certificate
     with open(X509_CERT_PATH, "rb") as cert_file:
         cert_data = cert_file.read()
     certificate = load_pem_x509_certificate(cert_data, default_backend())
@@ -42,54 +43,54 @@ def get_signature(digest: str, valid: bool):
     # Get the current date (signature date)
     signature_date = datetime.now(timezone.utc)
 
-    # Check if certificate has expired
+    # Check if the certificate has expired
     if verify_certificate_valid_when_signed(signature_date, certificate):
         print("Certificate is valid.")
     else:
         raise Exception("Certificate has expired. You may need to generate a new one.")
 
+    # If private key doesn't exist but X.509 certificate exists, return dummy signature
     if not PRIVATE_KEY_EXISTS and X509_CERT_EXISTS:
         return DUMMY_SIGNATURE
-    # load x509 and check it hasn't expired
-    cert_bytes = load_file(X509_CERT_PATH)
-    x509_cert = load_pem_x509_certificate(cert_bytes)
 
+    # Load X.509 certificate and check if it has expired
+    x509_cert = load_pem_x509_certificate(cert_data, default_backend())
     if x509_cert.not_valid_after_utc < datetime.now(timezone.utc):
         raise Exception("Signing certificate has expired")
 
-    # load private key and generate signature
-    key_bytes = load_file(PRIVATE_KEY_PATH)
-    private_key = load_pem_private_key(key_bytes, password=None)
+    # Load private key and generate signature
+    with open(PRIVATE_KEY_PATH, "rb") as key_file:
+        key_bytes = key_file.read()
+    private_key = load_pem_private_key(key_bytes, password=None, backend=default_backend())
 
+    # Decode digest
     digest = base64.b64decode(digest).decode("utf-8")
 
-    signature_raw = private_key.sign(  # pyright: ignore [reportAttributeAccessIssue, reportCallIssue]
+    # Generate signature
+    signature_raw = private_key.sign(
         digest.encode("utf-8"),
-        padding.PKCS1v15(),  # pyright: ignore [reportAttributeAccessIssue, reportCallIssue]
-        hashes.SHA1(),  # pyright: ignore [reportAttributeAccessIssue, reportCallIssue]
+        padding.PKCS1v15(),
+        hashes.SHA1(),
     )
 
-    # align format of signature with equivalent ts code
+    # Align format of signature with equivalent TypeScript code
     signature = base64.b64encode(signature_raw).decode("ASCII")
 
-    # prepare values for insertion into xml signature
-    digest_without_namespace = digest.replace(
-        ' xmlns="http://www.w3.org/2000/09/xmldsig#"', ""
-    )
+    # Prepare values for insertion into XML signature
+    digest_without_namespace = digest.replace(' xmlns="http://www.w3.org/2000/09/xmldsig#"', "")
     cert_public_bytes = x509_cert.public_bytes(encoding=Encoding.DER)
     cert_string = base64.b64encode(cert_public_bytes).decode("utf-8")
 
-    # load template and insert prepared values
+    # Load template and insert prepared values
     xml_d_sig = f"""<Signature xmlns="http://www.w3.org/2000/09/xmldsig#">{digest_without_namespace}<SignatureValue>{signature if valid else f'{signature}TVV3WERxSU0xV0w4ODdRRTZ3O'}</SignatureValue><KeyInfo><X509Data><X509Certificate>{cert_string}</X509Certificate></X509Data></KeyInfo></Signature>"""
 
-    # match returned signature data with that from equivalent ts code
+    # Match returned signature data with that from equivalent TypeScript code
     signature_data = base64.b64encode(xml_d_sig.encode("utf-8")).decode("utf-8")
     return signature_data
 
-
-def load_file(path, mode="rb"):
+def load_file(path, mode="r") -> bytes:
     with open(path, mode) as f:
-        doc = f.read()
+        doc = f.read().encode("utf-8")
     return doc
 
 

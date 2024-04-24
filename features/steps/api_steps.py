@@ -46,6 +46,7 @@ def i_release_a_prescription(context):
 @then("the response indicates success")
 def indicate_successful_response(context):
     indicate_success(context)
+    assert_that(str(context.response.content)).does_not_contain("Signature is invalid.")
 
 
 @when('I make a request to the "{product}" ping endpoint')
