@@ -23,9 +23,6 @@ def i_am_an_authorised_user(context, user):
 def i_prepare_sign_release_a_prescription(context, prescription_type):
     i_prepare_a_new_prescription(context, prescription_type)
     i_sign_a_new_prescription(context=context)
-    # raise NotImplementedError(
-    #     "STEP: And I successfully prepare, sign and send a <Type> prescription"
-    # )
 
 
 def i_prepare_a_new_prescription(context, prescription_type):
@@ -47,7 +44,7 @@ def i_release_a_prescription(context):
 
 
 @then("the response indicates success")
-def indicate_successfull_response(context):
+def indicate_successful_response(context):
     indicate_success(context)
 
 
