@@ -54,6 +54,7 @@ def prepare_prescription(context):
     response = post(data=body, url=url, context=context, headers=headers)
     the_expected_response_code_is_returned(context, 200)
     context.digest = response.json()["parameter"][0]["valueString"]
+    print(f"DIGEST:{context.digest}")
     with open("./records/prepare_prescription.json", "w") as f:
         print(body, file=f)
 

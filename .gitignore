@@ -249,3 +249,6 @@ node_modules
 vscode
 # certs
 /certs/*
+
+# Generated files from features
+/records/
