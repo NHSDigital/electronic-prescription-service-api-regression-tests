@@ -1,6 +1,10 @@
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import json
 import uuid
+
+three_months_later = datetime.today() + timedelta(days=3 * 30)
+
+later_date = three_months_later.strftime("%Y-%m-%d")
 
 
 def create_fhir_resource(resource_type, main_keys, **kwargs):
@@ -70,7 +74,11 @@ def create_fhir_signed_bundle(**kwargs):
 def create_fhir_parameter(**kwargs):
     return create_fhir_resource(
         "Parameters",
-        ["group_identifier", "agent", "owner"],
+        [
+            "group_identifier",
+            "owner",
+            "agent",
+        ],
         **kwargs,
     )
 
@@ -94,8 +102,6 @@ def generate_message_header(**kwargs):
                     "system": "https://fhir.nhs.uk/Id/ods-organization-code",
                     "value": sender_ods_code,
                 },
-                "reference": "urn:uuid:56166769-c1c4-4d07-afa8-132b5dfca666",
-                "display": "RAZIA|ALI",
             },
             "source": {"endpoint": f"urn:nhs-uk:addressing:ods:{sender_ods_code}"},
         },
@@ -162,9 +168,7 @@ def generate_medication_request(**kwargs):
                 }
             ],
             "medicationCodeableConcept": {
-                "coding": [
-                    {"system": "http://snomed.info/sct", "code": "15517911000001104"}
-                ]
+                "coding": [{"system": "http://snomed.info/sct", "code": "322237000"}]
             },
             "subject": {
                 "reference": "urn:uuid:78d3c2eb-009e-4ec8-a358-b042954aa9b2"  # patient
@@ -197,73 +201,63 @@ def generate_medication_request(**kwargs):
             },
             "dosageInstruction": [
                 {
-                    "text": "Inject 10 milligram - 5 times a day - Subcutaneous route - for 10 days",
+                    "text": "4 times a day - Oral",
                     "timing": {
-                        "repeat": {
-                            "frequency": 5,
-                            "period": 1,
-                            "periodUnit": "d",
-                            "boundsDuration": {
-                                "value": 10,
-                                "unit": "day",
-                                "system": "http://unitsofmeasure.org",
-                                "code": "d",
-                            },
-                        }
+                        "repeat": {"frequency": 4, "period": 1, "periodUnit": "d"}
                     },
                     "route": {
                         "coding": [
                             {
                                 "system": "http://snomed.info/sct",
-                                "code": "34206005",
-                                "display": "Subcutaneous route",
+                                "code": "26643006",
+                                "display": "Oral",
                             }
                         ]
                     },
-                    "doseAndRate": [
-                        {
-                            "doseQuantity": {
-                                "value": 10,
-                                "unit": "milligram",
-                                "system": "http://unitsofmeasure.org",
-                                "code": "mg",
-                            }
-                        }
-                    ],
                 }
             ],
             "dispenseRequest": {
+                "validityPeriod": {
+                    "start": datetime.today().strftime("%Y-%m-%d"),
+                    "end": later_date,
+                },
+                "expectedSupplyDuration": {
+                    "value": 30,
+                    "unit": "day",
+                    "system": "http://unitsofmeasure.org",
+                    "code": "d",
+                },
                 "quantity": {
-                    "value": 1,
-                    "unit": "pre-filled disposable injection",
+                    "value": 100,
+                    "unit": "tablet",
                     "system": "http://snomed.info/sct",
-                    "code": "3318611000001103",
+                    "code": "428673006",
                 },
             },
             "substitution": {"allowedBoolean": False},
         },
     }
 
-    if code == "P1":  # Nominated
-        medication_request["resource"]["dispenseRequest"].update(
-            {
-                "extension": [
-                    {
-                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-DM-PerformerSiteType",
-                        "valueCoding": {
-                            "system": "https://fhir.nhs.uk/CodeSystem/dispensing-site-preference",
-                            "code": code,
-                        },
-                    }
-                ],
-                "performer": {
-                    "identifier": {
-                        "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-                        "value": "FH542",
-                    }
-                },
-            }
-        )
+    # if code == "P1":  # Nominated
+    #     medication_request["resource"]["dispenseRequest"].update(
+    #         {
+    #             "extension": [
+    #                 {
+    #                     "url": "https://fhir.nhs.uk/StructureDefinition/Extension-DM-PerformerSiteType",
+    #                     "valueCoding": {
+    #                         "system": "https://fhir.nhs.uk/CodeSystem/dispensing-site-preference",
+    #                         "code": code,
+    #                     },
+    #                 }
+    #             ],
+    #             "performer": {
+    #                 "identifier": {
+    #                     "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+    #                     "value": "VNE51",
+    #                 }
+    #             },
+    #         }
+    #     )
     if code == "0004":
         medication_request["resource"]["dispenseRequest"].update(
             {
@@ -290,12 +284,8 @@ def generate_practitioner_role():
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/sds-role-profile-id",
-                    "value": "100102238986",
-                },
-                {
-                    "system": "https://fhir.hl7.org.uk/Id/nhsbsa-spurious-code",
-                    "value": "G6123456",  # needs to be of G6NNNNNN or G7NNNNNN
-                },
+                    "value": "555086415105",
+                }
             ],
             "practitioner": {
                 "reference": "urn:uuid:a8c85454-f8cb-498d-9629-78e2cb5fa47a"
@@ -303,19 +293,14 @@ def generate_practitioner_role():
             "organization": {
                 "reference": "urn:uuid:3b4b03a5-52ba-4ba6-9b82-70350aa109d8"
             },
-            "code": [  # Mandatory???
+            "code": [
                 {
                     "coding": [
                         {
                             "system": "https://fhir.nhs.uk/CodeSystem/NHSDigital-SDS-JobRoleCode",
-                            "code": "R8000",
+                            "code": "S8000:G8000:R8000",
                             "display": "Clinical Practitioner Access Role",
-                        },
-                        {
-                            "system": "https://fhir.hl7.org.uk/CodeSystem/UKCore-SDSJobRoleName",
-                            "code": "R8000",
-                            "display": "Clinical Practitioner Access Role",
-                        },
+                        }
                     ]
                 }
             ],
@@ -333,11 +318,11 @@ def generate_practitioner():
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/sds-user-id",
-                    "value": "555086689106",
+                    "value": "3415870201",
                 },
                 {
                     "system": "https://fhir.hl7.org.uk/Id/nmc-number",
-                    "value": "12A3456B",
+                    "value": "999999",
                 },
             ],
             "name": [{"family": "BOIN", "given": ["C"], "prefix": ["DR"]}],
@@ -396,7 +381,7 @@ def generate_organization():
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-                    "value": "RBA",
+                    "value": "A99968",
                 }
             ],
             "name": "SOMERSET BOWEL CANCER SCREENING CENTRE",  # mandatory
@@ -414,7 +399,7 @@ def generate_organization():
             "partOf": {  # del
                 "identifier": {
                     "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-                    "value": "84H",
+                    "value": "RBA",
                 },
                 "display": "TAUNTON AND SOMERSET NHS FOUNDATION TRUST",  # mandatory
             },
@@ -469,7 +454,7 @@ def generate_owner():
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-                    "value": "RBA",
+                    "value": "A99968",
                 }
             ],
             "active": True,
@@ -508,22 +493,22 @@ def generate_agent():
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/sds-role-profile-id",
-                    "value": "100102238986",
+                    "value": "555086415105",
                 }
             ],
             "practitioner": {
                 "identifier": {
                     "system": "https://fhir.nhs.uk/Id/sds-user-id",
-                    "value": "555083343101",
+                    "value": "3415870201",
                 },
-                "display": "AutoTest Practitioner",
+                "display": "Jackie Clark",
             },
             "code": [
                 {
                     "coding": [
                         {
                             "system": "https://fhir.nhs.uk/CodeSystem/NHSDigital-SDS-JobRoleCode",
-                            "code": "R8000",
+                            "code": "S8000:G8000:R8000",
                             "display": "Clinical Practitioner Access Role",
                         }
                     ]

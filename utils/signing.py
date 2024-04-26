@@ -61,7 +61,9 @@ def get_signature(digest: str, valid: bool):
     # Load private key and generate signature
     with open(PRIVATE_KEY_PATH, "rb") as key_file:
         key_bytes = key_file.read()
-    private_key = load_pem_private_key(key_bytes, password=None, backend=default_backend())
+    private_key = load_pem_private_key(
+        key_bytes, password=None, backend=default_backend()
+    )
 
     # Decode digest
     digest = base64.b64decode(digest).decode("utf-8")
@@ -77,7 +79,9 @@ def get_signature(digest: str, valid: bool):
     signature = base64.b64encode(signature_raw).decode("ASCII")
 
     # Prepare values for insertion into XML signature
-    digest_without_namespace = digest.replace(' xmlns="http://www.w3.org/2000/09/xmldsig#"', "")
+    digest_without_namespace = digest.replace(
+        ' xmlns="http://www.w3.org/2000/09/xmldsig#"', ""
+    )
     cert_public_bytes = x509_cert.public_bytes(encoding=Encoding.DER)
     cert_string = base64.b64encode(cert_public_bytes).decode("utf-8")
 
@@ -87,11 +91,6 @@ def get_signature(digest: str, valid: bool):
     # Match returned signature data with that from equivalent TypeScript code
     signature_data = base64.b64encode(xml_d_sig.encode("utf-8")).decode("utf-8")
     return signature_data
-
-def load_file(path, mode="r") -> bytes:
-    with open(path, mode) as f:
-        doc = f.read().encode("utf-8")
-    return doc
 
 
 # if __name__ == "__main__":

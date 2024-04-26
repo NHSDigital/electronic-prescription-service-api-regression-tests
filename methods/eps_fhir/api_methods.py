@@ -21,7 +21,7 @@ from utils.signing import get_signature
 
 def create_new_prepare_body(context):
     context.sender_ods_code = "RBA"
-    context.receiver_ods_code = "FH542"
+    context.receiver_ods_code = "VNE51"
     context.prescription_id = generate_short_form_id(ods_code=context.sender_ods_code)
     message_header = generate_message_header(
         sender_ods_code=context.sender_ods_code,
@@ -88,13 +88,13 @@ def create_new_signed_body(context):
 
 def create_release_body(context):
     prescription_order_number = context.prescription_id
-    agent = generate_agent()
-    owner = generate_owner()
     group_identifier = generate_group_identifier(
         prescription_order_number=prescription_order_number
     )
+    owner = generate_owner()
+    agent = generate_agent()
     body = create_fhir_parameter(
-        agent=agent, owner=owner, group_identifier=group_identifier
+        group_identifier=group_identifier, owner=owner, agent=agent
     )
     return body
 
@@ -117,7 +117,6 @@ def release_signed_prescription(context):
     headers.update({"Authorization": f"Bearer {context.auth_token}"})
     headers.update({"NHSD-Session-URID": "555083343101"})
     post(data=body, url=url, context=context, headers=headers)
-    print(context.response.content)
     with open("./records/release_signed_prescription.json", "w") as f:
         print(body, file=f)
 
