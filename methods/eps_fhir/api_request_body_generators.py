@@ -284,7 +284,7 @@ def generate_practitioner_role():
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/sds-role-profile-id",
-                    "value": "555086415105",
+                    "value": "555083343101",
                 }
             ],
             "practitioner": {
@@ -493,7 +493,7 @@ def generate_agent():
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/sds-role-profile-id",
-                    "value": "555086415105",
+                    "value": "555083343101",
                 }
             ],
             "practitioner": {

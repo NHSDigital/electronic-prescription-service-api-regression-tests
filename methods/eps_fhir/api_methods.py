@@ -21,7 +21,7 @@ from utils.signing import get_signature
 
 def create_new_prepare_body(context):
     context.sender_ods_code = "RBA"
-    context.receiver_ods_code = "VNE51"
+    context.receiver_ods_code = "FA565"
     context.prescription_id = generate_short_form_id(ods_code=context.sender_ods_code)
     message_header = generate_message_header(
         sender_ods_code=context.sender_ods_code,
