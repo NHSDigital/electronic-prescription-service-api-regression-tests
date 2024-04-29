@@ -53,6 +53,7 @@ def prepare_prescription(context):
         print(body, file=f)
     headers = get_default_headers()
     headers.update({"Authorization": f"Bearer {context.auth_token}"})
+    headers.update({"Content-Type": "application/json"})
     response = post(data=body, url=url, context=context, headers=headers)
     the_expected_response_code_is_returned(context, 200)
     context.digest = response.json()["parameter"][0]["valueString"]
@@ -109,6 +110,7 @@ def create_signed_prescription(context):
         print(body, file=f)
     headers = get_default_headers()
     headers.update({"Authorization": f"Bearer {context.auth_token}"})
+    headers.update({"NHSD-Session-URID": "555083343101"})
     post(data=body, url=url, context=context, headers=headers)
     the_expected_response_code_is_returned(context, 200)
 
@@ -120,6 +122,8 @@ def release_signed_prescription(context):
     headers.update({"Authorization": f"Bearer {context.auth_token}"})
     headers.update({"NHSD-Session-URID": "555083343101"})
     post(data=body, url=url, context=context, headers=headers)
+    x_request_id = context.response.headers["x-request-id"]
+    print(f"x-request-id: {x_request_id}")
     with open("./records/release_signed_prescription.json", "w") as f:
         print(body, file=f)
 

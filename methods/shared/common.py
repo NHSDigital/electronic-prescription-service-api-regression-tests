@@ -1,7 +1,7 @@
 import json
 import allure
 import requests
-from features.environment import CIS2_USERS
+from features.environment import CLIENT_ID, CLIENT_SECRET, CIS2_USERS
 from assertpy import assert_that as assertpy_assert  # type: ignore
 from pytest_nhsd_apim.identity_service import (
     AuthorizationCodeConfig,
@@ -11,15 +11,18 @@ from pytest_nhsd_apim.identity_service import (
 
 def get_auth(user, env):
     # 1. Set your app config
-    url = f"https://{env.lower()}.api.service.nhs.uk/oauth2-mock"
+    if CLIENT_ID is None or CLIENT_SECRET is None:
+        raise ValueError("You must provide BOTH CLIENT_ID and CLIENT_SECRET")
+    env = env.lower()
+    url = f"https://{env}.api.service.nhs.uk/oauth2-mock"
     config = AuthorizationCodeConfig(
-        environment=env.lower(),
+        environment=env,
         identity_service_base_url=url,  # pyright: ignore [reportArgumentType]
         callback_url="https://example.org/",  # pyright: ignore [reportArgumentType]
-        client_id=CIS2_USERS[env]["client_id"],
-        client_secret=CIS2_USERS[env]["client_secret"],
+        client_id=CLIENT_ID,
+        client_secret=CLIENT_SECRET,
         scope="nhs-cis2",
-        login_form={"username": CIS2_USERS[env][user]},
+        login_form={"username": CIS2_USERS[user]},
     )
 
     # 2. Pass the config to the Authenticator
@@ -34,12 +37,16 @@ def get_auth(user, env):
 
     # 4. Use the token and confirm is valid
     headers = {"Authorization": f"Bearer {token}"}
-    resp = requests.get(
-        "https://int.api.service.nhs.uk/mock-jwks/test-auth/nhs-cis2/aal3",
-        headers=headers,
-    )
-    assert resp.status_code == 200
-    print("Successfully Authenticated")
+    if env == "int":
+        response = requests.get(
+            "https://int.api.service.nhs.uk/mock-jwks/test-auth/nhs-cis2/aal3",
+            headers=headers,
+        )
+        if response.status_code != 200:
+            print(f"{response.status_code}\n{str(response.content)}")
+            raise AssertionError()
+        assert response.status_code == 200
+        print("Successfully Authenticated")
     return token
 
 

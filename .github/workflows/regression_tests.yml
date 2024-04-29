@@ -93,7 +93,15 @@ jobs:
           environment: ${{ inputs.environment }}
           pull_request_id: ${{ inputs.pull_request_id }}
           tags: ${{ inputs.tags }}
+          client_id: ${{ env.secrets.CLIENT_ID }}
+          client_secret: ${{ env.secrets.CLIENT_SECRET }}
+          certificate: ${{ env.secrets.CERTIFICATE }}
+          private_key: ${{ env.secrets.PRIVATE_KEY }}
         run: |
+            export CLIENT_ID=$client_id
+            export CLIENT_SECRET=$client_secret
+            export CERTIFICATE=$certificate
+            export PRIVATE_KEY=$private_key
             export PULL_REQUEST_ID=$pull_request_id
             echo Pull request ID = $pull_request_id
             poetry run python ./runner.py --env=$environment --product=$product --tags=$tags

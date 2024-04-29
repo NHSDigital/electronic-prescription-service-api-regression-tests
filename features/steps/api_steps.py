@@ -17,6 +17,7 @@ from utils.nhs_number_generator import random_nhs_number_generator
 def i_am_an_authorised_user(context, user):
     env = context.config.userdata["env"]
     context.auth_token = get_auth(user, env)
+    print(context.auth_token)
 
 
 @given("I successfully prepare, sign and send a {prescription_type} prescription")

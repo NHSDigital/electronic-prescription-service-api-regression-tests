@@ -25,6 +25,7 @@ pyright = "^1.1.359"
 pytest-nhsd-apim = "^3.3.12"
 cryptography = "^42.0.5"
 python-dateutil = "^2.9.0.post0"
+python-dotenv = "^1.0.1"
 
 
 [tool.poetry.group.dev.dependencies]

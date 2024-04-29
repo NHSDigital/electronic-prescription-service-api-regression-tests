@@ -1,6 +1,9 @@
 import logging
 import os
 import sys
+from dotenv import load_dotenv
+
+load_dotenv()
 
 INTERNAL_QA_BASE_URL = "https://internal-qa.api.service.nhs.uk/"
 INTERNAL_DEV_BASE_URL = "https://internal-dev.api.service.nhs.uk/"
@@ -18,27 +21,17 @@ ENVS = {
     "SANDBOX": SANDBOX_INT_BASE_URL,
 }
 
-CIS2_USERS = {
-    "INT": {
-        "prescriber": "656005750104",
-        "dispenser": "555083343101",
-        "client_id": "4foToJR1dlX2Vs90pxRD1D48SaZMAwAY",
-        "client_secret": "2NeQe6P6ObWPfILl",
-    },
-    "INTERNAL-DEV": {
-        "prescriber": "656005750104",
-        "dispenser": "555083343101",
-        "client_id": "tU1NHdDCHGrOi94pXdjCsXJOuZkOH8XA",
-        "client_secret": "OLeZoP6Fb0BKbeYN",
-    },
-}
+CIS2_USERS = {"prescriber": "656005750104", "dispenser": "555083343101"}
 
 REPOS = {
     "EPS-FHIR": "https://github.com/NHSDigital/electronic-prescription-service-api",
     "PFP-APIGEE": "https://github.com/NHSDigital/prescriptions-for-patients",
 }
 
-# This will need rework when the pack includes additional products to test
+CERTIFICATE = os.getenv("CERTIFICATE")
+PRIVATE_KEY = os.getenv("PRIVATE_KEY")
+CLIENT_ID = os.getenv("CLIENT_ID")
+CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 PULL_REQUEST_ID = os.getenv("PULL_REQUEST_ID")
 EPS_FHIR_SUFFIX = "electronic-prescriptions"
 PFP_APIGEE_SUFFIX = "prescriptions-for-patients"
