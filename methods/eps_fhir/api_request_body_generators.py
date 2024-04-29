@@ -410,6 +410,7 @@ def generate_organization():
 
 def generate_provenance(**kwargs):
     signature = kwargs["signature"]
+    timestamp = kwargs["timestamp"]
     provenance = {
         "fullUrl": "urn:uuid:28828c55-8fa7-42d7-916f-fcf076e0c10e",
         "resource": {
@@ -432,9 +433,7 @@ def generate_provenance(**kwargs):
                             "code": "1.2.840.10065.1.12.1.1",
                         }
                     ],
-                    "when": datetime.now(timezone.utc).strftime(
-                        "%Y-%m-%dT%H:%M:%S+00:00"
-                    ),
+                    "when": timestamp,
                     "who": {
                         "reference": "urn:uuid:56166769-c1c4-4d07-afa8-132b5dfca666"
                     },

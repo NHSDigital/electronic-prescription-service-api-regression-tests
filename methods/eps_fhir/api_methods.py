@@ -56,6 +56,7 @@ def prepare_prescription(context):
     response = post(data=body, url=url, context=context, headers=headers)
     the_expected_response_code_is_returned(context, 200)
     context.digest = response.json()["parameter"][0]["valueString"]
+    context.timestamp = response.json()["parameter"][1]["valueString"]
     print(f"DIGEST:{context.digest}")
 
 
@@ -73,7 +74,9 @@ def create_new_signed_body(context):
     organization = generate_organization()
     practitioner_role = generate_practitioner_role()
     practitioner = generate_practitioner()
-    provenance = generate_provenance(signature=context.signature)
+    provenance = generate_provenance(
+        signature=context.signature, timestamp=context.timestamp
+    )
     body = create_fhir_signed_bundle(
         message_header=message_header,
         medication_request=medication_request,
