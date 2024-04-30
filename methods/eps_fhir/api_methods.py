@@ -20,7 +20,7 @@ from utils.signing import get_signature
 
 
 def create_new_prepare_body(context):
-    context.sender_ods_code = "RBA"
+    context.sender_ods_code = "A83008"
     context.receiver_ods_code = "FA565"
     context.prescription_id = generate_short_form_id(ods_code=context.sender_ods_code)
     message_header = generate_message_header(
@@ -59,6 +59,19 @@ def prepare_prescription(context):
     context.digest = response.json()["parameter"][0]["valueString"]
     context.timestamp = response.json()["parameter"][1]["valueString"]
     print(f"DIGEST:{context.digest}")
+
+
+def convert_prepared_prescription(context):
+    url = f"{context.eps_fhir_base_url}/FHIR/R4/$convert"
+    body = create_new_prepare_body(context)
+    headers = get_default_headers()
+    headers.update({"Authorization": f"Bearer {context.auth_token}"})
+    headers.update({"Content-Type": "application/json"})
+    response = post(data=body, url=url, context=context, headers=headers)
+    the_expected_response_code_is_returned(context, 200)
+    # Write the response body to a file
+    with open("./records/convert_prepare_prescription.xml", "w") as f:
+        f.write(response.text)
 
 
 def create_new_signed_body(context):
@@ -110,9 +123,22 @@ def create_signed_prescription(context):
         print(body, file=f)
     headers = get_default_headers()
     headers.update({"Authorization": f"Bearer {context.auth_token}"})
-    headers.update({"NHSD-Session-URID": "555083343101"})
+    # headers.update({"NHSD-Session-URID": "555083343101"})
     post(data=body, url=url, context=context, headers=headers)
     the_expected_response_code_is_returned(context, 200)
+
+
+def convert_signed_prescription(context):
+    url = f"{context.eps_fhir_base_url}/FHIR/R4/$convert"
+    body = create_new_signed_body(context)
+    headers = get_default_headers()
+    headers.update({"Authorization": f"Bearer {context.auth_token}"})
+    headers.update({"Content-Type": "application/json"})
+    response = post(data=body, url=url, context=context, headers=headers)
+    the_expected_response_code_is_returned(context, 200)
+    # Write the response body to a file
+    with open("./records/convert_signed_prescription.xml", "w") as f:
+        f.write(response.text)
 
 
 def release_signed_prescription(context):
@@ -123,9 +149,22 @@ def release_signed_prescription(context):
     headers.update({"NHSD-Session-URID": "555083343101"})
     post(data=body, url=url, context=context, headers=headers)
     x_request_id = context.response.headers["x-request-id"]
-    print(f"x-request-id: {x_request_id}")
     with open("./records/release_signed_prescription.json", "w") as f:
+        # print(f"x-request-id: {x_request_id}")
         print(body, file=f)
+
+
+def convert_released_prescription(context):
+    url = f"{context.eps_fhir_base_url}/FHIR/R4/$convert"
+    body = create_release_body(context)
+    headers = get_default_headers()
+    headers.update({"Authorization": f"Bearer {context.auth_token}"})
+    headers.update({"Content-Type": "application/json"})
+    response = post(data=body, url=url, context=context, headers=headers)
+    the_expected_response_code_is_returned(context, 200)
+    # Write the response body to a file
+    with open("./records/convert_released_prescription.xml", "w") as f:
+        f.write(response.text)
 
 
 def indicate_success(context):

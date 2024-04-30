@@ -86,7 +86,6 @@ def create_fhir_parameter(**kwargs):
 def generate_message_header(**kwargs):
     bundle_id = uuid.uuid4()
     sender_ods_code = kwargs["sender_ods_code"]
-    receiver_ods_code = kwargs["receiver_ods_code"]
     message_header = {
         "fullUrl": f"urn:uuid:{bundle_id}",
         "resource": {
@@ -107,22 +106,22 @@ def generate_message_header(**kwargs):
         },
     }
 
-    if receiver_ods_code:  # Nominated
-        message_header["resource"].update(
-            {
-                "destination": [
-                    {
-                        "endpoint": "https://sandbox.api.service.nhs.uk/electronic-prescriptions/$post-message",
-                        "receiver": {
-                            "identifier": {
-                                "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-                                "value": receiver_ods_code,
-                            }
-                        },
-                    }
-                ]
-            },
-        )
+    # if receiver_ods_code:  # Nominated
+    #     message_header["resource"].update(
+    #         {
+    #             "destination": [
+    #                 {
+    #                     "endpoint": "https://sandbox.api.service.nhs.uk/electronic-prescriptions/$post-message",
+    #                     "receiver": {
+    #                         "identifier": {
+    #                             "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+    #                             "value": receiver_ods_code,
+    #                         }
+    #                     },
+    #                 }
+    #             ]
+    #         },
+    #     )
     return message_header
 
 
@@ -364,7 +363,7 @@ def generate_patient(**kwargs):
                 {
                     "identifier": {
                         "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-                        "value": "RBA",
+                        "value": "A83008",
                     }
                 }
             ],
@@ -381,7 +380,7 @@ def generate_organization():
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-                    "value": "A99968",
+                    "value": "A83008",
                 }
             ],
             "name": "SOMERSET BOWEL CANCER SCREENING CENTRE",  # mandatory

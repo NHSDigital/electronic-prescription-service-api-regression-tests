@@ -4,6 +4,9 @@ from methods.eps_fhir.api_methods import (
     prepare_prescription,
     create_signed_prescription,
     release_signed_prescription,
+    convert_prepared_prescription,
+    convert_signed_prescription,
+    convert_released_prescription,
     indicate_success,
 )
 from methods.shared import common
@@ -33,7 +36,10 @@ def i_prepare_a_new_prescription(context, prescription_type):
     if prescription_type == "nominated":
         context.nomination_code = "P1"
     prepare_prescription(context)
-
+    convert_prepared_prescription(context)
+    convert_signed_prescription(context)
+    convert_released_prescription(context)
+ 
 
 def i_sign_a_new_prescription(context):
     create_signed_prescription(context)
