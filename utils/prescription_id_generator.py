@@ -16,6 +16,7 @@ def generate_short_form_id(ods_code=None, original_short_form_id=None) -> str:
     last = hex_string[12:17]
     prescription_id = f"{first}-{middle}-{last}"
     prescription_id = generate_check_digit(prescription_id)
+    print("Generated prescription id:", prescription_id)
     return prescription_id
 
 

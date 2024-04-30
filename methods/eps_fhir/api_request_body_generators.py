@@ -128,7 +128,7 @@ def generate_message_header(**kwargs):
 def generate_medication_request(**kwargs):
     short_prescription_id = kwargs["short_prescription_id"]
     prescription_item_id = kwargs["prescription_item_id"]
-    long_prescription_id = str(uuid.uuid4())
+    long_prescription_id = kwargs["long_prescription_id"]
     code = kwargs["code"]
 
     medication_request = {
@@ -272,7 +272,8 @@ def generate_medication_request(**kwargs):
     return medication_request
 
 
-def generate_practitioner_role():
+def generate_practitioner_role(**kwargs):
+    sds_role_id = kwargs["sds_role_id"]
     practitioner_role = {
         "fullUrl": "urn:uuid:56166769-c1c4-4d07-afa8-132b5dfca666",
         "resource": {
@@ -280,7 +281,7 @@ def generate_practitioner_role():
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/sds-role-profile-id",
-                    "value": "555083343101",
+                    "value": sds_role_id,
                 }
             ],
             "practitioner": {
@@ -306,7 +307,8 @@ def generate_practitioner_role():
     return practitioner_role
 
 
-def generate_practitioner():
+def generate_practitioner(**kwargs):
+    user_id = kwargs["user_id"]
     practitioner = {
         "fullUrl": "urn:uuid:a8c85454-f8cb-498d-9629-78e2cb5fa47a",
         "resource": {
@@ -314,7 +316,7 @@ def generate_practitioner():
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/sds-user-id",
-                    "value": "3415870201",
+                    "value": user_id,
                 },
                 {
                     "system": "https://fhir.hl7.org.uk/Id/nmc-number",
@@ -488,13 +490,13 @@ def generate_agent():
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/sds-role-profile-id",
-                    "value": "555083343101",
+                    "value": "555254242105",
                 }
             ],
             "practitioner": {
                 "identifier": {
                     "system": "https://fhir.nhs.uk/Id/sds-user-id",
-                    "value": "3415870201",
+                    "value": "656005750107",
                 },
                 "display": "Jackie Clark",
             },

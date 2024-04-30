@@ -1,4 +1,7 @@
+import json
 import uuid
+
+from features.environment import CIS2_USERS
 from methods.eps_fhir.api_request_body_generators import (
     create_fhir_bundle,
     create_fhir_signed_bundle,
@@ -25,6 +28,9 @@ def create_new_prepare_body(context):
     context.receiver_ods_code = "FA565"
     context.prescription_item_id = str(uuid.uuid4())
     context.prescription_id = generate_short_form_id(ods_code=context.sender_ods_code)
+    context.long_prescription_id = str(uuid.uuid4())
+    user_id = CIS2_USERS["prescriber"]["user_id"]
+    sds_role_id = CIS2_USERS["prescriber"]["role_id"]
     message_header = generate_message_header(
         sender_ods_code=context.sender_ods_code,
         receiver_ods_code=context.receiver_ods_code,
@@ -33,11 +39,12 @@ def create_new_prepare_body(context):
         short_prescription_id=context.prescription_id,
         code=context.nomination_code,
         prescription_item_id=context.prescription_item_id,
+        long_prescription_id=context.long_prescription_id,
     )
     patient = generate_patient(nhs_number=context.nhs_number)
     organization = generate_organization()
-    practitioner_role = generate_practitioner_role()
-    practitioner = generate_practitioner()
+    practitioner_role = generate_practitioner_role(sds_role_id=sds_role_id)
+    practitioner = generate_practitioner(user_id=user_id)
     body = create_fhir_bundle(
         message_header=message_header,
         medication_request=medication_request,
@@ -51,13 +58,13 @@ def create_new_prepare_body(context):
 
 def prepare_prescription(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/$prepare"
-    context.body = create_new_prepare_body(context)
+    context.prepare_body = create_new_prepare_body(context)
     with open("./records/prepare_prescription.json", "w") as f:
-        print(context.body, file=f)
+        print(context.prepare_body, file=f)
     headers = get_default_headers()
     headers.update({"Authorization": f"Bearer {context.auth_token}"})
     headers.update({"Content-Type": "application/json"})
-    response = post(data=context.body, url=url, context=context, headers=headers)
+    response = post(data=context.prepare_body, url=url, context=context, headers=headers)
     the_expected_response_code_is_returned(context, 200)
     context.digest = response.json()["parameter"][0]["valueString"]
     context.timestamp = response.json()["parameter"][1]["valueString"]
@@ -66,7 +73,7 @@ def prepare_prescription(context):
 
 def convert_prepared_prescription(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/$convert"
-    body = context.body
+    body = context.prepare_body
     headers = get_default_headers()
     headers.update({"Authorization": f"Bearer {context.auth_token}"})
     headers.update({"Content-Type": "application/json"})
@@ -79,31 +86,12 @@ def convert_prepared_prescription(context):
 
 def create_new_signed_body(context):
     context.signature = get_signature(context.digest, True)
-    message_header = generate_message_header(
-        sender_ods_code=context.sender_ods_code,
-        receiver_ods_code=context.receiver_ods_code,
-    )
-    medication_request = generate_medication_request(
-        short_prescription_id=context.prescription_id,
-        code=context.nomination_code,
-        prescription_item_id=context.prescription_item_id,
-    )
-    patient = generate_patient(nhs_number=context.nhs_number)
-    organization = generate_organization()
-    practitioner_role = generate_practitioner_role()
-    practitioner = generate_practitioner()
+    body = json.loads(context.prepare_body)
     provenance = generate_provenance(
         signature=context.signature, timestamp=context.timestamp
     )
-    body = create_fhir_signed_bundle(
-        message_header=message_header,
-        medication_request=medication_request,
-        patient=patient,
-        organization=organization,
-        practitioner_role=practitioner_role,
-        practitioner=practitioner,
-        provenance=provenance,
-    )
+    body["entry"].append(provenance)
+    body = json.dumps(body)
     return body
 
 
@@ -127,7 +115,6 @@ def create_signed_prescription(context):
         print(context.signed_body, file=f)
     headers = get_default_headers()
     headers.update({"Authorization": f"Bearer {context.auth_token}"})
-    # headers.update({"NHSD-Session-URID": "555083343101"})
     post(data=context.signed_body, url=url, context=context, headers=headers)
     the_expected_response_code_is_returned(context, 200)
 
@@ -150,11 +137,11 @@ def release_signed_prescription(context):
     context.release_body = create_release_body(context)
     headers = get_default_headers()
     headers.update({"Authorization": f"Bearer {context.auth_token}"})
-    headers.update({"NHSD-Session-URID": "555083343101"})
+    # headers.update({"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]})
     post(data=context.release_body, url=url, context=context, headers=headers)
     x_request_id = context.response.headers["x-request-id"]
+    print(f"x-request-id: {x_request_id}")
     with open("./records/release_signed_prescription.json", "w") as f:
-        # print(f"x-request-id: {x_request_id}")
         print(context.release_body, file=f)
 
 

@@ -22,7 +22,8 @@ def get_auth(user, env):
         client_id=CLIENT_ID,
         client_secret=CLIENT_SECRET,
         scope="nhs-cis2",
-        login_form={"username": CIS2_USERS[user]},
+        login_form={"username": CIS2_USERS[user]["user_id"]},
+        # login_form={"username": "656005750108"},
     )
 
     # 2. Pass the config to the Authenticator
@@ -101,4 +102,4 @@ def the_expected_response_code_is_returned(context, expected_response_code: int)
 
 
 if __name__ == "__main__":
-    print(get_auth("dispenser", "INT"))
+    print(get_auth("dispenser", "INTERNAL-DEV"))

@@ -21,8 +21,12 @@ ENVS = {
     "SANDBOX": SANDBOX_INT_BASE_URL,
 }
 
-CIS2_USERS = {"prescriber": "656005750104", "dispenser": "555083343101"}
+CIS2_USERS = {
+    "prescriber": {"user_id": "656005750107", "role_id": "555254242105"},
+    "dispenser": {"user_id": "555260695103", "role_id": "555265434108"},
+}
 
+# "NHSD-Session-URID": "555254242106" for user UID 656005750108
 REPOS = {
     "EPS-FHIR": "https://github.com/NHSDigital/electronic-prescription-service-api",
     "PFP-APIGEE": "https://github.com/NHSDigital/prescriptions-for-patients",

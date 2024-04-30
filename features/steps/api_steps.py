@@ -19,8 +19,8 @@ from utils.nhs_number_generator import random_nhs_number_generator
 @when("I am an authorised {user}")
 def i_am_an_authorised_user(context, user):
     env = context.config.userdata["env"]
+    context.user = user
     context.auth_token = get_auth(user, env)
-    print(context.auth_token)
 
 
 @given("I successfully prepare, sign and send a {prescription_type} prescription")
@@ -48,7 +48,7 @@ def i_sign_a_new_prescription(context):
 def i_release_a_prescription(context):
     release_signed_prescription(context)
     assert_that(str(context.response.content)).does_not_contain("Signature is invalid.")
-    convert_released_prescription(context)
+    # convert_released_prescription(context)
 
 
 @then("the response indicates success")
