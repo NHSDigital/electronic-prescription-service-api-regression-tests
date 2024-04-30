@@ -2,9 +2,9 @@ from datetime import datetime, timedelta, timezone
 import json
 import uuid
 
-three_months_later = datetime.today() + timedelta(days=3 * 30)
+# three_months_later = datetime.today() + timedelta(days=3 * 30)
 
-later_date = three_months_later.strftime("%Y-%m-%d")
+# later_date = three_months_later.strftime("%Y-%m-%d")
 
 
 def create_fhir_resource(resource_type, main_keys, **kwargs):
@@ -127,9 +127,9 @@ def generate_message_header(**kwargs):
 
 def generate_medication_request(**kwargs):
     short_prescription_id = kwargs["short_prescription_id"]
+    prescription_item_id = kwargs["prescription_item_id"]
     long_prescription_id = str(uuid.uuid4())
     code = kwargs["code"]
-    identifier_value = str(uuid.uuid4())
 
     medication_request = {
         "fullUrl": "urn:uuid:a54219b8-f741-4c47-b662-e4f8dfa49ab6",
@@ -149,7 +149,7 @@ def generate_medication_request(**kwargs):
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/prescription-order-item-number",
-                    "value": identifier_value,
+                    "value": prescription_item_id,
                 }
             ],
             "status": "active",  # must be consistent
@@ -216,10 +216,7 @@ def generate_medication_request(**kwargs):
                 }
             ],
             "dispenseRequest": {
-                "validityPeriod": {
-                    "start": datetime.today().strftime("%Y-%m-%d"),
-                    "end": later_date,
-                },
+                "validityPeriod": {"start": "2024-04-29", "end": "2024-07-28"},
                 "expectedSupplyDuration": {
                     "value": 30,
                     "unit": "day",
@@ -415,7 +412,7 @@ def generate_provenance(**kwargs):
         "resource": {
             "resourceType": "Provenance",
             "target": [{"reference": "urn:uuid:a54219b8-f741-4c47-b662-e4f8dfa49ab6"}],
-            "recorded": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S+00:00"),
+            "recorded": "2008-02-27T11:38:00+00:00",
             "agent": [
                 {
                     "who": {

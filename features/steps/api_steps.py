@@ -37,17 +37,18 @@ def i_prepare_a_new_prescription(context, prescription_type):
         context.nomination_code = "P1"
     prepare_prescription(context)
     convert_prepared_prescription(context)
-    convert_signed_prescription(context)
-    convert_released_prescription(context)
- 
+
 
 def i_sign_a_new_prescription(context):
     create_signed_prescription(context)
+    convert_signed_prescription(context)
 
 
 @when("I release a prescription")
 def i_release_a_prescription(context):
     release_signed_prescription(context)
+    assert_that(str(context.response.content)).does_not_contain("Signature is invalid.")
+    convert_released_prescription(context)
 
 
 @then("the response indicates success")
