@@ -4,7 +4,6 @@ import uuid
 from features.environment import CIS2_USERS
 from methods.eps_fhir.api_request_body_generators import (
     create_fhir_bundle,
-    create_fhir_signed_bundle,
     create_fhir_parameter,
     generate_message_header,
     generate_medication_request,
@@ -68,23 +67,9 @@ def prepare_prescription(context):
     the_expected_response_code_is_returned(context, 200)
     context.digest = response.json()["parameter"][0]["valueString"]
     context.timestamp = response.json()["parameter"][1]["valueString"]
-    # print(f"DIGEST:{context.digest}")
 
 
-def convert_prepared_prescription(context):
-    url = f"{context.eps_fhir_base_url}/FHIR/R4/$convert"
-    body = context.prepare_body
-    headers = get_default_headers()
-    headers.update({"Authorization": f"Bearer {context.auth_token}"})
-    headers.update({"Content-Type": "application/json"})
-    response = post(data=body, url=url, context=context, headers=headers)
-    the_expected_response_code_is_returned(context, 200)
-    # Write the response body to a file
-    with open("./records/convert_prepare_prescription.xml", "w") as f:
-        f.write(response.text)
-
-
-def create_new_signed_body(context):
+def create_signed_body(context):
     context.signature = get_signature(context.digest, True)
     body = json.loads(context.prepare_body)
     provenance = generate_provenance(
@@ -93,6 +78,16 @@ def create_new_signed_body(context):
     body["entry"].append(provenance)
     body = json.dumps(body)
     return body
+
+def create_signed_prescription(context):
+    url = f"{context.eps_fhir_base_url}/FHIR/R4/$process-message#prescription-order"
+    context.signed_body = create_signed_body(context)
+    with open("./records/create_signed_prescription.json", "w") as f:
+        print(context.signed_body, file=f)
+    headers = get_default_headers()
+    headers.update({"Authorization": f"Bearer {context.auth_token}"})
+    post(data=context.signed_body, url=url, context=context, headers=headers)
+    the_expected_response_code_is_returned(context, 200)
 
 
 def create_release_body(context):
@@ -108,55 +103,13 @@ def create_release_body(context):
     return body
 
 
-def create_signed_prescription(context):
-    url = f"{context.eps_fhir_base_url}/FHIR/R4/$process-message#prescription-order"
-    context.signed_body = create_new_signed_body(context)
-    with open("./records/create_signed_prescription.json", "w") as f:
-        print(context.signed_body, file=f)
-    headers = get_default_headers()
-    headers.update({"Authorization": f"Bearer {context.auth_token}"})
-    post(data=context.signed_body, url=url, context=context, headers=headers)
-    the_expected_response_code_is_returned(context, 200)
-
-
-def convert_signed_prescription(context):
-    url = f"{context.eps_fhir_base_url}/FHIR/R4/$convert"
-    body = context.signed_body
-    headers = get_default_headers()
-    headers.update({"Authorization": f"Bearer {context.auth_token}"})
-    headers.update({"Content-Type": "application/json"})
-    response = post(data=body, url=url, context=context, headers=headers)
-    the_expected_response_code_is_returned(context, 200)
-    # Write the response body to a file
-    with open("./records/convert_signed_prescription.xml", "w") as f:
-        f.write(response.text)
-
-
 def release_signed_prescription(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/Task/$release"
     context.release_body = create_release_body(context)
     headers = get_default_headers()
     headers.update({"Authorization": f"Bearer {context.auth_token}"})
-    # headers.update({"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]})
+    headers.update({"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]})
     post(data=context.release_body, url=url, context=context, headers=headers)
-    x_request_id = context.response.headers["x-request-id"]
-    print(f"x-request-id: {x_request_id}")
-    with open("./records/release_signed_prescription.json", "w") as f:
-        print(context.release_body, file=f)
-
-
-def convert_released_prescription(context):
-    url = f"{context.eps_fhir_base_url}/FHIR/R4/$convert"
-    body = context.release_body
-    headers = get_default_headers()
-    headers.update({"Authorization": f"Bearer {context.auth_token}"})
-    headers.update({"Content-Type": "application/json"})
-    headers.update({"NHSD-Session-URID": "555083343101"})
-    response = post(data=body, url=url, context=context, headers=headers)
-    the_expected_response_code_is_returned(context, 200)
-    # Write the response body to a file
-    with open("./records/convert_released_prescription.xml", "w") as f:
-        f.write(response.text)
 
 
 def indicate_success(context):

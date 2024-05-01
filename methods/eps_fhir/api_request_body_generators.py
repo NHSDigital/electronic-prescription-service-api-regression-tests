@@ -55,22 +55,6 @@ def create_fhir_bundle(**kwargs):
     )
 
 
-def create_fhir_signed_bundle(**kwargs):
-    return create_fhir_resource(
-        "Bundle",
-        [
-            "message_header",
-            "practitioner_role",
-            "practitioner",
-            "patient",
-            "organization",
-            "medication_request",
-            "provenance",
-        ],
-        **kwargs,
-    )
-
-
 def create_fhir_parameter(**kwargs):
     return create_fhir_resource(
         "Parameters",
@@ -125,10 +109,11 @@ def generate_message_header(**kwargs):
     return message_header
 
 
-def generate_medication_request(**kwargs):
+def generate_medication_request(primary_care=True, **kwargs):
     short_prescription_id = kwargs["short_prescription_id"]
     prescription_item_id = kwargs["prescription_item_id"]
     long_prescription_id = kwargs["long_prescription_id"]
+    secondary_care_type = kwargs["secondary_care_type"]
     code = kwargs["code"]
 
     medication_request = {
@@ -159,7 +144,7 @@ def generate_medication_request(**kwargs):
                     "coding": [
                         {
                             "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
-                            "code": "community",
+                            "code": ("community" if primary_care else secondary_care_type),
                             # primary-care : "community"
                             # but secondary-care: "inpatient"/"outpatient"
                         }  # must be consistent
@@ -286,7 +271,7 @@ def generate_practitioner_role(**kwargs):
             ],
             "practitioner": {
                 "reference": "urn:uuid:a8c85454-f8cb-498d-9629-78e2cb5fa47a"
-            },  # mandatory if there is a practitioner
+            },
             "organization": {
                 "reference": "urn:uuid:3b4b03a5-52ba-4ba6-9b82-70350aa109d8"
             },
@@ -331,6 +316,7 @@ def generate_practitioner(**kwargs):
 
 def generate_patient(**kwargs):
     nhs_number = kwargs["nhs_number"]
+    gp_ods_code = kwargs["sender_ods_code"]
     patient = {
         "fullUrl": "urn:uuid:78d3c2eb-009e-4ec8-a358-b042954aa9b2",
         "resource": {
@@ -362,7 +348,7 @@ def generate_patient(**kwargs):
                 {
                     "identifier": {
                         "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-                        "value": "A83008",
+                        "value": gp_ods_code,
                     }
                 }
             ],
