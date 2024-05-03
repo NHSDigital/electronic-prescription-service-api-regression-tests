@@ -45,6 +45,29 @@ If your IDE supports it, you can directly run the .feature files within `/featur
 Run the tests by running `behave` in a command prompt or terminal window.
 * This will run the tests and print the results to console
 
+```
+behave -D product=EPS-FHIR -D env=INT -f behave_cucumber_formatter:PrettyCucumberJSONFormatter -o reports/cucumber_json.json -f 
+allure_behave.formatter:AllureFormatter -o allure-results -f pretty features --no-capture --no-capture-stderr --no-skipped --expand --logging-level=DEBUG --tags eps_fhir
+```
+
+change the `env` variable accordingly to either `INT` or `INTERNAL-DEV`
+
 ### Setting the BASE_URL
 To run the tests from your IDE it is necessary to set the BASE_URL environment variable.
 <br /> If running via GitHub actions this will default to `INT` and currently cannot be changed
+
+
+### Getting the token to check the endpoint calls on Postman
+
+Depending on which environment you have run your *behave* command you can pick from the following:
+
+- INTERNAL-DEV: Call `https://sxhjsbv4d7tvmt67av3jlboera0yzvgc.lambda-url.eu-west-2.on.aws/?env=internal-dev` which provides the Authorization token for the internal-dev environment.
+- INT: Run `poetry run python get_token.py env=INT` to get the Authorization token for the int environment.
+
+### Commit to Git
+1. Before committing run `make pre-install`
+2. You can run the commit command by adding `--no-verify` if you want to avoid word heavy messages that block the commit. Make sure you have resolved them before the end of the ticket. 
+
+
+### Schema
+The schema for the request bodies needed for eac endpoint call can be found here: https://digital.nhs.uk/developer/api-catalogue/electronic-prescription-service-fhir#post-/FHIR/R4/$prepare 
