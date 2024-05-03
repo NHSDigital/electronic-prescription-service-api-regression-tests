@@ -41,6 +41,7 @@ def create_new_prepare_body(context):
         prescription_item_id=context.prescription_item_id,
         long_prescription_id=context.long_prescription_id,
         secondary_care_type=context.secondary_care_type,
+        receiver_ods_code=context.receiver_ods_code,
     )
     patient = generate_patient(
         nhs_number=context.nhs_number, sender_ods_code=context.sender_ods_code

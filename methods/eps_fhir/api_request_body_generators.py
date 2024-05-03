@@ -1,10 +1,5 @@
-from datetime import datetime, timedelta, timezone
 import json
 import uuid
-
-# three_months_later = datetime.today() + timedelta(days=3 * 30)
-
-# later_date = three_months_later.strftime("%Y-%m-%d")
 
 
 def create_fhir_resource(resource_type, main_keys, **kwargs):
@@ -70,6 +65,7 @@ def create_fhir_parameter(**kwargs):
 def generate_message_header(**kwargs):
     bundle_id = uuid.uuid4()
     sender_ods_code = kwargs["sender_ods_code"]
+    receiver_ods_code = kwargs["receiver_ods_code"]
     message_header = {
         "fullUrl": f"urn:uuid:{bundle_id}",
         "resource": {
@@ -90,22 +86,22 @@ def generate_message_header(**kwargs):
         },
     }
 
-    # if receiver_ods_code:  # Nominated
-    #     message_header["resource"].update(
-    #         {
-    #             "destination": [
-    #                 {
-    #                     "endpoint": "https://sandbox.api.service.nhs.uk/electronic-prescriptions/$post-message",
-    #                     "receiver": {
-    #                         "identifier": {
-    #                             "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-    #                             "value": receiver_ods_code,
-    #                         }
-    #                     },
-    #                 }
-    #             ]
-    #         },
-    #     )
+    if receiver_ods_code:  # Nominated
+        message_header["resource"].update(
+            {
+                "destination": [
+                    {
+                        "endpoint": "https://sandbox.api.service.nhs.uk/electronic-prescriptions/$post-message",
+                        "receiver": {
+                            "identifier": {
+                                "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                                "value": receiver_ods_code,
+                            }
+                        },
+                    }
+                ]
+            },
+        )
     return message_header
 
 
@@ -114,6 +110,7 @@ def generate_medication_request(primary_care=True, **kwargs):
     prescription_item_id = kwargs["prescription_item_id"]
     long_prescription_id = kwargs["long_prescription_id"]
     secondary_care_type = kwargs["secondary_care_type"]
+    receiver_ods_code = kwargs["receiver_ods_code"]
     code = kwargs["code"]
 
     medication_request = {
@@ -221,26 +218,27 @@ def generate_medication_request(primary_care=True, **kwargs):
         },
     }
 
-    # if code == "P1":  # Nominated
-    #     medication_request["resource"]["dispenseRequest"].update(
-    #         {
-    #             "extension": [
-    #                 {
-    #                     "url": "https://fhir.nhs.uk/StructureDefinition/Extension-DM-PerformerSiteType",
-    #                     "valueCoding": {
-    #                         "system": "https://fhir.nhs.uk/CodeSystem/dispensing-site-preference",
-    #                         "code": code,
-    #                     },
-    #                 }
-    #             ],
-    #             "performer": {
-    #                 "identifier": {
-    #                     "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-    #                     "value": "VNE51",
-    #                 }
-    #             },
-    #         }
-    #     )
+    if code == "P1":  # Nominated
+        medication_request["resource"]["dispenseRequest"].update(
+            {
+                "extension": [
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-DM-PerformerSiteType",
+                        "valueCoding": {
+                            "system": "https://fhir.nhs.uk/CodeSystem/dispensing-site-preference",
+                            "code": code,
+                        },
+                    }
+                ],
+                "performer": {
+                    "identifier": {
+                        "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                        "value": receiver_ods_code,
+                    }
+                },
+            }
+        )
+
     if code == "0004":
         medication_request["resource"]["dispenseRequest"].update(
             {
