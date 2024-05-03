@@ -144,7 +144,9 @@ def generate_medication_request(primary_care=True, **kwargs):
                     "coding": [
                         {
                             "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
-                            "code": ("community" if primary_care else secondary_care_type),
+                            "code": (
+                                "community" if primary_care else secondary_care_type
+                            ),
                             # primary-care : "community"
                             # but secondary-care: "inpatient"/"outpatient"
                         }  # must be consistent

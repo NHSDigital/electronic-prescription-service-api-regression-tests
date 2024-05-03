@@ -28,6 +28,7 @@ def create_new_prepare_body(context):
     context.prescription_item_id = str(uuid.uuid4())
     context.prescription_id = generate_short_form_id(ods_code=context.sender_ods_code)
     context.long_prescription_id = str(uuid.uuid4())
+    context.secondary_care_type = "inpatient"
     user_id = CIS2_USERS["prescriber"]["user_id"]
     sds_role_id = CIS2_USERS["prescriber"]["role_id"]
     message_header = generate_message_header(
@@ -39,8 +40,11 @@ def create_new_prepare_body(context):
         code=context.nomination_code,
         prescription_item_id=context.prescription_item_id,
         long_prescription_id=context.long_prescription_id,
+        secondary_care_type=context.secondary_care_type,
     )
-    patient = generate_patient(nhs_number=context.nhs_number)
+    patient = generate_patient(
+        nhs_number=context.nhs_number, sender_ods_code=context.sender_ods_code
+    )
     organization = generate_organization()
     practitioner_role = generate_practitioner_role(sds_role_id=sds_role_id)
     practitioner = generate_practitioner(user_id=user_id)
@@ -63,7 +67,9 @@ def prepare_prescription(context):
     headers = get_default_headers()
     headers.update({"Authorization": f"Bearer {context.auth_token}"})
     headers.update({"Content-Type": "application/json"})
-    response = post(data=context.prepare_body, url=url, context=context, headers=headers)
+    response = post(
+        data=context.prepare_body, url=url, context=context, headers=headers
+    )
     the_expected_response_code_is_returned(context, 200)
     context.digest = response.json()["parameter"][0]["valueString"]
     context.timestamp = response.json()["parameter"][1]["valueString"]
@@ -78,6 +84,7 @@ def create_signed_body(context):
     body["entry"].append(provenance)
     body = json.dumps(body)
     return body
+
 
 def create_signed_prescription(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/$process-message#prescription-order"
