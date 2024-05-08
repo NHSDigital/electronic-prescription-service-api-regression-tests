@@ -103,7 +103,7 @@ def create_release_body(context):
     group_identifier = generate_group_identifier(
         prescription_order_number=prescription_order_number
     )
-    owner = generate_owner()
+    owner = generate_owner(receiver_ods_code=context.receiver_ods_code)
     agent = generate_agent()
     body = create_fhir_parameter(
         group_identifier=group_identifier, owner=owner, agent=agent
@@ -114,11 +114,13 @@ def create_release_body(context):
 def release_signed_prescription(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/Task/$release"
     context.release_body = create_release_body(context)
+    with open("./records/release_prescription.json", "w") as f:
+        print(context.release_body, file=f)
     headers = get_default_headers()
     headers.update({"Authorization": f"Bearer {context.auth_token}"})
     headers.update({"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]})
     post(data=context.release_body, url=url, context=context, headers=headers)
 
 
-def indicate_success(context):
+def assert_ok_status_code(context):
     the_expected_response_code_is_returned(context, 200)

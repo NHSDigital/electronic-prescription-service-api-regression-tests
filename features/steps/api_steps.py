@@ -1,10 +1,12 @@
+import json
+
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 
 from methods.eps_fhir.api_methods import (
     prepare_prescription,
     create_signed_prescription,
     release_signed_prescription,
-    indicate_success,
+    assert_ok_status_code,
 )
 from methods.shared import common
 from methods.shared.api import request_ping
@@ -20,8 +22,8 @@ def i_am_an_authorised_user(context, user):
     context.auth_token = get_auth(user, env)
 
 
-@given("I successfully prepare, sign and send a {prescription_type} prescription")
-def i_prepare_sign_release_a_prescription(context, prescription_type):
+@given("I successfully prepare and sign a {prescription_type} prescription")
+def i_prepare_and_sign_a_prescription(context, prescription_type):
     i_prepare_a_new_prescription(context, prescription_type)
     i_sign_a_new_prescription(context=context)
 
@@ -46,8 +48,9 @@ def i_release_a_prescription(context):
 
 @then("the response indicates success")
 def indicate_successful_response(context):
-    indicate_success(context)
-    assert_that(str(context.response.content)).does_not_contain("Signature is invalid.")
+    assert_ok_status_code(context)
+    json_response = json.loads(context.response.content)
+    assert_that(json_response["parameter"][0]["resource"]["total"]).is_equal_to(1)
 
 
 @when('I make a request to the "{product}" ping endpoint')

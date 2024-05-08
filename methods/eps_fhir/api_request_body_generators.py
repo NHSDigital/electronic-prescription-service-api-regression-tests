@@ -429,7 +429,8 @@ def generate_provenance(**kwargs):
     return provenance
 
 
-def generate_owner():
+def generate_owner(**kwargs):
+    receiver_ods_code = kwargs["receiver_ods_code"]
     owner = {
         "name": "owner",
         "resource": {
@@ -437,7 +438,7 @@ def generate_owner():
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-                    "value": "A99968",
+                    "value": receiver_ods_code,
                 }
             ],
             "active": True,
