@@ -47,7 +47,7 @@ def get_signature(digest: str, valid: bool):
     if verify_certificate_valid_when_signed(signature_date, certificate):
         print("Certificate is valid.")
     else:
-        raise Exception("Certificate has expired. You may need to generate a new one.")
+        raise RuntimeError("Certificate has expired. You may need to generate a new one.")
 
     # If private key doesn't exist but X.509 certificate exists, return dummy signature
     if not PRIVATE_KEY_EXISTS and X509_CERT_EXISTS:
@@ -56,7 +56,7 @@ def get_signature(digest: str, valid: bool):
     # Load X.509 certificate and check if it has expired
     x509_cert = load_pem_x509_certificate(cert_data, default_backend())
     if x509_cert.not_valid_after_utc < datetime.now(timezone.utc):
-        raise Exception("Signing certificate has expired")
+        raise RuntimeError("Signing certificate has expired")
 
     # Load private key and generate signature
     with open(PRIVATE_KEY_PATH, "rb") as key_file:

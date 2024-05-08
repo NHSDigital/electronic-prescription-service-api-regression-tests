@@ -26,7 +26,6 @@ CIS2_USERS = {
     "dispenser": {"user_id": "555260695103", "role_id": "555265434108"},
 }
 
-# "NHSD-Session-URID": "555254242106" for user UID 656005750108
 REPOS = {
     "EPS-FHIR": "https://github.com/NHSDigital/electronic-prescription-service-api",
     "PFP-APIGEE": "https://github.com/NHSDigital/prescriptions-for-patients",
