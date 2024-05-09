@@ -93,10 +93,10 @@ jobs:
           environment: ${{ inputs.environment }}
           pull_request_id: ${{ inputs.pull_request_id }}
           tags: ${{ inputs.tags }}
-          client_id: ${{ env.secrets.CLIENT_ID }}
-          client_secret: ${{ env.secrets.CLIENT_SECRET }}
-          certificate: ${{ env.secrets.CERTIFICATE }}
-          private_key: ${{ env.secrets.PRIVATE_KEY }}
+          client_id: ${{ secrets.CLIENT_ID }}
+          client_secret: ${{ secrets.CLIENT_SECRET }}
+          certificate: ${{ secrets.CERTIFICATE }}
+          private_key: ${{ secrets.PRIVATE_KEY }}
         run: |
             export CLIENT_ID=$client_id
             export CLIENT_SECRET=$client_secret
