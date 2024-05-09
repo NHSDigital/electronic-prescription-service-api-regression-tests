@@ -63,8 +63,6 @@ def create_new_prepare_body(context):
 def prepare_prescription(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/$prepare"
     context.prepare_body = create_new_prepare_body(context)
-    with open("./records/prepare_prescription.json", "w") as f:
-        print(context.prepare_body, file=f)
     headers = get_default_headers()
     headers.update({"Authorization": f"Bearer {context.auth_token}"})
     headers.update({"Content-Type": "application/json"})
@@ -90,8 +88,6 @@ def create_signed_body(context):
 def create_signed_prescription(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/$process-message#prescription-order"
     context.signed_body = create_signed_body(context)
-    with open("./records/create_signed_prescription.json", "w") as f:
-        print(context.signed_body, file=f)
     headers = get_default_headers()
     headers.update({"Authorization": f"Bearer {context.auth_token}"})
     post(data=context.signed_body, url=url, context=context, headers=headers)
@@ -114,8 +110,6 @@ def create_release_body(context):
 def release_signed_prescription(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/Task/$release"
     context.release_body = create_release_body(context)
-    with open("./records/release_prescription.json", "w") as f:
-        print(context.release_body, file=f)
     headers = get_default_headers()
     headers.update({"Authorization": f"Bearer {context.auth_token}"})
     headers.update({"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]})
