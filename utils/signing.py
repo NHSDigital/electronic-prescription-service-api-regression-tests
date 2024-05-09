@@ -20,8 +20,8 @@ from os.path import exists
 from dotenv import load_dotenv
 
 dotenv = load_dotenv()
-PRIVATE_KEY_PATH = os.getenv("PRIVATE_KEY")
-X509_CERT_PATH = os.getenv("CERTIFICATE")
+PRIVATE_KEY = os.getenv("PRIVATE_KEY")
+X509_CERT = os.getenv("CERTIFICATE")
 DUMMY_SIGNATURE = """
 DQo8U2lnbmF0dXJlIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwLz\
 A5L3htbGRzaWcjIj4NCiAgICA8U2lnbmVkSW5mbz48Q2Fub25pY2FsaXph\
@@ -29,8 +29,8 @@ dGlvbk1ldGhvZCBBbGdvcml0aG09Imh0dHA6Ly93d3cudzMub3JnLzIwMD\
 EvMTAveG1sLWV4Yy1jMTRuIyI
 """
 
-PRIVATE_KEY_EXISTS = exists(PRIVATE_KEY_PATH)
-X509_CERT_EXISTS = exists(X509_CERT_PATH)
+PRIVATE_KEY_EXISTS = exists(PRIVATE_KEY)
+X509_CERT_EXISTS = exists(X509_CERT)
 
 
 def verify_certificate_valid_when_signed(signature_date, certificate):
@@ -40,35 +40,31 @@ def verify_certificate_valid_when_signed(signature_date, certificate):
 
 
 def get_signature(digest: str, valid: bool):
+    # If private key doesn't exist but X.509 certificate exists, return dummy signature
+    if not PRIVATE_KEY_EXISTS and X509_CERT_EXISTS:
+        return DUMMY_SIGNATURE
+
     # Load X.509 certificate
-    with open(X509_CERT_PATH, "rb") as cert_file:
-        cert_data = cert_file.read()
-    certificate = load_pem_x509_certificate(cert_data, default_backend())
+    x509_cert = load_pem_x509_certificate(X509_CERT.encode("utf-8"), default_backend())
+
+    # Load private key
+    private_key = load_pem_private_key(
+        PRIVATE_KEY.encode("utf-8"), password=None, backend=default_backend()
+    )
 
     # Get the current date (signature date)
     signature_date = datetime.now(timezone.utc)
 
     # Check if the certificate has expired
-    if verify_certificate_valid_when_signed(signature_date, certificate):
+    if verify_certificate_valid_when_signed(signature_date, x509_cert):
         print("Certificate is valid.")
     else:
         raise RuntimeError("Certificate has expired. You may need to generate a new one.")
 
-    # If private key doesn't exist but X.509 certificate exists, return dummy signature
-    if not PRIVATE_KEY_EXISTS and X509_CERT_EXISTS:
-        return DUMMY_SIGNATURE
 
-    # Load X.509 certificate and check if it has expired
-    x509_cert = load_pem_x509_certificate(cert_data, default_backend())
+    # check if X.509 certificate has expired
     if x509_cert.not_valid_after_utc < datetime.now(timezone.utc):
         raise RuntimeError("Signing certificate has expired")
-
-    # Load private key and generate signature
-    with open(PRIVATE_KEY_PATH, "rb") as key_file:
-        key_bytes = key_file.read()
-    private_key = load_pem_private_key(
-        key_bytes, password=None, backend=default_backend()
-    )
 
     # Decode digest
     digest = base64.b64decode(digest).decode("utf-8")
