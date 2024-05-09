@@ -7,6 +7,8 @@
 #####################################################################
 
 import base64
+import os
+
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
@@ -15,8 +17,11 @@ from cryptography.x509 import load_pem_x509_certificate
 from datetime import datetime, timezone
 from os.path import exists
 
-PRIVATE_KEY_PATH = "./certs/cert.crt"
-X509_CERT_PATH = "./certs/x509.pem"
+from dotenv import load_dotenv
+
+dotenv = load_dotenv()
+PRIVATE_KEY_PATH = os.getenv("PRIVATE_KEY")
+X509_CERT_PATH = os.getenv("CERTIFICATE")
 DUMMY_SIGNATURE = """
 DQo8U2lnbmF0dXJlIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwLz\
 A5L3htbGRzaWcjIj4NCiAgICA8U2lnbmVkSW5mbz48Q2Fub25pY2FsaXph\
