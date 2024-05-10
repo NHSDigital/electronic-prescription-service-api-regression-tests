@@ -64,7 +64,8 @@ def prepare_prescription(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/$prepare"
     context.prepare_body = create_new_prepare_body(context)
     headers = get_default_headers()
-    headers.update({"Authorization": f"Bearer {context.auth_token}"})
+    if context.config.userdata["env"] != "SANDBOX":
+        headers.update({"Authorization": f"Bearer {context.auth_token}"})
     headers.update({"Content-Type": "application/json"})
     response = post(
         data=context.prepare_body, url=url, context=context, headers=headers
@@ -75,7 +76,9 @@ def prepare_prescription(context):
 
 
 def create_signed_body(context):
-    context.signature = get_signature(context.digest, True)
+    context.signature = get_signature(
+        env=context.config.userdata["env"], digest=context.digest
+    )
     body = json.loads(context.prepare_body)
     provenance = generate_provenance(
         signature=context.signature, timestamp=context.timestamp
@@ -89,7 +92,8 @@ def create_signed_prescription(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/$process-message#prescription-order"
     context.signed_body = create_signed_body(context)
     headers = get_default_headers()
-    headers.update({"Authorization": f"Bearer {context.auth_token}"})
+    if context.config.userdata["env"] != "SANDBOX":
+        headers.update({"Authorization": f"Bearer {context.auth_token}"})
     post(data=context.signed_body, url=url, context=context, headers=headers)
     the_expected_response_code_is_returned(context, 200)
 
@@ -111,7 +115,8 @@ def release_signed_prescription(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/Task/$release"
     context.release_body = create_release_body(context)
     headers = get_default_headers()
-    headers.update({"Authorization": f"Bearer {context.auth_token}"})
+    if context.config.userdata["env"] != "SANDBOX":
+        headers.update({"Authorization": f"Bearer {context.auth_token}"})
     headers.update({"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]})
     post(data=context.release_body, url=url, context=context, headers=headers)
 

@@ -17,6 +17,8 @@ from utils.nhs_number_generator import random_nhs_number_generator
 @given("I am an authorised {user}")
 @when("I am an authorised {user}")
 def i_am_an_authorised_user(context, user):
+    if context.config.userdata["env"] == "SANDBOX":
+        return
     env = context.config.userdata["env"]
     context.user = user
     context.auth_token = get_auth(user, env)
@@ -48,6 +50,8 @@ def i_release_a_prescription(context):
 
 @then("the response indicates success")
 def indicate_successful_response(context):
+    if context.config.userdata["env"] == "SANDBOX":
+        return
     assert_ok_status_code(context)
     json_response = json.loads(context.response.content)
     assert_that(json_response["parameter"][0]["resource"]["total"]).is_equal_to(1)

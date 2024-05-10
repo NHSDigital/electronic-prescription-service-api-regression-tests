@@ -22,7 +22,7 @@ def get_auth(user, env):
         client_id=CLIENT_ID,
         client_secret=CLIENT_SECRET,
         scope="nhs-cis2",
-        login_form={"username": CIS2_USERS[user]["user_id"]}
+        login_form={"username": CIS2_USERS[user]["user_id"]},
     )
 
     # 2. Pass the config to the Authenticator
