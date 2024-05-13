@@ -252,8 +252,5 @@ vscode
 # certs
 /certs/*
 
-# Generated files from features
-/records/
-
 # all .env files
 /.env*

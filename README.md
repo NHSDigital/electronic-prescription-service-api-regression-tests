@@ -33,7 +33,8 @@ Run the `runner.py` file located in the root of the project <br />
 This is the preferred method and allows you to include/exclude tags <br />
 a `~` before the tag name excludes it. <br />
 This is how the tests are run on the CI
-#### Example: `python runner.py --tags smoke --tags ~slow`
+<h4> You MUST specify the environment and product
+#### Example: `python runner.py  --product=EPS-FHIR --env=INT --tags smoke --tags ~slow`
 This will run all tests with the tag `@smoke` but skip any tests tagged with `@slow`
 
 ### Method 2:
@@ -46,15 +47,15 @@ Run the tests by running `behave` in a command prompt or terminal window.
 * This will run the tests and print the results to console
 
 ```
-behave -D product=EPS-FHIR -D env=INT -f behave_cucumber_formatter:PrettyCucumberJSONFormatter -o reports/cucumber_json.json -f 
+behave -D product=EPS-FHIR -D env=INT -f behave_cucumber_formatter:PrettyCucumberJSONFormatter -o reports/cucumber_json.json -f
 allure_behave.formatter:AllureFormatter -o allure-results -f pretty features --no-capture --no-capture-stderr --no-skipped --expand --logging-level=DEBUG --tags eps_fhir
 ```
 
 change the `env` variable accordingly to either `INT` or `INTERNAL-DEV`
+If you with to test a different product i.e. `PFP-APIGREE` then you must change `product=` and `--tags` respectively
 
 ### Setting the BASE_URL
-To run the tests from your IDE it is necessary to set the BASE_URL environment variable.
-<br /> If running via GitHub actions this will default to `INT` and currently cannot be changed
+The BASE_URL is set based on the environment you provide in the above command. This cannot be overridden
 
 
 ### Getting the token to check the endpoint calls on Postman
@@ -65,9 +66,10 @@ Depending on which environment you have run your *behave* command you can pick f
 - INT: Run `poetry run python get_token.py env=INT` to get the Authorization token for the int environment.
 
 ### Commit to Git
-1. Before committing run `make pre-install`
-2. You can run the commit command by adding `--no-verify` if you want to avoid word heavy messages that block the commit. Make sure you have resolved them before the end of the ticket. 
+1. Before committing run `make pre-commit`. <br>
+Note: This process will stop after the first program detects an error or if Black modified any files. You may need to run this multiple times to ensure everything is ok before commiting
 
 
-### Schema
-The schema for the request bodies needed for eac endpoint call can be found here: https://digital.nhs.uk/developer/api-catalogue/electronic-prescription-service-fhir#post-/FHIR/R4/$prepare 
+### APIs tested and their Documentation
+* [EPS-FHIR](https://digital.nhs.uk/developer/api-catalogue/electronic-prescription-service-fhir)
+* [Prescriptions for Patients (PfP)](https://digital.nhs.uk/developer/api-catalogue/prescriptions-for-patients)
