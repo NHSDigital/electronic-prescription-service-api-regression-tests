@@ -249,8 +249,5 @@ node_modules
 .vscode
 vscode
 
-# certs
-/certs/*
-
 # all .env files
 /.env*
