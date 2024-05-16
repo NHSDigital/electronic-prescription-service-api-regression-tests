@@ -89,14 +89,14 @@ jobs:
         id: tests
         continue-on-error: true
         env:
-          product: ${{ inputs.product }}
-          environment: ${{ inputs.environment }}
-          pull_request_id: ${{ inputs.pull_request_id }}
-          tags: ${{ inputs.tags }}
-          client_id: ${{ secrets.CLIENT_ID }}
-          client_secret: ${{ secrets.CLIENT_SECRET }}
-          certificate: ${{ secrets.CERTIFICATE }}
-          private_key: ${{ secrets.PRIVATE_KEY }}
+          PRODUCT: ${{ inputs.product }}
+          ENVIRONMENT: ${{ inputs.environment }}
+          PULL_REQUEST_ID: ${{ inputs.pull_request_id }}
+          TAGS: ${{ inputs.tags }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          CERTIFICATE: ${{ secrets.CERTIFICATE }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
         run: |
             export CLIENT_ID=$client_id
             export CLIENT_SECRET=$client_secret

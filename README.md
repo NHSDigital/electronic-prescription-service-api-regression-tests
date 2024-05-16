@@ -25,6 +25,9 @@ If you'd like to use your own machine without containerisation. You will need th
 
 Now you can run `make install` to install the virtualenv and packages
 
+## Obtaining certificates and env files
+TBA
+
 ## Developing/Debugging Tests
 
 ## Running the tests:
@@ -67,7 +70,7 @@ Depending on which environment you have run your *behave* command you can pick f
 
 ### Commit to Git
 1. Before committing run `make pre-commit`. <br>
-Note: This process will stop after the first program detects an error or if Black modified any files. You may need to run this multiple times to ensure everything is ok before commiting
+Note: This process will stop after the first program detects an error or if Black modified any files. You may need to run this multiple times to ensure everything is ok before committing.
 
 
 ### APIs tested and their Documentation
