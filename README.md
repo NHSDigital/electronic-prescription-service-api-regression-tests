@@ -9,11 +9,11 @@ These tests are run automatically during deployment and shouldn't need to be tou
 adding/removing/changing the test cases
 
 ## Preparing your development environment
-This test pack utilises the power of Docker to fast and easily spin up a dev environment for you to work in
+This test pack utilizes the power of Docker to fast and easily spin up a dev environment for you to work in
 the Dockerfile is located in `{project_root}/.devcontainer/Dockerfile`
 
 ## Setup without docker development environment
-If you'd like to use your own machine without containerisation. You will need the following;
+If you'd like to use your own machine without containerization. You will need the following;
 * Ubuntu (WSL)
 * [ASDF](https://asdf-vm.com/guide/getting-started.html)
 #### Once ASDF is installed, add the following plugins:
@@ -43,7 +43,7 @@ This will run all tests with the tag `@smoke` but skip any tests tagged with `@s
 ### Method 2:
 If your IDE supports it, you can directly run the .feature files within `/features`
 <br />
-* Note in some IDEs, you will need to set the `BASE_URL` environment within the behave run configuration rather than the machine
+* Note in some IDEs, you will need to set the `BASE_URL` environment within the behave run configuration rather than the machine.
 
 ### Method 3:
 Run the tests by running `behave` in a command prompt or terminal window.
@@ -54,8 +54,8 @@ behave -D product=EPS-FHIR -D env=INT -f behave_cucumber_formatter:PrettyCucumbe
 allure_behave.formatter:AllureFormatter -o allure-results -f pretty features --no-capture --no-capture-stderr --no-skipped --expand --logging-level=DEBUG --tags eps_fhir
 ```
 
-change the `env` variable accordingly to either `INT` or `INTERNAL-DEV`
-If you with to test a different product i.e. `PFP-APIGREE` then you must change `product=` and `--tags` respectively
+change the `env` variable accordingly to either `INT` or `INTERNAL-DEV`.
+If you wish to test a different product i.e. `PFP-APIGREE` then you must change `product=` and `--tags` respectively.
 
 ### Setting the BASE_URL
 The BASE_URL is set based on the environment you provide in the above command. This cannot be overridden
