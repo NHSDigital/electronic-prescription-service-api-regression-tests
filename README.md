@@ -62,8 +62,8 @@ The BASE_URL is set based on the environment you provide in the above command. T
 
 Depending on which environment you have run your *behave* command you can pick from the following:
 
-- INTERNAL-DEV: Call `https://sxhjsbv4d7tvmt67av3jlboera0yzvgc.lambda-url.eu-west-2.on.aws/?env=internal-dev` which provides the Authorization token for the internal-dev environment.
-- INT: Run `poetry run python get_token.py env=INT` to get the Authorization token for the int environment.
+- INTERNAL-DEV: Run `poetry run python get_token.py INTERNAL-DEV` to get the Authorization token for the internal-dev environment.
+- INT: Run `poetry run python get_token.py INT` to get the Authorization token for the int environment.
 
 ### Commit to Git
 1. Before committing run `make pre-commit`. <br>

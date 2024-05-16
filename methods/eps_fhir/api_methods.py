@@ -22,7 +22,7 @@ from utils.prescription_id_generator import generate_short_form_id
 from utils.signing import get_signature
 
 
-def create_new_prepare_body(context):
+def _create_new_prepare_body(context):
     context.sender_ods_code = "A83008"
     context.receiver_ods_code = "FA565"
     context.prescription_item_id = str(uuid.uuid4())
@@ -62,7 +62,7 @@ def create_new_prepare_body(context):
 
 def prepare_prescription(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/$prepare"
-    context.prepare_body = create_new_prepare_body(context)
+    context.prepare_body = _create_new_prepare_body(context)
     headers = get_default_headers()
     if "SANDBOX" not in context.config.userdata["env"]:
         headers.update({"Authorization": f"Bearer {context.auth_token}"})
@@ -75,7 +75,7 @@ def prepare_prescription(context):
     context.timestamp = response.json()["parameter"][1]["valueString"]
 
 
-def create_signed_body(context):
+def _create_signed_body(context):
     context.signature = get_signature(
         env=context.config.userdata["env"], digest=context.digest
     )
@@ -90,7 +90,7 @@ def create_signed_body(context):
 
 def create_signed_prescription(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/$process-message#prescription-order"
-    context.signed_body = create_signed_body(context)
+    context.signed_body = _create_signed_body(context)
     headers = get_default_headers()
     if "SANDBOX" not in context.config.userdata["env"]:
         headers.update({"Authorization": f"Bearer {context.auth_token}"})
@@ -98,7 +98,7 @@ def create_signed_prescription(context):
     the_expected_response_code_is_returned(context, 200)
 
 
-def create_release_body(context):
+def _create_release_body(context):
     prescription_order_number = context.prescription_id
     group_identifier = generate_group_identifier(
         prescription_order_number=prescription_order_number
@@ -113,7 +113,7 @@ def create_release_body(context):
 
 def release_signed_prescription(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/Task/$release"
-    context.release_body = create_release_body(context)
+    context.release_body = _create_release_body(context)
     headers = get_default_headers()
     if "SANDBOX" not in context.config.userdata["env"]:
         headers.update({"Authorization": f"Bearer {context.auth_token}"})

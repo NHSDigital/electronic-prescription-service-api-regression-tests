@@ -1,12 +1,14 @@
 import json
+
 import allure
 import requests
-from features.environment import CLIENT_ID, CLIENT_SECRET, CIS2_USERS
 from assertpy import assert_that as assertpy_assert  # type: ignore
 from pytest_nhsd_apim.identity_service import (
-    AuthorizationCodeConfig,
     AuthorizationCodeAuthenticator,
+    AuthorizationCodeConfig,
 )
+
+from features.environment import CIS2_USERS, CLIENT_ID, CLIENT_SECRET
 
 
 def get_auth(user, env):
@@ -46,8 +48,25 @@ def get_auth(user, env):
             print(f"{response.status_code}\n{str(response.content)}")
             raise AssertionError()
         assert response.status_code == 200
-        print("Successfully Authenticated")
+        print("Successfully Authenticated in INT")
     return token
+
+
+def get_auth_internal_dev():
+    url = "https://sxhjsbv4d7tvmt67av3jlboera0yzvgc.lambda-url.eu-west-2.on.aws/?env=internal-dev"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        access_token = data.get("access_token")
+        if access_token:
+            print("Successfully Authenticated in INTERNAL-DEV")
+            return access_token
+        else:
+            print("Access token not found in response")
+            return None
+    else:
+        print(f"Failed to retrieve access token. Status code: {response.status_code}")
+        return None
 
 
 def assert_that(actual):
