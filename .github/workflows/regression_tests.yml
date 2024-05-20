@@ -47,12 +47,12 @@ jobs:
       - name: ${{github.event.inputs.id}}
         env:
           ID: ${{github.event.inputs.id}}
-          env: ${{ inputs.environment }}
-          product: ${{ inputs.product }}
-          pull_request_id: ${{ inputs.pull_request_id }}
+          ENV: ${{ inputs.environment }}
+          PRODUCT: ${{ inputs.product }}
+          PULL_REQUEST_ID: ${{ inputs.pull_request_id }}
         run: |
-          echo run identifier $ID-$product-$env-$pull_request_id
-          echo run identifier $ID-$product-$env-$pull_request_id  >> "$GITHUB_STEP_SUMMARY"
+          echo run identifier $ID-$PRODUCT-$ENV-$PULL_REQUEST_ID
+          echo run identifier $ID-$PRODUCT-$ENV-$PULL_REQUEST_ID  >> "$GITHUB_STEP_SUMMARY"
 
       # using git commit sha for version of action to ensure we have stable version
       - name: Install asdf
@@ -104,7 +104,7 @@ jobs:
             export PRIVATE_KEY=$PRIVATE_KEY
             export PULL_REQUEST_ID=$PULL_REQUEST_ID
             echo Pull request ID = $PULL_REQUEST_ID
-            poetry run python ./runner.py --env=$environment --product=$product --tags=$tags
+            poetry run python ./runner.py --env=$ENVIRONMENT --product=$PRODUCT --tags=$TAGS
 
       - name: Upload Artifact
         uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
