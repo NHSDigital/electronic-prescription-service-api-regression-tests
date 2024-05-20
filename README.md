@@ -9,11 +9,11 @@ These tests are run automatically during deployment and shouldn't need to be tou
 adding/removing/changing the test cases
 
 ## Preparing your development environment
-This test pack utilizes the power of Docker to fast and easily spin up a dev environment for you to work in
+This test pack utilises the power of Docker to fast and easily spin up a dev environment for you to work in
 the Dockerfile is located in `{project_root}/.devcontainer/Dockerfile`
 
 ## Setup without docker development environment
-If you'd like to use your own machine without containerization. You will need the following;
+If you'd like to use your own machine without containerisation. You will need the following;
 * Ubuntu (WSL)
 * [ASDF](https://asdf-vm.com/guide/getting-started.html)
 #### Once ASDF is installed, add the following plugins:
