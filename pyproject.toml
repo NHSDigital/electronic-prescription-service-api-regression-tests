@@ -24,7 +24,9 @@ pre-commit = "^3.7.1"
 isort = "^5.13.1"
 pyright = "^1.1.363"
 pytest-nhsd-apim = "^3.3.14"
-
+cryptography = "^42.0.5"
+python-dateutil = "^2.9.0.post0"
+python-dotenv = "^1.0.1"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.7.1"
