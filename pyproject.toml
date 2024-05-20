@@ -4,7 +4,6 @@ version = "0.1.0"
 description = ""
 authors = ["SeanSteberis <sean.steberis@airelogic.com>"]
 readme = "README.md"
-package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.12"
@@ -20,16 +19,14 @@ semver = "^3.0.2"
 gitpython = "^3.1.43"
 pip-licenses = "^4.4.0"
 flake8 = "^7.0.0"
-pre-commit = "^3.7.0"
+pre-commit = "^3.7.1"
 isort = "^5.13.1"
-pyright = "^1.1.362"
-pytest-nhsd-apim = "^3.3.12"
-cryptography = "^42.0.5"
-python-dotenv = "^1.0.1"
+pyright = "^1.1.363"
+pytest-nhsd-apim = "^3.3.14"
 
 
 [tool.poetry.group.dev.dependencies]
-pre-commit = "^3.7.0"
+pre-commit = "^3.7.1"
 
 [tool.pyright]
 include = ["src"]
