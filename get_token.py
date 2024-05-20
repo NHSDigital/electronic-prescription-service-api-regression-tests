@@ -1,16 +1,15 @@
-import sys
-from methods.shared.common import get_auth, get_auth_internal_dev
-
-
-def get_token(environment):
-    if environment == "INT":
-        return get_auth("dispenser", environment)
-    elif environment == "INTERNAL-DEV":
-        return get_auth_internal_dev()
-    else:
-        raise ValueError("Invalid environment specified")
-
+from methods.shared.common import get_auth
 
 if __name__ == "__main__":
-    environment = sys.argv[1]
-    print(get_token(environment))
+    print(
+        "This tool will allow you to generate a CIS2 authentication token. You can use this token to authenticate"
+        " with APIs that support this service."
+    )
+    print(
+        "Please ensure the appropriate environment variables are set: CLIENT_ID, CLIENT_SECRET"
+    )
+    user = input("User (dispenser or practitioner): ").lower()
+    env = input(
+        "Env (INTERNAL-DEV-SANDBOX, SANDBOX, INT, INTERNAL-QA, INTERNAL-DEV, REF): "
+    ).upper()
+    print(get_auth(user=user, env=env))

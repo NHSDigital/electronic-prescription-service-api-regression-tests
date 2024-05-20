@@ -25,9 +25,6 @@ If you'd like to use your own machine without containerisation. You will need th
 
 Now you can run `make install` to install the virtualenv and packages
 
-## Obtaining certificates and env files
-TBA
-
 ## Developing/Debugging Tests
 
 ## Running the tests:
@@ -61,13 +58,27 @@ If you wish to test a different product i.e. `PFP-APIGREE` then you must change 
 The BASE_URL is set based on the environment you provide in the above command. This cannot be overridden
 
 
+### Environment Variables
+It is necessary to set some Environment variables in order to run any tests in your local environment. The tests will look for environment variables in the following order:
+(For security, the values will not be displayed here)
+1. `.env` file
+2. OS environment variable
+use the `template.env` file located on the root to see which variables need to be set
+<p> Any file that beings with `.env` is automatically ignored by Git </p>
+
 ### Getting the token to check the endpoint calls on Postman
-
-Depending on which environment you have run your *behave* command you can pick from the following:
-
-- INTERNAL-DEV: Run `poetry run python get_token.py INTERNAL-DEV` to get the Authorization token for the internal-dev environment.
-- INT: Run `poetry run python get_token.py INT` to get the Authorization token for the int environment.
-
+On the root of the project is a file `get_token.py` <br>
+This interactive Python script will assist you in generating a CIS2 authentication token that you can use elsewhere to make API calls (e.g. in Postman)
+<br> **You will need a Client ID and Client Secret set as environment variables** </br>
+Example:
+```
+This tool will allow you to generate a CIS2 authentication token. You can use this token to authenticate with APIs that support this service.
+Please ensure the appropriate environment variables are set: CLIENT_ID, CLIENT_SECRET
+User (dispenser or practitioner): dispenser
+Env (INTERNAL-DEV-SANDBOX, SANDBOX, INT, INTERNAL-QA, INTERNAL-DEV, REF): int
+Successfully Authenticated in INT
+J6cdtaZa...
+```
 ### Commit to Git
 1. Before committing run `make pre-commit`. <br>
 Note: This process will stop after the first program detects an error or if Black modified any files. You may need to run this multiple times to ensure everything is ok before committing.
