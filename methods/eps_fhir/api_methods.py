@@ -22,40 +22,81 @@ from utils.prescription_id_generator import generate_short_form_id
 from utils.signing import get_signature
 
 
+# def _create_new_prepare_body(context):
+#     context.sender_ods_code = "A83008"
+#     context.receiver_ods_code = "FA565"
+#     context.prescription_item_id = str(uuid.uuid4())
+#     context.prescription_id = generate_short_form_id(context.sender_ods_code)
+#     context.long_prescription_id = str(uuid.uuid4())
+#     context.secondary_care_type = "inpatient"
+#     user_id = CIS2_USERS["prescriber"]["user_id"]
+#     sds_role_id = CIS2_USERS["prescriber"]["role_id"]
+#     message_header = generate_message_header(
+#         sender_ods_code=context.sender_ods_code,
+#         receiver_ods_code=context.receiver_ods_code,
+#     )
+#     medication_request = generate_medication_request(
+#         short_prescription_id=context.prescription_id,
+#         code=context.nomination_code,
+#         prescription_item_id=context.prescription_item_id,
+#         long_prescription_id=context.long_prescription_id,
+#         secondary_care_type=context.secondary_care_type,
+#         receiver_ods_code=context.receiver_ods_code,
+#     )
+#     patient = generate_patient(
+#         nhs_number=context.nhs_number, sender_ods_code=context.sender_ods_code
+#     )
+#     organization = generate_organization()
+#     practitioner_role = generate_practitioner_role(sds_role_id=sds_role_id)
+#     practitioner = generate_practitioner(user_id=user_id)
+#     body = create_fhir_bundle(
+#         message_header=message_header,
+#         medication_request=medication_request,
+#         patient=patient,
+#         organization=organization,
+#         practitioner_role=practitioner_role,
+#         practitioner=practitioner,
+#     )
+#     return body
+
+
 def _create_new_prepare_body(context):
-    context.sender_ods_code = "A83008"
+    sender_ods_code = "A83008"
+    prescription_item_id = str(uuid.uuid4())
+    long_prescription_id = str(uuid.uuid4())
+
     context.receiver_ods_code = "FA565"
-    context.prescription_item_id = str(uuid.uuid4())
-    context.prescription_id = generate_short_form_id(ods_code=context.sender_ods_code)
-    context.long_prescription_id = str(uuid.uuid4())
-    context.secondary_care_type = "inpatient"
+    context.prescription_id = generate_short_form_id(sender_ods_code)
+
     user_id = CIS2_USERS["prescriber"]["user_id"]
     sds_role_id = CIS2_USERS["prescriber"]["role_id"]
+
     message_header = generate_message_header(
-        sender_ods_code=context.sender_ods_code,
-        receiver_ods_code=context.receiver_ods_code,
+        sender_ods_code,
+        context.receiver_ods_code,
     )
+
     medication_request = generate_medication_request(
-        short_prescription_id=context.prescription_id,
-        code=context.nomination_code,
-        prescription_item_id=context.prescription_item_id,
-        long_prescription_id=context.long_prescription_id,
-        secondary_care_type=context.secondary_care_type,
-        receiver_ods_code=context.receiver_ods_code,
+        context.prescription_id,
+        prescription_item_id,
+        long_prescription_id,
+        context.receiver_ods_code,
+        context.nomination_code,
     )
-    patient = generate_patient(
-        nhs_number=context.nhs_number, sender_ods_code=context.sender_ods_code
-    )
+
+    patient = generate_patient(context.nhs_number, sender_ods_code)
+
     organization = generate_organization()
-    practitioner_role = generate_practitioner_role(sds_role_id=sds_role_id)
-    practitioner = generate_practitioner(user_id=user_id)
+    practitioner_role = generate_practitioner_role(sds_role_id)
+    practitioner = generate_practitioner(user_id)
+
     body = create_fhir_bundle(
-        message_header=message_header,
-        medication_request=medication_request,
-        patient=patient,
-        organization=organization,
-        practitioner_role=practitioner_role,
-        practitioner=practitioner,
+        message_header,
+        medication_request,
+        patient,
+        organization,
+        practitioner_role,
+        practitioner,
     )
     return body
 
@@ -105,9 +146,7 @@ def _create_release_body(context):
     )
     owner = generate_owner(receiver_ods_code=context.receiver_ods_code)
     agent = generate_agent()
-    body = create_fhir_parameter(
-        group_identifier=group_identifier, owner=owner, agent=agent
-    )
+    body = create_fhir_parameter(group_identifier, owner, agent)
     return body
 
 

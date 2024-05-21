@@ -2,70 +2,34 @@ import json
 import uuid
 
 
-def create_fhir_resource(resource_type, main_keys, **kwargs):
+def create_fhir_bundle(*entries):
     resource_id = str(uuid.uuid4())
     fhir_resource = {
-        "resourceType": resource_type,
+        "resourceType": "Bundle",
         "id": resource_id,
+        "identifier": {
+            "system": "https://tools.ietf.org/html/rfc4122",
+            "value": resource_id,
+        },
+        "type": "message",
+        "entry": [],
     }
-
-    if resource_type == "Bundle":
-        fhir_resource.update(
-            {
-                "identifier": {
-                    "system": "https://tools.ietf.org/html/rfc4122",
-                    "value": resource_id,
-                },
-                "type": "message",
-                "entry": [],
-            }
-        )
-        main_key = "entry"
-    if resource_type == "Parameters":
-        fhir_resource["parameter"] = [
-            {"name": "status", "valueCode": "accepted"},
-        ]
-        main_key = "parameter"
-
-    for key in main_keys:
-        if kwargs.get(key):
-            fhir_resource[
-                main_key  # pyright: ignore[reportPossiblyUnboundVariable]
-            ].append(kwargs[key])
+    fhir_resource["entry"].extend(entries)
     return json.dumps(fhir_resource)
 
 
-def create_fhir_bundle(**kwargs):
-    return create_fhir_resource(
-        "Bundle",
-        [
-            "message_header",
-            "practitioner_role",
-            "practitioner",
-            "patient",
-            "organization",
-            "medication_request",
-        ],
-        **kwargs,
-    )
+def create_fhir_parameter(*entries):
+    fhir_resource = {
+        "resourceType": "Parameters",
+        "id": str(uuid.uuid4()),
+        "parameter": [{"name": "status", "valueCode": "accepted"}],
+    }
+    fhir_resource["parameter"].extend(entries)
+    return json.dumps(fhir_resource)
 
 
-def create_fhir_parameter(**kwargs):
-    return create_fhir_resource(
-        "Parameters",
-        [
-            "group_identifier",
-            "owner",
-            "agent",
-        ],
-        **kwargs,
-    )
-
-
-def generate_message_header(**kwargs):
+def generate_message_header(sender_ods_code, receiver_ods_code):
     bundle_id = uuid.uuid4()
-    sender_ods_code = kwargs["sender_ods_code"]
-    receiver_ods_code = kwargs["receiver_ods_code"]
     message_header = {
         "fullUrl": f"urn:uuid:{bundle_id}",
         "resource": {
@@ -105,14 +69,13 @@ def generate_message_header(**kwargs):
     return message_header
 
 
-def generate_medication_request(primary_care=True, **kwargs):
-    short_prescription_id = kwargs["short_prescription_id"]
-    prescription_item_id = kwargs["prescription_item_id"]
-    long_prescription_id = kwargs["long_prescription_id"]
-    secondary_care_type = kwargs["secondary_care_type"]
-    receiver_ods_code = kwargs["receiver_ods_code"]
-    code = kwargs["code"]
-
+def generate_medication_request(
+    short_prescription_id,
+    prescription_item_id,
+    long_prescription_id,
+    receiver_ods_code,
+    code,
+):
     medication_request = {
         "fullUrl": "urn:uuid:a54219b8-f741-4c47-b662-e4f8dfa49ab6",
         "resource": {
@@ -141,9 +104,7 @@ def generate_medication_request(primary_care=True, **kwargs):
                     "coding": [
                         {
                             "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
-                            "code": (
-                                "community" if primary_care else secondary_care_type
-                            ),
+                            "code": ("community"),
                             # primary-care : "community"
                             # but secondary-care: "inpatient"/"outpatient"
                         }  # must be consistent
@@ -257,8 +218,7 @@ def generate_medication_request(primary_care=True, **kwargs):
     return medication_request
 
 
-def generate_practitioner_role(**kwargs):
-    sds_role_id = kwargs["sds_role_id"]
+def generate_practitioner_role(sds_role_id):
     practitioner_role = {
         "fullUrl": "urn:uuid:56166769-c1c4-4d07-afa8-132b5dfca666",
         "resource": {
@@ -292,8 +252,7 @@ def generate_practitioner_role(**kwargs):
     return practitioner_role
 
 
-def generate_practitioner(**kwargs):
-    user_id = kwargs["user_id"]
+def generate_practitioner(user_id):
     practitioner = {
         "fullUrl": "urn:uuid:a8c85454-f8cb-498d-9629-78e2cb5fa47a",
         "resource": {
@@ -314,9 +273,7 @@ def generate_practitioner(**kwargs):
     return practitioner
 
 
-def generate_patient(**kwargs):
-    nhs_number = kwargs["nhs_number"]
-    gp_ods_code = kwargs["sender_ods_code"]
+def generate_patient(nhs_number, gp_ods_code):
     patient = {
         "fullUrl": "urn:uuid:78d3c2eb-009e-4ec8-a358-b042954aa9b2",
         "resource": {
@@ -358,7 +315,7 @@ def generate_patient(**kwargs):
 
 
 def generate_organization():
-    organization = {
+    return {
         "fullUrl": "urn:uuid:3b4b03a5-52ba-4ba6-9b82-70350aa109d8",  # del
         "resource": {
             "resourceType": "Organization",
@@ -389,13 +346,10 @@ def generate_organization():
             },
         },
     }
-    return organization
 
 
-def generate_provenance(**kwargs):
-    signature = kwargs["signature"]
-    timestamp = kwargs["timestamp"]
-    provenance = {
+def generate_provenance(signature, timestamp):
+    return {
         "fullUrl": "urn:uuid:28828c55-8fa7-42d7-916f-fcf076e0c10e",
         "resource": {
             "resourceType": "Provenance",
@@ -426,12 +380,10 @@ def generate_provenance(**kwargs):
             ],
         },
     }
-    return provenance
 
 
-def generate_owner(**kwargs):
-    receiver_ods_code = kwargs["receiver_ods_code"]
-    owner = {
+def generate_owner(receiver_ods_code):
+    return {
         "name": "owner",
         "resource": {
             "resourceType": "Organization",
@@ -466,11 +418,10 @@ def generate_owner(**kwargs):
             ],  # mandatory
         },
     }
-    return owner
 
 
 def generate_agent():
-    agent = {
+    return {
         "name": "agent",
         "resource": {
             "resourceType": "PractitionerRole",
@@ -501,16 +452,13 @@ def generate_agent():
             "telecom": [{"system": "phone", "value": "01234567890", "use": "work"}],
         },
     }
-    return agent
 
 
-def generate_group_identifier(**kwargs):
-    prescription_order_number = kwargs["prescription_order_number"]
-    group_identifier = {
+def generate_group_identifier(prescription_order_number):
+    return {
         "name": "group-identifier",
         "valueIdentifier": {
             "system": "https://fhir.nhs.uk/Id/prescription-order-number",
             "value": prescription_order_number,
         },
     }
-    return group_identifier
