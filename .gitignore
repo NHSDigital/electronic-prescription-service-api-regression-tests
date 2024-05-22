@@ -121,7 +121,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+.env*
 .venv
 env/
 venv/
@@ -249,5 +249,5 @@ node_modules
 .vscode
 vscode
 
-# all .env files
-/.env*
+# poetry.lock
+poetry.lock
