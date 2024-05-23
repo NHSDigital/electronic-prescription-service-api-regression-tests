@@ -25,7 +25,7 @@ The following environment variables need to be set for the correct environment y
 
 To make this easier, a `template.env` file is located on the root. Fill in the values and rename this to `.env`
 
-Any file that beings with `.env` is automatically ignored by Git
+Any file that begins with `.env` is automatically ignored by Git
 
 ### Preparing your development environment
 This test pack utilises the power of Docker to quickly and easily spin up a dev environment for you to work in
