@@ -79,9 +79,7 @@ def prepare_prescription(context):
 
 
 def _create_signed_body(context):
-    context.signature = get_signature(
-        env=context.config.userdata["env"], digest=context.digest
-    )
+    context.signature = get_signature(digest=context.digest)
     body = json.loads(context.prepare_body)
     provenance = generate_provenance(
         signature=context.signature, timestamp=context.timestamp

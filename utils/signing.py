@@ -35,7 +35,7 @@ def verify_certificate_valid_when_signed(signature_date, certificate):
     return certificate_start_date <= signature_date <= certificate_end_date
 
 
-def get_signature(env: str, digest: str):
+def get_signature(digest: str):
     # Load X.509 certificate
     x509_cert = load_pem_x509_certificate(
         X509_CERT.encode("utf-8"),  # pyright: ignore [reportOptionalMemberAccess]
