@@ -47,12 +47,12 @@ jobs:
       - name: ${{github.event.inputs.id}}
         env:
           ID: ${{github.event.inputs.id}}
-          env: ${{ inputs.environment }}
-          product: ${{ inputs.product }}
-          pull_request_id: ${{ inputs.pull_request_id }}
+          ENV: ${{ inputs.environment }}
+          PRODUCT: ${{ inputs.product }}
+          PULL_REQUEST_ID: ${{ inputs.pull_request_id }}
         run: |
-          echo run identifier $ID-$product-$env-$pull_request_id
-          echo run identifier $ID-$product-$env-$pull_request_id  >> "$GITHUB_STEP_SUMMARY"
+          echo run identifier $ID-$PRODUCT-$ENV-$PULL_REQUEST_ID
+          echo run identifier $ID-$PRODUCT-$ENV-$PULL_REQUEST_ID  >> "$GITHUB_STEP_SUMMARY"
 
       # using git commit sha for version of action to ensure we have stable version
       - name: Install asdf
@@ -89,14 +89,22 @@ jobs:
         id: tests
         continue-on-error: true
         env:
-          product: ${{ inputs.product }}
-          environment: ${{ inputs.environment }}
-          pull_request_id: ${{ inputs.pull_request_id }}
-          tags: ${{ inputs.tags }}
+          PRODUCT: ${{ inputs.product }}
+          ENVIRONMENT: ${{ inputs.environment }}
+          PULL_REQUEST_ID: ${{ inputs.pull_request_id }}
+          TAGS: ${{ inputs.tags }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          CERTIFICATE: ${{ secrets.CERTIFICATE }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
         run: |
-            export PULL_REQUEST_ID=$pull_request_id
-            echo Pull request ID = $pull_request_id
-            poetry run python ./runner.py --env=$environment --product=$product --tags=$tags
+            export CLIENT_ID=$CLIENT_ID
+            export CLIENT_SECRET=$CLIENT_SECRET
+            export CERTIFICATE=$CERTIFICATE
+            export PRIVATE_KEY=$PRIVATE_KEY
+            export PULL_REQUEST_ID=$PULL_REQUEST_ID
+            echo Pull request ID = $PULL_REQUEST_ID
+            poetry run python ./runner.py --env=$ENVIRONMENT --product=$PRODUCT --tags=$TAGS
 
       - name: Upload Artifact
         uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
@@ -120,18 +128,18 @@ jobs:
 
       - name: Commit results to GitHub Pages Repo
         env:
-          product: ${{ inputs.product }}
-          environment: ${{ inputs.environment }}
-          pull_request_id: ${{ inputs.pull_request_id }}
+          PRODUCT: ${{ inputs.product }}
+          ENVIRONMENT: ${{ inputs.environment }}
+          PULL_REQUEST_ID: ${{ inputs.pull_request_id }}
         run: |
           DATE_TIME=`date +"%Y%m%d%H%M%S"`
 
-          git checkout -b regression-tests-$DATE_TIME-$product-$environment-$pull_request_id
+          git checkout -b regression-tests-$DATE_TIME-$PRODUCT-$ENVIRONMENT-$PULL_REQUEST_ID
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add allure-results/*
-          git commit -m "regression-tests-$DATE_TIME-$product-$environment-$pull_request_id"
-          git push --set-upstream origin regression-tests-$DATE_TIME-$product-$environment-$pull_request_id
+          git commit -m "regression-tests-$DATE_TIME-$PRODUCT-$ENVIRONMENT-$PULL_REQUEST_ID"
+          git push --set-upstream origin regression-tests-$DATE_TIME-$PRODUCT-$ENVIRONMENT-$PULL_REQUEST_ID
 
       - name: Report failure on test failure
         if: steps.tests.outcome != 'success'

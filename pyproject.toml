@@ -4,11 +4,12 @@ version = "0.1.0"
 description = ""
 authors = ["SeanSteberis <sean.steberis@airelogic.com>"]
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.12"
 jsonschema = "^4.22.0"
-requests = "^2.32.2"
+requests = "^2.32.1"
 assertpy = "^1.1"
 behave = "^1.2.6"
 behave-cucumber-formatter = "^1.0.1"
@@ -21,7 +22,10 @@ pip-licenses = "^4.4.0"
 flake8 = "^7.0.0"
 pre-commit = "^3.7.1"
 isort = "^5.13.1"
-pyright = "^1.1.364"
+pyright = "^1.1.363"
+cryptography = "^42.0.5"
+python-dateutil = "^2.9.0.post0"
+python-dotenv = "^1.0.1"
 pytest-nhsd-apim = "^3.3.15"
 
 
