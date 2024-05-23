@@ -1,7 +1,7 @@
 [![Regression Tests](https://github.com/NHSDigital/electronic-prescription-service-api-regression-tests/actions/workflows/regression_tests.yml/badge.svg?branch=main)](https://github.com/NHSDigital/electronic-prescription-service-api-regression-tests/actions/workflows/regression_tests.yml)
 
 # Regression Tests
-These tests will automate End-to-End regression testing of the following products:
+These tests will automate End-to-End regression testing for:
 * [EPS-FHIR](https://digital.nhs.uk/developer/api-catalogue/electronic-prescription-service-fhir)
 * [Prescriptions for Patients (PfP)](https://digital.nhs.uk/developer/api-catalogue/prescriptions-for-patients)
 
@@ -12,8 +12,8 @@ If there are any test failures, this will report a failed build
 ## Setup
 
 ### Environment Variables
-It is necessary to set some Environment variables in order to run any tests in your local environment. The tests will look for environment variables in the following order:
-(For security, the values will not be displayed here)
+It is necessary to set some Environment variables in order to run any tests in your local environment. The tests will look for environment variables in the following order
+(For security, the values will not be displayed here):
 1. `.env` file
 2. OS environment variable
 
@@ -23,11 +23,12 @@ The following environment variables need to be set for the correct environment y
 * PRIVATE_KEY
 * CERTIFICATE
 
-To make this easier. a `template.env` file is located on the root. Fill in the values and rename this to `.env`
+To make this easier, a `template.env` file is located on the root. Fill in the values and rename this to `.env`
+
 Any file that beings with `.env` is automatically ignored by Git
 
 ### Preparing your development environment
-This test pack utilises the power of Docker to fast and easily spin up a dev environment for you to work in
+This test pack utilises the power of Docker to quickly and easily spin up a dev environment for you to work in
 the Dockerfile is located in `{project_root}/.devcontainer/Dockerfile`
 
 ### Setup without docker development environment
@@ -69,7 +70,7 @@ behave -D product=EPS-FHIR -D env=INT -f behave_cucumber_formatter:PrettyCucumbe
 allure_behave.formatter:AllureFormatter -o allure-results -f pretty features --no-capture --no-capture-stderr --no-skipped --expand --logging-level=DEBUG --tags eps_fhir
 ```
 
-change the `env` variable accordingly to either `INT` or `INTERNAL-DEV`.
+Change the `env` variable accordingly to either `INT` or `INTERNAL-DEV`.
 If you wish to test a different product i.e. `PFP-APIGEE` then you must change `product=` and `--tags` respectively.
 
 ### Getting the token to check the endpoint calls on Postman
