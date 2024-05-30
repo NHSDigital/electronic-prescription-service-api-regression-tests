@@ -3,10 +3,11 @@ import json
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 
 from methods.eps_fhir.api_methods import (
-    prepare_prescription,
-    create_signed_prescription,
-    release_signed_prescription,
     assert_ok_status_code,
+    cancel_all_line_items,
+    create_signed_prescription,
+    prepare_prescription,
+    release_signed_prescription,
 )
 from methods.shared import common
 from methods.shared.api import request_ping
@@ -46,6 +47,11 @@ def i_sign_a_new_prescription(context):
 @when("I release a prescription")
 def i_release_a_prescription(context):
     release_signed_prescription(context)
+
+
+@when("I cancel all line items on the prescription")
+def i_cancel_all_line_items(context):
+    cancel_all_line_items(context)
 
 
 @then("the response indicates success")
