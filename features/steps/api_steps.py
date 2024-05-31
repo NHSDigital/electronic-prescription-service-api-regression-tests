@@ -18,7 +18,7 @@ from utils.nhs_number_generator import random_nhs_number_generator
 @given("I am an authorised {user}")
 @when("I am an authorised {user}")
 def i_am_an_authorised_user(context, user):
-    if "SANDBOX" in context.config.userdata["env"]:
+    if "sandbox" in context.config.userdata["env"].lower():
         return
     env = context.config.userdata["env"]
     context.user = user
@@ -56,7 +56,7 @@ def i_cancel_all_line_items(context):
 
 @then("the response indicates success")
 def indicate_successful_response(context):
-    if "SANDBOX" in context.config.userdata["env"]:
+    if "sandbox" in context.config.userdata["env"].lower():
         return
     assert_ok_status_code(context)
     json_response = json.loads(context.response.content)

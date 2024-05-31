@@ -70,7 +70,7 @@ def _cancel_medication_request(medication_request):
             {
                 "system": "https://fhir.nhs.uk/CodeSystem/medicationrequest-status-reason",
                 "code": "0001",
-                "display": "Prescribing Error"
+                "display": "Prescribing Error",
             }
         ]
     }
@@ -79,10 +79,18 @@ def _cancel_medication_request(medication_request):
 def _create_cancel_body(context):
     cancel_body = json.loads(context.prepare_body)
 
-    medication_requests = [e for e in cancel_body["entry"] if e["resource"]["resourceType"] == "MedicationRequest"]
+    medication_requests = [
+        e
+        for e in cancel_body["entry"]
+        if e["resource"]["resourceType"] == "MedicationRequest"
+    ]
     [_cancel_medication_request(mr) for mr in medication_requests]
 
-    message_header = [e for e in cancel_body["entry"] if e["resource"]["resourceType"] == "MessageHeader"][0]
+    message_header = [
+        e
+        for e in cancel_body["entry"]
+        if e["resource"]["resourceType"] == "MessageHeader"
+    ][0]
     event_coding = message_header["resource"]["eventCoding"]
     event_coding["code"] = "prescription-order-update"
     event_coding["display"] = "Prescription Order Update"
