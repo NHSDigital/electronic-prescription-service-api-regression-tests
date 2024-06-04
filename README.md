@@ -39,6 +39,8 @@ If you'd like to use your own machine without containerisation. You will need th
 * ASDF python plugin `asdf plugin add python`
 * ASDF poetry plugin `asdf plugin add poetry`
 * ASDF shellcheck plugin `asdf plugin add shellcheck`
+* ASDF nodejs plugin `asdf plugin add nodejs`
+* ASDF allure plugin `asdf plugin add allure`
 #### Once the plugins are added you can install them
 `asdf install` This will install the versions as described in .tool-versions
 
@@ -53,7 +55,7 @@ This is the preferred method and allows you to include/exclude tags <br />
 a `~` before the tag name excludes it. <br />
 This is how the tests are run on the CI
 <h4> You MUST specify the environment and product
-#### Example: `python runner.py  --product=EPS-FHIR --env=INT --tags smoke --tags ~slow`
+#### Example: `python runner.py --product=EPS-FHIR --env=INT --tags smoke --tags ~slow`
 This will run all tests with the tag `@smoke` but skip any tests tagged with `@slow`
 
 ### Method 2:

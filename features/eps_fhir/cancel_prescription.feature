@@ -1,4 +1,5 @@
 @phil
+@eps_fhir
 @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-3869
 Feature: I can can create and then cancel prescriptions, using the EPS FHIR API
 

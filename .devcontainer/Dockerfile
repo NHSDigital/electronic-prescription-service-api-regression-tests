@@ -25,8 +25,8 @@ ENV PATH="$PATH:/home/vscode/.asdf/bin/"
 RUN asdf plugin add python; \
     asdf plugin add poetry https://github.com/asdf-community/asdf-poetry.git; \
     asdf plugin add shellcheck https://github.com/luizm/asdf-shellcheck.git; \
-    asdf plugin add nodejs;
-
+    asdf plugin add nodejs; \
+    asdf plugin add allure;
 
 WORKDIR /workspaces/electronic-prescription-service-api-regression-tests
 ADD .tool-versions /workspaces/electronic-prescription-service-api-regression-tests/.tool-versions
