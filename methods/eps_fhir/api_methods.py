@@ -98,6 +98,11 @@ def _create_cancel_body(context):
     return json.dumps(cancel_body)
 
 
+def _replace_ids(body):
+    old_id = json.loads(body)["id"]
+    return body.replace(old_id, str(uuid.uuid4()))
+
+
 def prepare_prescription(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/$prepare"
     additional_headers = {"Content-Type": "application/json"}
@@ -159,7 +164,9 @@ def cancel_all_line_items(context):
     headers = get_headers(context, additional_headers)
 
     cancel_body = _create_cancel_body(context)
+    cancel_body = _replace_ids(cancel_body)
     context.cancel_body = cancel_body
+
     post(data=cancel_body, url=url, context=context, headers=headers)
 
 

@@ -7,7 +7,7 @@ Feature: I can can create and then cancel prescriptions, using the EPS FHIR API
     Given I am an authorised prescriber
     And I successfully prepare and sign a <Type> prescription
     When I cancel all line items on the prescription
-    Then the response indicates success
+    Then the response indicates a successful cancel action
     Examples:
       | Type          |
       | non-nominated |

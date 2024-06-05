@@ -1,5 +1,7 @@
+# pylint: disable=missing-module-docstring
 import json
 
+# pylint: disable=no-name-in-module
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 
 from methods.eps_fhir.api_methods import (
@@ -54,13 +56,30 @@ def i_cancel_all_line_items(context):
     cancel_all_line_items(context)
 
 
-@then("the response indicates success")
-def indicate_successful_response(context):
+@then("the response indicates a successful {action_type} action")
+def indicate_successful_response(context, action_type):
     if "sandbox" in context.config.userdata["env"].lower():
         return
     assert_ok_status_code(context)
+
+    def _prescribe_assertion():
+        assert_that(json_response["parameter"][0]["resource"]["total"]).is_equal_to(1)
+
+    def _cancel_assertion():
+        entries = json_response["entry"]
+        message_header = [
+            entry
+            for entry in entries
+            if entry["resource"]["resourceType"] == "MessageHeader"
+        ][0]
+        assert_that(message_header["resource"]["response"]["code"]).is_equal_to("ok")
+
     json_response = json.loads(context.response.content)
-    assert_that(json_response["parameter"][0]["resource"]["total"]).is_equal_to(1)
+    action_assertions = {
+        "prescribe": [_prescribe_assertion],
+        "cancel": [_cancel_assertion],
+    }
+    [assertion() for assertion in action_assertions.get(action_type, [])]
 
 
 @when('I make a request to the "{product}" ping endpoint')
