@@ -27,7 +27,7 @@ def _create_new_prepare_body(context):
     sender_ods_code = "A83008"
     prescription_item_id = str(uuid.uuid4())
 
-    context.long_prescription_id = str(uuid.uuid4())
+    long_prescription_id = str(uuid.uuid4())
     context.receiver_ods_code = "FA565"
     context.prescription_id = generate_short_form_id(sender_ods_code)
 
@@ -42,7 +42,7 @@ def _create_new_prepare_body(context):
     medication_request = generate_medication_request(
         context.prescription_id,
         prescription_item_id,
-        context.long_prescription_id,
+        long_prescription_id,
         context.receiver_ods_code,
         context.nomination_code,
     )
