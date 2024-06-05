@@ -15,6 +15,7 @@ from methods.eps_fhir.api_request_body_generators import (
     generate_agent,
     generate_owner,
     generate_group_identifier,
+    generate_return,
 )
 from methods.shared.common import the_expected_response_code_is_returned
 from methods.shared.api import post, get_default_headers
@@ -25,8 +26,8 @@ from utils.signing import get_signature
 def _create_new_prepare_body(context):
     sender_ods_code = "A83008"
     prescription_item_id = str(uuid.uuid4())
-    long_prescription_id = str(uuid.uuid4())
 
+    context.long_prescription_id = str(uuid.uuid4())
     context.receiver_ods_code = "FA565"
     context.prescription_id = generate_short_form_id(sender_ods_code)
 
@@ -41,7 +42,7 @@ def _create_new_prepare_body(context):
     medication_request = generate_medication_request(
         context.prescription_id,
         prescription_item_id,
-        long_prescription_id,
+        context.long_prescription_id,
         context.receiver_ods_code,
         context.nomination_code,
     )
@@ -110,6 +111,14 @@ def _create_release_body(context):
     return body
 
 
+def _create_return_body(context):
+    short_prescription_id = context.prescription_id
+    nhs_number = context.nhs_number
+
+    body = generate_return(nhs_number, short_prescription_id)
+    return json.dumps(body)
+
+
 def release_signed_prescription(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/Task/$release"
     context.release_body = _create_release_body(context)
@@ -118,6 +127,16 @@ def release_signed_prescription(context):
         headers.update({"Authorization": f"Bearer {context.auth_token}"})
     headers.update({"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]})
     post(data=context.release_body, url=url, context=context, headers=headers)
+
+
+def return_prescription(context):
+    url = f"{context.eps_fhir_base_url}/FHIR/R4/Task"
+    context.return_body = _create_return_body(context)
+    headers = get_default_headers()
+    if "sandbox" not in context.config.userdata["env"].lower():
+        headers.update({"Authorization": f"Bearer {context.auth_token}"})
+    headers.update({"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]})
+    post(data=context.return_body, url=url, context=context, headers=headers)
 
 
 def assert_ok_status_code(context):

@@ -7,11 +7,27 @@ from methods.eps_fhir.api_methods import (
     create_signed_prescription,
     release_signed_prescription,
     assert_ok_status_code,
+    return_prescription,
 )
 from methods.shared import common
 from methods.shared.api import request_ping
 from methods.shared.common import assert_that, get_auth
 from utils.nhs_number_generator import random_nhs_number_generator
+
+
+@given("I successfully prepare and sign a {prescription_type} prescription")
+def i_prepare_and_sign_a_prescription(context, prescription_type="nominated"):
+    i_prepare_a_new_prescription(context, prescription_type)
+    i_sign_a_new_prescription(context=context)
+
+
+@given("a prescription has been created and released")
+def a_prescription_has_been_created_and_released(context):
+    i_am_an_authorised_user(context, "prescriber")
+    i_prepare_and_sign_a_prescription(context)
+    i_am_an_authorised_user(context, "dispenser")
+    i_release_a_prescription(context)
+    indicate_successful_response(context)
 
 
 @given("I am an authorised {user}")
@@ -22,12 +38,6 @@ def i_am_an_authorised_user(context, user):
     env = context.config.userdata["env"]
     context.user = user
     context.auth_token = get_auth(user, env)
-
-
-@given("I successfully prepare and sign a {prescription_type} prescription")
-def i_prepare_and_sign_a_prescription(context, prescription_type):
-    i_prepare_a_new_prescription(context, prescription_type)
-    i_sign_a_new_prescription(context=context)
 
 
 def i_prepare_a_new_prescription(context, prescription_type):
@@ -48,13 +58,16 @@ def i_release_a_prescription(context):
     release_signed_prescription(context)
 
 
+@when("I return the prescription")
+def i_return_the_prescription(context):
+    return_prescription(context)
+
+
 @then("the response indicates success")
 def indicate_successful_response(context):
     if "sandbox" in context.config.userdata["env"].lower():
         return
     assert_ok_status_code(context)
-    json_response = json.loads(context.response.content)
-    assert_that(json_response["parameter"][0]["resource"]["total"]).is_equal_to(1)
 
 
 @when('I make a request to the "{product}" ping endpoint')
@@ -109,3 +122,9 @@ def i_can_see_the_ping_information(context):
     i_see_revision_in_response(context)
     i_see_release_id_in_response(context)
     i_see_commit_id_in_response(context)
+
+
+@then("I can see the prescription in the response")
+def i_can_see_the_prescription_in_the_response(context):
+    json_response = json.loads(context.response.content)
+    assert_that(json_response["parameter"][0]["resource"]["total"]).is_equal_to(1)
