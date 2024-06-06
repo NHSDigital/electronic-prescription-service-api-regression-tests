@@ -56,12 +56,15 @@ def i_cancel_all_line_items(context):
     cancel_all_line_items(context)
 
 
-@then("the response indicates a successful {action_type} action")
-def indicate_successful_response(context, action_type):
+@then("the response indicates a success")
+def indicate_successful_response(context):
     if "sandbox" in context.config.userdata["env"].lower():
         return
     assert_ok_status_code(context)
 
+
+@then("the response body indicates a successful {action_type} action")
+def body_indicates_successful_action(context, action_type):
     def _prescribe_assertion():
         assert_that(json_response["parameter"][0]["resource"]["total"]).is_equal_to(1)
 
