@@ -40,7 +40,6 @@ If you'd like to use your own machine without containerisation. You will need th
 * ASDF poetry plugin `asdf plugin add poetry`
 * ASDF shellcheck plugin `asdf plugin add shellcheck`
 * ASDF nodejs plugin `asdf plugin add nodejs`
-* ASDF allure plugin `asdf plugin add allure`
 #### Once the plugins are added you can install them
 `asdf install` This will install the versions as described in .tool-versions
 
