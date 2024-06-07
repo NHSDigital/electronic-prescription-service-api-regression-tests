@@ -30,12 +30,12 @@ REPOS = {
     "PFP-APIGEE": "https://github.com/NHSDigital/prescriptions-for-patients",
 }
 
-env = dotenv_values(".env")
-CERTIFICATE = env.get("CERTIFICATE")
-PRIVATE_KEY = env.get("PRIVATE_KEY")
-CLIENT_ID = env.get("CLIENT_ID")
-CLIENT_SECRET = env.get("CLIENT_SECRET")
-PULL_REQUEST_ID = env.get("PULL_REQUEST_ID")
+env_file = dotenv_values(".env")
+CERTIFICATE = env_file.get("CERTIFICATE")
+PRIVATE_KEY = env_file.get("PRIVATE_KEY")
+CLIENT_ID = env_file.get("CLIENT_ID")
+CLIENT_SECRET = env_file.get("CLIENT_SECRET")
+PULL_REQUEST_ID = env_file.get("PULL_REQUEST_ID")
 
 EPS_FHIR_SUFFIX = "electronic-prescriptions"
 PFP_APIGEE_SUFFIX = "prescriptions-for-patients"

@@ -153,7 +153,6 @@ def _create_release_body(context):
 def _create_return_body(context):
     short_prescription_id = context.prescription_id
     nhs_number = context.nhs_number
-    practitioner_role = generate_practitioner_role(CIS2_USERS["prescriber"]["role_id"])["resource"]
 
     body = generate_return(nhs_number, short_prescription_id)
     return json.dumps(body)
@@ -182,11 +181,10 @@ def cancel_all_line_items(context):
 
 def return_prescription(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/Task"
+    additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
+    headers = get_headers(context, additional_headers)
+
     context.return_body = _create_return_body(context)
-    headers = get_default_headers()
-    if "sandbox" not in context.config.userdata["env"].lower():
-        headers.update({"Authorization": f"Bearer {context.auth_token}"})
-    headers.update({"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]})
     post(data=context.return_body, url=url, context=context, headers=headers)
 
 

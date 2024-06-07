@@ -7,7 +7,7 @@ Feature: I can create prescriptions
     And I successfully prepare and sign a <Type> prescription
     When I am an authorised dispenser
     And I release a prescription
-    Then the response indicates success
+    Then the response indicates a success
     And I can see the prescription in the response
     Examples:
       | Type          |

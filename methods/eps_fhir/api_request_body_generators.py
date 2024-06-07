@@ -253,7 +253,6 @@ def generate_practitioner_role(sds_role_id):
     }
 
 
-
 def generate_practitioner(user_id):
     return {
         "fullUrl": "urn:uuid:a8c85454-f8cb-498d-9629-78e2cb5fa47a",
@@ -471,7 +470,7 @@ def generate_return(nhs_number, short_prescription_id):
         "contained": [
             {
                 "resourceType": "PractitionerRole",
-                "id": "16708936-6397-4e03-b84f-4aaa790633e0",
+                "id": "urn:uuid:56166769-c1c4-4d07-afa8-132b5dfca666",
                 "identifier": [
                     {
                         "system": "https://fhir.nhs.uk/Id/sds-role-profile-id",
@@ -485,7 +484,9 @@ def generate_return(nhs_number, short_prescription_id):
                     },
                     "display": "Jackie Clark",
                 },
-                "organization": {"reference": "#3b4b03a5-52ba-4ba6-9b82-70350aa109d8"},
+                "organization": {
+                    "reference": "#urn:uuid:3b4b03a5-52ba-4ba6-9b82-70350aa109d8"
+                },
                 "code": [
                     {
                         "coding": [
@@ -501,7 +502,7 @@ def generate_return(nhs_number, short_prescription_id):
             },
             {
                 "resourceType": "Organization",
-                "id": "3b4b03a5-52ba-4ba6-9b82-70350aa109d8",
+                "id": "urn:uuid:3b4b03a5-52ba-4ba6-9b82-70350aa109d8",
                 "identifier": [
                     {
                         "system": "https://fhir.nhs.uk/Id/ods-organization-code",
@@ -572,7 +573,7 @@ def generate_return(nhs_number, short_prescription_id):
             }
         },
         "authoredOn": "2022-11-21T14:30:00+00:00",
-        "requester": {"reference": "#16708936-6397-4e03-b84f-4aaa790633e0"},
+        "requester": {"reference": "#urn:uuid:56166769-c1c4-4d07-afa8-132b5dfca666"},
         "reasonCode": {
             "coding": [
                 {

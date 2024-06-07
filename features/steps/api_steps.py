@@ -5,7 +5,6 @@ import json
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 
 from methods.eps_fhir.api_methods import (
-    assert_ok_status_code,
     cancel_all_line_items,
     create_signed_prescription,
     prepare_prescription,
@@ -67,7 +66,6 @@ def i_return_the_prescription(context):
     return_prescription(context)
 
 
-@then("the response indicates success")
 @when("I cancel all line items on the prescription")
 def i_cancel_all_line_items(context):
     cancel_all_line_items(context)
@@ -82,7 +80,7 @@ def indicate_successful_response(context):
 
 @then("the response body indicates a successful {action_type} action")
 def body_indicates_successful_action(context, action_type):
-    def _prescribe_assertion():
+    def _release_assertion():
         assert_that(json_response["parameter"][0]["resource"]["total"]).is_equal_to(1)
 
     def _cancel_assertion():
@@ -96,7 +94,7 @@ def body_indicates_successful_action(context, action_type):
 
     json_response = json.loads(context.response.content)
     action_assertions = {
-        "prescribe": [_prescribe_assertion],
+        "release": [_release_assertion],
         "cancel": [_cancel_assertion],
     }
     [assertion() for assertion in action_assertions.get(action_type, [])]

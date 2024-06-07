@@ -29,6 +29,10 @@ def get_headers(context, additional_headers=None):
     if additional_headers:
         headers.update(additional_headers)
     if "sandbox" not in context.config.userdata["env"].lower():
+        try:
+            context.auth_token
+        except AttributeError:
+            return headers
         headers["Authorization"] = f"Bearer {context.auth_token}"
     return headers
 
