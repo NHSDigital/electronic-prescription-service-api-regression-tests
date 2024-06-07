@@ -9,7 +9,7 @@ Feature: I can can create prescriptions using the EPS FHIR API
     When I am an authorised dispenser
     And I release a prescription
     Then the response indicates a success
-    Then the response body indicates a successful prescribe action
+    And the response body indicates a successful prescribe action
     Examples:
       | Type          |
       | nominated     |
