@@ -23,21 +23,22 @@
     "customizations": {
       "vscode": {
         "extensions": [
-          "redhat.vscode-yaml",
-          "ms-python.python",
-          "eamodio.gitlens",
-          "github.vscode-pull-request-github",
-          "orta.vscode-jest",
-          "42crunch.vscode-openapi",
-          "mermade.openapi-lint",
-          "rvest.vs-code-prettier-eslint",
-          "dbaeumer.vscode-eslint",
-          "lfm.vscode-makefile-term",
-          "GrapeCity.gc-excelviewer",
-          "redhat.vscode-xml",
-          "streetsidesoftware.code-spell-checker",
-          "timonwong.shellcheck",
-          "github.vscode-github-actions"
+            "redhat.vscode-yaml",
+            "ms-python.python",
+            "eamodio.gitlens",
+            "github.vscode-pull-request-github",
+            "orta.vscode-jest",
+            "42crunch.vscode-openapi",
+            "mermade.openapi-lint",
+            "rvest.vs-code-prettier-eslint",
+            "dbaeumer.vscode-eslint",
+            "lfm.vscode-makefile-term",
+            "GrapeCity.gc-excelviewer",
+            "redhat.vscode-xml",
+            "streetsidesoftware.code-spell-checker",
+            "timonwong.shellcheck",
+            "github.vscode-github-actions",
+            "ms-python.pylint"
         ],
         "settings": {
           "python.defaultInterpreterPath": "/workspaces/electronic-prescription-service-api-regression-tests/venv/bin/python",
@@ -45,8 +46,8 @@
           "python.analysis.extraPaths": [],
           "python.testing.unittestEnabled": false,
           "python.testing.pytestEnabled": false,
-          "python.linting.pylintEnabled": true,
           "python.linting.enabled": true, // required to format on save
+          "pylint.args": ["--disable=C0116,W0106"],
           "python.experiments.optOutFrom": ["pythonTestAdapter"],
           "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
           "editor.formatOnPaste": false, // required

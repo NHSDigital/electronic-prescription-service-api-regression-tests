@@ -27,7 +27,6 @@ RUN asdf plugin add python; \
     asdf plugin add shellcheck https://github.com/luizm/asdf-shellcheck.git; \
     asdf plugin add nodejs;
 
-
 WORKDIR /workspaces/electronic-prescription-service-api-regression-tests
 ADD .tool-versions /workspaces/electronic-prescription-service-api-regression-tests/.tool-versions
 ADD .tool-versions /home/vscode/.tool-versions

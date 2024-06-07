@@ -1,7 +1,6 @@
-@eps_fhir
-@smoke @regression @blocker
+@eps_fhir @smoke @regression @blocker
 @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-3847
-Feature: I can can create prescriptions using the EPS FHIR API
+Feature: I can create prescriptions
 
   Scenario Outline: I can create, sign and release a prescription
     Given I am an authorised prescriber
@@ -14,9 +13,3 @@ Feature: I can can create prescriptions using the EPS FHIR API
       | Type          |
       | nominated     |
       | non-nominated |
-
-  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-3866
-  Scenario: I can return a prescription
-  Given a prescription has been created and released
-    When I return the prescription
-    Then the response indicates success

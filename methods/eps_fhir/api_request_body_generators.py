@@ -221,7 +221,7 @@ def generate_medication_request(
 
 
 def generate_practitioner_role(sds_role_id):
-    practitioner_role = {
+    return {
         "fullUrl": "urn:uuid:56166769-c1c4-4d07-afa8-132b5dfca666",
         "resource": {
             "resourceType": "PractitionerRole",
@@ -251,11 +251,11 @@ def generate_practitioner_role(sds_role_id):
             "telecom": [{"system": "phone", "value": "01234567890", "use": "work"}],
         },
     }
-    return practitioner_role
+
 
 
 def generate_practitioner(user_id):
-    practitioner = {
+    return {
         "fullUrl": "urn:uuid:a8c85454-f8cb-498d-9629-78e2cb5fa47a",
         "resource": {
             "resourceType": "Practitioner",
@@ -272,11 +272,10 @@ def generate_practitioner(user_id):
             "name": [{"family": "BOIN", "given": ["C"], "prefix": ["DR"]}],
         },
     }
-    return practitioner
 
 
 def generate_patient(nhs_number, gp_ods_code):
-    patient = {
+    return {
         "fullUrl": "urn:uuid:78d3c2eb-009e-4ec8-a358-b042954aa9b2",
         "resource": {
             "resourceType": "Patient",
@@ -313,7 +312,6 @@ def generate_patient(nhs_number, gp_ods_code):
             ],
         },
     }
-    return patient
 
 
 def generate_organization():

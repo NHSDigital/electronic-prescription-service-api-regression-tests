@@ -1,10 +1,14 @@
+# pylint: disable=missing-module-docstring
 import json
 
+# pylint: disable=no-name-in-module
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 
 from methods.eps_fhir.api_methods import (
-    prepare_prescription,
+    assert_ok_status_code,
+    cancel_all_line_items,
     create_signed_prescription,
+    prepare_prescription,
     release_signed_prescription,
     assert_ok_status_code,
     return_prescription,
@@ -64,10 +68,38 @@ def i_return_the_prescription(context):
 
 
 @then("the response indicates success")
+@when("I cancel all line items on the prescription")
+def i_cancel_all_line_items(context):
+    cancel_all_line_items(context)
+
+
+@then("the response indicates a success")
 def indicate_successful_response(context):
     if "sandbox" in context.config.userdata["env"].lower():
         return
     assert_ok_status_code(context)
+
+
+@then("the response body indicates a successful {action_type} action")
+def body_indicates_successful_action(context, action_type):
+    def _prescribe_assertion():
+        assert_that(json_response["parameter"][0]["resource"]["total"]).is_equal_to(1)
+
+    def _cancel_assertion():
+        entries = json_response["entry"]
+        message_header = [
+            entry
+            for entry in entries
+            if entry["resource"]["resourceType"] == "MessageHeader"
+        ][0]
+        assert_that(message_header["resource"]["response"]["code"]).is_equal_to("ok")
+
+    json_response = json.loads(context.response.content)
+    action_assertions = {
+        "prescribe": [_prescribe_assertion],
+        "cancel": [_cancel_assertion],
+    }
+    [assertion() for assertion in action_assertions.get(action_type, [])]
 
 
 @when('I make a request to the "{product}" ping endpoint')
@@ -128,3 +160,11 @@ def i_can_see_the_ping_information(context):
 def i_can_see_the_prescription_in_the_response(context):
     json_response = json.loads(context.response.content)
     assert_that(json_response["parameter"][0]["resource"]["total"]).is_equal_to(1)
+
+
+@then("I can see an informational operation outcome in the response")
+def i_can_see_an_informational_operation_outcome_in_the_response(context):
+    json_response = json.loads(context.response.content)
+    assert_that(json_response["resourceType"]).is_equal_to("OperationOutcome")
+    assert_that(json_response["issue"][0]["code"]).is_equal_to("informational")
+    assert_that(json_response["issue"][0]["severity"]).is_equal_to("information")

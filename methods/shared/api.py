@@ -16,7 +16,7 @@ def post(context, **kwargs):
     return context.response
 
 
-def get_default_headers():
+def _get_default_headers():
     return {
         "x-request-id": str(uuid.uuid4()),
         "x-user-org-code": "Auto001",
@@ -24,6 +24,15 @@ def get_default_headers():
     }
 
 
+def get_headers(context, additional_headers=None):
+    headers = _get_default_headers()
+    if additional_headers:
+        headers.update(additional_headers)
+    if "sandbox" not in context.config.userdata["env"].lower():
+        headers["Authorization"] = f"Bearer {context.auth_token}"
+    return headers
+
+
 def request_ping(context, base_url):
     url = f"{base_url}/_ping"
-    get(context=context, url=url, headers=get_default_headers())
+    get(context=context, url=url, headers=_get_default_headers())
