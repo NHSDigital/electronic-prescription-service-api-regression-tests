@@ -7,7 +7,6 @@
 #####################################################################
 
 import base64
-import os
 
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
@@ -16,11 +15,8 @@ from cryptography.hazmat.primitives.serialization import Encoding, load_pem_priv
 from cryptography.x509 import load_pem_x509_certificate
 from datetime import datetime, timezone
 
-from dotenv import load_dotenv
+from features.environment import PRIVATE_KEY, CERTIFICATE
 
-dotenv = load_dotenv()
-PRIVATE_KEY = os.getenv("PRIVATE_KEY")
-X509_CERT = os.getenv("CERTIFICATE")
 DUMMY_SIGNATURE = """
 DQo8U2lnbmF0dXJlIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwLz\
 A5L3htbGRzaWcjIj4NCiAgICA8U2lnbmVkSW5mbz48Q2Fub25pY2FsaXph\
@@ -38,7 +34,7 @@ def verify_certificate_valid_when_signed(signature_date, certificate):
 def get_signature(digest: str):
     # Load X.509 certificate
     x509_cert = load_pem_x509_certificate(
-        X509_CERT.encode("utf-8"),  # pyright: ignore [reportOptionalMemberAccess]
+        CERTIFICATE.encode("utf-8"),  # pyright: ignore [reportOptionalMemberAccess]
         default_backend(),
     )
 

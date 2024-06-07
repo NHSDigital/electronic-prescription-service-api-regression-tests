@@ -17,7 +17,7 @@ from methods.eps_fhir.api_request_body_generators import (
     generate_group_identifier,
 )
 from methods.shared.common import the_expected_response_code_is_returned
-from methods.shared.api import post, get_default_headers
+from methods.shared.api import post, get_headers
 from utils.prescription_id_generator import generate_short_form_id
 from utils.signing import get_signature
 
@@ -63,17 +63,57 @@ def _create_new_prepare_body(context):
     return body
 
 
+def _cancel_medication_request(medication_request):
+    medication_request["resource"]["status"] = "cancelled"
+    medication_request["resource"]["statusReason"] = {
+        "coding": [
+            {
+                "system": "https://fhir.nhs.uk/CodeSystem/medicationrequest-status-reason",
+                "code": "0001",
+                "display": "Prescribing Error",
+            }
+        ]
+    }
+
+
+def _create_cancel_body(context):
+    cancel_body = json.loads(context.prepare_body)
+
+    medication_requests = [
+        e
+        for e in cancel_body["entry"]
+        if e["resource"]["resourceType"] == "MedicationRequest"
+    ]
+    [_cancel_medication_request(mr) for mr in medication_requests]
+
+    message_header = [
+        e
+        for e in cancel_body["entry"]
+        if e["resource"]["resourceType"] == "MessageHeader"
+    ][0]
+    event_coding = message_header["resource"]["eventCoding"]
+    event_coding["code"] = "prescription-order-update"
+    event_coding["display"] = "Prescription Order Update"
+
+    return json.dumps(cancel_body)
+
+
+def _replace_ids(body):
+    old_id = json.loads(body)["id"]
+    return body.replace(old_id, str(uuid.uuid4()))
+
+
 def prepare_prescription(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/$prepare"
+    additional_headers = {"Content-Type": "application/json"}
+    headers = get_headers(context, additional_headers)
+
     context.prepare_body = _create_new_prepare_body(context)
-    headers = get_default_headers()
-    if "sandbox" not in context.config.userdata["env"].lower():
-        headers.update({"Authorization": f"Bearer {context.auth_token}"})
-    headers.update({"Content-Type": "application/json"})
     response = post(
         data=context.prepare_body, url=url, context=context, headers=headers
     )
     the_expected_response_code_is_returned(context, 200)
+
     context.digest = response.json()["parameter"][0]["valueString"]
     context.timestamp = response.json()["parameter"][1]["valueString"]
 
@@ -91,10 +131,9 @@ def _create_signed_body(context):
 
 def create_signed_prescription(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/$process-message#prescription-order"
+    headers = get_headers(context)
+
     context.signed_body = _create_signed_body(context)
-    headers = get_default_headers()
-    if "sandbox" not in context.config.userdata["env"].lower():
-        headers.update({"Authorization": f"Bearer {context.auth_token}"})
     post(data=context.signed_body, url=url, context=context, headers=headers)
     the_expected_response_code_is_returned(context, 200)
 
@@ -112,12 +151,23 @@ def _create_release_body(context):
 
 def release_signed_prescription(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/Task/$release"
+    additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
+    headers = get_headers(context, additional_headers)
+
     context.release_body = _create_release_body(context)
-    headers = get_default_headers()
-    if "sandbox" not in context.config.userdata["env"].lower():
-        headers.update({"Authorization": f"Bearer {context.auth_token}"})
-    headers.update({"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]})
     post(data=context.release_body, url=url, context=context, headers=headers)
+
+
+def cancel_all_line_items(context):
+    url = f"{context.eps_fhir_base_url}/FHIR/R4/$process-message"
+    additional_headers = {"NHSD-Session-URID": CIS2_USERS["prescriber"]["role_id"]}
+    headers = get_headers(context, additional_headers)
+
+    cancel_body = _create_cancel_body(context)
+    cancel_body = _replace_ids(cancel_body)
+    context.cancel_body = cancel_body
+
+    post(data=cancel_body, url=url, context=context, headers=headers)
 
 
 def assert_ok_status_code(context):
