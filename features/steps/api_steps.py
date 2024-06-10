@@ -84,6 +84,7 @@ def body_indicates_successful_action(context, action_type):
         if "sandbox" in context.config.userdata["env"].lower():
             return
         assert_that(json_response["parameter"][0]["resource"]["total"]).is_equal_to(1)
+
     def _return_assertion():
         i_can_see_an_informational_operation_outcome_in_the_response(context)
 
@@ -100,7 +101,7 @@ def body_indicates_successful_action(context, action_type):
     action_assertions = {
         "release": [_release_assertion],
         "cancel": [_cancel_assertion],
-        "return": [_return_assertion]
+        "return": [_return_assertion],
     }
     [assertion() for assertion in action_assertions.get(action_type, [])]
 
