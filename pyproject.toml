@@ -4,36 +4,41 @@ version = "0.1.0"
 description = ""
 authors = ["SeanSteberis <sean.steberis@airelogic.com>"]
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
-python = "^3.11"
-jsonschema = "^4.21.1"
-requests = "^2.31.0"
+python = "^3.12"
+jsonschema = "^4.22.0"
+requests = "^2.32.1"
 assertpy = "^1.1"
 behave = "^1.2.6"
 behave-cucumber-formatter = "^1.0.1"
-locust = "^2.21.0"
-lxml = "^5.1.0"
-pyright = "^1.1.349"
-allure-behave = "^2.13.2"
-black = "^24.1.1"
+lxml = "^4.9.1"
+allure-behave = "^2.13.5"
+black = "^24.4.2"
 semver = "^3.0.2"
-gitpython = "^3.1.41"
-pip-licenses = "^4.3.4"
+gitpython = "^3.1.43"
+pip-licenses = "^4.4.0"
 flake8 = "^7.0.0"
-pre-commit = "^3.5.0"
+pre-commit = "^3.7.1"
 isort = "^5.13.1"
+pyright = "^1.1.363"
+cryptography = "^42.0.5"
+python-dateutil = "^2.9.0.post0"
+python-dotenv = "^1.0.1"
+pytest-nhsd-apim = "^3.3.15"
 
 
 [tool.poetry.group.dev.dependencies]
-pre-commit = "^3.6.0"
+pre-commit = "^3.7.1"
 
 [tool.pyright]
 include = ["src"]
 exclude = ["**/.*",
     "**/__pycache__",
     "**/venv",
-    "**/.venv"
+    "**/.venv",
+    "**/node_modules"
 ]
 defineConstant = { DEBUG = true }
 reportMissingImports = true

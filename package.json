@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/release-notes-generator": "^14.0.0",
+    "conventional-changelog-eslint": "^6.0.0",
+    "semantic-release": "^24.0.0"
+  },
+  "dependencies": {
+    "npm": "^10.8.1"
+  }
+}

@@ -2,24 +2,36 @@ name: Regression Tests
 on:
   workflow_dispatch:
     inputs:
-          tags:
-            description: 'Test scenario tags'
-            required: true
-            type: string
-            default: "@regression"
-          environment:
-            description: 'Environment to run tests against'
-            type: environment
-            required: true
-            default: "DEV"
-          id:
-            description: 'Unique run identifier (Do not change this)'
-            required: false
-            default: "Manually Triggered Run"
-          pull_request_id:
-            description: 'The ID of the pull request'
-            required: false
-            default: ""
+      tags:
+        description: 'Test scenario tags'
+        required: true
+        type: string
+        default: "@regression"
+      environment:
+        description: 'Environment to run tests against'
+        type: environment
+        required: true
+        default: "DEV"
+      product:
+        description: 'The product we are testing'
+        type: choice
+        options:
+          - EPS-FHIR
+          - PFP-APIGEE
+        required: false
+        default: EPS-FHIR
+      id:
+        description: 'Unique run identifier (Do not change this)'
+        required: false
+        default: "Manually Triggered Run"
+      pull_request_id:
+        description: 'The ID of the pull request. This should be in the format pr-xxxx where xxxx is the pull request id'
+        required: false
+        default: ""
+      github_tag:
+        description: 'The github tag to run the test pack from'
+        required: false
+        default: "main"
 
 jobs:
   regression_tests:
@@ -30,11 +42,17 @@ jobs:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
         with:
           fetch-depth: 0  # This causes all history to be fetched, which is required for calculate-version to function
+          ref: ${{ inputs.github_tag }}
 
       - name: ${{github.event.inputs.id}}
+        env:
+          ID: ${{github.event.inputs.id}}
+          ENV: ${{ inputs.environment }}
+          PRODUCT: ${{ inputs.product }}
+          PULL_REQUEST_ID: ${{ inputs.pull_request_id }}
         run: |
-          echo run identifier ${{ inputs.id }}
-          echo run identifier ${{ inputs.id }}  >> "$GITHUB_STEP_SUMMARY"
+          echo run identifier $ID-$PRODUCT-$ENV-$PULL_REQUEST_ID
+          echo run identifier $ID-$PRODUCT-$ENV-$PULL_REQUEST_ID  >> "$GITHUB_STEP_SUMMARY"
 
       # using git commit sha for version of action to ensure we have stable version
       - name: Install asdf
@@ -61,7 +79,7 @@ jobs:
           path: ./.venv/
           key: ${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-venv-${{ hashFiles('pyproject.toml') }}
           restore-keys: |
-            ${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-venv- 
+            ${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-venv-
 
       - name: Install Dependencies
         if: steps.cache-venv.outputs.cache-hit != 'true'
@@ -71,14 +89,25 @@ jobs:
         id: tests
         continue-on-error: true
         env:
+          PRODUCT: ${{ inputs.product }}
+          ENVIRONMENT: ${{ inputs.environment }}
           PULL_REQUEST_ID: ${{ inputs.pull_request_id }}
+          TAGS: ${{ inputs.tags }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          CERTIFICATE: ${{ secrets.CERTIFICATE }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
         run: |
+            export CLIENT_ID=$CLIENT_ID
+            export CLIENT_SECRET=$CLIENT_SECRET
+            export CERTIFICATE=$CERTIFICATE
+            export PRIVATE_KEY=$PRIVATE_KEY
             export PULL_REQUEST_ID=$PULL_REQUEST_ID
             echo Pull request ID = $PULL_REQUEST_ID
-            poetry run python ./runner.py --env ${{ inputs.environment }} --tags ${{ inputs.tags }}
+            poetry run python ./runner.py --env=$ENVIRONMENT --product=$PRODUCT --tags=$TAGS
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@26f96dfa697d77e81fd5907df203aa23a56210a8
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
         with:
           name: allure-results
           path: allure-results
@@ -92,23 +121,29 @@ jobs:
           path: ${{ env.GITHUB_REF_NAME }}
 
       - name: Download Artifact
-        uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935
+        uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e
         with:
           name: allure-results
           path: allure-results
 
       - name: Commit results to GitHub Pages Repo
+        env:
+          PRODUCT: ${{ inputs.product }}
+          ENVIRONMENT: ${{ inputs.environment }}
+          PULL_REQUEST_ID: ${{ inputs.pull_request_id }}
         run: |
           DATE_TIME=`date +"%Y%m%d%H%M%S"`
-          git checkout -b regression-tests-$DATE_TIME
+
+          git checkout -b regression-tests-$DATE_TIME-$PRODUCT-$ENVIRONMENT-$PULL_REQUEST_ID
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add allure-results/*
-          git commit -m "regression-tests-$DATE_TIME"
-          git push --set-upstream origin regression-tests-$DATE_TIME
+          git commit -m "regression-tests-$DATE_TIME-$PRODUCT-$ENVIRONMENT-$PULL_REQUEST_ID"
+          git push --set-upstream origin regression-tests-$DATE_TIME-$PRODUCT-$ENVIRONMENT-$PULL_REQUEST_ID
 
       - name: Report failure on test failure
         if: steps.tests.outcome != 'success'
         run: |
           echo The regression tests step failed, this likely means there are test failures.
+          echo The report will be generated shortly
           exit 1

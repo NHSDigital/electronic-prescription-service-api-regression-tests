@@ -1,5 +1,6 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
+./__pycache__/
 *.py[cod]
 *$py.class
 
@@ -120,7 +121,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+.env*
 .venv
 env/
 venv/
@@ -242,3 +243,11 @@ fabric.properties
 /allure-results/
 .idea
 /allure-report/
+node_modules
+
+# VSCODE specific
+.vscode
+vscode
+
+# poetry.lock
+poetry.lock
