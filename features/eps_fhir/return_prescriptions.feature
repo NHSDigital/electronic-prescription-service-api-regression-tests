@@ -7,4 +7,4 @@ Feature: I can return prescriptions
     When I am an authorised dispenser
     And I return the prescription
     Then the response indicates a success
-    And I can see an informational operation outcome in the response
+    And the response body indicates a successful return action

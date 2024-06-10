@@ -84,6 +84,8 @@ def body_indicates_successful_action(context, action_type):
         if "sandbox" in context.config.userdata["env"].lower():
             return
         assert_that(json_response["parameter"][0]["resource"]["total"]).is_equal_to(1)
+    def _return_assertion():
+        i_can_see_an_informational_operation_outcome_in_the_response(context)
 
     def _cancel_assertion():
         entries = json_response["entry"]
@@ -98,6 +100,7 @@ def body_indicates_successful_action(context, action_type):
     action_assertions = {
         "release": [_release_assertion],
         "cancel": [_cancel_assertion],
+        "return": [_return_assertion]
     }
     [assertion() for assertion in action_assertions.get(action_type, [])]
 
@@ -154,12 +157,6 @@ def i_can_see_the_ping_information(context):
     i_see_revision_in_response(context)
     i_see_release_id_in_response(context)
     i_see_commit_id_in_response(context)
-
-
-@then("I can see the prescription in the response")
-def i_can_see_the_prescription_in_the_response(context):
-    json_response = json.loads(context.response.content)
-    assert_that(json_response["parameter"][0]["resource"]["total"]).is_equal_to(1)
 
 
 @then("I can see an informational operation outcome in the response")

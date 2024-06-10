@@ -8,7 +8,7 @@ Feature: I can create prescriptions
     When I am an authorised dispenser
     And I release a prescription
     Then the response indicates a success
-    And I can see the prescription in the response
+    And the response body indicates a successful release action
     Examples:
       | Type          |
       | nominated     |
