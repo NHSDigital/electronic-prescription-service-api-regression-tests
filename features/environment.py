@@ -1,7 +1,9 @@
 import logging
 import os
 import sys
-from dotenv import dotenv_values
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 INTERNAL_QA_BASE_URL = "https://internal-qa.api.service.nhs.uk/"
@@ -30,12 +32,11 @@ REPOS = {
     "PFP-APIGEE": "https://github.com/NHSDigital/prescriptions-for-patients",
 }
 
-env_file = dotenv_values(".env")
-CERTIFICATE = env_file.get("CERTIFICATE")
-PRIVATE_KEY = env_file.get("PRIVATE_KEY")
-CLIENT_ID = env_file.get("CLIENT_ID")
-CLIENT_SECRET = env_file.get("CLIENT_SECRET")
-PULL_REQUEST_ID = env_file.get("PULL_REQUEST_ID")
+CERTIFICATE = os.getenv("CERTIFICATE")
+PRIVATE_KEY = os.getenv("PRIVATE_KEY")
+CLIENT_ID = os.getenv("CLIENT_ID")
+CLIENT_SECRET = os.getenv("CLIENT_SECRET")
+PULL_REQUEST_ID = os.getenv("PULL_REQUEST_ID")
 
 EPS_FHIR_SUFFIX = "electronic-prescriptions"
 PFP_APIGEE_SUFFIX = "prescriptions-for-patients"
