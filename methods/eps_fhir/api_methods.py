@@ -15,6 +15,7 @@ from methods.eps_fhir.api_request_body_generators import (
     generate_agent,
     generate_owner,
     generate_group_identifier,
+    generate_return,
 )
 from methods.shared.common import the_expected_response_code_is_returned
 from methods.shared.api import post, get_headers
@@ -25,8 +26,8 @@ from utils.signing import get_signature
 def _create_new_prepare_body(context):
     sender_ods_code = "A83008"
     prescription_item_id = str(uuid.uuid4())
-    long_prescription_id = str(uuid.uuid4())
 
+    long_prescription_id = str(uuid.uuid4())
     context.receiver_ods_code = "FA565"
     context.prescription_id = generate_short_form_id(sender_ods_code)
 
@@ -149,6 +150,14 @@ def _create_release_body(context):
     return body
 
 
+def _create_return_body(context):
+    short_prescription_id = context.prescription_id
+    nhs_number = context.nhs_number
+
+    body = generate_return(nhs_number, short_prescription_id)
+    return json.dumps(body)
+
+
 def release_signed_prescription(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/Task/$release"
     additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
@@ -168,6 +177,15 @@ def cancel_all_line_items(context):
     context.cancel_body = cancel_body
 
     post(data=cancel_body, url=url, context=context, headers=headers)
+
+
+def return_prescription(context):
+    url = f"{context.eps_fhir_base_url}/FHIR/R4/Task"
+    additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
+    headers = get_headers(context, additional_headers)
+
+    context.return_body = _create_return_body(context)
+    post(data=context.return_body, url=url, context=context, headers=headers)
 
 
 def assert_ok_status_code(context):

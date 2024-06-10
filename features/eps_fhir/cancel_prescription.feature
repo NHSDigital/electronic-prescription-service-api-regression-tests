@@ -1,6 +1,6 @@
 @eps_fhir @cancel @regression @blocker @smoke
 @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-3869
-Feature: I can can create and then cancel prescriptions
+Feature: I can create and then cancel prescriptions
 
   Scenario: I can create and then cancel a prescription
     Given I am an authorised prescriber

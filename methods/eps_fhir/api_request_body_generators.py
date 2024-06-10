@@ -1,6 +1,8 @@
 import json
 import uuid
 
+from features.environment import CIS2_USERS
+
 
 def create_fhir_bundle(*entries):
     resource_id = str(uuid.uuid4())
@@ -219,7 +221,7 @@ def generate_medication_request(
 
 
 def generate_practitioner_role(sds_role_id):
-    practitioner_role = {
+    return {
         "fullUrl": "urn:uuid:56166769-c1c4-4d07-afa8-132b5dfca666",
         "resource": {
             "resourceType": "PractitionerRole",
@@ -249,11 +251,10 @@ def generate_practitioner_role(sds_role_id):
             "telecom": [{"system": "phone", "value": "01234567890", "use": "work"}],
         },
     }
-    return practitioner_role
 
 
 def generate_practitioner(user_id):
-    practitioner = {
+    return {
         "fullUrl": "urn:uuid:a8c85454-f8cb-498d-9629-78e2cb5fa47a",
         "resource": {
             "resourceType": "Practitioner",
@@ -270,11 +271,10 @@ def generate_practitioner(user_id):
             "name": [{"family": "BOIN", "given": ["C"], "prefix": ["DR"]}],
         },
     }
-    return practitioner
 
 
 def generate_patient(nhs_number, gp_ods_code):
-    patient = {
+    return {
         "fullUrl": "urn:uuid:78d3c2eb-009e-4ec8-a358-b042954aa9b2",
         "resource": {
             "resourceType": "Patient",
@@ -311,7 +311,6 @@ def generate_patient(nhs_number, gp_ods_code):
             ],
         },
     }
-    return patient
 
 
 def generate_organization():
@@ -428,13 +427,13 @@ def generate_agent():
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/sds-role-profile-id",
-                    "value": "555254242105",
+                    "value": CIS2_USERS["prescriber"]["role_id"],
                 }
             ],
             "practitioner": {
                 "identifier": {
                     "system": "https://fhir.nhs.uk/Id/sds-user-id",
-                    "value": "656005750107",
+                    "value": CIS2_USERS["prescriber"]["user_id"],
                 },
                 "display": "Jackie Clark",
             },
@@ -460,5 +459,128 @@ def generate_group_identifier(prescription_order_number):
         "valueIdentifier": {
             "system": "https://fhir.nhs.uk/Id/prescription-order-number",
             "value": prescription_order_number,
+        },
+    }
+
+
+def generate_return(nhs_number, short_prescription_id):
+    return {
+        "resourceType": "Task",
+        "id": f"{uuid.uuid4()}",
+        "contained": [
+            {
+                "resourceType": "PractitionerRole",
+                "id": "urn:uuid:56166769-c1c4-4d07-afa8-132b5dfca666",
+                "identifier": [
+                    {
+                        "system": "https://fhir.nhs.uk/Id/sds-role-profile-id",
+                        "value": CIS2_USERS["prescriber"]["role_id"],
+                    }
+                ],
+                "practitioner": {
+                    "identifier": {
+                        "system": "https://fhir.nhs.uk/Id/sds-user-id",
+                        "value": CIS2_USERS["prescriber"]["user_id"],
+                    },
+                    "display": "Jackie Clark",
+                },
+                "organization": {
+                    "reference": "#urn:uuid:3b4b03a5-52ba-4ba6-9b82-70350aa109d8"
+                },
+                "code": [
+                    {
+                        "coding": [
+                            {
+                                "system": "https://fhir.nhs.uk/CodeSystem/NHSDigital-SDS-JobRoleCode",
+                                "code": "S8000:G8000:R8000",
+                                "display": "Clinical Practitioner Access Role",
+                            }
+                        ]
+                    }
+                ],
+                "telecom": [{"system": "phone", "use": "work", "value": "02380798431"}],
+            },
+            {
+                "resourceType": "Organization",
+                "id": "urn:uuid:3b4b03a5-52ba-4ba6-9b82-70350aa109d8",
+                "identifier": [
+                    {
+                        "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                        "value": "A83008",
+                    }
+                ],
+                "name": "SOMERSET BOWEL CANCER SCREENING CENTRE",
+                "address": [
+                    {
+                        "use": "work",
+                        "line": ["MUSGROVE PARK HOSPITAL"],
+                        "city": "TAUNTON",
+                        "postalCode": "TA1 5DA",
+                    }
+                ],
+                "telecom": [
+                    {"system": "phone", "value": "01823 333444", "use": "work"}
+                ],
+                "partOf": {
+                    "identifier": {
+                        "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                        "value": "RBA",
+                    },
+                    "display": "TAUNTON AND SOMERSET NHS FOUNDATION TRUST",
+                },
+            },
+        ],
+        "identifier": [
+            {
+                "system": "https://tools.ietf.org/html/rfc4122",
+                "value": f"{uuid.uuid4()}",
+            }
+        ],
+        "status": "rejected",
+        "statusReason": {
+            "coding": [
+                {
+                    "system": "https://fhir.nhs.uk/CodeSystem/EPS-task-dispense-return-status-reason",
+                    "code": "0003",
+                    "display": "Patient requested release",
+                }
+            ]
+        },
+        "intent": "order",
+        "code": {
+            "coding": [
+                {
+                    "system": "http://hl7.org/fhir/CodeSystem/task-code",
+                    "code": "fulfill",
+                    "display": "Fulfill the focal request",
+                }
+            ]
+        },
+        "groupIdentifier": {
+            "system": "https://fhir.nhs.uk/Id/prescription-order-number",
+            "value": short_prescription_id,
+        },
+        "focus": {
+            "identifier": {
+                "system": "https://tools.ietf.org/html/rfc4122",
+                "value": f"{uuid.uuid4()}",
+            }
+        },
+        "for": {
+            "identifier": {
+                "system": "https://fhir.nhs.uk/Id/nhs-number",
+                "value": nhs_number,
+            }
+        },
+        "authoredOn": "2022-11-21T14:30:00+00:00",
+        "requester": {"reference": "#urn:uuid:56166769-c1c4-4d07-afa8-132b5dfca666"},
+        "reasonCode": {
+            "coding": [
+                {
+                    "system": "http://snomed.info/sct",
+                    "code": "33633005",
+                    "display": "Prescription of drug",
+                }
+            ]
         },
     }

@@ -5,16 +5,32 @@ import json
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 
 from methods.eps_fhir.api_methods import (
-    assert_ok_status_code,
     cancel_all_line_items,
     create_signed_prescription,
     prepare_prescription,
     release_signed_prescription,
+    assert_ok_status_code,
+    return_prescription,
 )
 from methods.shared import common
 from methods.shared.api import request_ping
 from methods.shared.common import assert_that, get_auth
 from utils.nhs_number_generator import random_nhs_number_generator
+
+
+@given("I successfully prepare and sign a {prescription_type} prescription")
+def i_prepare_and_sign_a_prescription(context, prescription_type="nominated"):
+    i_prepare_a_new_prescription(context, prescription_type)
+    i_sign_a_new_prescription(context=context)
+
+
+@given("a prescription has been created and released")
+def a_prescription_has_been_created_and_released(context):
+    i_am_an_authorised_user(context, "prescriber")
+    i_prepare_and_sign_a_prescription(context)
+    i_am_an_authorised_user(context, "dispenser")
+    i_release_a_prescription(context)
+    indicate_successful_response(context)
 
 
 @given("I am an authorised {user}")
@@ -25,12 +41,6 @@ def i_am_an_authorised_user(context, user):
     env = context.config.userdata["env"]
     context.user = user
     context.auth_token = get_auth(user, env)
-
-
-@given("I successfully prepare and sign a {prescription_type} prescription")
-def i_prepare_and_sign_a_prescription(context, prescription_type):
-    i_prepare_a_new_prescription(context, prescription_type)
-    i_sign_a_new_prescription(context=context)
 
 
 def i_prepare_a_new_prescription(context, prescription_type):
@@ -51,6 +61,11 @@ def i_release_a_prescription(context):
     release_signed_prescription(context)
 
 
+@when("I return the prescription")
+def i_return_the_prescription(context):
+    return_prescription(context)
+
+
 @when("I cancel all line items on the prescription")
 def i_cancel_all_line_items(context):
     cancel_all_line_items(context)
@@ -65,10 +80,13 @@ def indicate_successful_response(context):
 
 @then("the response body indicates a successful {action_type} action")
 def body_indicates_successful_action(context, action_type):
-    def _prescribe_assertion():
+    def _release_assertion():
         if "sandbox" in context.config.userdata["env"].lower():
             return
         assert_that(json_response["parameter"][0]["resource"]["total"]).is_equal_to(1)
+
+    def _return_assertion():
+        i_can_see_an_informational_operation_outcome_in_the_response(context)
 
     def _cancel_assertion():
         entries = json_response["entry"]
@@ -81,8 +99,9 @@ def body_indicates_successful_action(context, action_type):
 
     json_response = json.loads(context.response.content)
     action_assertions = {
-        "prescribe": [_prescribe_assertion],
+        "release": [_release_assertion],
         "cancel": [_cancel_assertion],
+        "return": [_return_assertion],
     }
     [assertion() for assertion in action_assertions.get(action_type, [])]
 
@@ -139,3 +158,11 @@ def i_can_see_the_ping_information(context):
     i_see_revision_in_response(context)
     i_see_release_id_in_response(context)
     i_see_commit_id_in_response(context)
+
+
+@then("I can see an informational operation outcome in the response")
+def i_can_see_an_informational_operation_outcome_in_the_response(context):
+    json_response = json.loads(context.response.content)
+    assert_that(json_response["resourceType"]).is_equal_to("OperationOutcome")
+    assert_that(json_response["issue"][0]["code"]).is_equal_to("informational")
+    assert_that(json_response["issue"][0]["severity"]).is_equal_to("information")
