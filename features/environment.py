@@ -3,7 +3,7 @@ import os
 import sys
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(override=True)
 
 
 INTERNAL_QA_BASE_URL = "https://internal-qa.api.service.nhs.uk/"

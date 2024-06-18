@@ -2,6 +2,12 @@ import json
 import uuid
 
 from features.environment import CIS2_USERS
+from messages.eps_fhir.api_request_dn_body_generators import (
+    create_dispense_notification,
+    create_dn_message_header,
+    create_dn_medication_dispense,
+    create_dn_organisation,
+)
 from methods.eps_fhir.api_request_body_generators import (
     create_fhir_bundle,
     create_fhir_parameter,
@@ -24,30 +30,30 @@ from utils.signing import get_signature
 
 
 def _create_new_prepare_body(context):
-    sender_ods_code = "A83008"
-    prescription_item_id = str(uuid.uuid4())
+    context.sender_ods_code = "A83008"
+    context.prescription_item_id = str(uuid.uuid4())
 
     long_prescription_id = str(uuid.uuid4())
     context.receiver_ods_code = "FA565"
-    context.prescription_id = generate_short_form_id(sender_ods_code)
+    context.prescription_id = generate_short_form_id(context.sender_ods_code)
 
     user_id = CIS2_USERS["prescriber"]["user_id"]
     sds_role_id = CIS2_USERS["prescriber"]["role_id"]
 
     message_header = generate_message_header(
-        sender_ods_code,
+        context.sender_ods_code,
         context.receiver_ods_code,
     )
 
     medication_request = generate_medication_request(
         context.prescription_id,
-        prescription_item_id,
+        context.prescription_item_id,
         long_prescription_id,
         context.receiver_ods_code,
         context.nomination_code,
     )
 
-    patient = generate_patient(context.nhs_number, sender_ods_code)
+    patient = generate_patient(context.nhs_number, context.sender_ods_code)
 
     organization = generate_organization()
     practitioner_role = generate_practitioner_role(sds_role_id)
@@ -97,6 +103,23 @@ def _create_cancel_body(context):
     event_coding["display"] = "Prescription Order Update"
 
     return json.dumps(cancel_body)
+
+
+def _create_dispense_notification_body(context):
+    medication_dispense_uuid = uuid.uuid4()
+    organisation_uuid = uuid.uuid4()
+
+    message_header = create_dn_message_header(context.receiver_ods_code)
+    medication_dispense = create_dn_medication_dispense(
+        medication_dispense_uuid, context.nhs_number
+    )
+    organisation = create_dn_organisation(organisation_uuid)
+
+    body = create_dispense_notification(
+        message_header, medication_dispense, organisation
+    )
+
+    return json.dumps(body)
 
 
 def _replace_ids(body):
@@ -177,6 +200,16 @@ def cancel_all_line_items(context):
     context.cancel_body = cancel_body
 
     post(data=cancel_body, url=url, context=context, headers=headers)
+
+
+def dispense_prescription(context):
+    url = f"{context.eps_fhir_base_url}/FHIR/R4/$process-message#dispense-notification"
+    additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
+    headers = get_headers(context, additional_headers)
+
+    dispense_notification_body = _create_dispense_notification_body(context)
+
+    post(data=dispense_notification_body, url=url, context=context, headers=headers)
 
 
 def return_prescription(context):

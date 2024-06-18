@@ -1,15 +1,15 @@
-# pylint: disable=missing-module-docstring
 import json
 
 # pylint: disable=no-name-in-module
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 
 from methods.eps_fhir.api_methods import (
+    assert_ok_status_code,
     cancel_all_line_items,
     create_signed_prescription,
+    dispense_prescription,
     prepare_prescription,
     release_signed_prescription,
-    assert_ok_status_code,
     return_prescription,
 )
 from methods.shared import common
@@ -69,6 +69,11 @@ def i_return_the_prescription(context):
 @when("I cancel all line items on the prescription")
 def i_cancel_all_line_items(context):
     cancel_all_line_items(context)
+
+
+@when("I dispense a prescription")
+def i_dispense_a_prescription(context):
+    dispense_prescription(context)
 
 
 @then("the response indicates a success")
