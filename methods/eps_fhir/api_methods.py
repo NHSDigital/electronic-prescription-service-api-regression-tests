@@ -7,6 +7,7 @@ from messages.eps_fhir.api_request_dn_body_generators import (
     create_dn_message_header,
     create_dn_medication_dispense,
     create_dn_organisation,
+    create_dn_practitioner_role,
 )
 from methods.eps_fhir.api_request_body_generators import (
     create_fhir_bundle,
@@ -108,10 +109,15 @@ def _create_cancel_body(context):
 def _create_dispense_notification_body(context):
     medication_dispense_uuid = uuid.uuid4()
     organisation_uuid = uuid.uuid4()
+    practitioner_role_uuid = uuid.uuid4()
 
+    practitioner_role = create_dn_practitioner_role(practitioner_role_uuid)
     message_header = create_dn_message_header(context.receiver_ods_code)
     medication_dispense = create_dn_medication_dispense(
-        medication_dispense_uuid, context.nhs_number
+        medication_dispense_uuid,
+        context.nhs_number,
+        practitioner_role_uuid,
+        practitioner_role,
     )
     organisation = create_dn_organisation(organisation_uuid)
 
