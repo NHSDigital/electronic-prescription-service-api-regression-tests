@@ -85,14 +85,6 @@ def indicate_successful_response(context):
 
 @then("the response body indicates a successful {action_type} action")
 def body_indicates_successful_action(context, action_type):
-    def _release_assertion():
-        if "sandbox" in context.config.userdata["env"].lower():
-            return
-        assert_that(json_response["parameter"][0]["resource"]["total"]).is_equal_to(1)
-
-    def _return_assertion():
-        i_can_see_an_informational_operation_outcome_in_the_response(context)
-
     def _cancel_assertion():
         entries = json_response["entry"]
         message_header = [
@@ -102,10 +94,22 @@ def body_indicates_successful_action(context, action_type):
         ][0]
         assert_that(message_header["resource"]["response"]["code"]).is_equal_to("ok")
 
+    def _dispense_assertion():
+        i_can_see_an_informational_operation_outcome_in_the_response(context)
+
+    def _release_assertion():
+        if "sandbox" in context.config.userdata["env"].lower():
+            return
+        assert_that(json_response["parameter"][0]["resource"]["total"]).is_equal_to(1)
+
+    def _return_assertion():
+        i_can_see_an_informational_operation_outcome_in_the_response(context)
+
     json_response = json.loads(context.response.content)
     action_assertions = {
-        "release": [_release_assertion],
         "cancel": [_cancel_assertion],
+        "dispense": [_dispense_assertion],
+        "release": [_release_assertion],
         "return": [_return_assertion],
     }
     [assertion() for assertion in action_assertions.get(action_type, [])]

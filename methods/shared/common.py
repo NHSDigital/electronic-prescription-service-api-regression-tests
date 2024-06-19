@@ -43,6 +43,7 @@ def get_auth(user, env):
         response = requests.get(
             "https://int.api.service.nhs.uk/mock-jwks/test-auth/nhs-cis2/aal3",
             headers=headers,
+            timeout=None,
         )
         if response.status_code != 200:
             print(f"{response.status_code}\n{str(response.content)}")
@@ -53,7 +54,7 @@ def get_auth(user, env):
 
 def get_auth_internal_dev():
     url = "https://sxhjsbv4d7tvmt67av3jlboera0yzvgc.lambda-url.eu-west-2.on.aws/?env=internal-dev"
-    response = requests.get(url)
+    response = requests.get(url, timeout=None)
     if response.status_code == 200:
         data = response.json()
         access_token = data.get("access_token")
