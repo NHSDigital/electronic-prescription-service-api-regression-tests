@@ -11,6 +11,7 @@ from methods.eps_fhir.api_methods import (
     prepare_prescription,
     release_signed_prescription,
     return_prescription,
+    withdraw_dispense_notification,
 )
 from methods.shared import common
 from methods.shared.api import request_ping
@@ -31,6 +32,12 @@ def a_prescription_has_been_created_and_released(context):
     i_am_an_authorised_user(context, "dispenser")
     i_release_a_prescription(context)
     indicate_successful_response(context)
+
+
+@given("a new prescription has dispensed")
+def a_new_prescription_has_been_dispensed(context):
+    a_prescription_has_been_created_and_released(context)
+    i_dispense_a_prescription(context)
 
 
 @given("I am an authorised {user}")
@@ -76,6 +83,24 @@ def i_dispense_a_prescription(context):
     dispense_prescription(context)
 
 
+@when("I withdraw the dispense notification")
+def i_withdraw_the_dispense_notification(context):
+    withdraw_dispense_notification(context)
+
+
+@when('I make a request to the "{product}" ping endpoint')
+def i_make_a_request_to_the_ping_endpoint(context, product):
+    base_url = None
+    if product == "pfp_apigee":
+        base_url = context.pfp_apigee_base_url
+    if product == "eps_fhir":
+        base_url = context.eps_fhir_base_url
+    if base_url is not None:
+        request_ping(context, base_url)
+    else:
+        raise ValueError(f"unable to find base url for '{product}'")
+
+
 @then("the response indicates a success")
 def indicate_successful_response(context):
     if "sandbox" in context.config.userdata["env"].lower():
@@ -93,6 +118,9 @@ def body_indicates_successful_action(context, action_type):
     def _return_assertion():
         i_can_see_an_informational_operation_outcome_in_the_response(context)
 
+    def _withdraw_dispense_notification_assertion():
+        i_can_see_an_informational_operation_outcome_in_the_response(context)
+
     def _cancel_assertion():
         entries = json_response["entry"]
         message_header = [
@@ -107,21 +135,9 @@ def body_indicates_successful_action(context, action_type):
         "release": [_release_assertion],
         "cancel": [_cancel_assertion],
         "return": [_return_assertion],
+        "dispense withdrawal": [_withdraw_dispense_notification_assertion()],
     }
     [assertion() for assertion in action_assertions.get(action_type, [])]
-
-
-@when('I make a request to the "{product}" ping endpoint')
-def i_make_a_request_to_the_ping_endpoint(context, product):
-    base_url = None
-    if product == "pfp_apigee":
-        base_url = context.pfp_apigee_base_url
-    if product == "eps_fhir":
-        base_url = context.eps_fhir_base_url
-    if base_url is not None:
-        request_ping(context, base_url)
-    else:
-        raise ValueError(f"unable to find base url for '{product}'")
 
 
 @then("I get a {status_code:n} response code")

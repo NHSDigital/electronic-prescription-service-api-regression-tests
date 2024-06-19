@@ -7,3 +7,9 @@ Feature: I can create and then dispense prescriptions
     When I dispense a prescription
     Then the response indicates a success
     And the response body indicates a successful dispense action
+
+  Scenario: I withdraw a dispense notification
+    Given a new prescription has dispensed
+    When I withdraw the dispense notification
+    Then the response indicates a success
+    And the response body indicates a successful dispense withdrawal action

@@ -73,7 +73,9 @@ def random_nhs_number_generator():
         check_digit = calculate_check_digit(candidate_number)
 
         if check_digit != 10:
-            return candidate_number + str(check_digit)
+            nhs_number = candidate_number + str(check_digit)
+            print(f"NHS Number: {nhs_number}")
+            return nhs_number
 
 
 def is_valid_nhs_number(nhs_number):

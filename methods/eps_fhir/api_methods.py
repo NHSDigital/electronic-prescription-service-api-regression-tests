@@ -206,6 +206,14 @@ def _create_return_body(context):
     return json.dumps(body)
 
 
+def _create_withdraw_dispense_notification_body(context):
+    short_prescription_id = context.prescription_id
+    nhs_number = context.nhs_number
+
+    body = generate_return(nhs_number, short_prescription_id)
+    return json.dumps(body)
+
+
 def release_signed_prescription(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/Task/$release"
     additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
@@ -233,6 +241,16 @@ def dispense_prescription(context):
     headers = get_headers(context, additional_headers)
 
     dispense_notification_body = _create_dispense_notification_body(context)
+
+    post(data=dispense_notification_body, url=url, context=context, headers=headers)
+
+
+def withdraw_dispense_notification(context):
+    url = f"{context.eps_fhir_base_url}/FHIR/R4/Task"
+    additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
+    headers = get_headers(context, additional_headers)
+
+    dispense_notification_body = _create_withdraw_dispense_notification_body(context)
 
     post(data=dispense_notification_body, url=url, context=context, headers=headers)
 
