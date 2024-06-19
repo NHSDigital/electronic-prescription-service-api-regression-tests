@@ -2,14 +2,7 @@ import json
 import uuid
 
 from features.environment import CIS2_USERS
-from messages.eps_fhir.api_request_dn_body_generators import (
-    create_dispense_notification,
-    create_dn_message_header,
-    create_dn_medication_dispense,
-    create_dn_medication_request,
-    create_dn_organisation,
-    create_dn_practitioner_role,
-)
+from messages.eps_fhir.dispense_notification import DispenseNotification
 from methods.eps_fhir.api_request_body_generators import (
     create_fhir_bundle,
     create_fhir_parameter,
@@ -107,46 +100,6 @@ def _create_cancel_body(context):
     return json.dumps(cancel_body)
 
 
-def _create_dispense_notification_body(context):
-    organisation_uuid = uuid.uuid4()
-    practitioner_role_uuid = uuid.uuid4()
-    practitioner_role = create_dn_practitioner_role(
-        practitioner_role_uuid, organisation_uuid
-    )
-
-    patient_uuid = uuid.uuid4()
-    medication_request_uuid = uuid.uuid4()
-    medication_request = create_dn_medication_request(
-        medication_request_uuid,
-        context.prescription_item_id,
-        patient_uuid,
-        context.long_prescription_id,
-        context.prescription_id,
-        practitioner_role_uuid,
-    )
-
-    message_header = create_dn_message_header(context.receiver_ods_code)
-
-    medication_dispense_uuid = uuid.uuid4()
-    medication_dispense = create_dn_medication_dispense(
-        medication_dispense_uuid,
-        context.nhs_number,
-        practitioner_role_uuid,
-        practitioner_role,
-        medication_request_uuid,
-        medication_request,
-        context.prescription_item_id,
-    )
-
-    organisation = create_dn_organisation(organisation_uuid, context.receiver_ods_code)
-
-    body = create_dispense_notification(
-        message_header, medication_dispense, organisation
-    )
-
-    return json.dumps(body)
-
-
 def _replace_ids(body):
     old_id = json.loads(body)["id"]
     return body.replace(old_id, str(uuid.uuid4()))
@@ -240,9 +193,9 @@ def dispense_prescription(context):
     additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
     headers = get_headers(context, additional_headers)
 
-    dispense_notification_body = _create_dispense_notification_body(context)
+    dispense_notification = DispenseNotification(context)
 
-    post(data=dispense_notification_body, url=url, context=context, headers=headers)
+    post(data=dispense_notification.body, url=url, context=context, headers=headers)
 
 
 def withdraw_dispense_notification(context):

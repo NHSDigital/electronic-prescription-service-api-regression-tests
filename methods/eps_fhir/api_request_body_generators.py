@@ -586,7 +586,7 @@ def generate_return(nhs_number, short_prescription_id):
     }
 
 
-def generate_withdraw_dispense_notification(nhs_number, short_prescription_id):
+def generate_withdraw_dispense_notification(nhs_number, short_prescription_id, dn_id):
     return {
         "resourceType": "Task",
         "id": f"{uuid.uuid4()}",
@@ -656,16 +656,16 @@ def generate_withdraw_dispense_notification(nhs_number, short_prescription_id):
         "identifier": [
             {
                 "system": "https://tools.ietf.org/html/rfc4122",
-                "value": f"{uuid.uuid4()}",
+                "value": str(dn_id),
             }
         ],
         "status": "in-progress",
         "statusReason": {
             "coding": [
                 {
-                    "system": "https://fhir.nhs.uk/CodeSystem/EPS-task-dispense-return-status-reason",
-                    "code": "0003",
-                    "display": "Patient requested release",
+                    "system": "https://fhir.nhs.uk/CodeSystem/EPS-task-dispense-withdraw-reason",
+                    "code": "MU",
+                    "display": "Medication Update"
                 }
             ]
         },
@@ -674,8 +674,8 @@ def generate_withdraw_dispense_notification(nhs_number, short_prescription_id):
             "coding": [
                 {
                     "system": "http://hl7.org/fhir/CodeSystem/task-code",
-                    "code": "fulfill",
-                    "display": "Fulfill the focal request",
+                    "code": "abort",
+                    "display": "Mark the focal resource as no longer active"
                 }
             ]
         },
@@ -686,7 +686,7 @@ def generate_withdraw_dispense_notification(nhs_number, short_prescription_id):
         "focus": {
             "identifier": {
                 "system": "https://tools.ietf.org/html/rfc4122",
-                "value": f"{uuid.uuid4()}",
+                "value": dn_id,
             }
         },
         "for": {
@@ -695,15 +695,6 @@ def generate_withdraw_dispense_notification(nhs_number, short_prescription_id):
                 "value": nhs_number,
             }
         },
-        "authoredOn": "2022-11-21T14:30:00+00:00",
+        "authoredOn": "2024-06-19T14:30:00+00:00",
         "requester": {"reference": "#urn:uuid:56166769-c1c4-4d07-afa8-132b5dfca666"},
-        "reasonCode": {
-            "coding": [
-                {
-                    "system": "http://snomed.info/sct",
-                    "code": "33633005",
-                    "display": "Prescription of drug",
-                }
-            ]
-        },
     }
