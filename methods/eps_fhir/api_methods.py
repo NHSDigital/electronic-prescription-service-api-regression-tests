@@ -6,6 +6,7 @@ from messages.eps_fhir.api_request_dn_body_generators import (
     create_dispense_notification,
     create_dn_message_header,
     create_dn_medication_dispense,
+    create_dn_medication_request,
     create_dn_organisation,
     create_dn_practitioner_role,
 )
@@ -32,11 +33,11 @@ from utils.signing import get_signature
 
 def _create_new_prepare_body(context):
     context.sender_ods_code = "A83008"
-    context.prescription_item_id = str(uuid.uuid4())
-
-    long_prescription_id = str(uuid.uuid4())
     context.receiver_ods_code = "FA565"
+
+    context.long_prescription_id = str(uuid.uuid4())
     context.prescription_id = generate_short_form_id(context.sender_ods_code)
+    context.prescription_item_id = str(uuid.uuid4())
 
     user_id = CIS2_USERS["prescriber"]["user_id"]
     sds_role_id = CIS2_USERS["prescriber"]["role_id"]
@@ -49,7 +50,7 @@ def _create_new_prepare_body(context):
     medication_request = generate_medication_request(
         context.prescription_id,
         context.prescription_item_id,
-        long_prescription_id,
+        context.long_prescription_id,
         context.receiver_ods_code,
         context.nomination_code,
     )
@@ -107,19 +108,37 @@ def _create_cancel_body(context):
 
 
 def _create_dispense_notification_body(context):
-    medication_dispense_uuid = uuid.uuid4()
     organisation_uuid = uuid.uuid4()
     practitioner_role_uuid = uuid.uuid4()
+    practitioner_role = create_dn_practitioner_role(
+        practitioner_role_uuid, organisation_uuid
+    )
 
-    practitioner_role = create_dn_practitioner_role(practitioner_role_uuid)
+    patient_uuid = uuid.uuid4()
+    medication_request_uuid = uuid.uuid4()
+    medication_request = create_dn_medication_request(
+        medication_request_uuid,
+        context.prescription_item_id,
+        patient_uuid,
+        context.long_prescription_id,
+        context.prescription_id,
+        practitioner_role_uuid,
+    )
+
     message_header = create_dn_message_header(context.receiver_ods_code)
+
+    medication_dispense_uuid = uuid.uuid4()
     medication_dispense = create_dn_medication_dispense(
         medication_dispense_uuid,
         context.nhs_number,
         practitioner_role_uuid,
         practitioner_role,
+        medication_request_uuid,
+        medication_request,
+        context.prescription_item_id,
     )
-    organisation = create_dn_organisation(organisation_uuid)
+
+    organisation = create_dn_organisation(organisation_uuid, context.receiver_ods_code)
 
     body = create_dispense_notification(
         message_header, medication_dispense, organisation
