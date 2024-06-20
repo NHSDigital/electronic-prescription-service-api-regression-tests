@@ -23,12 +23,12 @@ class Prescription:
     def __init__(self, context: Any) -> None:
         self.ids = PrescriptionIDs(context)
         self.context = context
-        message_header = self.generate_message_header()
-        medication_request = self.generate_medication_request()
-        patient = self.generate_patient()
-        organization = self.generate_organization()
-        practitioner_role = self.generate_practitioner_role()
-        practitioner = self.generate_practitioner()
+        message_header = self.create_message_header()
+        medication_request = self.create_medication_request()
+        patient = self.create_patient()
+        organization = self.create_organization()
+        practitioner_role = self.create_practitioner_role()
+        practitioner = self.create_practitioner()
 
         self.body = self.create_fhir_bundle(
             message_header,
@@ -54,7 +54,7 @@ class Prescription:
         fhir_resource["entry"].extend(entries)
         return json.dumps(fhir_resource)
 
-    def generate_message_header(self):
+    def create_message_header(self):
         bundle_id = uuid4()
         message_header = {
             "fullUrl": f"urn:uuid:{bundle_id}",
@@ -96,7 +96,7 @@ class Prescription:
             )
         return message_header
 
-    def generate_medication_request(self):
+    def create_medication_request(self):
         medication_request = {
             "fullUrl": "urn:uuid:a54219b8-f741-4c47-b662-e4f8dfa49ab6",
             "resource": {
@@ -235,7 +235,7 @@ class Prescription:
 
         return medication_request
 
-    def generate_practitioner_role(self):
+    def create_practitioner_role(self):
         return {
             "fullUrl": "urn:uuid:56166769-c1c4-4d07-afa8-132b5dfca666",
             "resource": {
@@ -267,7 +267,7 @@ class Prescription:
             },
         }
 
-    def generate_practitioner(self):
+    def create_practitioner(self):
         return {
             "fullUrl": "urn:uuid:a8c85454-f8cb-498d-9629-78e2cb5fa47a",
             "resource": {
@@ -286,7 +286,7 @@ class Prescription:
             },
         }
 
-    def generate_patient(self):
+    def create_patient(self):
         return {
             "fullUrl": "urn:uuid:78d3c2eb-009e-4ec8-a358-b042954aa9b2",
             "resource": {
@@ -325,7 +325,7 @@ class Prescription:
             },
         }
 
-    def generate_organization(self):
+    def create_organization(self):
         return {
             "fullUrl": "urn:uuid:3b4b03a5-52ba-4ba6-9b82-70350aa109d8",
             "resource": {
