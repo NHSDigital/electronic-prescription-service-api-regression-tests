@@ -3,15 +3,9 @@ import uuid
 
 from features.environment import CIS2_USERS
 from messages.eps_fhir.dispense_notification import DispenseNotification
+from messages.eps_fhir.prescription import Prescription
 from methods.eps_fhir.api_request_body_generators import (
-    create_fhir_bundle,
     create_fhir_parameter,
-    generate_message_header,
-    generate_medication_request,
-    generate_patient,
-    generate_organization,
-    generate_practitioner_role,
-    generate_practitioner,
     generate_provenance,
     generate_agent,
     generate_owner,
@@ -20,49 +14,7 @@ from methods.eps_fhir.api_request_body_generators import (
 )
 from methods.shared.common import the_expected_response_code_is_returned
 from methods.shared.api import post, get_headers
-from utils.prescription_id_generator import generate_short_form_id
 from utils.signing import get_signature
-
-
-def _create_new_prepare_body(context):
-    context.sender_ods_code = "A83008"
-    context.receiver_ods_code = "FA565"
-
-    context.long_prescription_id = str(uuid.uuid4())
-    context.prescription_id = generate_short_form_id(context.sender_ods_code)
-    context.prescription_item_id = str(uuid.uuid4())
-
-    user_id = CIS2_USERS["prescriber"]["user_id"]
-    sds_role_id = CIS2_USERS["prescriber"]["role_id"]
-
-    message_header = generate_message_header(
-        context.sender_ods_code,
-        context.receiver_ods_code,
-    )
-
-    medication_request = generate_medication_request(
-        context.prescription_id,
-        context.prescription_item_id,
-        context.long_prescription_id,
-        context.receiver_ods_code,
-        context.nomination_code,
-    )
-
-    patient = generate_patient(context.nhs_number, context.sender_ods_code)
-
-    organization = generate_organization()
-    practitioner_role = generate_practitioner_role(sds_role_id)
-    practitioner = generate_practitioner(user_id)
-
-    body = create_fhir_bundle(
-        message_header,
-        medication_request,
-        patient,
-        organization,
-        practitioner_role,
-        practitioner,
-    )
-    return body
 
 
 def _cancel_medication_request(medication_request):
@@ -110,7 +62,7 @@ def prepare_prescription(context):
     additional_headers = {"Content-Type": "application/json"}
     headers = get_headers(context, additional_headers)
 
-    context.prepare_body = _create_new_prepare_body(context)
+    context.prepare_body = Prescription(context).body
     response = post(
         data=context.prepare_body, url=url, context=context, headers=headers
     )
