@@ -1,7 +1,7 @@
 import json
-import uuid
 
 from features.environment import CIS2_USERS
+from messages.eps_fhir.cancel import Cancel
 from messages.eps_fhir.dispense_notification import DispenseNotification
 from messages.eps_fhir.prescription import Prescription
 from messages.eps_fhir.release import Release
@@ -12,46 +12,6 @@ from methods.eps_fhir.api_request_body_generators import (
 from methods.shared.common import the_expected_response_code_is_returned
 from methods.shared.api import post, get_headers
 from utils.signing import get_signature
-
-
-def _cancel_medication_request(medication_request):
-    medication_request["resource"]["status"] = "cancelled"
-    medication_request["resource"]["statusReason"] = {
-        "coding": [
-            {
-                "system": "https://fhir.nhs.uk/CodeSystem/medicationrequest-status-reason",
-                "code": "0001",
-                "display": "Prescribing Error",
-            }
-        ]
-    }
-
-
-def _create_cancel_body(context):
-    cancel_body = json.loads(context.prepare_body)
-
-    medication_requests = [
-        e
-        for e in cancel_body["entry"]
-        if e["resource"]["resourceType"] == "MedicationRequest"
-    ]
-    [_cancel_medication_request(mr) for mr in medication_requests]
-
-    message_header = [
-        e
-        for e in cancel_body["entry"]
-        if e["resource"]["resourceType"] == "MessageHeader"
-    ][0]
-    event_coding = message_header["resource"]["eventCoding"]
-    event_coding["code"] = "prescription-order-update"
-    event_coding["display"] = "Prescription Order Update"
-
-    return json.dumps(cancel_body)
-
-
-def _replace_ids(body):
-    old_id = json.loads(body)["id"]
-    return body.replace(old_id, str(uuid.uuid4()))
 
 
 def prepare_prescription(context):
@@ -111,8 +71,7 @@ def cancel_all_line_items(context):
     additional_headers = {"NHSD-Session-URID": CIS2_USERS["prescriber"]["role_id"]}
     headers = get_headers(context, additional_headers)
 
-    cancel_body = _create_cancel_body(context)
-    cancel_body = _replace_ids(cancel_body)
+    cancel_body = Cancel(context).body
     context.cancel_body = cancel_body
 
     post(data=cancel_body, url=url, context=context, headers=headers)
