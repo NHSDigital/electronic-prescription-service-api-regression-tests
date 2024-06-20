@@ -1,15 +1,12 @@
-import json
-
 from features.environment import CIS2_USERS
 from messages.eps_fhir.cancel import Cancel
 from messages.eps_fhir.dispense_notification import DispenseNotification
 from messages.eps_fhir.prescription import Prescription
 from messages.eps_fhir.prescription_return import Return
 from messages.eps_fhir.release import Release
-from methods.eps_fhir.api_request_body_generators import generate_provenance
+from messages.eps_fhir.signed_prescription import SignedPrescription
 from methods.shared.common import the_expected_response_code_is_returned
 from methods.shared.api import post, get_headers
-from utils.signing import get_signature
 
 
 def prepare_prescription(context):
@@ -27,22 +24,11 @@ def prepare_prescription(context):
     context.timestamp = response.json()["parameter"][1]["valueString"]
 
 
-def _create_signed_body(context):
-    context.signature = get_signature(digest=context.digest)
-    body = json.loads(context.prepare_body)
-    provenance = generate_provenance(
-        signature=context.signature, timestamp=context.timestamp
-    )
-    body["entry"].append(provenance)
-    body = json.dumps(body)
-    return body
-
-
 def create_signed_prescription(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/$process-message#prescription-order"
     headers = get_headers(context)
 
-    context.signed_body = _create_signed_body(context)
+    context.signed_body = SignedPrescription(context).body
     post(data=context.signed_body, url=url, context=context, headers=headers)
     the_expected_response_code_is_returned(context, 200)
 

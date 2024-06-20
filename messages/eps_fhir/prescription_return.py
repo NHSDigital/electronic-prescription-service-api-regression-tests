@@ -1,11 +1,12 @@
 import json
+from typing import Any
 from uuid import uuid4
 
 from features.environment import CIS2_USERS
 
 
 class Return:
-    def __init__(self, context) -> None:
+    def __init__(self, context: Any) -> None:
         self.context = context
         body = self.generate_return()
         self.body = json.dumps(body)
