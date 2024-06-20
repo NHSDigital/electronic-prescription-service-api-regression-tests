@@ -4,11 +4,9 @@ from features.environment import CIS2_USERS
 from messages.eps_fhir.cancel import Cancel
 from messages.eps_fhir.dispense_notification import DispenseNotification
 from messages.eps_fhir.prescription import Prescription
+from messages.eps_fhir.prescription_return import Return
 from messages.eps_fhir.release import Release
-from methods.eps_fhir.api_request_body_generators import (
-    generate_provenance,
-    generate_return,
-)
+from methods.eps_fhir.api_request_body_generators import generate_provenance
 from methods.shared.common import the_expected_response_code_is_returned
 from methods.shared.api import post, get_headers
 from utils.signing import get_signature
@@ -49,14 +47,6 @@ def create_signed_prescription(context):
     the_expected_response_code_is_returned(context, 200)
 
 
-def _create_return_body(context):
-    short_prescription_id = context.prescription_id
-    nhs_number = context.nhs_number
-
-    body = generate_return(nhs_number, short_prescription_id)
-    return json.dumps(body)
-
-
 def release_signed_prescription(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/Task/$release"
     additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
@@ -92,7 +82,7 @@ def return_prescription(context):
     additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
     headers = get_headers(context, additional_headers)
 
-    context.return_body = _create_return_body(context)
+    context.return_body = Return(context).body
     post(data=context.return_body, url=url, context=context, headers=headers)
 
 
