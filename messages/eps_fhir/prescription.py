@@ -159,7 +159,8 @@ class Prescription:
                 "courseOfTherapyType": {
                     "coding": [
                         {
-                            "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-course-of-therapy",  # http only
+                            # http only
+                            "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-course-of-therapy",
                             "code": "acute",
                         }
                     ]
