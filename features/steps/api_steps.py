@@ -38,7 +38,7 @@ def a_prescription_has_been_created_and_released(context):
 def a_new_prescription_has_been_dispensed(context):
     a_prescription_has_been_created_and_released(context)
     i_dispense_a_prescription(context)
-
+    indicate_successful_response(context)
 
 @given("I am an authorised {user}")
 @when("I am an authorised {user}")
