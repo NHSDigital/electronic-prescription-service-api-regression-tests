@@ -8,7 +8,7 @@ from uuid import uuid4
 @dataclass
 class DispenseNotificationIDs:
     practitioner_role = uuid4()
-    organisation = uuid4()
+    organization = uuid4()
     medication_request = uuid4()
 
 
@@ -23,10 +23,10 @@ class DispenseNotification:
         )
 
         message_header = self.message_header(context)
-        organisation = self.organisation(ids, context)
+        organization = self.organization(ids, context)
 
         dispense_notification = self.dispense_notification(
-            message_header, medication_dispense, organisation
+            message_header, medication_dispense, organization
         )
 
         self.body = json.dumps(dispense_notification)
@@ -48,7 +48,7 @@ class DispenseNotification:
                 },
                 "display": "Jackie Clark",
             },
-            "organization": {"reference": f"urn:uuid:{ids.organisation}"},
+            "organization": {"reference": f"urn:uuid:{ids.organization}"},
             "code": [
                 {
                     "coding": [
@@ -250,9 +250,9 @@ class DispenseNotification:
             },
         }
 
-    def organisation(self, ids: DispenseNotificationIDs, context: Any):
+    def organization(self, ids: DispenseNotificationIDs, context: Any):
         return {
-            "fullUrl": f"urn:uuid:{ids.organisation}",
+            "fullUrl": f"urn:uuid:{ids.organization}",
             "resource": {
                 "resourceType": "Organization",
                 "extension": [
