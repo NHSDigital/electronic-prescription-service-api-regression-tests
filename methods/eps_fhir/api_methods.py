@@ -4,12 +4,9 @@ import uuid
 from features.environment import CIS2_USERS
 from messages.eps_fhir.dispense_notification import DispenseNotification
 from messages.eps_fhir.prescription import Prescription
+from messages.eps_fhir.release import Release
 from methods.eps_fhir.api_request_body_generators import (
-    create_fhir_parameter,
     generate_provenance,
-    generate_agent,
-    generate_owner,
-    generate_group_identifier,
     generate_return,
 )
 from methods.shared.common import the_expected_response_code_is_returned
@@ -92,17 +89,6 @@ def create_signed_prescription(context):
     the_expected_response_code_is_returned(context, 200)
 
 
-def _create_release_body(context):
-    prescription_order_number = context.prescription_id
-    group_identifier = generate_group_identifier(
-        prescription_order_number=prescription_order_number
-    )
-    owner = generate_owner(receiver_ods_code=context.receiver_ods_code)
-    agent = generate_agent()
-    body = create_fhir_parameter(group_identifier, owner, agent)
-    return body
-
-
 def _create_return_body(context):
     short_prescription_id = context.prescription_id
     nhs_number = context.nhs_number
@@ -116,7 +102,7 @@ def release_signed_prescription(context):
     additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
     headers = get_headers(context, additional_headers)
 
-    context.release_body = _create_release_body(context)
+    context.release_body = Release(context).body
     post(data=context.release_body, url=url, context=context, headers=headers)
 
 

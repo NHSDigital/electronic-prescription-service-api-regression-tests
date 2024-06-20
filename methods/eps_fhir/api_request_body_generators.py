@@ -1,17 +1,6 @@
-import json
 import uuid
 
 from features.environment import CIS2_USERS
-
-
-def create_fhir_parameter(*entries):
-    fhir_resource = {
-        "resourceType": "Parameters",
-        "id": str(uuid.uuid4()),
-        "parameter": [{"name": "status", "valueCode": "accepted"}],
-    }
-    fhir_resource["parameter"].extend(entries)
-    return json.dumps(fhir_resource)
 
 
 def generate_provenance(signature, timestamp):
@@ -22,12 +11,7 @@ def generate_provenance(signature, timestamp):
             "target": [{"reference": "urn:uuid:a54219b8-f741-4c47-b662-e4f8dfa49ab6"}],
             "recorded": "2008-02-27T11:38:00+00:00",
             "agent": [
-                {
-                    "who": {
-                        # practitioner-role
-                        "reference": "urn:uuid:56166769-c1c4-4d07-afa8-132b5dfca666"
-                    }
-                }
+                {"who": {"reference": "urn:uuid:56166769-c1c4-4d07-afa8-132b5dfca666"}}
             ],
             "signature": [
                 {
@@ -44,88 +28,6 @@ def generate_provenance(signature, timestamp):
                     "data": signature,
                 }
             ],
-        },
-    }
-
-
-def generate_owner(receiver_ods_code):
-    return {
-        "name": "owner",
-        "resource": {
-            "resourceType": "Organization",
-            "identifier": [
-                {
-                    "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-                    "value": receiver_ods_code,
-                }
-            ],
-            "active": True,
-            "type": [
-                {
-                    "coding": [
-                        {
-                            "system": "https://fhir.nhs.uk/CodeSystem/organisation-role",
-                            "code": "123",
-                        }
-                    ]
-                }
-            ],
-            "name": "SOMERSET BOWEL CANCER SCREENING CENTRE",  # mandatory
-            "address": [
-                {
-                    "use": "work",
-                    "line": ["MUSGROVE PARK HOSPITAL"],
-                    "city": "TAUNTON",
-                    "postalCode": "TA1 5DA",
-                }
-            ],  # mandatory
-            "telecom": [
-                {"system": "phone", "value": "01823 333444", "use": "work"}
-            ],  # mandatory
-        },
-    }
-
-
-def generate_agent():
-    return {
-        "name": "agent",
-        "resource": {
-            "resourceType": "PractitionerRole",
-            "identifier": [
-                {
-                    "system": "https://fhir.nhs.uk/Id/sds-role-profile-id",
-                    "value": CIS2_USERS["prescriber"]["role_id"],
-                }
-            ],
-            "practitioner": {
-                "identifier": {
-                    "system": "https://fhir.nhs.uk/Id/sds-user-id",
-                    "value": CIS2_USERS["prescriber"]["user_id"],
-                },
-                "display": "Jackie Clark",
-            },
-            "code": [
-                {
-                    "coding": [
-                        {
-                            "system": "https://fhir.nhs.uk/CodeSystem/NHSDigital-SDS-JobRoleCode",
-                            "code": "S8000:G8000:R8000",
-                            "display": "Clinical Practitioner Access Role",
-                        }
-                    ]
-                }
-            ],
-            "telecom": [{"system": "phone", "value": "01234567890", "use": "work"}],
-        },
-    }
-
-
-def generate_group_identifier(prescription_order_number):
-    return {
-        "name": "group-identifier",
-        "valueIdentifier": {
-            "system": "https://fhir.nhs.uk/Id/prescription-order-number",
-            "value": prescription_order_number,
         },
     }
 
