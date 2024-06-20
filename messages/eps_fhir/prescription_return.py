@@ -100,7 +100,7 @@ class Return:
             "code": {
                 "coding": [
                     {
-                        "system": "http://hl7.org/fhir/CodeSystem/task-code",
+                        "system": "http://hl7.org/fhir/CodeSystem/task-code",  # http only
                         "code": "fulfill",
                         "display": "Fulfill the focal request",
                     }
@@ -129,7 +129,7 @@ class Return:
             "reasonCode": {
                 "coding": [
                     {
-                        "system": "http://snomed.info/sct",
+                        "system": "https://snomed.info/sct",
                         "code": "33633005",
                         "display": "Prescription of drug",
                     }

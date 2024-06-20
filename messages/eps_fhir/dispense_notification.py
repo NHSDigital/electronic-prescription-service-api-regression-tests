@@ -89,7 +89,7 @@ class DispenseNotification:
                 {
                     "coding": [
                         {
-                            "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                            "system": "https://terminology.hl7.org/CodeSystem/medicationrequest-category",
                             "code": "outpatient",
                             "display": "Outpatient",
                         }
@@ -97,7 +97,12 @@ class DispenseNotification:
                 }
             ],
             "medicationCodeableConcept": {
-                "coding": [{"system": "http://snomed.info/sct", "code": "322237000"}]
+                "coding": [
+                    {
+                        "system": "http://snomed.info/sct",  # http only
+                        "code": "322237000",
+                    }
+                ]
             },
             "subject": {"reference": f"urn:uuid:{uuid4()}"},
             "authoredOn": datetime.now(UTC).isoformat(),
@@ -118,7 +123,7 @@ class DispenseNotification:
             "courseOfTherapyType": {
                 "coding": [
                     {
-                        "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-course-of-therapy",
+                        "system": "https://terminology.hl7.org/CodeSystem/medicationrequest-course-of-therapy",
                         "code": "acute",
                         "display": "Short course (acute) therapy",
                     }
@@ -133,7 +138,7 @@ class DispenseNotification:
                     "route": {
                         "coding": [
                             {
-                                "system": "http://snomed.info/sct",
+                                "system": "https://snomed.info/sct",
                                 "code": "26643006",
                                 "display": "Oral",
                             }
@@ -149,13 +154,13 @@ class DispenseNotification:
                 "expectedSupplyDuration": {
                     "value": 30,
                     "unit": "day",
-                    "system": "http://unitsofmeasure.org",
+                    "system": "http://unitsofmeasure.org",  # http only
                     "code": "d",
                 },
                 "quantity": {
                     "value": 100,
                     "unit": "tablet",
-                    "system": "http://snomed.info/sct",
+                    "system": "https://snomed.info/sct",
                     "code": "428673006",
                 },
             },
@@ -175,7 +180,10 @@ class DispenseNotification:
                 "resourceType": "MedicationDispense",
                 "medicationCodeableConcept": {
                     "coding": [
-                        {"system": "http://snomed.info/sct", "code": "322237000"}
+                        {
+                            "system": "http://snomed.info/sct",  # http only
+                            "code": "322237000",
+                        }
                     ]
                 },
                 "subject": {
@@ -206,7 +214,7 @@ class DispenseNotification:
                 "quantity": {
                     "value": 1,
                     "unit": "pre-filled disposable injection",
-                    "system": "http://snomed.info/sct",
+                    "system": "https://snomed.info/sct",
                     "code": "3318611000001103",
                 },
                 "contained": [practitioner_role, medication_request],
