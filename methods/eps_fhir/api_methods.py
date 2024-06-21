@@ -68,9 +68,14 @@ def withdraw_dispense_notification(context):
     additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
     headers = get_headers(context, additional_headers)
 
-    dispense_notification_body = WithdrawDispenseNotification(context)
+    context.dispense_notification_body = WithdrawDispenseNotification(context).body
 
-    post(data=dispense_notification_body, url=url, context=context, headers=headers)
+    post(
+        data=context.dispense_notification_body,
+        url=url,
+        context=context,
+        headers=headers,
+    )
 
 
 def return_prescription(context):
