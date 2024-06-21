@@ -22,7 +22,7 @@ class DispenseNotification:
             ids, context, practitioner_role, medication_request
         )
 
-        message_header = self.message_header(context)
+        message_header = self.message_header(context) if context.amend is None else self.amended_message_header(context)
         organization = self.organization(ids, context)
 
         dispense_notification = self.dispense_notification(
@@ -237,6 +237,77 @@ class DispenseNotification:
                 "whenHandedOver": datetime.now(UTC).isoformat(),
             },
         }
+    
+    def amended_medication_dispense(
+        self,
+        ids: DispenseNotificationIDs,
+        context: Any,
+        practitioner_role,
+        medication_request,
+    ):
+        return {
+            "fullUrl": f"urn:uuid:{uuid4()}",
+            "resource": {
+                "resourceType": "MedicationDispense",
+                "medicationCodeableConcept": {
+                    "coding": [
+                        {
+                            "system": "http://snomed.info/sct",  # http only
+                            "code": "322237000",
+                        }
+                    ]
+                },
+                "subject": {
+                    "type": "Patient",
+                    "identifier": {
+                        "system": "https://fhir.nhs.uk/Id/nhs-number",
+                        "value": context.nhs_number,
+                    },
+                    "display": "MR DONOTUSE XXTESTPATIENT-TGNP",
+                },
+                "status": "completed",
+                "extension": [
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-EPS-TaskBusinessStatus",
+                        "valueCoding": {
+                            "system": "https://fhir.nhs.uk/CodeSystem/EPS-task-business-status",
+                            "code": "0006",
+                            "display": "Dispensed",
+                        },
+                    }
+                ],
+                "performer": [
+                    {"actor": {"reference": f"#urn:uuid:{ids.practitioner_role}"}}
+                ],
+                "authorizingPrescription": [
+                    {"reference": f"#urn:uuid:{ids.medication_request}"}
+                ],
+                "quantity": {
+                    "value": 1,
+                    "unit": "pre-filled disposable injection",
+                    "system": "https://snomed.info/sct",
+                    "code": "3318611000001103",
+                },
+                "contained": [practitioner_role, medication_request],
+                "identifier": [
+                    {
+                        "system": "https://fhir.nhs.uk/Id/prescription-dispense-item-number",
+                        "value": context.prescription_item_id,
+                    }
+                ],
+                "type": {
+                    "coding": [
+                        {
+                            "system": "https://fhir.nhs.uk/CodeSystem/medicationdispense-type",
+                            "code": "0002",
+                            "display": "Item not dispensed",
+                        }
+                    ]
+                },
+                "dosageInstruction": [{"text": "4 times a day - Oral"}],
+                "whenHandedOver": datetime.now(UTC).isoformat(),
+            },
+        }
 
     def message_header(self, context):
         return {
@@ -248,6 +319,35 @@ class DispenseNotification:
                     "code": "dispense-notification",
                     "display": "Dispense Notification",
                 },
+                "source": {
+                    "endpoint": f"urn:nhs-uk:addressing:ods:{context.receiver_ods_code}"
+                },
+                "response": {
+                    "identifier": str(uuid4()),
+                    "code": "ok",
+                },
+            },
+        }
+    
+    def amended_message_header(self, context):
+        return {
+            "fullUrl": f"urn:uuid:{uuid4()}",
+            "resource": {
+                "resourceType": "MessageHeader",
+                "eventCoding": {
+                    "system": "https://fhir.nhs.uk/CodeSystem/message-event",
+                    "code": "dispense-notification",
+                    "display": "Dispense Notification",
+                },
+                 "extension": [
+                    {
+                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-replacementOf",
+                        "valueIdentifier": {
+                        "system": "https://tools.ietf.org/html/rfc4122",
+                        "value": context.prescription_item_id,
+                        }
+                    }
+                ],
                 "source": {
                     "endpoint": f"urn:nhs-uk:addressing:ods:{context.receiver_ods_code}"
                 },

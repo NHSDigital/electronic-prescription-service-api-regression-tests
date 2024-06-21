@@ -8,6 +8,7 @@ from methods.eps_fhir.api_methods import (
     cancel_all_line_items,
     create_signed_prescription,
     dispense_prescription,
+    amend_dispense_notification,
     prepare_prescription,
     release_signed_prescription,
     return_prescription,
@@ -74,6 +75,11 @@ def i_cancel_all_line_items(context):
 @when("I dispense a prescription")
 def i_dispense_a_prescription(context):
     dispense_prescription(context)
+
+
+@when("I amend a dispense notification")
+def i_amend_a_dispense_notification(context):
+    amend_dispense_notification(context)
 
 
 @then("the response indicates a success")
