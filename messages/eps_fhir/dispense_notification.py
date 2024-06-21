@@ -18,6 +18,8 @@ class DispenseNotification:
 
         practitioner_role = self.practitioner_role(ids)
         medication_request = self.medication_request(ids, context)
+        context.type_code = "0001" if context.amend is None else "0002"
+        context.type_display = "Item Fully Dispensed" if context.amend is None else "Item Not Dispensed"
         medication_dispense = self.medication_dispense(
             ids, context, practitioner_role, medication_request
         )
@@ -173,6 +175,7 @@ class DispenseNotification:
         context: Any,
         practitioner_role,
         medication_request,
+        medication_dispense_type
     ):
         return {
             "fullUrl": f"urn:uuid:{uuid4()}",
@@ -228,79 +231,8 @@ class DispenseNotification:
                     "coding": [
                         {
                             "system": "https://fhir.nhs.uk/CodeSystem/medicationdispense-type",
-                            "code": "0001",
-                            "display": "Item fully dispensed",
-                        }
-                    ]
-                },
-                "dosageInstruction": [{"text": "4 times a day - Oral"}],
-                "whenHandedOver": datetime.now(UTC).isoformat(),
-            },
-        }
-    
-    def amended_medication_dispense(
-        self,
-        ids: DispenseNotificationIDs,
-        context: Any,
-        practitioner_role,
-        medication_request,
-    ):
-        return {
-            "fullUrl": f"urn:uuid:{uuid4()}",
-            "resource": {
-                "resourceType": "MedicationDispense",
-                "medicationCodeableConcept": {
-                    "coding": [
-                        {
-                            "system": "http://snomed.info/sct",  # http only
-                            "code": "322237000",
-                        }
-                    ]
-                },
-                "subject": {
-                    "type": "Patient",
-                    "identifier": {
-                        "system": "https://fhir.nhs.uk/Id/nhs-number",
-                        "value": context.nhs_number,
-                    },
-                    "display": "MR DONOTUSE XXTESTPATIENT-TGNP",
-                },
-                "status": "completed",
-                "extension": [
-                    {
-                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-EPS-TaskBusinessStatus",
-                        "valueCoding": {
-                            "system": "https://fhir.nhs.uk/CodeSystem/EPS-task-business-status",
-                            "code": "0006",
-                            "display": "Dispensed",
-                        },
-                    }
-                ],
-                "performer": [
-                    {"actor": {"reference": f"#urn:uuid:{ids.practitioner_role}"}}
-                ],
-                "authorizingPrescription": [
-                    {"reference": f"#urn:uuid:{ids.medication_request}"}
-                ],
-                "quantity": {
-                    "value": 1,
-                    "unit": "pre-filled disposable injection",
-                    "system": "https://snomed.info/sct",
-                    "code": "3318611000001103",
-                },
-                "contained": [practitioner_role, medication_request],
-                "identifier": [
-                    {
-                        "system": "https://fhir.nhs.uk/Id/prescription-dispense-item-number",
-                        "value": context.prescription_item_id,
-                    }
-                ],
-                "type": {
-                    "coding": [
-                        {
-                            "system": "https://fhir.nhs.uk/CodeSystem/medicationdispense-type",
-                            "code": "0002",
-                            "display": "Item not dispensed",
+                            "code": context.type_code,
+                            "display": context.type_display,
                         }
                     ]
                 },
@@ -323,7 +255,7 @@ class DispenseNotification:
                     "endpoint": f"urn:nhs-uk:addressing:ods:{context.receiver_ods_code}"
                 },
                 "response": {
-                    "identifier": str(uuid4()),
+                    "identifier": self.context.dn_id,
                     "code": "ok",
                 },
             },
@@ -352,7 +284,7 @@ class DispenseNotification:
                     "endpoint": f"urn:nhs-uk:addressing:ods:{context.receiver_ods_code}"
                 },
                 "response": {
-                    "identifier": str(uuid4()),
+                    "identifier": self.context.dn_id,
                     "code": "ok",
                 },
             },
