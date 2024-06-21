@@ -47,10 +47,8 @@ def cancel_all_line_items(context):
     additional_headers = {"NHSD-Session-URID": CIS2_USERS["prescriber"]["role_id"]}
     headers = get_headers(context, additional_headers)
 
-    cancel_body = Cancel(context).body
-    context.cancel_body = cancel_body
-
-    post(data=cancel_body, url=url, context=context, headers=headers)
+    context.cancel_body = Cancel(context).body
+    post(data=context.cancel_body, url=url, context=context, headers=headers)
 
 
 def dispense_prescription(context):
@@ -58,9 +56,8 @@ def dispense_prescription(context):
     additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
     headers = get_headers(context, additional_headers)
 
-    dispense_notification = DispenseNotification(context)
-
-    post(data=dispense_notification.body, url=url, context=context, headers=headers)
+    dispense_notification = DispenseNotification(context).body
+    post(data=dispense_notification, url=url, context=context, headers=headers)
 
 
 def withdraw_dispense_notification(context):

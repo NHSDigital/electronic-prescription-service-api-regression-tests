@@ -123,7 +123,7 @@ class Prescription:
                     {
                         "coding": [
                             {
-                                "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                                "system": "https://terminology.hl7.org/CodeSystem/medicationrequest-category",
                                 "code": ("community"),
                             }
                         ]
@@ -131,7 +131,10 @@ class Prescription:
                 ],
                 "medicationCodeableConcept": {
                     "coding": [
-                        {"system": "http://snomed.info/sct", "code": "322237000"}
+                        {
+                            "system": "http://snomed.info/sct",  # http only
+                            "code": "322237000",
+                        }
                     ]
                 },
                 "subject": {
@@ -156,6 +159,7 @@ class Prescription:
                 "courseOfTherapyType": {
                     "coding": [
                         {
+                            # http only
                             "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-course-of-therapy",
                             "code": "acute",
                         }
@@ -170,7 +174,7 @@ class Prescription:
                         "route": {
                             "coding": [
                                 {
-                                    "system": "http://snomed.info/sct",
+                                    "system": "https://snomed.info/sct",
                                     "code": "26643006",
                                     "display": "Oral",
                                 }
@@ -183,13 +187,13 @@ class Prescription:
                     "expectedSupplyDuration": {
                         "value": 30,
                         "unit": "day",
-                        "system": "http://unitsofmeasure.org",
+                        "system": "http://unitsofmeasure.org",  # http only
                         "code": "d",
                     },
                     "quantity": {
                         "value": 100,
                         "unit": "tablet",
-                        "system": "http://snomed.info/sct",
+                        "system": "https://snomed.info/sct",
                         "code": "428673006",
                     },
                 },

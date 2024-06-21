@@ -1,4 +1,4 @@
-@eps_fhir @smoke @regression @blocker
+@eps_fhir @smoke @regression @blocker @return
 @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-3866
 Feature: I can return prescriptions
 
