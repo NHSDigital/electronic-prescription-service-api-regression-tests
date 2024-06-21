@@ -5,6 +5,9 @@ from messages.eps_fhir.prescription import Prescription
 from messages.eps_fhir.prescription_return import Return
 from messages.eps_fhir.release import Release
 from messages.eps_fhir.signed_prescription import SignedPrescription
+from messages.eps_fhir.withdraw_dispense_notification import (
+    WithdrawDispenseNotification,
+)
 from methods.shared.common import the_expected_response_code_is_returned
 from methods.shared.api import post, get_headers
 
@@ -65,7 +68,7 @@ def withdraw_dispense_notification(context):
     additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
     headers = get_headers(context, additional_headers)
 
-    dispense_notification_body = _create_withdraw_dispense_notification_body(context)
+    dispense_notification_body = WithdrawDispenseNotification(context)
 
     post(data=dispense_notification_body, url=url, context=context, headers=headers)
 

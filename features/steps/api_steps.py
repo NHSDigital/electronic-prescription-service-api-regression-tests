@@ -40,6 +40,7 @@ def a_new_prescription_has_been_dispensed(context):
     i_dispense_a_prescription(context)
     indicate_successful_response(context)
 
+
 @given("I am an authorised {user}")
 @when("I am an authorised {user}")
 def i_am_an_authorised_user(context, user):
