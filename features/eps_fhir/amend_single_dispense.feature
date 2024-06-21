@@ -3,6 +3,7 @@
 Feature: I can amend a single dispense notification
 
 Scenario Outline: I can amend a single dispense notification
-    Given I am an authorised dispenser
-    When I amend a dispense notification
-    Then the amended notification is successfully sent. 
+    Given a new prescription has dispensed
+    When I amend the dispense notification
+    Then the response indicates a success
+    And the response body indicates a successful amend dispense action
