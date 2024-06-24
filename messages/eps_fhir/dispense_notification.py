@@ -174,8 +174,7 @@ class DispenseNotification:
         ids: DispenseNotificationIDs,
         context: Any,
         practitioner_role,
-        medication_request,
-        medication_dispense_type
+        medication_request
     ):
         return {
             "fullUrl": f"urn:uuid:{uuid4()}",
