@@ -56,7 +56,7 @@ def dispense_prescription(context):
     additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
     headers = get_headers(context, additional_headers)
 
-    dispense_notification = DispenseNotification(context).body
+    dispense_notification = DispenseNotification(context, amend = False).body
     post(data=dispense_notification, url=url, context=context, headers=headers)
 
 def amend_dispense_notification(context):
@@ -64,8 +64,7 @@ def amend_dispense_notification(context):
     additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
     headers = get_headers(context, additional_headers)
     
-    context.amend = True
-    amended_dispense_notification = DispenseNotification(context).body
+    amended_dispense_notification = DispenseNotification(context, amend = True).body
     post(data=amended_dispense_notification, url=url, context=context, headers=headers)
 
 def return_prescription(context):

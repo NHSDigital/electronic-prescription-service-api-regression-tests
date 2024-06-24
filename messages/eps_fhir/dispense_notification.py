@@ -10,22 +10,19 @@ class DispenseNotificationIDs:
     practitioner_role = uuid4()
     organization = uuid4()
     medication_request = uuid4()
+    dn_id = uuid4()
 
 
 class DispenseNotification:
-    def __init__(self, context: Any) -> None:
+    def __init__(self, context: Any, amend: bool) -> None:
         ids = DispenseNotificationIDs()
-        self.context = context
-        self.context.dn_id = str(uuid4())
         practitioner_role = self.practitioner_role(ids)
         medication_request = self.medication_request(ids, context)
-        context.type_code = "0001" if context.amend is None else "0002"
-        context.type_display = "Item Fully Dispensed" if context.amend is None else "Item Not Dispensed"
         medication_dispense = self.medication_dispense(
-            ids, context, practitioner_role, medication_request
+            ids, context, practitioner_role, medication_request, amend
         )
 
-        message_header = self.message_header(context) if context.amend is None else self.amended_message_header(context)
+        message_header = self.message_header(context) if amend else self.amended_message_header(context)
         organization = self.organization(ids, context)
 
         dispense_notification = self.dispense_notification(
@@ -175,7 +172,8 @@ class DispenseNotification:
         ids: DispenseNotificationIDs,
         context: Any,
         practitioner_role,
-        medication_request
+        medication_request,
+        amend
     ):
         return {
             "fullUrl": f"urn:uuid:{uuid4()}",
@@ -231,8 +229,8 @@ class DispenseNotification:
                     "coding": [
                         {
                             "system": "https://fhir.nhs.uk/CodeSystem/medicationdispense-type",
-                            "code": context.type_code,
-                            "display": context.type_display,
+                            "code": "0001" if amend else "0002",
+                            "display": "Item Fully Dispensed" if amend else "Item Not Dispensed"
                         }
                     ]
                 },
@@ -241,7 +239,7 @@ class DispenseNotification:
             },
         }
 
-    def message_header(self, context):
+    def message_header(self, context, ids: DispenseNotificationIDs):
         return {
             "fullUrl": f"urn:uuid:{uuid4()}",
             "resource": {
@@ -255,13 +253,13 @@ class DispenseNotification:
                     "endpoint": f"urn:nhs-uk:addressing:ods:{context.receiver_ods_code}"
                 },
                 "response": {
-                    "identifier": self.context.dn_id,
+                    "identifier": ids.dn_id,
                     "code": "ok",
                 },
             },
         }
     
-    def amended_message_header(self, context):
+    def amended_message_header(self, context, ids: DispenseNotificationIDs):
         return {
             "fullUrl": f"urn:uuid:{uuid4()}",
             "resource": {
@@ -284,7 +282,7 @@ class DispenseNotification:
                     "endpoint": f"urn:nhs-uk:addressing:ods:{context.receiver_ods_code}"
                 },
                 "response": {
-                    "identifier": self.context.dn_id,
+                    "identifier": ids.dn_id,
                     "code": "ok",
                 },
             },
@@ -342,13 +340,13 @@ class DispenseNotification:
             },
         }
 
-    def dispense_notification(self, *entries):
+    def dispense_notification(self, *entries, ids: DispenseNotificationIDs):
         return {
             "resourceType": "Bundle",
             "type": "message",
             "entry": entries,
             "identifier": {
                 "system": "https://tools.ietf.org/html/rfc4122",
-                "value": self.context.dn_id,
+                "value": ids.dn_id,
             },
         }
