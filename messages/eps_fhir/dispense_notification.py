@@ -15,7 +15,8 @@ class DispenseNotificationIDs:
 class DispenseNotification:
     def __init__(self, context: Any) -> None:
         ids = DispenseNotificationIDs()
-
+        self.context = context
+        self.context.dn_id = str(uuid4())
         practitioner_role = self.practitioner_role(ids)
         medication_request = self.medication_request(ids, context)
         context.type_code = "0001" if context.amend is None else "0002"
@@ -348,6 +349,6 @@ class DispenseNotification:
             "entry": entries,
             "identifier": {
                 "system": "https://tools.ietf.org/html/rfc4122",
-                "value": str(uuid4()),
+                "value": self.context.dn_id,
             },
         }
