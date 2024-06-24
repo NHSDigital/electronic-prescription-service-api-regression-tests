@@ -110,6 +110,9 @@ def body_indicates_successful_action(context, action_type):
     def _dispense_assertion():
         i_can_see_an_informational_operation_outcome_in_the_response(context)
 
+    def _amend_dispense_assertion():
+        i_can_see_an_informational_operation_outcome_in_the_response(context)
+
     def _release_assertion():
         if "sandbox" in context.config.userdata["env"].lower():
             return
@@ -122,6 +125,7 @@ def body_indicates_successful_action(context, action_type):
     action_assertions = {
         "cancel": [_cancel_assertion],
         "dispense": [_dispense_assertion],
+        "amend dispense": [_amend_dispense_assertion],
         "release": [_release_assertion],
         "return": [_return_assertion],
     }
