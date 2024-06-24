@@ -22,11 +22,11 @@ class DispenseNotification:
             ids, context, practitioner_role, medication_request, amend
         )
 
-        message_header = self.message_header(context) if amend else self.amended_message_header(context)
+        message_header = self.message_header(ids, context) if amend else self.amended_message_header(ids, context)
         organization = self.organization(ids, context)
 
         dispense_notification = self.dispense_notification(
-            message_header, medication_dispense, organization
+            ids, message_header, medication_dispense, organization
         )
 
         self.body = json.dumps(dispense_notification)
@@ -239,7 +239,7 @@ class DispenseNotification:
             },
         }
 
-    def message_header(self, context, ids: DispenseNotificationIDs):
+    def message_header(self, ids: DispenseNotificationIDs, context):
         return {
             "fullUrl": f"urn:uuid:{uuid4()}",
             "resource": {
@@ -259,7 +259,7 @@ class DispenseNotification:
             },
         }
     
-    def amended_message_header(self, context, ids: DispenseNotificationIDs):
+    def amended_message_header(self, ids: DispenseNotificationIDs, context):
         return {
             "fullUrl": f"urn:uuid:{uuid4()}",
             "resource": {
@@ -340,7 +340,7 @@ class DispenseNotification:
             },
         }
 
-    def dispense_notification(self, *entries, ids: DispenseNotificationIDs):
+    def dispense_notification(self, ids: DispenseNotificationIDs, *entries):
         return {
             "resourceType": "Bundle",
             "type": "message",
