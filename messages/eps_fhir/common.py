@@ -11,10 +11,13 @@ def create_task(
     prescription_id,
     focus_id,
     nhs_number,
+    status_reason,
+    code,
+    status,
 ):
     return {
         "resourceType": "Task",
-        "id": task_id,
+        "id": str(task_id),
         "contained": [
             {
                 "resourceType": "PractitionerRole",
@@ -82,26 +85,10 @@ def create_task(
                 "value": str(uuid4()),
             }
         ],
-        "status": "in-progress",
-        "statusReason": {
-            "coding": [
-                {
-                    "system": "https://fhir.nhs.uk/CodeSystem/EPS-task-dispense-withdraw-reason",
-                    "code": "MU",
-                    "display": "Medication Update",
-                }
-            ]
-        },
+        "status": status,
+        "statusReason": status_reason,
         "intent": "order",
-        "code": {
-            "coding": [
-                {
-                    "system": "http://hl7.org/fhir/CodeSystem/task-code",
-                    "code": "abort",
-                    "display": "Mark the focal resource as no longer active",
-                }
-            ]
-        },
+        "code": code,
         "groupIdentifier": {
             "system": "https://fhir.nhs.uk/Id/prescription-order-number",
             "value": prescription_id,
@@ -109,7 +96,7 @@ def create_task(
         "focus": {
             "identifier": {
                 "system": "https://tools.ietf.org/html/rfc4122",
-                "value": focus_id,
+                "value": str(focus_id),
             }
         },
         "for": {
