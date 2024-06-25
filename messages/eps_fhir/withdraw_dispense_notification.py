@@ -36,12 +36,12 @@ class WithdrawDispenseNotification:
         }
 
         body = create_task(
-            context.dn_id,
+            context.dispense_notification_id,
             ids.practitioner_role,
             ids.organization,
             context.sender_ods_code,
             context.prescription_id,
-            context.dn_id,
+            context.dispense_notification_id,
             context.nhs_number,
             status_reason,
             code,

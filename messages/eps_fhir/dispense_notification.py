@@ -1,30 +1,32 @@
-from dataclasses import dataclass
 from datetime import date, datetime, UTC, timedelta
 import json
 from typing import Any
 from uuid import uuid4
 
 
-@dataclass
-class DispenseNotificationIDs:
-    practitioner_role = uuid4()
-    organization = uuid4()
-    medication_request = uuid4()
-
-
 class DispenseNotification:
     def __init__(self, context: Any) -> None:
-        ids = DispenseNotificationIDs()
+        practitioner_role_id = uuid4()
+        organization_id = uuid4()
+        medication_request_id = uuid4()
         self.context = context
-        self.context.dn_id = str(uuid4())
-        practitioner_role = self.practitioner_role(ids)
-        medication_request = self.medication_request(ids, context)
+        self.context.dispense_notification_id = str(uuid4())
+        practitioner_role = self.practitioner_role(
+            practitioner_role_id, organization_id
+        )
+        medication_request = self.medication_request(
+            medication_request_id, practitioner_role_id, context
+        )
         medication_dispense = self.medication_dispense(
-            ids, context, practitioner_role, medication_request
+            practitioner_role_id,
+            medication_request_id,
+            context,
+            practitioner_role,
+            medication_request,
         )
 
         message_header = self.message_header(context)
-        organization = self.organization(ids, context)
+        organization = self.organization(organization_id, context)
 
         dispense_notification = self.dispense_notification(
             message_header, medication_dispense, organization
@@ -32,10 +34,10 @@ class DispenseNotification:
 
         self.body = json.dumps(dispense_notification)
 
-    def practitioner_role(self, ids: DispenseNotificationIDs):
+    def practitioner_role(self, practitioner_role_id, organization_id):
         return {
             "resourceType": "PractitionerRole",
-            "id": f"urn:uuid:{ids.practitioner_role}",
+            "id": f"urn:uuid:{practitioner_role_id}",
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/sds-role-profile-id",
@@ -49,7 +51,7 @@ class DispenseNotification:
                 },
                 "display": "Jackie Clark",
             },
-            "organization": {"reference": f"urn:uuid:{ids.organization}"},
+            "organization": {"reference": f"urn:uuid:{organization_id}"},
             "code": [
                 {
                     "coding": [
@@ -64,10 +66,12 @@ class DispenseNotification:
             "telecom": [{"system": "phone", "use": "work", "value": "02380798431"}],
         }
 
-    def medication_request(self, ids: DispenseNotificationIDs, context: Any):
+    def medication_request(
+        self, medication_request_id, practitioner_role_id, context: Any
+    ):
         return {
             "resourceType": "MedicationRequest",
-            "id": f"urn:uuid:{ids.medication_request}",
+            "id": f"urn:uuid:{medication_request_id}",
             "extension": [
                 {
                     "url": "https://fhir.nhs.uk/StructureDefinition/Extension-DM-PrescriptionType",
@@ -107,7 +111,7 @@ class DispenseNotification:
             },
             "subject": {"reference": f"urn:uuid:{uuid4()}"},
             "authoredOn": datetime.now(UTC).isoformat(),
-            "requester": {"reference": f"urn:uuid:{ids.practitioner_role}"},
+            "requester": {"reference": f"urn:uuid:{practitioner_role_id}"},
             "groupIdentifier": {
                 "extension": [
                     {
@@ -170,7 +174,8 @@ class DispenseNotification:
 
     def medication_dispense(
         self,
-        ids: DispenseNotificationIDs,
+        practitioner_role_id,
+        medication_request_id,
         context: Any,
         practitioner_role,
         medication_request,
@@ -207,10 +212,10 @@ class DispenseNotification:
                     }
                 ],
                 "performer": [
-                    {"actor": {"reference": f"#urn:uuid:{ids.practitioner_role}"}}
+                    {"actor": {"reference": f"#urn:uuid:{practitioner_role_id}"}}
                 ],
                 "authorizingPrescription": [
-                    {"reference": f"#urn:uuid:{ids.medication_request}"}
+                    {"reference": f"#urn:uuid:{medication_request_id}"}
                 ],
                 "quantity": {
                     "value": 1,
@@ -259,9 +264,9 @@ class DispenseNotification:
             },
         }
 
-    def organization(self, ids: DispenseNotificationIDs, context: Any):
+    def organization(self, organization_id, context: Any):
         return {
-            "fullUrl": f"urn:uuid:{ids.organization}",
+            "fullUrl": f"urn:uuid:{organization_id}",
             "resource": {
                 "resourceType": "Organization",
                 "extension": [
@@ -318,6 +323,6 @@ class DispenseNotification:
             "entry": entries,
             "identifier": {
                 "system": "https://tools.ietf.org/html/rfc4122",
-                "value": self.context.dn_id,
+                "value": self.context.dispense_notification_id,
             },
         }
