@@ -11,7 +11,7 @@ Feature: I can create and then dispense prescriptions
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-3868
   Scenario: I can amend a single dispense notification
-      Given a new prescription has dispensed
-      When I amend the dispense notification
-      Then the response indicates a success
-      And the response body indicates a successful amend dispense action
+    Given a new prescription has been dispensed
+    When I amend the dispense notification
+    Then the response indicates a success
+    And the response body indicates a successful amend dispense action

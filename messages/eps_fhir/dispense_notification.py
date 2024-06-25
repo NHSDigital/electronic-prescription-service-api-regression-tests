@@ -253,7 +253,7 @@ class DispenseNotification:
                     "endpoint": f"urn:nhs-uk:addressing:ods:{context.receiver_ods_code}"
                 },
                 "response": {
-                    "identifier": ids.dn_id,
+                    "identifier": f"{ids.dn_id}",
                     "code": "ok",
                 },
             },
@@ -282,7 +282,7 @@ class DispenseNotification:
                     "endpoint": f"urn:nhs-uk:addressing:ods:{context.receiver_ods_code}"
                 },
                 "response": {
-                    "identifier": ids.dn_id,
+                    "identifier": f"{ids.dn_id}",
                     "code": "ok",
                 },
             },
@@ -347,6 +347,6 @@ class DispenseNotification:
             "entry": entries,
             "identifier": {
                 "system": "https://tools.ietf.org/html/rfc4122",
-                "value": ids.dn_id,
+                "value": f"{ids.dn_id}",
             },
         }

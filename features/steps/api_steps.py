@@ -84,7 +84,7 @@ def i_dispense_a_prescription(context):
     dispense_prescription(context)
 
 
-@when("I amend a dispense notification")
+@when("I amend the dispense notification")
 def i_amend_a_dispense_notification(context):
     amend_dispense_notification(context)
 
