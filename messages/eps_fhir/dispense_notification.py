@@ -22,7 +22,7 @@ class DispenseNotification:
             ids, context, practitioner_role, medication_request, amend
         )
 
-        message_header = self.message_header(ids, context) if amend else self.amended_message_header(ids, context)
+        message_header = self.message_header(ids, context) if not amend else self.amended_message_header(ids, context)
         organization = self.organization(ids, context)
 
         dispense_notification = self.dispense_notification(
