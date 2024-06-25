@@ -13,6 +13,7 @@ def get(context, **kwargs):
 def post(context, **kwargs):
     context.response = api_post_request(**kwargs)
     common.attach_api_information(context)
+    print(context.response.content)
     return context.response
 
 

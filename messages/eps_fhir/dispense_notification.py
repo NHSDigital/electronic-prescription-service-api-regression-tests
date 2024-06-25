@@ -21,12 +21,15 @@ class DispenseNotification:
         medication_dispense = self.medication_dispense(
             ids, context, practitioner_role, medication_request, amend
         )
-
+        self.context = context
+        if amend:
+            context.previous_dn_id = self.context.dn_id
+        self.context.dn_id = str(uuid4())
         message_header = self.message_header(ids, context) if not amend else self.amended_message_header(ids, context)
         organization = self.organization(ids, context)
 
         dispense_notification = self.dispense_notification(
-            ids, message_header, medication_dispense, organization
+            message_header, medication_dispense, organization
         )
 
         self.body = json.dumps(dispense_notification)
@@ -274,7 +277,7 @@ class DispenseNotification:
                         "url": "https://fhir.nhs.uk/StructureDefinition/Extension-replacementOf",
                         "valueIdentifier": {
                         "system": "https://tools.ietf.org/html/rfc4122",
-                        "value": context.prescription_item_id,
+                        "value": self.context.previous_dn_id,
                         }
                     }
                 ],
@@ -340,13 +343,13 @@ class DispenseNotification:
             },
         }
 
-    def dispense_notification(self, ids: DispenseNotificationIDs, *entries):
+    def dispense_notification(self, *entries):
         return {
             "resourceType": "Bundle",
             "type": "message",
             "entry": entries,
             "identifier": {
                 "system": "https://tools.ietf.org/html/rfc4122",
-                "value": f"{ids.dn_id}",
+                "value": self.context.dn_id,
             },
         }
