@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+from datetime import UTC, datetime
 import json
 from typing import Any
 from uuid import uuid4
@@ -5,20 +7,26 @@ from uuid import uuid4
 from features.environment import CIS2_USERS
 
 
+@dataclass
+class ReturnIDs:
+    practitioner_role = uuid4()
+    organization = uuid4()
+
+
 class Return:
     def __init__(self, context: Any) -> None:
-        self.context = context
-        body = self.generate_return()
+        ids = ReturnIDs()
+        body = self.generate_return(ids, context)
         self.body = json.dumps(body)
 
-    def generate_return(self):
+    def generate_return(self, ids: ReturnIDs, context):
         return {
             "resourceType": "Task",
             "id": f"{uuid4()}",
             "contained": [
                 {
                     "resourceType": "PractitionerRole",
-                    "id": "urn:uuid:56166769-c1c4-4d07-afa8-132b5dfca666",
+                    "id": f"urn:uuid:{ids.practitioner_role}",
                     "identifier": [
                         {
                             "system": "https://fhir.nhs.uk/Id/sds-role-profile-id",
@@ -32,9 +40,7 @@ class Return:
                         },
                         "display": "Jackie Clark",
                     },
-                    "organization": {
-                        "reference": "#urn:uuid:3b4b03a5-52ba-4ba6-9b82-70350aa109d8"
-                    },
+                    "organization": {"reference": f"#urn:uuid:{ids.organization}"},
                     "code": [
                         {
                             "coding": [
@@ -52,11 +58,11 @@ class Return:
                 },
                 {
                     "resourceType": "Organization",
-                    "id": "urn:uuid:3b4b03a5-52ba-4ba6-9b82-70350aa109d8",
+                    "id": f"urn:uuid:{ids.organization}",
                     "identifier": [
                         {
                             "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-                            "value": "A83008",
+                            "value": context.sender_ods_code,
                         }
                     ],
                     "name": "SOMERSET BOWEL CANCER SCREENING CENTRE",
@@ -108,7 +114,7 @@ class Return:
             },
             "groupIdentifier": {
                 "system": "https://fhir.nhs.uk/Id/prescription-order-number",
-                "value": self.context.prescription_id,
+                "value": context.prescription_id,
             },
             "focus": {
                 "identifier": {
@@ -119,13 +125,11 @@ class Return:
             "for": {
                 "identifier": {
                     "system": "https://fhir.nhs.uk/Id/nhs-number",
-                    "value": self.context.nhs_number,
+                    "value": context.nhs_number,
                 }
             },
-            "authoredOn": "2022-11-21T14:30:00+00:00",
-            "requester": {
-                "reference": "#urn:uuid:56166769-c1c4-4d07-afa8-132b5dfca666"
-            },
+            "authoredOn": datetime.now(UTC).isoformat(),
+            "requester": {"reference": f"#urn:uuid:{ids.practitioner_role}"},
             "reasonCode": {
                 "coding": [
                     {

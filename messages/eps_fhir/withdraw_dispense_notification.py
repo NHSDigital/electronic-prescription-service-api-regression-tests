@@ -17,19 +17,15 @@ class WithdrawDispenseNotificationIDs:
 class WithdrawDispenseNotification:
     def __init__(self, context: Any) -> None:
         ids = WithdrawDispenseNotificationIDs()
-        self.nhs_number = context.nhs_number
-        self.prescription_id = context.prescription_id
-        self.dn_id = context.dn_id
-        body = self.generate_withdraw_dispense_notification(ids)
+        body = self.generate_withdraw_dispense_notification(ids, context)
         self.body = json.dumps(body)
-        self.context = context
 
     def generate_withdraw_dispense_notification(
-        self, ids: WithdrawDispenseNotificationIDs
+        self, ids: WithdrawDispenseNotificationIDs, context
     ):
         return {
             "resourceType": "Task",
-            "id": self.dn_id,
+            "id": context.dn_id,
             "contained": [
                 {
                     "resourceType": "PractitionerRole",
@@ -69,7 +65,7 @@ class WithdrawDispenseNotification:
                     "identifier": [
                         {
                             "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-                            "value": "A83008",
+                            "value": context.sender_ods_code,
                         }
                     ],
                     "name": "SOMERSET BOWEL CANCER SCREENING CENTRE",
@@ -121,18 +117,18 @@ class WithdrawDispenseNotification:
             },
             "groupIdentifier": {
                 "system": "https://fhir.nhs.uk/Id/prescription-order-number",
-                "value": self.prescription_id,
+                "value": context.prescription_id,
             },
             "focus": {
                 "identifier": {
                     "system": "https://tools.ietf.org/html/rfc4122",
-                    "value": self.dn_id,
+                    "value": context.dn_id,
                 }
             },
             "for": {
                 "identifier": {
                     "system": "https://fhir.nhs.uk/Id/nhs-number",
-                    "value": self.nhs_number,
+                    "value": context.nhs_number,
                 }
             },
             "authoredOn": datetime.now(UTC).isoformat(),
