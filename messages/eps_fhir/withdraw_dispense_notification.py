@@ -4,6 +4,7 @@ import json
 from typing import Any
 from uuid import uuid4
 
+from messages.eps_fhir.common import create_task
 from features.environment import CIS2_USERS
 
 
@@ -17,7 +18,16 @@ class WithdrawDispenseNotificationIDs:
 class WithdrawDispenseNotification:
     def __init__(self, context: Any) -> None:
         ids = WithdrawDispenseNotificationIDs()
-        body = self.generate_withdraw_dispense_notification(ids, context)
+        # body = self.generate_withdraw_dispense_notification(ids, context)
+        body = create_task(
+            context.dn_id,
+            ids.practitioner_role,
+            ids.organization,
+            context.sender_ods_code,
+            context.prescription_id,
+            context.dn_id,
+            context.nhs_number,
+        )
         self.body = json.dumps(body)
 
     def generate_withdraw_dispense_notification(
