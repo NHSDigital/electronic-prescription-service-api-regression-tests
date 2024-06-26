@@ -64,6 +64,7 @@ def dispense_prescription(context):
     dispense_notification = DispenseNotification(context, False).body
     post(data=dispense_notification, url=url, context=context, headers=headers)
 
+
 def amend_dispense_notification(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/$process-message#dispense-notification"
     additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
@@ -74,6 +75,7 @@ def amend_dispense_notification(context):
     amended_dispense_notification = DispenseNotification(context, True).body
     print(amended_dispense_notification)
     post(data=amended_dispense_notification, url=url, context=context, headers=headers)
+
 
 def withdraw_dispense_notification(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/Task"
