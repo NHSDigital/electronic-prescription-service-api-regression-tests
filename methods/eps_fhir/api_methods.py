@@ -73,7 +73,6 @@ def amend_dispense_notification(context):
     context.medication_dispense_code = "0002"
     context.medication_dispense_display = "Item Not Dispensed"
     amended_dispense_notification = DispenseNotification(context, True).body
-    print(amended_dispense_notification)
     post(data=amended_dispense_notification, url=url, context=context, headers=headers)
 
 
