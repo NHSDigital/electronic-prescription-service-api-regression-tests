@@ -57,7 +57,6 @@ def dispense_prescription(context):
     headers = get_headers(context, additional_headers)
 
     dispense_notification = DispenseNotification(context, False).body
-    print(dispense_notification)
     post(data=dispense_notification, url=url, context=context, headers=headers)
 
 def amend_dispense_notification(context):
