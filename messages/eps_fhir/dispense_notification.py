@@ -17,15 +17,19 @@ class DispenseNotification:
         practitioner_role = self.practitioner_role(ids)
         medication_request = self.medication_request(ids, context)
         medication_dispense = self.medication_dispense(
-            ids, context, practitioner_role, medication_request, amend
+            ids, context, practitioner_role, medication_request
         )
+
         self.context = context
+
+        message_header = self.message_header(context)
         if amend:
-            context.previous_dn_id = self.context.dn_id
-        self.context.dn_id = str(uuid4())
-        message_header = self.message_header(ids, context) if not amend else self.amended_message_header(ids, context)
+            self.context.previous_dn_id = self.context.dn_id
+            message_header["resource"]["extension"] = self.replacement_of()
+        
         organization = self.organization(ids, context)
 
+        self.context.dn_id = str(uuid4())
         dispense_notification = self.dispense_notification(
             message_header, medication_dispense, organization
         )
@@ -173,8 +177,7 @@ class DispenseNotification:
         ids: DispenseNotificationIDs,
         context: Any,
         practitioner_role,
-        medication_request,
-        amend
+        medication_request
     ):
         return {
             "fullUrl": f"urn:uuid:{uuid4()}",
@@ -230,8 +233,8 @@ class DispenseNotification:
                     "coding": [
                         {
                             "system": "https://fhir.nhs.uk/CodeSystem/medicationdispense-type",
-                            "code": "0001" if amend else "0002",
-                            "display": "Item Fully Dispensed" if amend else "Item Not Dispensed"
+                            "code": context.med_dispense_code,
+                            "display": context.med_dispense_display
                         }
                     ]
                 },
@@ -240,7 +243,7 @@ class DispenseNotification:
             },
         }
 
-    def message_header(self, ids: DispenseNotificationIDs, context):
+    def message_header(self, context):
         return {
             "fullUrl": f"urn:uuid:{uuid4()}",
             "resource": {
@@ -260,34 +263,15 @@ class DispenseNotification:
             },
         }
     
-    def amended_message_header(self, ids: DispenseNotificationIDs, context):
-        return {
-            "fullUrl": f"urn:uuid:{uuid4()}",
-            "resource": {
-                "resourceType": "MessageHeader",
-                "eventCoding": {
-                    "system": "https://fhir.nhs.uk/CodeSystem/message-event",
-                    "code": "dispense-notification",
-                    "display": "Dispense Notification",
-                },
-                 "extension": [
-                    {
+    def replacement_of(self):
+        return{
                         "url": "https://fhir.nhs.uk/StructureDefinition/Extension-replacementOf",
                         "valueIdentifier": {
                         "system": "https://tools.ietf.org/html/rfc4122",
                         "value": self.context.previous_dn_id,
                         }
-                    }
-                ],
-                "source": {
-                    "endpoint": f"urn:nhs-uk:addressing:ods:{context.receiver_ods_code}"
-                },
-                "response": {
-                    "identifier": str(uuid4()),
-                    "code": "ok",
-                },
-            },
-        }
+                    },
+            
 
     def organization(self, ids: DispenseNotificationIDs, context: Any):
         return {
