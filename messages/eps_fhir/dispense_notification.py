@@ -244,11 +244,8 @@ class DispenseNotification:
                         {
                             "system": "https://fhir.nhs.uk/CodeSystem/medicationdispense-type",
                             "code": self.values.medication_dispense_code,
-<<<<<<< HEAD
                             "display": self.values.medication_dispense_display,
-=======
-                            "display": self.values.medication_dispense_display
->>>>>>> bf27d11 (Updated my uses to Phil and Seans merge, all tests passing)
+
                         }
                     ]
                 },
@@ -287,6 +284,7 @@ class DispenseNotification:
                 },
             },
         )
+
 
     def organization(self):
         return {
@@ -348,5 +346,6 @@ class DispenseNotification:
             "identifier": {
                 "system": "https://tools.ietf.org/html/rfc4122",
                 "value": self.values.dispense_notification_id
+
             },
         }
