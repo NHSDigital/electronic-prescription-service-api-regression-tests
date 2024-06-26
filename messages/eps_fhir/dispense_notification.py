@@ -10,8 +10,6 @@ class DispenseNotificationIDs:
     practitioner_role = uuid4()
     organization = uuid4()
     medication_request = uuid4()
-    dn_id = uuid4()
-
 
 class DispenseNotification:
     def __init__(self, context: Any, amend: bool) -> None:
@@ -256,7 +254,7 @@ class DispenseNotification:
                     "endpoint": f"urn:nhs-uk:addressing:ods:{context.receiver_ods_code}"
                 },
                 "response": {
-                    "identifier": f"{ids.dn_id}",
+                    "identifier": str(uuid4()),
                     "code": "ok",
                 },
             },
@@ -285,7 +283,7 @@ class DispenseNotification:
                     "endpoint": f"urn:nhs-uk:addressing:ods:{context.receiver_ods_code}"
                 },
                 "response": {
-                    "identifier": f"{ids.dn_id}",
+                    "identifier": str(uuid4()),
                     "code": "ok",
                 },
             },
