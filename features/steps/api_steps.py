@@ -12,6 +12,7 @@ from methods.eps_fhir.api_methods import (
     prepare_prescription,
     release_signed_prescription,
     return_prescription,
+    withdraw_dispense_notification,
 )
 from methods.shared import common
 from methods.shared.api import request_ping
@@ -83,11 +84,25 @@ def i_cancel_all_line_items(context):
 def i_dispense_a_prescription(context):
     dispense_prescription(context)
 
-
 @when("I amend the dispense notification")
 def i_amend_a_dispense_notification(context):
     amend_dispense_notification(context)
 
+@when("I withdraw the dispense notification")
+def i_withdraw_the_dispense_notification(context):
+    withdraw_dispense_notification(context)
+
+@when('I make a request to the "{product}" ping endpoint')
+def i_make_a_request_to_the_ping_endpoint(context, product):
+    base_url = None
+    if product == "pfp_apigee":
+        base_url = context.pfp_apigee_base_url
+    if product == "eps_fhir":
+        base_url = context.eps_fhir_base_url
+    if base_url is not None:
+        request_ping(context, base_url)
+    else:
+        raise ValueError(f"unable to find base url for '{product}'")
 
 @then("the response indicates a success")
 def indicate_successful_response(context):
@@ -98,6 +113,9 @@ def indicate_successful_response(context):
 
 @then("the response body indicates a successful {action_type} action")
 def body_indicates_successful_action(context, action_type):
+    def _withdraw_dispense_notification_assertion():
+        i_can_see_an_informational_operation_outcome_in_the_response(context)
+
     def _cancel_assertion():
         entries = json_response["entry"]
         message_header = [
@@ -126,23 +144,11 @@ def body_indicates_successful_action(context, action_type):
         "cancel": [_cancel_assertion],
         "dispense": [_dispense_assertion],
         "amend dispense": [_amend_dispense_assertion],
+        "dispense withdrawal": [_withdraw_dispense_notification_assertion],
         "release": [_release_assertion],
         "return": [_return_assertion],
     }
     [assertion() for assertion in action_assertions.get(action_type, [])]
-
-
-@when('I make a request to the "{product}" ping endpoint')
-def i_make_a_request_to_the_ping_endpoint(context, product):
-    base_url = None
-    if product == "pfp_apigee":
-        base_url = context.pfp_apigee_base_url
-    if product == "eps_fhir":
-        base_url = context.eps_fhir_base_url
-    if base_url is not None:
-        request_ping(context, base_url)
-    else:
-        raise ValueError(f"unable to find base url for '{product}'")
 
 
 @then("I get a {status_code:n} response code")
