@@ -49,9 +49,7 @@ def get_signature(digest: str):
     signature_date = datetime.now(timezone.utc)
 
     # Check if the certificate has expired
-    if verify_certificate_valid_when_signed(signature_date, x509_cert):
-        print("Certificate is valid.")
-    else:
+    if not verify_certificate_valid_when_signed(signature_date, x509_cert):
         raise RuntimeError(
             "Certificate has expired. You may need to generate a new one."
         )

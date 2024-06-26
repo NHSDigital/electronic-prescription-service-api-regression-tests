@@ -1,7 +1,7 @@
 import json
-
 import allure
 import requests
+
 from assertpy import assert_that as assertpy_assert  # type: ignore
 from pytest_nhsd_apim.identity_service import (
     AuthorizationCodeAuthenticator,
@@ -48,7 +48,6 @@ def get_auth(user, env):
             print(f"{response.status_code}\n{str(response.content)}")
             raise AssertionError()
         assert response.status_code == 200
-        print("Successfully Authenticated in INT")
     return token
 
 
@@ -59,7 +58,6 @@ def get_auth_internal_dev():
         data = response.json()
         access_token = data.get("access_token")
         if access_token:
-            print("Successfully Authenticated in INTERNAL-DEV")
             return access_token
         else:
             print("Access token not found in response")
@@ -117,7 +115,3 @@ def attach_api_information(context):
 def the_expected_response_code_is_returned(context, expected_response_code: int):
     actual_response_code = context.response.status_code
     assert_that(actual_response_code).is_equal_to(expected_response_code)
-
-
-if __name__ == "__main__":
-    print(get_auth("dispenser", "INTERNAL-DEV"))

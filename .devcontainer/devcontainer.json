@@ -38,7 +38,8 @@
             "streetsidesoftware.code-spell-checker",
             "timonwong.shellcheck",
             "github.vscode-github-actions",
-            "ms-python.pylint"
+            "ms-python.pylint",
+            "ms-python.black-formatter"
         ],
         "settings": {
           "python.defaultInterpreterPath": "/workspaces/electronic-prescription-service-api-regression-tests/venv/bin/python",
@@ -47,7 +48,6 @@
           "python.testing.unittestEnabled": false,
           "python.testing.pytestEnabled": false,
           "python.linting.enabled": true, // required to format on save
-          "pylint.args": ["--disable=C0116,W0106"],
           "python.experiments.optOutFrom": ["pythonTestAdapter"],
           "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
           "editor.formatOnPaste": false, // required
