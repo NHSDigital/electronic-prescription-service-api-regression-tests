@@ -4,9 +4,15 @@ from uuid import uuid4
 from features.environment import CIS2_USERS
 
 
+class ReleaseIDs:
+    def __init__(self, context: Any) -> None:
+        self.prescription = context.prescription_id
+        self.receiver_ods_code = context.receiver_ods_code
+
+
 class Release:
     def __init__(self, context: Any) -> None:
-        self.context = context
+        self.ids = ReleaseIDs(context)
         group_identifier = self.create_group_identifier()
         owner = self.create_owner()
         agent = self.create_agent()
@@ -17,7 +23,7 @@ class Release:
             "name": "group-identifier",
             "valueIdentifier": {
                 "system": "https://fhir.nhs.uk/Id/prescription-order-number",
-                "value": self.context.prescription_id,
+                "value": self.ids.prescription,
             },
         }
 
@@ -29,7 +35,7 @@ class Release:
                 "identifier": [
                     {
                         "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-                        "value": self.context.receiver_ods_code,
+                        "value": self.ids.receiver_ods_code,
                     }
                 ],
                 "active": True,

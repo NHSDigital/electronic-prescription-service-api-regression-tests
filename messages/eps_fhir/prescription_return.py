@@ -1,20 +1,23 @@
-from dataclasses import dataclass
 import json
 from typing import Any
 from uuid import uuid4
 from messages.eps_fhir.common import create_task
 
 
-@dataclass
 class ReturnIDs:
-    practitioner_role = uuid4()
-    organization = uuid4()
-    task_id = uuid4()
+    def __init__(self, context: Any) -> None:
+        self.practitioner_role = uuid4()
+        self.organization = uuid4()
+        self.task_id = uuid4()
+
+        self.sender_ods_code = context.sender_ods_code
+        self.prescription = context.prescription_id
+        self.nhs_number = context.nhs_number
 
 
 class Return:
     def __init__(self, context: Any) -> None:
-        ids = ReturnIDs()
+        ids = ReturnIDs(context)
         status_reason = {
             "coding": [
                 {
@@ -38,10 +41,10 @@ class Return:
             ids.task_id,
             ids.practitioner_role,
             ids.organization,
-            context.sender_ods_code,
-            context.prescription_id,
+            ids.sender_ods_code,
+            ids.prescription,
             ids.task_id,
-            context.nhs_number,
+            ids.nhs_number,
             status_reason,
             code,
             "rejected",

@@ -8,12 +8,20 @@ from utils.prescription_id_generator import generate_short_form_id
 
 class PrescriptionIDs:
     def __init__(self, context: Any) -> None:
-        context.sender_ods_code = "A83008"
-        context.receiver_ods_code = "FA565"
+        self.sender_ods_code = "A83008"
+        context.sender_ods_code = self.sender_ods_code
+        self.receiver_ods_code = "FA565"
+        context.receiver_ods_code = self.receiver_ods_code
 
-        context.long_prescription_id = str(uuid4())
-        context.prescription_id = generate_short_form_id(context.sender_ods_code)
-        context.prescription_item_id = str(uuid4())
+        self.long_prescription = str(uuid4())
+        context.long_prescription_id = self.long_prescription
+        self.prescription = generate_short_form_id(context.sender_ods_code)
+        context.prescription_id = self.prescription
+        self.prescription_item = str(uuid4())
+        context.prescription_item_id = self.prescription_item
+
+        self.nomination_code = context.nomination_code
+        self.nhs_number = context.nhs_number
 
         self.user_id = CIS2_USERS["prescriber"]["user_id"]
         self.sds_role_id = CIS2_USERS["prescriber"]["role_id"]
@@ -22,7 +30,6 @@ class PrescriptionIDs:
 class Prescription:
     def __init__(self, context: Any) -> None:
         self.ids = PrescriptionIDs(context)
-        self.context = context
         message_header = self.create_message_header()
         medication_request = self.create_medication_request()
         patient = self.create_patient()
@@ -69,16 +76,16 @@ class Prescription:
                 "sender": {
                     "identifier": {
                         "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-                        "value": self.context.sender_ods_code,
+                        "value": self.ids.sender_ods_code,
                     },
                 },
                 "source": {
-                    "endpoint": f"urn:nhs-uk:addressing:ods:{self.context.sender_ods_code}"
+                    "endpoint": f"urn:nhs-uk:addressing:ods:{self.ids.sender_ods_code}"
                 },
             },
         }
 
-        if self.context.receiver_ods_code:
+        if self.ids.receiver_ods_code:
             message_header["resource"].update(
                 {
                     "destination": [
@@ -87,7 +94,7 @@ class Prescription:
                             "receiver": {
                                 "identifier": {
                                     "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-                                    "value": self.context.receiver_ods_code,
+                                    "value": self.ids.receiver_ods_code,
                                 }
                             },
                         }
@@ -114,7 +121,7 @@ class Prescription:
                 "identifier": [
                     {
                         "system": "https://fhir.nhs.uk/Id/prescription-order-item-number",
-                        "value": self.context.prescription_item_id,
+                        "value": self.ids.prescription_item,
                     }
                 ],
                 "status": "active",
@@ -149,12 +156,12 @@ class Prescription:
                             "url": "https://fhir.nhs.uk/StructureDefinition/Extension-DM-PrescriptionId",
                             "valueIdentifier": {
                                 "system": "https://fhir.nhs.uk/Id/prescription",
-                                "value": self.context.long_prescription_id,
+                                "value": self.ids.long_prescription,
                             },
                         }
                     ],
                     "system": "https://fhir.nhs.uk/Id/prescription-order-number",
-                    "value": self.context.prescription_id,
+                    "value": self.ids.prescription,
                 },
                 "courseOfTherapyType": {
                     "coding": [
@@ -201,7 +208,7 @@ class Prescription:
             },
         }
 
-        if self.context.nomination_code == "P1":
+        if self.ids.nomination_code == "P1":
             medication_request["resource"]["dispenseRequest"].update(
                 {
                     "extension": [
@@ -209,20 +216,20 @@ class Prescription:
                             "url": "https://fhir.nhs.uk/StructureDefinition/Extension-DM-PerformerSiteType",
                             "valueCoding": {
                                 "system": "https://fhir.nhs.uk/CodeSystem/dispensing-site-preference",
-                                "code": self.context.nomination_code,
+                                "code": self.ids.nomination_code,
                             },
                         }
                     ],
                     "performer": {
                         "identifier": {
                             "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-                            "value": self.context.receiver_ods_code,
+                            "value": self.ids.receiver_ods_code,
                         }
                     },
                 }
             )
 
-        if self.context.nomination_code == "0004":
+        if self.ids.nomination_code == "0004":
             medication_request["resource"]["dispenseRequest"].update(
                 {
                     "extension": [
@@ -230,7 +237,7 @@ class Prescription:
                             "url": "https://fhir.nhs.uk/StructureDefinition/Extension-DM-PerformerSiteType",
                             "valueCoding": {
                                 "system": "https://fhir.nhs.uk/CodeSystem/dispensing-site-preference",
-                                "code": self.context.nomination_code,
+                                "code": self.ids.nomination_code,
                             },
                         }
                     ],
@@ -298,7 +305,7 @@ class Prescription:
                 "identifier": [
                     {
                         "system": "https://fhir.nhs.uk/Id/nhs-number",
-                        "value": self.context.nhs_number,
+                        "value": self.ids.nhs_number,
                     }
                 ],
                 "name": [
@@ -322,7 +329,7 @@ class Prescription:
                     {
                         "identifier": {
                             "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-                            "value": self.context.sender_ods_code,
+                            "value": self.ids.sender_ods_code,
                         }
                     }
                 ],

@@ -1,30 +1,37 @@
-from dataclasses import dataclass
 from datetime import date, datetime, UTC, timedelta
 import json
 from typing import Any
 from uuid import uuid4
 
 
-@dataclass
 class DispenseNotificationIDs:
-    practitioner_role = uuid4()
-    organization = uuid4()
-    medication_request = uuid4()
+    def __init__(self, context: Any) -> None:
+        self.practitioner_role = uuid4()
+        self.organization = uuid4()
+        self.medication_request = uuid4()
+
+        self.dispense_notification = str(uuid4())
+        context.dispense_notification_id = self.dispense_notification
+
+        self.prescription_item = context.prescription_item_id
+        self.long_prescription = context.long_prescription_id
+        self.prescription = context.prescription_id
+
+        self.nhs_number = context.nhs_number
+        self.receiver_ods_code = context.receiver_ods_code
 
 
 class DispenseNotification:
     def __init__(self, context: Any) -> None:
-        ids = DispenseNotificationIDs()
-        self.context = context
-        self.context.dn_id = str(uuid4())
-        practitioner_role = self.practitioner_role(ids)
-        medication_request = self.medication_request(ids, context)
+        self.ids = DispenseNotificationIDs(context)
+        practitioner_role = self.practitioner_role()
+        medication_request = self.medication_request()
         medication_dispense = self.medication_dispense(
-            ids, context, practitioner_role, medication_request
+            practitioner_role, medication_request
         )
 
-        message_header = self.message_header(context)
-        organization = self.organization(ids, context)
+        message_header = self.message_header()
+        organization = self.organization()
 
         dispense_notification = self.dispense_notification(
             message_header, medication_dispense, organization
@@ -32,10 +39,10 @@ class DispenseNotification:
 
         self.body = json.dumps(dispense_notification)
 
-    def practitioner_role(self, ids: DispenseNotificationIDs):
+    def practitioner_role(self):
         return {
             "resourceType": "PractitionerRole",
-            "id": f"urn:uuid:{ids.practitioner_role}",
+            "id": f"urn:uuid:{self.ids.practitioner_role}",
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/sds-role-profile-id",
@@ -49,7 +56,7 @@ class DispenseNotification:
                 },
                 "display": "Jackie Clark",
             },
-            "organization": {"reference": f"urn:uuid:{ids.organization}"},
+            "organization": {"reference": f"urn:uuid:{self.ids.organization}"},
             "code": [
                 {
                     "coding": [
@@ -64,10 +71,10 @@ class DispenseNotification:
             "telecom": [{"system": "phone", "use": "work", "value": "02380798431"}],
         }
 
-    def medication_request(self, ids: DispenseNotificationIDs, context: Any):
+    def medication_request(self):
         return {
             "resourceType": "MedicationRequest",
-            "id": f"urn:uuid:{ids.medication_request}",
+            "id": f"urn:uuid:{self.ids.medication_request}",
             "extension": [
                 {
                     "url": "https://fhir.nhs.uk/StructureDefinition/Extension-DM-PrescriptionType",
@@ -81,7 +88,7 @@ class DispenseNotification:
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/prescription-order-item-number",
-                    "value": context.prescription_item_id,
+                    "value": self.ids.prescription_item,
                 }
             ],
             "status": "active",
@@ -107,19 +114,19 @@ class DispenseNotification:
             },
             "subject": {"reference": f"urn:uuid:{uuid4()}"},
             "authoredOn": datetime.now(UTC).isoformat(),
-            "requester": {"reference": f"urn:uuid:{ids.practitioner_role}"},
+            "requester": {"reference": f"urn:uuid:{self.ids.practitioner_role}"},
             "groupIdentifier": {
                 "extension": [
                     {
                         "url": "https://fhir.nhs.uk/StructureDefinition/Extension-DM-PrescriptionId",
                         "valueIdentifier": {
                             "system": "https://fhir.nhs.uk/Id/prescription",
-                            "value": context.long_prescription_id,
+                            "value": self.ids.long_prescription,
                         },
                     }
                 ],
                 "system": "https://fhir.nhs.uk/Id/prescription-order-number",
-                "value": context.prescription_id,
+                "value": self.ids.prescription,
             },
             "courseOfTherapyType": {
                 "coding": [
@@ -170,8 +177,6 @@ class DispenseNotification:
 
     def medication_dispense(
         self,
-        ids: DispenseNotificationIDs,
-        context: Any,
         practitioner_role,
         medication_request,
     ):
@@ -191,7 +196,7 @@ class DispenseNotification:
                     "type": "Patient",
                     "identifier": {
                         "system": "https://fhir.nhs.uk/Id/nhs-number",
-                        "value": context.nhs_number,
+                        "value": self.ids.nhs_number,
                     },
                     "display": "MR DONOTUSE XXTESTPATIENT-TGNP",
                 },
@@ -207,10 +212,10 @@ class DispenseNotification:
                     }
                 ],
                 "performer": [
-                    {"actor": {"reference": f"#urn:uuid:{ids.practitioner_role}"}}
+                    {"actor": {"reference": f"#urn:uuid:{self.ids.practitioner_role}"}}
                 ],
                 "authorizingPrescription": [
-                    {"reference": f"#urn:uuid:{ids.medication_request}"}
+                    {"reference": f"#urn:uuid:{self.ids.medication_request}"}
                 ],
                 "quantity": {
                     "value": 1,
@@ -222,7 +227,7 @@ class DispenseNotification:
                 "identifier": [
                     {
                         "system": "https://fhir.nhs.uk/Id/prescription-dispense-item-number",
-                        "value": context.prescription_item_id,
+                        "value": self.ids.prescription_item,
                     }
                 ],
                 "type": {
@@ -239,7 +244,7 @@ class DispenseNotification:
             },
         }
 
-    def message_header(self, context):
+    def message_header(self):
         return {
             "fullUrl": f"urn:uuid:{uuid4()}",
             "resource": {
@@ -250,7 +255,7 @@ class DispenseNotification:
                     "display": "Dispense Notification",
                 },
                 "source": {
-                    "endpoint": f"urn:nhs-uk:addressing:ods:{context.receiver_ods_code}"
+                    "endpoint": f"urn:nhs-uk:addressing:ods:{self.ids.receiver_ods_code}"
                 },
                 "response": {
                     "identifier": str(uuid4()),
@@ -259,9 +264,9 @@ class DispenseNotification:
             },
         }
 
-    def organization(self, ids: DispenseNotificationIDs, context: Any):
+    def organization(self):
         return {
-            "fullUrl": f"urn:uuid:{ids.organization}",
+            "fullUrl": f"urn:uuid:{self.ids.organization}",
             "resource": {
                 "resourceType": "Organization",
                 "extension": [
@@ -281,7 +286,7 @@ class DispenseNotification:
                 "identifier": [
                     {
                         "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-                        "value": context.receiver_ods_code,
+                        "value": self.ids.receiver_ods_code,
                     }
                 ],
                 "address": [
@@ -318,6 +323,6 @@ class DispenseNotification:
             "entry": entries,
             "identifier": {
                 "system": "https://tools.ietf.org/html/rfc4122",
-                "value": self.context.dn_id,
+                "value": self.ids.dispense_notification,
             },
         }
