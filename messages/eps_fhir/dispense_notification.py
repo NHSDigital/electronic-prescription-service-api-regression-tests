@@ -27,7 +27,6 @@ class DispenseNotificationValues:
         self.nhs_number = context.nhs_number
         self.receiver_ods_code = context.receiver_ods_code
 
-
 class DispenseNotification:
 
     def __init__(self, context: Any, amend: bool) -> None:
@@ -245,7 +244,11 @@ class DispenseNotification:
                         {
                             "system": "https://fhir.nhs.uk/CodeSystem/medicationdispense-type",
                             "code": self.values.medication_dispense_code,
+<<<<<<< HEAD
                             "display": self.values.medication_dispense_display,
+=======
+                            "display": self.values.medication_dispense_display
+>>>>>>> bf27d11 (Updated my uses to Phil and Seans merge, all tests passing)
                         }
                     ]
                 },
