@@ -122,6 +122,7 @@ def body_indicates_successful_action(context, action_type):
             if entry["resource"]["resourceType"] == "MessageHeader"
         ][0]
         assert_that(message_header["resource"]["response"]["code"]).is_equal_to("ok")
+        assert_that(json_response).contains("Prescription/item was cancelled")
 
     def _dispense_assertion():
         i_can_see_an_informational_operation_outcome_in_the_response(context)
