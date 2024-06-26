@@ -20,6 +20,9 @@ class DispenseNotificationValues:
         self.nhs_number = context.nhs_number
         self.receiver_ods_code = context.receiver_ods_code
 
+        self.medication_dispense_code = context.medication_dispense_code,
+        self.medication_dispense_display = context.medication_dispense_display
+
 class DispenseNotification:
     def __init__(self, context: Any, amend: bool) -> None:
         if amend:
@@ -37,8 +40,6 @@ class DispenseNotification:
           
         organization = self.organization()
 
-
-        self.context.dn_id = str(uuid4())
         dispense_notification = self.dispense_notification(
             message_header, medication_dispense, organization
         )
@@ -244,8 +245,8 @@ class DispenseNotification:
                     "coding": [
                         {
                             "system": "https://fhir.nhs.uk/CodeSystem/medicationdispense-type",
-                            "code": context.med_dispense_code,
-                            "display": context.med_dispense_display
+                            "code": self.values.medication_dispense_code,
+                            "display": self.values.medication_dispense_display
                         }
                     ]
                 },
