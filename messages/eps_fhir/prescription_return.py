@@ -4,20 +4,20 @@ from uuid import uuid4
 from messages.eps_fhir.common import create_task
 
 
-class ReturnIDs:
+class ReturnValues:
     def __init__(self, context: Any) -> None:
-        self.practitioner_role = uuid4()
-        self.organization = uuid4()
+        self.practitioner_role_id = uuid4()
+        self.organization_id = uuid4()
         self.task_id = uuid4()
 
         self.sender_ods_code = context.sender_ods_code
-        self.prescription = context.prescription_id
+        self.prescription_id = context.prescription_id
         self.nhs_number = context.nhs_number
 
 
 class Return:
     def __init__(self, context: Any) -> None:
-        ids = ReturnIDs(context)
+        values = ReturnValues(context)
         status_reason = {
             "coding": [
                 {
@@ -38,13 +38,13 @@ class Return:
         }
 
         body = create_task(
-            ids.task_id,
-            ids.practitioner_role,
-            ids.organization,
-            ids.sender_ods_code,
-            ids.prescription,
-            ids.task_id,
-            ids.nhs_number,
+            values.task_id,
+            values.practitioner_role_id,
+            values.organization_id,
+            values.sender_ods_code,
+            values.prescription_id,
+            values.task_id,
+            values.nhs_number,
             status_reason,
             code,
             "rejected",

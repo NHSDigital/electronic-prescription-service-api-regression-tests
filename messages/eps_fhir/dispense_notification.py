@@ -4,18 +4,18 @@ from typing import Any
 from uuid import uuid4
 
 
-class DispenseNotificationIDs:
+class DispenseNotificationValues:
     def __init__(self, context: Any) -> None:
-        self.practitioner_role = uuid4()
-        self.organization = uuid4()
-        self.medication_request = uuid4()
+        self.practitioner_role_id = uuid4()
+        self.organization_id = uuid4()
+        self.medication_request_id = uuid4()
 
-        self.dispense_notification = str(uuid4())
-        context.dispense_notification_id = self.dispense_notification
+        self.dispense_notification_id = str(uuid4())
+        context.dispense_notification_id = self.dispense_notification_id
 
-        self.prescription_item = context.prescription_item_id
-        self.long_prescription = context.long_prescription_id
-        self.prescription = context.prescription_id
+        self.prescription_item_id = context.prescription_item_id
+        self.long_prescription_id = context.long_prescription_id
+        self.prescription_id = context.prescription_id
 
         self.nhs_number = context.nhs_number
         self.receiver_ods_code = context.receiver_ods_code
@@ -23,7 +23,7 @@ class DispenseNotificationIDs:
 
 class DispenseNotification:
     def __init__(self, context: Any) -> None:
-        self.ids = DispenseNotificationIDs(context)
+        self.values = DispenseNotificationValues(context)
         practitioner_role = self.practitioner_role()
         medication_request = self.medication_request()
         medication_dispense = self.medication_dispense(
@@ -42,7 +42,7 @@ class DispenseNotification:
     def practitioner_role(self):
         return {
             "resourceType": "PractitionerRole",
-            "id": f"urn:uuid:{self.ids.practitioner_role}",
+            "id": f"urn:uuid:{self.values.practitioner_role_id}",
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/sds-role-profile-id",
@@ -56,7 +56,7 @@ class DispenseNotification:
                 },
                 "display": "Jackie Clark",
             },
-            "organization": {"reference": f"urn:uuid:{self.ids.organization}"},
+            "organization": {"reference": f"urn:uuid:{self.values.organization_id}"},
             "code": [
                 {
                     "coding": [
@@ -74,7 +74,7 @@ class DispenseNotification:
     def medication_request(self):
         return {
             "resourceType": "MedicationRequest",
-            "id": f"urn:uuid:{self.ids.medication_request}",
+            "id": f"urn:uuid:{self.values.medication_request_id}",
             "extension": [
                 {
                     "url": "https://fhir.nhs.uk/StructureDefinition/Extension-DM-PrescriptionType",
@@ -88,7 +88,7 @@ class DispenseNotification:
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/prescription-order-item-number",
-                    "value": self.ids.prescription_item,
+                    "value": self.values.prescription_item_id,
                 }
             ],
             "status": "active",
@@ -114,19 +114,19 @@ class DispenseNotification:
             },
             "subject": {"reference": f"urn:uuid:{uuid4()}"},
             "authoredOn": datetime.now(UTC).isoformat(),
-            "requester": {"reference": f"urn:uuid:{self.ids.practitioner_role}"},
+            "requester": {"reference": f"urn:uuid:{self.values.practitioner_role_id}"},
             "groupIdentifier": {
                 "extension": [
                     {
                         "url": "https://fhir.nhs.uk/StructureDefinition/Extension-DM-PrescriptionId",
                         "valueIdentifier": {
                             "system": "https://fhir.nhs.uk/Id/prescription",
-                            "value": self.ids.long_prescription,
+                            "value": self.values.long_prescription_id,
                         },
                     }
                 ],
                 "system": "https://fhir.nhs.uk/Id/prescription-order-number",
-                "value": self.ids.prescription,
+                "value": self.values.prescription_id,
             },
             "courseOfTherapyType": {
                 "coding": [
@@ -196,7 +196,7 @@ class DispenseNotification:
                     "type": "Patient",
                     "identifier": {
                         "system": "https://fhir.nhs.uk/Id/nhs-number",
-                        "value": self.ids.nhs_number,
+                        "value": self.values.nhs_number,
                     },
                     "display": "MR DONOTUSE XXTESTPATIENT-TGNP",
                 },
@@ -212,10 +212,14 @@ class DispenseNotification:
                     }
                 ],
                 "performer": [
-                    {"actor": {"reference": f"#urn:uuid:{self.ids.practitioner_role}"}}
+                    {
+                        "actor": {
+                            "reference": f"#urn:uuid:{self.values.practitioner_role_id}"
+                        }
+                    }
                 ],
                 "authorizingPrescription": [
-                    {"reference": f"#urn:uuid:{self.ids.medication_request}"}
+                    {"reference": f"#urn:uuid:{self.values.medication_request_id}"}
                 ],
                 "quantity": {
                     "value": 1,
@@ -227,7 +231,7 @@ class DispenseNotification:
                 "identifier": [
                     {
                         "system": "https://fhir.nhs.uk/Id/prescription-dispense-item-number",
-                        "value": self.ids.prescription_item,
+                        "value": self.values.prescription_item_id,
                     }
                 ],
                 "type": {
@@ -255,7 +259,7 @@ class DispenseNotification:
                     "display": "Dispense Notification",
                 },
                 "source": {
-                    "endpoint": f"urn:nhs-uk:addressing:ods:{self.ids.receiver_ods_code}"
+                    "endpoint": f"urn:nhs-uk:addressing:ods:{self.values.receiver_ods_code}"
                 },
                 "response": {
                     "identifier": str(uuid4()),
@@ -266,7 +270,7 @@ class DispenseNotification:
 
     def organization(self):
         return {
-            "fullUrl": f"urn:uuid:{self.ids.organization}",
+            "fullUrl": f"urn:uuid:{self.values.organization_id}",
             "resource": {
                 "resourceType": "Organization",
                 "extension": [
@@ -286,7 +290,7 @@ class DispenseNotification:
                 "identifier": [
                     {
                         "system": "https://fhir.nhs.uk/Id/ods-organization-code",
-                        "value": self.ids.receiver_ods_code,
+                        "value": self.values.receiver_ods_code,
                     }
                 ],
                 "address": [
@@ -323,6 +327,6 @@ class DispenseNotification:
             "entry": entries,
             "identifier": {
                 "system": "https://tools.ietf.org/html/rfc4122",
-                "value": self.ids.dispense_notification,
+                "value": self.values.dispense_notification_id,
             },
         }
