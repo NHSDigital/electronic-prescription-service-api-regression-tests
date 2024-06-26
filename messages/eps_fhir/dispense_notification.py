@@ -20,8 +20,9 @@ class DispenseNotificationValues:
         self.nhs_number = context.nhs_number
         self.receiver_ods_code = context.receiver_ods_code
 
-        self.medication_dispense_code = context.medication_dispense_code,
+        self.medication_dispense_code = context.medication_dispense_code
         self.medication_dispense_display = context.medication_dispense_display
+
 
 class DispenseNotification:
     def __init__(self, context: Any, amend: bool) -> None:
@@ -37,7 +38,7 @@ class DispenseNotification:
         message_header = self.message_header()
         if amend:
             message_header["resource"]["extension"] = self.replacement_of()
-          
+
         organization = self.organization()
 
         dispense_notification = self.dispense_notification(
@@ -182,11 +183,7 @@ class DispenseNotification:
             "substitution": {"allowedBoolean": False},
         }
 
-    def medication_dispense(
-        self,
-        practitioner_role,
-        medication_request
-    ):
+    def medication_dispense(self, practitioner_role, medication_request):
         return {
             "fullUrl": f"urn:uuid:{uuid4()}",
             "resource": {
@@ -246,7 +243,7 @@ class DispenseNotification:
                         {
                             "system": "https://fhir.nhs.uk/CodeSystem/medicationdispense-type",
                             "code": self.values.medication_dispense_code,
-                            "display": self.values.medication_dispense_display
+                            "display": self.values.medication_dispense_display,
                         }
                     ]
                 },
@@ -274,16 +271,17 @@ class DispenseNotification:
                 },
             },
         }
-    
+
     def replacement_of(self):
-        return{
-                        "url": "https://fhir.nhs.uk/StructureDefinition/Extension-replacementOf",
-                        "valueIdentifier": {
-                        "system": "https://tools.ietf.org/html/rfc4122",
-                        "value": self.previous_dispense_notification_id,
-                        }
-                    },
-            
+        return (
+            {
+                "url": "https://fhir.nhs.uk/StructureDefinition/Extension-replacementOf",
+                "valueIdentifier": {
+                    "system": "https://tools.ietf.org/html/rfc4122",
+                    "value": self.previous_dispense_notification_id,
+                },
+            },
+        )
 
     def organization(self):
         return {
@@ -345,6 +343,5 @@ class DispenseNotification:
             "identifier": {
                 "system": "https://tools.ietf.org/html/rfc4122",
                 "value": self.values.dispense_notification_id,
-
             },
         }

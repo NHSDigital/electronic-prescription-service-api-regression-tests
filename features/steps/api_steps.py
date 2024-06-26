@@ -84,17 +84,17 @@ def i_cancel_all_line_items(context):
 def i_dispense_a_prescription(context):
     dispense_prescription(context)
 
-    
+
 @when("I amend the dispense notification")
 def i_amend_a_dispense_notification(context):
     amend_dispense_notification(context)
 
-    
+
 @when("I withdraw the dispense notification")
 def i_withdraw_the_dispense_notification(context):
     withdraw_dispense_notification(context)
 
-    
+
 @when('I make a request to the "{product}" ping endpoint')
 def i_make_a_request_to_the_ping_endpoint(context, product):
     base_url = None
@@ -107,7 +107,7 @@ def i_make_a_request_to_the_ping_endpoint(context, product):
     else:
         raise ValueError(f"unable to find base url for '{product}'")
 
-        
+
 @then("the response indicates a success")
 def indicate_successful_response(context):
     if "sandbox" in context.config.userdata["env"].lower():
