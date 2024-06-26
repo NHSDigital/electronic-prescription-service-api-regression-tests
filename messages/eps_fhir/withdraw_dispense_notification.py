@@ -1,52 +1,55 @@
 import json
 from typing import Any
 from uuid import uuid4
+
 from messages.eps_fhir.common import create_task
 
 
-class ReturnValues:
+class WithdrawDispenseNotificationValues:
     def __init__(self, context: Any) -> None:
         self.practitioner_role_id = uuid4()
         self.organization_id = uuid4()
-        self.task_id = uuid4()
+        self.medication_request_id = uuid4()
 
+        self.dispense_notification_id = context.dispense_notification_id
         self.sender_ods_code = context.sender_ods_code
         self.prescription_id = context.prescription_id
+        self.dispense_notification_id = context.dispense_notification_id
         self.nhs_number = context.nhs_number
 
 
-class Return:
+class WithdrawDispenseNotification:
     def __init__(self, context: Any) -> None:
-        values = ReturnValues(context)
+        values = WithdrawDispenseNotificationValues(context)
         status_reason = {
             "coding": [
                 {
-                    "system": "https://fhir.nhs.uk/CodeSystem/EPS-task-dispense-return-status-reason",
-                    "code": "0003",
-                    "display": "Patient requested release",
+                    "system": "https://fhir.nhs.uk/CodeSystem/EPS-task-dispense-withdraw-reason",
+                    "code": "MU",
+                    "display": "Medication Update",
                 }
             ]
         }
         code = {
             "coding": [
                 {
-                    "system": "http://hl7.org/fhir/CodeSystem/task-code",  # http only
-                    "code": "fulfill",
-                    "display": "Fulfill the focal request",
+                    "system": "http://hl7.org/fhir/CodeSystem/task-code",
+                    "code": "abort",
+                    "display": "Mark the focal resource as no longer active",
                 }
             ]
         }
 
         body = create_task(
-            values.task_id,
+            values.dispense_notification_id,
             values.practitioner_role_id,
             values.organization_id,
             values.sender_ods_code,
             values.prescription_id,
-            values.task_id,
+            values.dispense_notification_id,
             values.nhs_number,
             status_reason,
             code,
-            "rejected",
+            "in-progress",
         )
         self.body = json.dumps(body)

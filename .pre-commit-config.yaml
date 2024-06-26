@@ -39,5 +39,5 @@ repos:
       types: [python]
 
 
-fail_fast: true
+fail_fast: false
 default_stages: [pre-commit, commit]
