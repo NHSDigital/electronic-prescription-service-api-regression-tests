@@ -76,14 +76,19 @@ jobs:
         uses: actions/cache@a2ed59d39b352305bdd2f628719a53b2cc4f9613
         id: cache-venv
         with:
-          path: ./.venv
+          path: .venv
           key: ${{ runner.os }}-venv-${{ hashFiles('pyproject.toml') }}
           restore-keys: |
             ${{ runner.os }}-venv-
 
-      - name: Install Dependencies
+      - name: Install Python Dependencies
         if: steps.cache-venv.outputs.cache-hit != 'true'
-        run: make install
+        run: |
+          poetry config virtualenvs.create "true"
+          poetry config virtualenvs.in-project "true"
+          poetry config virtualenvs.path ".venv"
+          poetry install
+          source .venv/bin/activate
 
       - name: Regression Tests
         id: tests
