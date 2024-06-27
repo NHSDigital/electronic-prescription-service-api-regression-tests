@@ -116,12 +116,16 @@ def body_indicates_successful_action(context, action_type):
 
     def _cancel_assertion():
         entries = json_response["entry"]
-        message_header = [
+        medication_request = [
             entry
             for entry in entries
-            if entry["resource"]["resourceType"] == "MessageHeader"
+            if entry["resource"]["resourceType"] == "MedicationRequest"
         ][0]
-        assert_that(message_header["resource"]["response"]["code"]).is_equal_to("ok")
+        assert_that(
+            medication_request["resource"]["extension"][0]["extension"][0][
+                "valueCoding"
+            ]["display"]
+        ).is_equal_to("Prescription/item was cancelled")
 
     def _dispense_assertion():
         i_can_see_an_informational_operation_outcome_in_the_response(context)
