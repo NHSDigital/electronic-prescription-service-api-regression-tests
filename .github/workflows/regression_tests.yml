@@ -77,9 +77,9 @@ jobs:
         id: cache-venv
         with:
           path: .venv
-          key: ${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-venv-${{ hashFiles('pyproject.toml') }}
+          key: ${{ runner.os }}-venv-${{ hashFiles('pyproject.toml') }}
           restore-keys: |
-            ${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-venv-
+            ${{ runner.os }}-venv-
 
       - name: Install Dependencies
         if: steps.cache-venv.outputs.cache-hit != 'true'
