@@ -1,5 +1,5 @@
 [tool.poetry]
-name = ""
+name = "electronic-prescription-service-api-regression-tests"
 version = "0.1.0"
 description = ""
 authors = ["SeanSteberis <sean.steberis@airelogic.com>"]
