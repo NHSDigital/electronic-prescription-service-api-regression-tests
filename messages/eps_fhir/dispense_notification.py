@@ -29,7 +29,6 @@ class DispenseNotificationValues:
 
 
 class DispenseNotification:
-
     def __init__(self, context: Any, amend: bool) -> None:
         self.values = DispenseNotificationValues(context, amend)
         practitioner_role = self.practitioner_role()

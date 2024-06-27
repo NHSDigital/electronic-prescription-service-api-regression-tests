@@ -71,7 +71,7 @@ def amend_dispense_notification(context):
     amended_dispense_notification = DispenseNotification(context, True).body
     post(data=amended_dispense_notification, url=url, context=context, headers=headers)
 
-
+    
 def withdraw_dispense_notification(context):
     url = f"{context.eps_fhir_base_url}/FHIR/R4/Task"
     additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
