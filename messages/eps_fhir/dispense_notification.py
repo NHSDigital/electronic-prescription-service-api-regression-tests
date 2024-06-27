@@ -6,6 +6,7 @@ from uuid import uuid4
 
 class DispenseNotificationValues:
     def __init__(self, context: Any, amend: bool) -> None:
+
         self.practitioner_role_id = uuid4()
         self.organization_id = uuid4()
         self.medication_request_id = uuid4()
@@ -344,6 +345,6 @@ class DispenseNotification:
             "entry": entries,
             "identifier": {
                 "system": "https://tools.ietf.org/html/rfc4122",
-                "value": self.values.dispense_notification_id,
+                "value": self.values.dispense_notification_id
             },
         }
