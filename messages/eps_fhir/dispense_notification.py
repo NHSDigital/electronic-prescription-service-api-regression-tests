@@ -27,6 +27,7 @@ class DispenseNotificationValues:
         self.nhs_number = context.nhs_number
         self.receiver_ods_code = context.receiver_ods_code
 
+
 class DispenseNotification:
 
     def __init__(self, context: Any, amend: bool) -> None:
@@ -285,7 +286,6 @@ class DispenseNotification:
             },
         )
 
-
     def organization(self):
         return {
             "fullUrl": f"urn:uuid:{self.values.organization_id}",
@@ -346,6 +346,5 @@ class DispenseNotification:
             "identifier": {
                 "system": "https://tools.ietf.org/html/rfc4122",
                 "value": self.values.dispense_notification_id
-
             },
         }
