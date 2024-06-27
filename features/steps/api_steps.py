@@ -8,6 +8,7 @@ from methods.eps_fhir.api_methods import (
     cancel_all_line_items,
     create_signed_prescription,
     dispense_prescription,
+    amend_dispense_notification,
     prepare_prescription,
     release_signed_prescription,
     return_prescription,
@@ -84,6 +85,11 @@ def i_dispense_a_prescription(context):
     dispense_prescription(context)
 
 
+@when("I amend the dispense notification")
+def i_amend_a_dispense_notification(context):
+    amend_dispense_notification(context)
+
+
 @when("I withdraw the dispense notification")
 def i_withdraw_the_dispense_notification(context):
     withdraw_dispense_notification(context)
@@ -130,6 +136,9 @@ def body_indicates_successful_action(context, action_type):
     def _dispense_assertion():
         i_can_see_an_informational_operation_outcome_in_the_response(context)
 
+    def _amend_dispense_assertion():
+        i_can_see_an_informational_operation_outcome_in_the_response(context)
+
     def _release_assertion():
         if "sandbox" in context.config.userdata["env"].lower():
             return
@@ -142,6 +151,7 @@ def body_indicates_successful_action(context, action_type):
     action_assertions = {
         "cancel": [_cancel_assertion],
         "dispense": [_dispense_assertion],
+        "amend dispense": [_amend_dispense_assertion],
         "dispense withdrawal": [_withdraw_dispense_notification_assertion],
         "release": [_release_assertion],
         "return": [_return_assertion],
