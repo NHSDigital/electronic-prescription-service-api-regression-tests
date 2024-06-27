@@ -5,10 +5,17 @@ from uuid import uuid4
 
 
 class DispenseNotificationValues:
-    def __init__(self, context: Any) -> None:
+    def __init__(self, context: Any, amend: bool) -> None:
         self.practitioner_role_id = uuid4()
         self.organization_id = uuid4()
         self.medication_request_id = uuid4()
+
+        self.medication_dispense_code = "0001"
+        self.medication_dispense_display = "Item Fully Dispensed"
+        if amend:
+            self.previous_dispense_notification_id = context.dispense_notification_id
+            self.medication_dispense_code = "0002"
+            self.medication_dispense_display = "Item Not Dispensed"
 
         self.dispense_notification_id = str(uuid4())
         context.dispense_notification_id = self.dispense_notification_id
@@ -20,15 +27,10 @@ class DispenseNotificationValues:
         self.nhs_number = context.nhs_number
         self.receiver_ods_code = context.receiver_ods_code
 
-        self.medication_dispense_code = context.medication_dispense_code
-        self.medication_dispense_display = context.medication_dispense_display
-
 
 class DispenseNotification:
     def __init__(self, context: Any, amend: bool) -> None:
-        if amend:
-            self.previous_dispense_notification_id = context.dispense_notification_id
-        self.values = DispenseNotificationValues(context)
+        self.values = DispenseNotificationValues(context, amend)
         practitioner_role = self.practitioner_role()
         medication_request = self.medication_request()
         medication_dispense = self.medication_dispense(
@@ -37,7 +39,7 @@ class DispenseNotification:
 
         message_header = self.message_header()
         if amend:
-            message_header["resource"]["extension"] = self.replacement_of()
+            message_header["resource"]["extension"] = self.replacement_extension()
 
         organization = self.organization()
 
@@ -272,13 +274,13 @@ class DispenseNotification:
             },
         }
 
-    def replacement_of(self):
+    def replacement_extension(self):
         return (
             {
                 "url": "https://fhir.nhs.uk/StructureDefinition/Extension-replacementOf",
                 "valueIdentifier": {
                     "system": "https://tools.ietf.org/html/rfc4122",
-                    "value": self.previous_dispense_notification_id,
+                    "value": self.values.previous_dispense_notification_id,
                 },
             },
         )
