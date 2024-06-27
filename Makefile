@@ -1,5 +1,11 @@
 project_name = electronic-prescription-service-api-regression-tests
 
+guard-%:
+	@ if [ "${${*}}" = "" ]; then \
+		echo "Environment variable $* not set"; \
+		exit 1; \
+	fi
+
 install: install-python install-hooks install-node
 
 update: update-poetry update-node install
@@ -30,9 +36,9 @@ lint-flake8:
 
 lint: lint-black lint-pyright lint-flake8
 
-run-tests:
+run-tests: guard-product guard-env
 	echo "Running Regression Tests"
-	poetry run python ./runner.py --product=EPS-FHIR --env=INT
+	poetry run python ./runner.py --product=$(product) --env=$(env)
 
 check-licenses:
 	scripts/check_python_licenses.sh
