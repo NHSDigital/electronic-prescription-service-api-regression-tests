@@ -26,8 +26,6 @@ jobs:
   tag_release:
     needs: quality_checks
     runs-on: ubuntu-latest
-    outputs:
-      spec_version: ${{steps.output_spec_version.outputs.SPEC_VERSION}}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -87,4 +85,4 @@ jobs:
         run: |
           npx semantic-release --dry-run
         env:
-          GITHUB_TOKEN: ${{ github.token }}          
+          GITHUB_TOKEN: ${{ github.token }}

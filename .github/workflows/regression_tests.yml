@@ -51,8 +51,8 @@ jobs:
           PRODUCT: ${{ inputs.product }}
           PULL_REQUEST_ID: ${{ inputs.pull_request_id }}
         run: |
-          echo run identifier $ID-$PRODUCT-$ENV-$PULL_REQUEST_ID
-          echo run identifier $ID-$PRODUCT-$ENV-$PULL_REQUEST_ID  >> "$GITHUB_STEP_SUMMARY"
+          echo run identifier "$ID"-"$PRODUCT"-"$ENV"-"$PULL_REQUEST_ID"
+          echo run identifier "$ID"-"$PRODUCT"-"$ENV"-"$PULL_REQUEST_ID"  >> "$GITHUB_STEP_SUMMARY"
 
       # using git commit sha for version of action to ensure we have stable version
       - name: Install asdf
@@ -77,9 +77,9 @@ jobs:
         id: cache-venv
         with:
           path: ./.venv/
-          key: ${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-venv-${{ hashFiles('pyproject.toml') }}
+          key: ${{ runner.os }}-venv-${{ hashFiles('pyproject.toml') }}
           restore-keys: |
-            ${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-venv-
+            ${{ runner.os }}-venv-
 
       - name: Install Dependencies
         if: steps.cache-venv.outputs.cache-hit != 'true'
@@ -98,13 +98,13 @@ jobs:
           CERTIFICATE: ${{ secrets.CERTIFICATE }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
         run: |
-            export CLIENT_ID=$CLIENT_ID
-            export CLIENT_SECRET=$CLIENT_SECRET
-            export CERTIFICATE=$CERTIFICATE
-            export PRIVATE_KEY=$PRIVATE_KEY
-            export PULL_REQUEST_ID=$PULL_REQUEST_ID
-            echo Pull request ID = $PULL_REQUEST_ID
-            poetry run python ./runner.py --env=$ENVIRONMENT --product=$PRODUCT --tags=$TAGS
+            export CLIENT_ID="$CLIENT_ID"
+            export CLIENT_SECRET="$CLIENT_SECRET"
+            export CERTIFICATE="$CERTIFICATE"
+            export PRIVATE_KEY="$PRIVATE_KEY"
+            export PULL_REQUEST_ID="$PULL_REQUEST_ID"
+            echo Pull request ID = "$PULL_REQUEST_ID"
+            poetry run python ./runner.py --env="$ENVIRONMENT" --product="$PRODUCT" --tags="$TAGS"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
@@ -132,14 +132,14 @@ jobs:
           ENVIRONMENT: ${{ inputs.environment }}
           PULL_REQUEST_ID: ${{ inputs.pull_request_id }}
         run: |
-          DATE_TIME=`date +"%Y%m%d%H%M%S"`
+          DATE_TIME=$(date +"%Y%m%d%H%M%S")
 
-          git checkout -b regression-tests-$DATE_TIME-$PRODUCT-$ENVIRONMENT-$PULL_REQUEST_ID
+          git checkout -b regression-tests-"$DATE_TIME"-"$PRODUCT"-"$ENVIRONMENT"-"$PULL_REQUEST_ID"
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add allure-results/*
           git commit -m "regression-tests-$DATE_TIME-$PRODUCT-$ENVIRONMENT-$PULL_REQUEST_ID"
-          git push --set-upstream origin regression-tests-$DATE_TIME-$PRODUCT-$ENVIRONMENT-$PULL_REQUEST_ID
+          git push --set-upstream origin regression-tests-"$DATE_TIME"-"$PRODUCT"-"$ENVIRONMENT"-"$PULL_REQUEST_ID"
 
       - name: Report failure on test failure
         if: steps.tests.outcome != 'success'
