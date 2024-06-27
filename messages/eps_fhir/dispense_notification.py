@@ -5,10 +5,17 @@ from uuid import uuid4
 
 
 class DispenseNotificationValues:
-    def __init__(self, context: Any) -> None:
+    def __init__(self, context: Any, amend: bool) -> None:
         self.practitioner_role_id = uuid4()
         self.organization_id = uuid4()
         self.medication_request_id = uuid4()
+
+        self.medication_dispense_code = "0001"
+        self.medication_dispense_display = "Item Fully Dispensed"
+        if amend:
+            self.previous_dispense_notification_id = context.dispense_notification_id
+            self.medication_dispense_code = "0002"
+            self.medication_dispense_display = "Item Not Dispensed"
 
         self.dispense_notification_id = str(uuid4())
         context.dispense_notification_id = self.dispense_notification_id
@@ -22,15 +29,17 @@ class DispenseNotificationValues:
 
 
 class DispenseNotification:
-    def __init__(self, context: Any) -> None:
-        self.values = DispenseNotificationValues(context)
+    def __init__(self, context: Any, amend: bool) -> None:
+        self.values = DispenseNotificationValues(context, amend)
         practitioner_role = self.practitioner_role()
         medication_request = self.medication_request()
         medication_dispense = self.medication_dispense(
             practitioner_role, medication_request
         )
-
         message_header = self.message_header()
+        if amend:
+            message_header["resource"]["extension"] = self.replacement_extension()
+
         organization = self.organization()
 
         dispense_notification = self.dispense_notification(
@@ -175,11 +184,7 @@ class DispenseNotification:
             "substitution": {"allowedBoolean": False},
         }
 
-    def medication_dispense(
-        self,
-        practitioner_role,
-        medication_request,
-    ):
+    def medication_dispense(self, practitioner_role, medication_request):
         return {
             "fullUrl": f"urn:uuid:{uuid4()}",
             "resource": {
@@ -238,8 +243,9 @@ class DispenseNotification:
                     "coding": [
                         {
                             "system": "https://fhir.nhs.uk/CodeSystem/medicationdispense-type",
-                            "code": "0001",
-                            "display": "Item fully dispensed",
+                            "code": self.values.medication_dispense_code,
+                            "display": self.values.medication_dispense_display,
+
                         }
                     ]
                 },
@@ -267,6 +273,17 @@ class DispenseNotification:
                 },
             },
         }
+
+    def replacement_extension(self):
+        return (
+            {
+                "url": "https://fhir.nhs.uk/StructureDefinition/Extension-replacementOf",
+                "valueIdentifier": {
+                    "system": "https://tools.ietf.org/html/rfc4122",
+                    "value": self.values.previous_dispense_notification_id,
+                },
+            },
+        )
 
     def organization(self):
         return {
@@ -327,6 +344,6 @@ class DispenseNotification:
             "entry": entries,
             "identifier": {
                 "system": "https://tools.ietf.org/html/rfc4122",
-                "value": self.values.dispense_notification_id,
+                "value": self.values.dispense_notification_id
             },
         }
