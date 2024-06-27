@@ -72,18 +72,43 @@ jobs:
         env:
           PYTHON_CONFIGURE_OPTS: --enable-shared
 
-      - name: Cache Virtualenv
-        uses: actions/cache@a2ed59d39b352305bdd2f628719a53b2cc4f9613
-        id: cache-venv
-        with:
-          path: '.venv'
-          key: ${{ runner.os }}-venv-${{ hashFiles('pyproject.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-venv-${{ hashFiles('pyproject.toml') }}
+      - name: Install Poetry
+        run: |
+          poetry config virtualenvs.create true
+          poetry config virtualenvs.in-project false
+          poetry config virtualenvs.path .venv
 
-      - name: Install Dependencies
-        if: steps.cache-venv.outputs.cache-hit != 'true'
-        run: make install
+      - name: Poetry Version
+        id: poetry-version
+        run: echo "::set-output name=version::$(poetry --version | grep -oP '[\d\.]+')"
+
+      - name: Cache Poetry virtualenv
+        uses: actions/cache@a2ed59d39b352305bdd2f628719a53b2cc4f9613
+        id: cache
+        with:
+          path: .venv
+          key: ${{ inputs.os }}-${{ inputs.python-version }}-poetry-${{ steps.poetry-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ inputs.os }}-${{ inputs.python-version }}-poetry-${{ steps.poetry-version.outputs.version }}-${{ hashFiles('**/poetry.lock') }}
+
+      - name: Install dependencies
+        run: |
+          poetry install
+        if: steps.cache.outputs.cache-hit != 'true'
+
+
+#      - name: Cache Virtualenv
+#        uses: actions/cache@a2ed59d39b352305bdd2f628719a53b2cc4f9613
+#        id: cache-venv
+#        with:
+#          path: '.venv'
+#          key: ${{ runner.os }}-venv-${{ hashFiles('pyproject.toml') }}
+#          restore-keys: |
+#            ${{ runner.os }}-venv-${{ hashFiles('pyproject.toml') }}
+#
+#      - name: Install Dependencies
+#        if: steps.cache-venv.outputs.cache-hit != 'true'
+#        run: make install
 
       - name: Regression Tests
         id: tests
