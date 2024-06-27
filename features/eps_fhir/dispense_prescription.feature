@@ -22,4 +22,3 @@ Feature: I can create and then dispense prescriptions
     When I withdraw the dispense notification
     Then the response indicates a success
     And the response body indicates a successful dispense withdrawal action
-
