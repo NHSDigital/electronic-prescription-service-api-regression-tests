@@ -26,6 +26,8 @@ jobs:
   tag_release:
     needs: quality_checks
     runs-on: ubuntu-latest
+    outputs:
+      spec_version: ${{steps.output_version_tag.outputs.SPEC_VERSION}}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
