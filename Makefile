@@ -49,10 +49,19 @@ deep-clean-install:
 	asdf uninstall python
 	asdf plugin remove poetry
 	asdf plugin remove python
+	asdf plugin remove shellcheck
+	asdf plugin remove nodejs
+	asdf plugin remove actionlint
 	asdf plugin add python
 	asdf install python
 	asdf plugin add poetry
 	asdf install poetry
+	asdf plugin add shellcheck
+	asdf install shellcheck
+	asdf plugin add nodejs
+	asdf install nodejs
+	asdf plugin add actionlint
+	asdf install actionlint
 	poetry install
 
 pre-commit:
