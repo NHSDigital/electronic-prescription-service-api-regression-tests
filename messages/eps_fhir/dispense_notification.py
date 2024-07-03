@@ -245,7 +245,6 @@ class DispenseNotification:
                             "system": "https://fhir.nhs.uk/CodeSystem/medicationdispense-type",
                             "code": self.values.medication_dispense_code,
                             "display": self.values.medication_dispense_display,
-
                         }
                     ]
                 },
@@ -344,6 +343,6 @@ class DispenseNotification:
             "entry": entries,
             "identifier": {
                 "system": "https://tools.ietf.org/html/rfc4122",
-                "value": self.values.dispense_notification_id
+                "value": self.values.dispense_notification_id,
             },
         }
