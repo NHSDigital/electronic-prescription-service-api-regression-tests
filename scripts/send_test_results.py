@@ -4,7 +4,7 @@ import argparse
 import requests
 from requests.auth import HTTPBasicAuth
 
-GITHUB_API_URL = "https://api.github.com/repos/NHSDigital/epservice-test-reports/actions/workflows/publish_report.yml/dispatches"
+GITHUB_API_URL = "https://api.github.com/repos/NHSDigital/eps-test-reports/actions/workflows/publish_report.yml/dispatches"
 
 
 def get_headers():
