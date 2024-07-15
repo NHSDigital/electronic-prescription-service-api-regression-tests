@@ -142,9 +142,12 @@ if __name__ == "__main__":
     parser.add_argument(
         "--user", required=True, help="Please provide the user credentials."
     )
+    parser.add_argument(
+        "--run_id", required=True, help="The ID of the workflow Run is Required"
+    )
     arguments = parser.parse_args()
 
-    run_id = arguments.identifier
+    run_id = arguments.run_id
     run_date_filter = generate_timestamp()
 
     trigger_run()

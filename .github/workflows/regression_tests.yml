@@ -115,7 +115,7 @@ jobs:
 
       - name: Send Results
         run: |
-          poetry run python scripts/send_test_results.py --user=seansteberisal:${{secrets.REGRESSION_TESTS_PAT}} --run_id=${{GITHUB.RUN_ID}}
+          poetry run python scripts/send_test_results.py --user seansteberisal:${{secrets.REGRESSION_TESTS_PAT}} --run_id ${{GITHUB.RUN_ID}}
 
 #      - name: checkout github page repo
 #        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
