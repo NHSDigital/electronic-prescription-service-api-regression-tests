@@ -35,7 +35,7 @@ def trigger_run():
 
     assert (
         response.status_code == 204
-    ), f"Failed to trigger test run. Expected 204, got {response.status_code}"
+    ), f"Failed to trigger test run. Expected 204, got {response.status_code}\nURL: {GITHUB_API_URL} \nBody: {response.text}"
 
 
 if __name__ == "__main__":
