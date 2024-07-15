@@ -8,7 +8,7 @@ if __name__ == "__main__":
     print(
         "Please ensure the appropriate environment variables are set: CLIENT_ID, CLIENT_SECRET"
     )
-    user = input("User (dispenser or practitioner): ").lower()
+    user = input("User (dispenser or prescriber): ").lower()
     env = input(
         "Env (INTERNAL-DEV-SANDBOX, SANDBOX, INT, INTERNAL-QA, INTERNAL-DEV, REF): "
     ).upper()
