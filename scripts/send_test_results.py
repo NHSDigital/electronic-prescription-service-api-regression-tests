@@ -4,7 +4,7 @@ import argparse
 import requests
 from requests.auth import HTTPBasicAuth
 
-GITHUB_API_URL = "https://api.github.com/repos/NHSDigital/eps-test-reports/actions/workflows/publish_report.yml/dispatches"
+URL = "https://api.github.com/repos/NHSDigital/eps-test-reports/actions/workflows/publish_report.yml/dispatches"
 
 
 def get_headers():
@@ -18,16 +18,15 @@ def get_auth_header():
     user_credentials = arguments.user.split(":")
     return HTTPBasicAuth(user_credentials[0], user_credentials[1])
 
+
 def trigger_run():
     body = {
         "ref": "feature/AEA-3819-generate-reports-in-a-cleaner-way",
-        "inputs": {
-            "run_id": run_id
-        },
+        "inputs": {"run_id": run_id},
     }
 
     response = requests.post(
-        url=GITHUB_API_URL,
+        url=URL,
         headers=get_headers(),
         auth=get_auth_header(),
         json=body,
@@ -35,7 +34,7 @@ def trigger_run():
 
     assert (
         response.status_code == 204
-    ), f"Failed to trigger test run. Expected 204, got {response.status_code}\nURL: {GITHUB_API_URL} \nBody: {response.text}"
+    ), f"Failed to trigger test run. Expected 204, got {response.status_code}\nURL: {URL} \nBody: {response.text}"
 
 
 if __name__ == "__main__":
