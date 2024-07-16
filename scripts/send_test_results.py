@@ -21,7 +21,7 @@ def get_auth_header():
 
 def trigger_run():
     body = {
-        "ref": "feature/AEA-3819-generate-reports-in-a-cleaner-way",
+        "ref": "main",
         "inputs": {"run_id": run_id},
     }
 
