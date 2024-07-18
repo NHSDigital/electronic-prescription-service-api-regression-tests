@@ -107,39 +107,15 @@ jobs:
             poetry run python ./runner.py --env="$ENVIRONMENT" --product="$PRODUCT" --tags="$TAGS"
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b
+        uses: actions/upload-artifact@v4
         with:
           name: allure-results
           path: allure-results
           if-no-files-found: error
 
-      - name: checkout github page repo
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
-        with:
-          repository: NHSDigital/eps-test-reports
-          token: ${{ secrets.REGRESSION_TESTS_PAT }}
-          path: ${{ env.GITHUB_REF_NAME }}
-
-      - name: Download Artifact
-        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16
-        with:
-          name: allure-results
-          path: allure-results
-
-      - name: Commit results to GitHub Pages Repo
-        env:
-          PRODUCT: ${{ inputs.product }}
-          ENVIRONMENT: ${{ inputs.environment }}
-          PULL_REQUEST_ID: ${{ inputs.pull_request_id }}
+      - name: Send Results
         run: |
-          DATE_TIME=$(date +"%Y%m%d%H%M%S")
-
-          git checkout -b regression-tests-"$DATE_TIME"-"$PRODUCT"-"$ENVIRONMENT"-"$PULL_REQUEST_ID"
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add allure-results/*
-          git commit -m "regression-tests-$DATE_TIME-$PRODUCT-$ENVIRONMENT-$PULL_REQUEST_ID"
-          git push --set-upstream origin regression-tests-"$DATE_TIME"-"$PRODUCT"-"$ENVIRONMENT"-"$PULL_REQUEST_ID"
+          poetry run python scripts/send_test_results.py --user seansteberisal:${{secrets.REGRESSION_TESTS_PAT}} --run_id ${{GITHUB.RUN_ID}}
 
       - name: Report failure on test failure
         if: steps.tests.outcome != 'success'
