@@ -38,11 +38,11 @@ if __name__ == "__main__":
     )
 
     if not args.user:
-        args.user = input("User (dispenser or practitioner): ").lower()
+        args.user = input("User (dispenser or practitioner): ")
 
     if not args.env:
         args.env = input(
             "Env (INTERNAL-DEV-SANDBOX, SANDBOX, INT, INTERNAL-QA, INTERNAL-DEV, REF): "
-        ).upper()
+        )
 
     print(get_auth(user=args.user.lower(), env=args.env.upper()))
