@@ -7,6 +7,7 @@ from random import choice, randint
 
 check_digit_weights = {0: 10, 1: 9, 2: 8, 3: 7, 4: 6, 5: 5, 6: 4, 7: 3, 8: 2}
 ranges = ((500000000, 599999999), (900000000, 999999999))
+count=0
 
 
 def calculate_check_digit(nhs_number):
@@ -101,4 +102,7 @@ def is_valid_nhs_number(nhs_number):
 
 
 if __name__ == "__main__":
-    print(random_nhs_number_generator())
+    amount = int(input("How many NHS numbers would you like to generate? "))
+    while amount > count:
+        count += 1
+        random_nhs_number_generator()
