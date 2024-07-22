@@ -1,6 +1,9 @@
 import logging
 import os
+import shutil
 import sys
+
+from behave.model import Scenario
 from dotenv import load_dotenv
 
 load_dotenv(override=True)
@@ -42,41 +45,69 @@ EPS_FHIR_SUFFIX = "electronic-prescriptions"
 PFP_APIGEE_SUFFIX = "prescriptions-for-patients"
 
 
-def before_all(context):
-    env = context.config.userdata["env"].upper()
+def count_of_scenarios_to_run(context):
+    tags = context.config.tags
+    total_scenarios = 0
+    for feature in context._runner.features:
+        for scenario in feature.walk_scenarios():
+            if isinstance(scenario, Scenario):
+                if tags:
+                    if scenario.should_run_with_tags(tags):
+                        total_scenarios += 1
+                else:
+                    total_scenarios += 1
 
-    context.eps_fhir_base_url = os.path.join(select_base_url(env), EPS_FHIR_SUFFIX)
-    context.pfp_apigee_base_url = os.path.join(select_base_url(env), PFP_APIGEE_SUFFIX)
-    # This will need rework when the pack includes additional products to test
-    if PULL_REQUEST_ID:
-        context.eps_fhir_base_url = os.path.join(
-            INTERNAL_DEV_BASE_URL, f"{EPS_FHIR_SUFFIX}-{PULL_REQUEST_ID}"
-        )
+    print(f"Total scenarios to be run: {total_scenarios}")
+
+    return total_scenarios
+
+
+def before_all(context):
+    if count_of_scenarios_to_run(context) != 0:
+        env = context.config.userdata["env"].upper()
+
+        context.eps_fhir_base_url = os.path.join(select_base_url(env), EPS_FHIR_SUFFIX)
         context.pfp_apigee_base_url = os.path.join(
-            INTERNAL_DEV_BASE_URL, f"{PFP_APIGEE_SUFFIX}-{PULL_REQUEST_ID}"
+            select_base_url(env), PFP_APIGEE_SUFFIX
         )
+        # This will need rework when the pack includes additional products to test
+        if PULL_REQUEST_ID:
+            context.eps_fhir_base_url = os.path.join(
+                INTERNAL_DEV_BASE_URL, f"{EPS_FHIR_SUFFIX}-{PULL_REQUEST_ID}"
+            )
+            context.pfp_apigee_base_url = os.path.join(
+                INTERNAL_DEV_BASE_URL, f"{PFP_APIGEE_SUFFIX}-{PULL_REQUEST_ID}"
+            )
+    else:
+        raise RuntimeError("no tests to run. Check your tags and try again")
 
 
 def after_all(context):
     # Add anything you want to happen after all the tests have completed here
-    env = context.config.userdata["env"].upper()
-    product = context.config.userdata["product"].upper()
-    properties_dict = {"PRODUCT": product, "ENV": env}
-    if PULL_REQUEST_ID:
-        env = os.path.join("PULL-REQUEST", PULL_REQUEST_ID)
-        pull_request_link = os.path.join(
-            select_repository_base_url(product),
-            "pull",
-            PULL_REQUEST_ID.upper().replace("PR-", ""),
-        )
-        properties_dict = {
-            "PRODUCT": product,
-            "ENV": env,
-            "PULL-REQUEST": pull_request_link,
-        }
+    if count_of_scenarios_to_run(context) != 0:
+        env = context.config.userdata["env"].upper()
+        product = context.config.userdata["product"].upper()
+        properties_dict = {"PRODUCT": product, "ENV": env}
+        if PULL_REQUEST_ID:
+            env = os.path.join("PULL-REQUEST", PULL_REQUEST_ID)
+            pull_request_link = os.path.join(
+                select_repository_base_url(product),
+                "pull",
+                PULL_REQUEST_ID.upper().replace("PR-", ""),
+            )
+            properties_dict = {
+                "PRODUCT": product,
+                "ENV": env,
+                "PULL-REQUEST": pull_request_link,
+            }
 
-    file_path = "./allure-results/environment.properties"
-    write_properties_file(file_path, properties_dict)
+        file_path = "./allure-results/environment.properties"
+        write_properties_file(file_path, properties_dict)
+    else:
+        directory_path = "./allure-results"
+        if os.path.exists(directory_path) and os.path.isdir(directory_path):
+            print(f"Directory '{directory_path}' exists. Deleting...")
+            shutil.rmtree(directory_path)
     return
 
 
