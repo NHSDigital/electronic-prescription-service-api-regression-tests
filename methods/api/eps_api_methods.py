@@ -8,8 +8,8 @@ from messages.eps_fhir.signed_prescription import SignedPrescription
 from messages.eps_fhir.withdraw_dispense_notification import (
     WithdrawDispenseNotification,
 )
+from methods.api.common_api_methods import get_headers, post
 from methods.shared.common import the_expected_response_code_is_returned
-from methods.shared.api import post, get_headers
 
 
 def prepare_prescription(context):
@@ -94,7 +94,3 @@ def return_prescription(context):
 
     context.return_body = Return(context).body
     post(data=context.return_body, url=url, context=context, headers=headers)
-
-
-def assert_ok_status_code(context):
-    the_expected_response_code_is_returned(context, 200)
