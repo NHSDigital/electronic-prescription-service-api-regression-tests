@@ -41,7 +41,7 @@ def a_prescription_has_been_created_and_released(context):
 @given("a new prescription has been dispensed")
 def a_new_prescription_has_been_dispensed(context):
     a_prescription_has_been_created_and_released(context)
-    i_dispense_a_prescription(context)
+    i_dispense_the_prescription(context)
     indicate_successful_response(context)
 
 

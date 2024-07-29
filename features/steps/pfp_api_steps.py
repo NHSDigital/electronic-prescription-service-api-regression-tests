@@ -24,11 +24,7 @@ def i_can_see_my_prescription(context):
     bundle = [
         entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"
     ][0]["resource"]["entry"][0]["resource"]
-    (
-        assert_that(bundle["subject"]["identifier"]["value"]).is_equal_to(
-            context.nhs_number
-        ),
-        assert_that(bundle["groupIdentifier"]["value"]).is_equal_to(
-            context.prescription_id
-        ),
+    assert_that(bundle["subject"]["identifier"]["value"]).is_equal_to(
+        context.nhs_number
     )
+    assert_that(bundle["groupIdentifier"]["value"]).is_equal_to(context.prescription_id)
