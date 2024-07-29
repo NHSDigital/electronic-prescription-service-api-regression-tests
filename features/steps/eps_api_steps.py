@@ -83,8 +83,8 @@ def i_cancel_all_line_items(context):
     cancel_all_line_items(context)
 
 
-@when("I dispense a prescription")
-def i_dispense_a_prescription(context):
+@when("I dispense the prescription")
+def i_dispense_the_prescription(context):
     dispense_prescription(context)
 
 
