@@ -29,6 +29,7 @@ CIS2_USERS = {
     "prescriber": {"user_id": "656005750107", "role_id": "555254242105"},
     "dispenser": {"user_id": "555260695103", "role_id": "555265434108"},
 }
+LOGIN_USERS = {"user_id": "9449304130"}
 
 REPOS = {
     "EPS-FHIR": "https://github.com/NHSDigital/electronic-prescription-service-api",
