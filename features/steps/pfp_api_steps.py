@@ -9,7 +9,8 @@ from methods.shared.common import assert_that, get_auth
 
 @when("I am authenticated")
 def i_am_authenticated(context):
-    context.auth_token = get_auth("dispenser", "int", "PFP-APIGEE")
+    env = context.config.userdata["env"]
+    context.auth_token = get_auth("dispenser", env, "PFP-APIGEE")
 
 
 @when("I request my prescriptions")
