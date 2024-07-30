@@ -54,6 +54,7 @@ This is the preferred method and allows you to include/exclude tags <br />
 a `~` before the tag name excludes it. <br />
 This is how the tests are run on the CI
 <h4> You MUST specify the environment and product <br />
+
 #### Example: `python runner.py --product=EPS-FHIR --env=INT --tags smoke --tags ~slow`
 This will run all tests with the tag `@smoke` but skip any tests tagged with `@slow`
 
