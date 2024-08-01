@@ -10,12 +10,8 @@ def get_headers():
     return {
         "Accept": "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28",
+        "Authorization": f"Bearer {arguments.token}",
     }
-
-
-def get_auth_header():
-    token = arguments.token
-    return "Bearer {}".format(token)
 
 
 def trigger_run():
@@ -27,7 +23,6 @@ def trigger_run():
     response = requests.post(
         url=URL,
         headers=get_headers(),
-        auth=get_auth_header(),
         json=body,
     )
 
