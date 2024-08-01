@@ -2,7 +2,6 @@
 
 import argparse
 import requests
-from requests.auth import HTTPBasicAuth
 
 URL = "https://api.github.com/repos/NHSDigital/eps-test-reports/actions/workflows/publish_report.yml/dispatches"
 
@@ -15,8 +14,8 @@ def get_headers():
 
 
 def get_auth_header():
-    user_credentials = arguments.user.split(":")
-    return HTTPBasicAuth(user_credentials[0], user_credentials[1])
+    token = arguments.token
+    return "Bearer {}".format(token)
 
 
 def trigger_run():
@@ -41,7 +40,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        "--user", required=True, help="Please provide the user credentials."
+        "--token", required=True, help="An authorised token is required"
     )
     parser.add_argument(
         "--run_id", required=True, help="The ID of the workflow Run is Required"
