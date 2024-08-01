@@ -119,6 +119,7 @@ jobs:
         with:
           app-id: ${{ vars.REGRESSION_TESTS_APP_ID }}
           private-key: ${{ secrets.REGRESSION_TESTS_PEM }}
+          repositories: "electronic-prescription-service-api-regression-tests,eps-test-reports"
 
       - name: Send Results
         env:
