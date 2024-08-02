@@ -113,9 +113,18 @@ jobs:
           path: allure-results
           if-no-files-found: error
 
+      - name: Generate a token
+        id: generate-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.REGRESSION_TESTS_APP_ID }}
+          private-key: ${{ secrets.REGRESSION_TESTS_PEM }}
+          owner: "NHSDigital"
+          repositories: "electronic-prescription-service-api-regression-tests,eps-test-reports"
+
       - name: Send Results
         run: |
-          poetry run python scripts/send_test_results.py --user seansteberisal:${{secrets.REGRESSION_TESTS_PAT}} --run_id ${{GITHUB.RUN_ID}}
+          poetry run python scripts/send_test_results.py --token=${{ steps.generate-token.outputs.token }} --run_id ${{GITHUB.RUN_ID}}
 
       - name: Report failure on test failure
         if: steps.tests.outcome != 'success'
