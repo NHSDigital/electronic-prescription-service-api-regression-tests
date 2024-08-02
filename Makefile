@@ -62,7 +62,7 @@ deep-clean-install:
 	asdf install nodejs
 	asdf plugin add actionlint
 	asdf install actionlint
-	poetry install
+	make install
 
 pre-commit:
 	poetry run pre-commit run --all-files

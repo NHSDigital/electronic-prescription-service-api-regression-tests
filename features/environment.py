@@ -48,18 +48,15 @@ PFP_APIGEE_SUFFIX = "prescriptions-for-patients"
 
 def count_of_scenarios_to_run(context):
     tags = context.config.tags
-    total_scenarios = 0
-    for feature in context._runner.features:
-        for scenario in feature.walk_scenarios():
-            if isinstance(scenario, Scenario):
-                if tags:
-                    if scenario.should_run_with_tags(tags):
-                        total_scenarios += 1
-                else:
-                    total_scenarios += 1
+    total_scenarios = sum(
+        1
+        for feature in context._runner.features
+        for scenario in feature.walk_scenarios()
+        if isinstance(scenario, Scenario)
+        and (not tags or scenario.should_run_with_tags(tags))
+    )
 
     print(f"Total scenarios to be run: {total_scenarios}")
-
     return total_scenarios
 
 
@@ -109,7 +106,6 @@ def after_all(context):
         if os.path.exists(directory_path) and os.path.isdir(directory_path):
             print(f"Directory '{directory_path}' exists. Deleting...")
             shutil.rmtree(directory_path)
-    return
 
 
 def setup_logging(level: int = logging.INFO):

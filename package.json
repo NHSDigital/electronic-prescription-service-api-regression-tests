@@ -6,6 +6,7 @@
     "semantic-release": "^24.0.0"
   },
   "dependencies": {
-    "npm": "^10.8.2"
+    "npm": "^10.8.2",
+    "pyright": "^1.1.374"
   }
 }
