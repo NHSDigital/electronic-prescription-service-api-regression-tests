@@ -30,6 +30,7 @@ class DispenseNotificationValues:
 
 class DispenseNotification:
     def __init__(self, context: Any, amend: bool) -> None:
+        self.HTTP_SNOMED_INFO_SCT = "http://snomed.info/sct"
         self.values = DispenseNotificationValues(context, amend)
         practitioner_role = self.practitioner_role()
         medication_request = self.medication_request()
@@ -116,7 +117,7 @@ class DispenseNotification:
             "medicationCodeableConcept": {
                 "coding": [
                     {
-                        "system": "http://snomed.info/sct",  # http only
+                        "system": self.HTTP_SNOMED_INFO_SCT,  # http only
                         "code": "322237000",
                     }
                 ]
@@ -192,7 +193,7 @@ class DispenseNotification:
                 "medicationCodeableConcept": {
                     "coding": [
                         {
-                            "system": "http://snomed.info/sct",  # http only
+                            "system": self.HTTP_SNOMED_INFO_SCT,
                             "code": "322237000",
                         }
                     ]
@@ -229,7 +230,7 @@ class DispenseNotification:
                 "quantity": {
                     "value": 1,
                     "unit": "pre-filled disposable injection",
-                    "system": "https://snomed.info/sct",
+                    "system": self.HTTP_SNOMED_INFO_SCT,
                     "code": "3318611000001103",
                 },
                 "contained": [practitioner_role, medication_request],

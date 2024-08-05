@@ -30,6 +30,7 @@ class PrescriptionValues:
 class Prescription:
     def __init__(self, context: Any) -> None:
         self.values = PrescriptionValues(context)
+        self.HTTPS_ODS_ORGANIZATION_CODE = "https://fhir.nhs.uk/Id/ods-organization-code"
         message_header = self.create_message_header()
         medication_request = self.create_medication_request()
         patient = self.create_patient()
@@ -75,7 +76,7 @@ class Prescription:
                 },
                 "sender": {
                     "identifier": {
-                        "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                        "system": self.HTTPS_ODS_ORGANIZATION_CODE,
                         "value": self.values.sender_ods_code,
                     },
                 },
@@ -93,7 +94,7 @@ class Prescription:
                             "endpoint": "https://sandbox.api.service.nhs.uk/electronic-prescriptions/$post-message",
                             "receiver": {
                                 "identifier": {
-                                    "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                                    "system": self.HTTPS_ODS_ORGANIZATION_CODE,
                                     "value": self.values.receiver_ods_code,
                                 }
                             },
@@ -131,7 +132,7 @@ class Prescription:
                         "coding": [
                             {
                                 "system": "https://terminology.hl7.org/CodeSystem/medicationrequest-category",
-                                "code": ("community"),
+                                "code": "community",
                             }
                         ]
                     }
@@ -222,7 +223,7 @@ class Prescription:
                     ],
                     "performer": {
                         "identifier": {
-                            "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                            "system": self.HTTPS_ODS_ORGANIZATION_CODE,
                             "value": self.values.receiver_ods_code,
                         }
                     },
@@ -328,7 +329,7 @@ class Prescription:
                 "generalPractitioner": [
                     {
                         "identifier": {
-                            "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                            "system": self.HTTPS_ODS_ORGANIZATION_CODE,
                             "value": self.values.sender_ods_code,
                         }
                     }
@@ -343,7 +344,7 @@ class Prescription:
                 "resourceType": "Organization",
                 "identifier": [
                     {
-                        "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                        "system": self.HTTPS_ODS_ORGANIZATION_CODE,
                         "value": "A83008",
                     }
                 ],
@@ -361,7 +362,7 @@ class Prescription:
                 ],
                 "partOf": {
                     "identifier": {
-                        "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                        "system": self.HTTPS_ODS_ORGANIZATION_CODE,
                         "value": "RBA",
                     },
                     "display": "TAUNTON AND SOMERSET NHS FOUNDATION TRUST",
