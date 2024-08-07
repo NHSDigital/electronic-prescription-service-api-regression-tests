@@ -9,9 +9,7 @@ from methods.shared.common import assert_that, get_auth
 
 @when("I am authenticated")
 def i_am_authenticated(context):
-    env = context.config.userdata["env"].lower()
-    if "sandbox" in env:
-        return
+    env = context.config.userdata["env"]
     context.auth_token = get_auth("dispenser", env, "PFP-APIGEE")
 
 
@@ -27,17 +25,7 @@ def i_can_see_my_prescription(context):
     bundle = [
         entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"
     ][0]["resource"]["entry"][0]["resource"]
-    if "sandbox" in context.config.userdata["env"].lower():
-        assert_that(bundle["subject"]["identifier"]["value"]).is_equal_to("9449304130")
-        assert_that(bundle["groupIdentifier"]["value"]).is_equal_to(
-            "24F5DA-A83008-7EFE6Z"
-        )
-        return
-    expected_nhs_number = context.nhs_number
-    expected_prescription_id = context.prescription_id
     assert_that(bundle["subject"]["identifier"]["value"]).is_equal_to(
-        expected_nhs_number
+        context.nhs_number
     )
-    assert_that(bundle["groupIdentifier"]["value"]).is_equal_to(
-        expected_prescription_id
-    )
+    assert_that(bundle["groupIdentifier"]["value"]).is_equal_to(context.prescription_id)
