@@ -29,6 +29,7 @@ def get_auth(user, env, product="EPS-FHIR"):
         environment=env,
         identity_service_base_url=url,  # pyright: ignore [reportArgumentType]
         callback_url="https://example.org/",  # pyright: ignore [reportArgumentType]
+        # callback_url="https://oauth.pstmn.io/v1/callback",  # pyright: ignore [reportArgumentType]
         client_id=CLIENT_ID,
         client_secret=CLIENT_SECRET,
         scope=scope,
