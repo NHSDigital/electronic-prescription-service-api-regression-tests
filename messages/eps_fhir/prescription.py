@@ -30,7 +30,9 @@ class PrescriptionValues:
 class Prescription:
     def __init__(self, context: Any) -> None:
         self.values = PrescriptionValues(context)
-        self.HTTPS_ODS_ORGANIZATION_CODE = "https://fhir.nhs.uk/Id/ods-organization-code"
+        self.HTTPS_ODS_ORGANIZATION_CODE = (
+            "https://fhir.nhs.uk/Id/ods-organization-code"
+        )
         message_header = self.create_message_header()
         medication_request = self.create_medication_request()
         patient = self.create_patient()
