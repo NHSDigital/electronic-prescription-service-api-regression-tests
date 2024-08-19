@@ -1,4 +1,4 @@
-@eps_fhir @smoke @regression @blocker
+@eps_fhir @smoke @regression @blocker @create
 @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-3847
 Feature: I can create prescriptions
 

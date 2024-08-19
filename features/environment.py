@@ -63,19 +63,21 @@ def count_of_scenarios_to_run(context):
 def before_all(context):
     if count_of_scenarios_to_run(context) != 0:
         env = context.config.userdata["env"].upper()
-
+        product = context.config.userdata["product"].upper()
         context.eps_fhir_base_url = os.path.join(select_base_url(env), EPS_FHIR_SUFFIX)
         context.pfp_apigee_base_url = os.path.join(
             select_base_url(env), PFP_APIGEE_SUFFIX
         )
         # This will need rework when the pack includes additional products to test
         if PULL_REQUEST_ID:
-            context.eps_fhir_base_url = os.path.join(
-                INTERNAL_DEV_BASE_URL, f"{EPS_FHIR_SUFFIX}-{PULL_REQUEST_ID}"
-            )
-            context.pfp_apigee_base_url = os.path.join(
-                INTERNAL_DEV_BASE_URL, f"{PFP_APIGEE_SUFFIX}-{PULL_REQUEST_ID}"
-            )
+            if product == "EPS-FHIR":
+                context.eps_fhir_base_url = os.path.join(
+                    context.eps_fhir_base_url, f"-{PULL_REQUEST_ID}"
+                )
+            if product == "PFP-APIGEE":
+                context.pfp_apigee_base_url = os.path.join(
+                    context.pfp_apigee_base_url, f"-{PULL_REQUEST_ID}"
+                )
     else:
         raise RuntimeError("no tests to run. Check your tags and try again")
 
