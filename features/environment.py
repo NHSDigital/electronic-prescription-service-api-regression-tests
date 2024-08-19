@@ -80,6 +80,8 @@ def before_all(context):
                 )
     else:
         raise RuntimeError("no tests to run. Check your tags and try again")
+    print("EPS: ", context.eps_fhir_base_url)
+    print("PFP: ", context.pfp_apigee_base_url)
 
 
 def after_all(context):
