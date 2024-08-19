@@ -72,11 +72,11 @@ def before_all(context):
         if PULL_REQUEST_ID:
             if product == "EPS-FHIR":
                 context.eps_fhir_base_url = os.path.join(
-                    context.eps_fhir_base_url, f"-{PULL_REQUEST_ID}"
+                    INTERNAL_DEV_BASE_URL, f"{EPS_FHIR_SUFFIX}-{PULL_REQUEST_ID}"
                 )
             if product == "PFP-APIGEE":
                 context.pfp_apigee_base_url = os.path.join(
-                    context.pfp_apigee_base_url, f"-{PULL_REQUEST_ID}"
+                    INTERNAL_DEV_BASE_URL, f"{PFP_APIGEE_SUFFIX}-{PULL_REQUEST_ID}"
                 )
     else:
         raise RuntimeError("no tests to run. Check your tags and try again")
