@@ -5,5 +5,5 @@ Feature: I can send an update to PSU
   @blocker @smoke
   Scenario: I can send an update to PSU
     Given I am authorised to send prescription updates
-    And I send an update
-    Then the response body indicates a successful status update action
+    When I send an update
+    Then the response indicates a record was created
