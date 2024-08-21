@@ -64,12 +64,12 @@ def get_signature(digest: str, algorithm: str):
     # Set signing algorithm from prepare response
     signing_algorithm = None
 
-    if algorithm == "SHA256":
+    if algorithm == "RS256":
         signing_algorithm = hashes.SHA256()
-    elif algorithm == "SHA1":
+    elif algorithm == "RS1":
         signing_algorithm = hashes.SHA1()
     else:
-        raise ValueError("Unsupported algorithm")
+        raise ValueError("Unsupported algorithm {}".format(algorithm))
 
     # Generate signature
     signature_raw = private_key.sign(  # pyright: ignore [reportAttributeAccessIssue]
