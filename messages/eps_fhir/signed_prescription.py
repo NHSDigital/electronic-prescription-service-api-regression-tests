@@ -6,7 +6,7 @@ from utils.signing import get_signature
 
 class SignedPrescription:
     def __init__(self, context: Any) -> None:
-        context.signature = get_signature(context.digest)
+        context.signature = get_signature(context.digest, context.algorithm)
         self.context = context
         prescription = json.loads(context.prepare_body)
         provenance = self.generate_provenance()
