@@ -51,8 +51,8 @@ jobs:
           PRODUCT: ${{ inputs.product }}
           PULL_REQUEST_ID: ${{ inputs.pull_request_id }}
         run: |
-          echo run identifier $ID-$PRODUCT-$ENV-$PULL_REQUEST_ID
-          echo run identifier $ID-$PRODUCT-$ENV-$PULL_REQUEST_ID  >> "$GITHUB_STEP_SUMMARY"
+          echo run identifier "$ID"-"$PRODUCT"-"$ENV"-"$PULL_REQUEST_ID"
+          echo run identifier "$ID"-"$PRODUCT"-"$ENV"-"$PULL_REQUEST_ID"  >> "$GITHUB_STEP_SUMMARY"
 
       # using git commit sha for version of action to ensure we have stable version
       - name: Install asdf
@@ -76,10 +76,10 @@ jobs:
         uses: actions/cache@a2ed59d39b352305bdd2f628719a53b2cc4f9613
         id: cache-venv
         with:
-          path: ./.venv/
-          key: ${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-venv-${{ hashFiles('pyproject.toml') }}
+          path: .venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('pyproject.toml') }}
           restore-keys: |
-            ${{ runner.os }}-${{ steps.setup_python.outputs.python-version }}-venv-
+            ${{ runner.os }}-venv-
 
       - name: Install Dependencies
         if: steps.cache-venv.outputs.cache-hit != 'true'
@@ -98,48 +98,33 @@ jobs:
           CERTIFICATE: ${{ secrets.CERTIFICATE }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
         run: |
-            export CLIENT_ID=$CLIENT_ID
-            export CLIENT_SECRET=$CLIENT_SECRET
-            export CERTIFICATE=$CERTIFICATE
-            export PRIVATE_KEY=$PRIVATE_KEY
-            export PULL_REQUEST_ID=$PULL_REQUEST_ID
-            echo Pull request ID = $PULL_REQUEST_ID
-            poetry run python ./runner.py --env=$ENVIRONMENT --product=$PRODUCT --tags=$TAGS
+            export CLIENT_ID="$CLIENT_ID"
+            export CLIENT_SECRET="$CLIENT_SECRET"
+            export CERTIFICATE="$CERTIFICATE"
+            export PRIVATE_KEY="$PRIVATE_KEY"
+            export PULL_REQUEST_ID="$PULL_REQUEST_ID"
+            echo Pull request ID = "$PULL_REQUEST_ID"
+            poetry run python ./runner.py --env="$ENVIRONMENT" --product="$PRODUCT" --tags="$TAGS"
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
+        uses: actions/upload-artifact@v4
         with:
           name: allure-results
           path: allure-results
           if-no-files-found: error
 
-      - name: checkout github page repo
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - name: Generate a token
+        id: generate-token
+        uses: actions/create-github-app-token@v1
         with:
-          repository: NHSDigital/eps-test-reports
-          token: ${{ secrets.REGRESSION_TESTS_PAT }}
-          path: ${{ env.GITHUB_REF_NAME }}
+          app-id: ${{ vars.REGRESSION_TESTS_APP_ID }}
+          private-key: ${{ secrets.REGRESSION_TESTS_PEM }}
+          owner: "NHSDigital"
+          repositories: "electronic-prescription-service-api-regression-tests,eps-test-reports"
 
-      - name: Download Artifact
-        uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e
-        with:
-          name: allure-results
-          path: allure-results
-
-      - name: Commit results to GitHub Pages Repo
-        env:
-          PRODUCT: ${{ inputs.product }}
-          ENVIRONMENT: ${{ inputs.environment }}
-          PULL_REQUEST_ID: ${{ inputs.pull_request_id }}
+      - name: Send Results
         run: |
-          DATE_TIME=`date +"%Y%m%d%H%M%S"`
-
-          git checkout -b regression-tests-$DATE_TIME-$PRODUCT-$ENVIRONMENT-$PULL_REQUEST_ID
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add allure-results/*
-          git commit -m "regression-tests-$DATE_TIME-$PRODUCT-$ENVIRONMENT-$PULL_REQUEST_ID"
-          git push --set-upstream origin regression-tests-$DATE_TIME-$PRODUCT-$ENVIRONMENT-$PULL_REQUEST_ID
+          poetry run python scripts/send_test_results.py --token=${{ steps.generate-token.outputs.token }} --run_id ${{GITHUB.RUN_ID}}
 
       - name: Report failure on test failure
         if: steps.tests.outcome != 'success'

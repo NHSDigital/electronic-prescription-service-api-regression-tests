@@ -8,23 +8,31 @@ from pytest_nhsd_apim.identity_service import (
     AuthorizationCodeConfig,
 )
 
-from features.environment import CIS2_USERS, CLIENT_ID, CLIENT_SECRET
+from features.environment import CIS2_USERS, LOGIN_USERS, CLIENT_ID, CLIENT_SECRET
 
 
-def get_auth(user, env):
+def get_auth(user, env, product="EPS-FHIR"):
     # 1. Set your app config
     if CLIENT_ID is None or CLIENT_SECRET is None:
         raise ValueError("You must provide BOTH CLIENT_ID and CLIENT_SECRET")
     env = env.lower()
     url = f"https://{env}.api.service.nhs.uk/oauth2-mock"
+    if product == "EPS-FHIR":
+        scope = "nhs-cis2"
+        login_form = {"username": CIS2_USERS[user]["user_id"]}
+    elif product == "PFP-APIGEE":
+        scope = "nhs-login"
+        login_form = {"username": LOGIN_USERS["user_id"]}
+    else:
+        raise ValueError(f"Unknown product {product}")
     config = AuthorizationCodeConfig(
         environment=env,
         identity_service_base_url=url,  # pyright: ignore [reportArgumentType]
         callback_url="https://example.org/",  # pyright: ignore [reportArgumentType]
         client_id=CLIENT_ID,
         client_secret=CLIENT_SECRET,
-        scope="nhs-cis2",
-        login_form={"username": CIS2_USERS[user]["user_id"]},
+        scope=scope,
+        login_form=login_form,
     )
 
     # 2. Pass the config to the Authenticator
@@ -37,17 +45,6 @@ def get_auth(user, env):
     assert "access_token" in token_response
     token = token_response["access_token"]
 
-    # 4. Use the token and confirm is valid
-    headers = {"Authorization": f"Bearer {token}"}
-    if env == "int":
-        response = requests.get(
-            "https://int.api.service.nhs.uk/mock-jwks/test-auth/nhs-cis2/aal3",
-            headers=headers,
-        )
-        if response.status_code != 200:
-            print(f"{response.status_code}\n{str(response.content)}")
-            raise AssertionError()
-        assert response.status_code == 200
     return token
 
 

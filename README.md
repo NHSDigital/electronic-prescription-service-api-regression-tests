@@ -53,7 +53,8 @@ Run the `runner.py` file located in the root of the project <br />
 This is the preferred method and allows you to include/exclude tags <br />
 a `~` before the tag name excludes it. <br />
 This is how the tests are run on the CI
-<h4> You MUST specify the environment and product
+<h4> You MUST specify the environment and product <br />
+
 #### Example: `python runner.py --product=EPS-FHIR --env=INT --tags smoke --tags ~slow`
 This will run all tests with the tag `@smoke` but skip any tests tagged with `@slow`
 
@@ -61,7 +62,11 @@ This will run all tests with the tag `@smoke` but skip any tests tagged with `@s
 If your IDE supports it, you can directly run the .feature files within `/features` <br />
 Make sure that your behave run configuration includes the `--product=` & `--env=` <B>These are mandatory</B>
 
-### Method 3 (Not Recommended):
+### Method 3:
+Run the tests by calling the Make command `make run-tests`. This requires the parameters `product=` and `env=` to be passed in
+* This will run the tests without tags so will run everything
+
+### Method 4 (Not Recommended):
 Run the tests by running `behave` in a command prompt or terminal window.
 * This will run the tests and print the results to console
 
