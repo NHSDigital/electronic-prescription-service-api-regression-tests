@@ -65,7 +65,7 @@ def get_signature(digest: str):
     signature_raw = private_key.sign(  # pyright: ignore [reportAttributeAccessIssue]
         digest.encode("utf-8"),
         padding.PKCS1v15(),  # pyright: ignore [reportCallIssue]
-        hashes.SHA1(),  # pyright: ignore [reportCallIssue]
+        hashes.SHA256(),  # pyright: ignore [reportCallIssue]
     )
     # Align format of signature with equivalent TypeScript code
     signature = base64.b64encode(signature_raw).decode("ASCII")
