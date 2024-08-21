@@ -18,6 +18,7 @@ on:
         options:
           - EPS-FHIR
           - PFP-APIGEE
+          - PSU
         required: false
         default: EPS-FHIR
       id:
