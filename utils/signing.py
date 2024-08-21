@@ -31,7 +31,7 @@ def verify_certificate_valid_when_signed(signature_date, certificate):
     return certificate_start_date <= signature_date <= certificate_end_date
 
 
-def get_signature(digest: str):
+def get_signature(digest: str, algorithm: str):
     # Load X.509 certificate
     x509_cert = load_pem_x509_certificate(
         CERTIFICATE.encode("utf-8"),  # pyright: ignore [reportOptionalMemberAccess]
@@ -61,11 +61,21 @@ def get_signature(digest: str):
     # Decode digest
     digest = base64.b64decode(digest).decode("utf-8")
 
+    # Set signing algorithm from prepare response
+    signing_algorithm = None
+
+    if algorithm == "RS256":
+        signing_algorithm = hashes.SHA256()
+    elif algorithm == "RS1":
+        signing_algorithm = hashes.SHA1()
+    else:
+        raise ValueError("Unsupported algorithm {}".format(algorithm))
+
     # Generate signature
     signature_raw = private_key.sign(  # pyright: ignore [reportAttributeAccessIssue]
         digest.encode("utf-8"),
         padding.PKCS1v15(),  # pyright: ignore [reportCallIssue]
-        hashes.SHA1(),  # pyright: ignore [reportCallIssue]
+        signing_algorithm,  # pyright: ignore [reportCallIssue]
     )
     # Align format of signature with equivalent TypeScript code
     signature = base64.b64encode(signature_raw).decode("ASCII")

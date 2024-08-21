@@ -25,6 +25,7 @@ def prepare_prescription(context):
 
     context.digest = response.json()["parameter"][0]["valueString"]
     context.timestamp = response.json()["parameter"][1]["valueString"]
+    context.algorithm = response.json()["parameter"][2]["valueString"]
 
 
 def create_signed_prescription(context):
