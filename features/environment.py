@@ -42,6 +42,8 @@ PRIVATE_KEY = os.getenv("PRIVATE_KEY")
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 PULL_REQUEST_ID = os.getenv("PULL_REQUEST_ID")
+JWT_PRIVATE_KEY = os.getenv("JWT_PRIVATE_KEY")
+JWT_KID = os.getenv("JWT_KID")
 
 EPS_FHIR_SUFFIX = "electronic-prescriptions"
 PFP_APIGEE_SUFFIX = "prescriptions-for-patients"

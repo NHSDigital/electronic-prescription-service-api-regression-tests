@@ -53,14 +53,14 @@ deep-clean-install:
 	asdf plugin remove nodejs
 	asdf plugin remove actionlint
 	asdf plugin add python
-	asdf install python
 	asdf plugin add poetry
-	asdf install poetry
 	asdf plugin add shellcheck
-	asdf install shellcheck
 	asdf plugin add nodejs
-	asdf install nodejs
 	asdf plugin add actionlint
+	asdf install python
+	asdf install poetry
+	asdf install shellcheck
+	asdf install nodejs
 	asdf install actionlint
 	make install
 
