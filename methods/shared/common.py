@@ -89,7 +89,10 @@ def get_auth(env, product, user="prescriber"):
         authenticator = get_pfp_apigee_authenticator(env, url)
     if product == "PSU":
         authenticator = get_psu_authenticator(env, url)
-    return get_token(authenticator)
+    if authenticator is not None:
+        return get_token(authenticator)
+    else:
+        raise ValueError("Authentication failed because authenticator was not generated")
 
 
 def get_token(authenticator):
