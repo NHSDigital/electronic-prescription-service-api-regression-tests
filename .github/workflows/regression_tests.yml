@@ -98,11 +98,15 @@ jobs:
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
           CERTIFICATE: ${{ secrets.CERTIFICATE }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          JWT_KID: ${{ secrets.JWT_KID }}
+          JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
         run: |
             export CLIENT_ID="$CLIENT_ID"
             export CLIENT_SECRET="$CLIENT_SECRET"
             export CERTIFICATE="$CERTIFICATE"
             export PRIVATE_KEY="$PRIVATE_KEY"
+            export JWT_KID="$JWT_KID"
+            export JWT_PRIVATE_KEY="$JWT_PRIVATE_KEY"
             export PULL_REQUEST_ID="$PULL_REQUEST_ID"
             echo Pull request ID = "$PULL_REQUEST_ID"
             poetry run python ./runner.py --env="$ENVIRONMENT" --product="$PRODUCT" --tags="$TAGS"
