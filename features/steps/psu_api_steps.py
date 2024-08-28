@@ -16,12 +16,12 @@ def i_am_authorised_to_send_prescription_updates(context):
     context.auth_token = get_auth(env, "PSU")
 
 
-@when("I send an update")
-def i_send_an_update(context):
+@when("I send an {status} update with a terminal status of {terminal}")
+def i_send_an_update(context, status, terminal):
     context.receiver_ods_code = "FA565"
     context.prescription_id = generate_short_form_id(context.receiver_ods_code)
     context.prescription_item_id = uuid.uuid4()
-    context.terminal_status = "completed"
-    context.item_status = "Collected"
+    context.terminal_status = terminal
+    context.item_status = status
     context.nhs_number = generate_single()
     send_status_update(context)
