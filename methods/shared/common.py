@@ -92,7 +92,9 @@ def get_auth(env, product, user="prescriber"):
     if authenticator is not None:
         return get_token(authenticator)
     else:
-        raise ValueError("Authentication failed because authenticator was not generated")
+        raise ValueError(
+            "Authentication failed because authenticator was not generated"
+        )
 
 
 def get_token(authenticator):
