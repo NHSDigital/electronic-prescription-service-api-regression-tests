@@ -52,7 +52,7 @@ def i_am_an_authorised_user(context, user):
         return
     env = context.config.userdata["env"]
     context.user = user
-    context.auth_token = get_auth(user, env)
+    context.auth_token = get_auth(env, "EPS-FHIR", user)
 
 
 def i_prepare_a_new_prescription(context, prescription_type):
