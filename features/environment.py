@@ -35,6 +35,7 @@ LOGIN_USERS = {"user_id": "9449304130"}
 REPOS = {
     "EPS-FHIR": "https://github.com/NHSDigital/electronic-prescription-service-api",
     "PFP-APIGEE": "https://github.com/NHSDigital/prescriptions-for-patients",
+    "PFP-AWS": "https://github.com/NHSDigital/prescriptionsforpatients",
 }
 
 CERTIFICATE = os.getenv("CERTIFICATE")
@@ -66,7 +67,7 @@ def before_all(context):
         env = context.config.userdata["env"].upper()
         product = context.config.userdata["product"].upper()
         context.eps_fhir_base_url = os.path.join(select_base_url(env), EPS_FHIR_SUFFIX)
-        context.pfp_apigee_base_url = os.path.join(
+        context.pfp_base_url = os.path.join(
             select_base_url(env), PFP_APIGEE_SUFFIX
         )
         # This will need rework when the pack includes additional products to test
@@ -76,13 +77,17 @@ def before_all(context):
                     INTERNAL_DEV_BASE_URL, f"{EPS_FHIR_SUFFIX}-{PULL_REQUEST_ID}"
                 )
             if product == "PFP-APIGEE":
-                context.pfp_apigee_base_url = PFP_AWS_PR_URL.replace(
+                context.eps_fhir_base_url = os.path.join(
+                    INTERNAL_DEV_BASE_URL, f"{PFP_APIGEE_SUFFIX}-{PULL_REQUEST_ID}"
+                )
+            if product == "PFP-AWS":
+                context.pfp_base_url = PFP_AWS_PR_URL.replace(
                     "{{aws_pull_request_id}}", PULL_REQUEST_ID
                 )
     else:
         raise RuntimeError("no tests to run. Check your tags and try again")
     print("EPS: ", context.eps_fhir_base_url)
-    print("PFP: ", context.pfp_apigee_base_url)
+    print("PFP: ", context.pfp_base_url)
 
 
 def after_all(context):
