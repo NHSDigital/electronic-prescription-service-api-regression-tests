@@ -67,9 +67,7 @@ def before_all(context):
         env = context.config.userdata["env"].upper()
         product = context.config.userdata["product"].upper()
         context.eps_fhir_base_url = os.path.join(select_base_url(env), EPS_FHIR_SUFFIX)
-        context.pfp_base_url = os.path.join(
-            select_base_url(env), PFP_APIGEE_SUFFIX
-        )
+        context.pfp_base_url = os.path.join(select_base_url(env), PFP_APIGEE_SUFFIX)
         # This will need rework when the pack includes additional products to test
         if PULL_REQUEST_ID:
             if product == "EPS-FHIR":
