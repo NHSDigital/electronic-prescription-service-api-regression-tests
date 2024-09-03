@@ -79,7 +79,7 @@ def before_all(context):
                     INTERNAL_DEV_BASE_URL, f"{EPS_FHIR_SUFFIX}-{PULL_REQUEST_ID}"
                 )
             if product == "PFP-APIGEE":
-                context.eps_fhir_base_url = os.path.join(
+                context.pfp_base_url = os.path.join(
                     INTERNAL_DEV_BASE_URL, f"{PFP_APIGEE_SUFFIX}-{PULL_REQUEST_ID}"
                 )
             if product == "PFP-AWS":
