@@ -45,4 +45,4 @@ if __name__ == "__main__":
             "Env (INTERNAL-DEV-SANDBOX, SANDBOX, INT, INTERNAL-QA, INTERNAL-DEV, REF): "
         )
 
-    print(get_auth(user=args.user.lower(), env=args.env.upper()))
+    print(get_auth(env=args.env.upper(), product="EPS-FHIR", user=args.user.lower()))

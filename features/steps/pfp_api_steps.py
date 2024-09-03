@@ -12,7 +12,7 @@ def i_am_authenticated(context):
     env = context.config.userdata["env"].lower()
     if "sandbox" in env:
         return
-    context.auth_token = get_auth("dispenser", env, "PFP-APIGEE")
+    context.auth_token = get_auth(env, "PFP-APIGEE")
 
 
 @when("I request my prescriptions")

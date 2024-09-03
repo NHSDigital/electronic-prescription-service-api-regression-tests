@@ -2,8 +2,10 @@
 
 # Regression Tests
 These tests will automate End-to-End regression testing for:
-* [EPS-FHIR](https://digital.nhs.uk/developer/api-catalogue/electronic-prescription-service-fhir)
+* [Electronic Prescription Service (EPS-FHIR)](https://digital.nhs.uk/developer/api-catalogue/electronic-prescription-service-fhir)
 * [Prescriptions for Patients (PfP)](https://digital.nhs.uk/developer/api-catalogue/prescriptions-for-patients)
+* [Prescription Status Update (PSU)](https://digital.nhs.uk/developer/api-catalogue/prescription-status-update-fhir/)
+*
 
 ## General usage
 These tests are run automatically during deployment and shouldn't need to be touched unless performing debugging or

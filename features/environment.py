@@ -34,6 +34,7 @@ LOGIN_USERS = {"user_id": "9449304130"}
 REPOS = {
     "EPS-FHIR": "https://github.com/NHSDigital/electronic-prescription-service-api",
     "PFP-APIGEE": "https://github.com/NHSDigital/prescriptions-for-patients",
+    "PSU": "https://github.com/NHSDigital/eps-prescription-status-update-api",
 }
 
 CERTIFICATE = os.getenv("CERTIFICATE")
@@ -41,9 +42,12 @@ PRIVATE_KEY = os.getenv("PRIVATE_KEY")
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 PULL_REQUEST_ID = os.getenv("PULL_REQUEST_ID")
+JWT_PRIVATE_KEY = os.getenv("JWT_PRIVATE_KEY")
+JWT_KID = os.getenv("JWT_KID")
 
 EPS_FHIR_SUFFIX = "electronic-prescriptions"
 PFP_APIGEE_SUFFIX = "prescriptions-for-patients"
+PSU_SUFFIX = "prescription-status-update"
 
 
 def count_of_scenarios_to_run(context):
@@ -68,7 +72,7 @@ def before_all(context):
         context.pfp_apigee_base_url = os.path.join(
             select_base_url(env), PFP_APIGEE_SUFFIX
         )
-        # This will need rework when the pack includes additional products to test
+        context.psu_base_url = os.path.join(select_base_url(env), PSU_SUFFIX)
         if PULL_REQUEST_ID:
             if product == "EPS-FHIR":
                 context.eps_fhir_base_url = os.path.join(
@@ -78,10 +82,15 @@ def before_all(context):
                 context.pfp_apigee_base_url = os.path.join(
                     INTERNAL_DEV_BASE_URL, f"{PFP_APIGEE_SUFFIX}-{PULL_REQUEST_ID}"
                 )
+            if product == "PSU":
+                context.psu_base_url = os.path.join(
+                    INTERNAL_DEV_BASE_URL, f"{PSU_SUFFIX}-{PULL_REQUEST_ID}"
+                )
     else:
         raise RuntimeError("no tests to run. Check your tags and try again")
     print("EPS: ", context.eps_fhir_base_url)
     print("PFP: ", context.pfp_apigee_base_url)
+    print("PSU: ", context.psu_base_url)
 
 
 def after_all(context):
