@@ -11,6 +11,7 @@ load_dotenv(override=True)
 
 INTERNAL_QA_BASE_URL = "https://internal-qa.api.service.nhs.uk/"
 INTERNAL_DEV_BASE_URL = "https://internal-dev.api.service.nhs.uk/"
+PFP_AWS_PR_URL = "https://pfp-{{aws_pull_request_id}}.dev.eps.national.nhs.uk/"
 INT_BASE_URL = "https://int.api.service.nhs.uk/"
 SANDBOX_DEV_BASE_URL = "https://internal-dev-sandbox.api.service.nhs.uk/"
 SANDBOX_INT_BASE_URL = "https://sandbox.api.service.nhs.uk/"
@@ -34,6 +35,7 @@ LOGIN_USERS = {"user_id": "9449304130"}
 REPOS = {
     "EPS-FHIR": "https://github.com/NHSDigital/electronic-prescription-service-api",
     "PFP-APIGEE": "https://github.com/NHSDigital/prescriptions-for-patients",
+    "PFP-AWS": "https://github.com/NHSDigital/prescriptionsforpatients",
     "PSU": "https://github.com/NHSDigital/eps-prescription-status-update-api",
 }
 
@@ -69,9 +71,7 @@ def before_all(context):
         env = context.config.userdata["env"].upper()
         product = context.config.userdata["product"].upper()
         context.eps_fhir_base_url = os.path.join(select_base_url(env), EPS_FHIR_SUFFIX)
-        context.pfp_apigee_base_url = os.path.join(
-            select_base_url(env), PFP_APIGEE_SUFFIX
-        )
+        context.pfp_base_url = os.path.join(select_base_url(env), PFP_APIGEE_SUFFIX)
         context.psu_base_url = os.path.join(select_base_url(env), PSU_SUFFIX)
         if PULL_REQUEST_ID:
             if product == "EPS-FHIR":
@@ -79,8 +79,12 @@ def before_all(context):
                     INTERNAL_DEV_BASE_URL, f"{EPS_FHIR_SUFFIX}-{PULL_REQUEST_ID}"
                 )
             if product == "PFP-APIGEE":
-                context.pfp_apigee_base_url = os.path.join(
+                context.pfp_base_url = os.path.join(
                     INTERNAL_DEV_BASE_URL, f"{PFP_APIGEE_SUFFIX}-{PULL_REQUEST_ID}"
+                )
+            if product == "PFP-AWS":
+                context.pfp_base_url = PFP_AWS_PR_URL.replace(
+                    "{{aws_pull_request_id}}", PULL_REQUEST_ID
                 )
             if product == "PSU":
                 context.psu_base_url = os.path.join(
@@ -89,7 +93,7 @@ def before_all(context):
     else:
         raise RuntimeError("no tests to run. Check your tags and try again")
     print("EPS: ", context.eps_fhir_base_url)
-    print("PFP: ", context.pfp_apigee_base_url)
+    print("PFP: ", context.pfp_base_url)
     print("PSU: ", context.psu_base_url)
 
 

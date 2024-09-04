@@ -18,6 +18,7 @@ on:
         options:
           - EPS-FHIR
           - PFP-APIGEE
+          - PFP-AWS
           - PSU
         required: false
         default: EPS-FHIR
