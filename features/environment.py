@@ -50,7 +50,7 @@ JWT_PRIVATE_KEY = os.getenv("JWT_PRIVATE_KEY")
 JWT_KID = os.getenv("JWT_KID")
 
 EPS_FHIR_SUFFIX = "electronic-prescriptions"
-PFP_APIGEE_SUFFIX = "prescriptions-for-patients"
+PFP_SUFFIX = "prescriptions-for-patients"
 PSU_SUFFIX = "prescription-status-update"
 
 
@@ -73,7 +73,7 @@ def before_all(context):
         env = context.config.userdata["env"].upper()
         product = context.config.userdata["product"].upper()
         context.eps_fhir_base_url = os.path.join(select_base_url(env), EPS_FHIR_SUFFIX)
-        context.pfp_base_url = os.path.join(select_base_url(env), PFP_APIGEE_SUFFIX)
+        context.pfp_base_url = os.path.join(select_base_url(env), PFP_SUFFIX)
         context.psu_base_url = os.path.join(select_base_url(env), PSU_SUFFIX)
         if PULL_REQUEST_ID:
             get_url_with_pr(context, env, product)
@@ -92,11 +92,11 @@ def get_url_with_pr(context, env, product):
         )
     if product == "PFP-APIGEE":
         context.pfp_base_url = os.path.join(
-            INTERNAL_DEV_BASE_URL, f"{PFP_APIGEE_SUFFIX}-{PULL_REQUEST_ID}"
+            INTERNAL_DEV_BASE_URL, f"{PFP_SUFFIX}-{PULL_REQUEST_ID}"
         )
     if product == "PFP-AWS":
         context.pfp_base_url = os.path.join(
-            INTERNAL_DEV_BASE_URL, f"{PFP_APIGEE_SUFFIX}-{PULL_REQUEST_ID}"
+            INTERNAL_DEV_BASE_URL, f"{PFP_SUFFIX}-{PULL_REQUEST_ID}"
         )
         if env == "INTERNAL-DEV":
             context.pfp_base_url = PFP_AWS_PR_URL.replace(
