@@ -8,7 +8,7 @@ from methods.shared.common import assert_that
 @when('I make a request to the "{product}" ping endpoint')
 def i_make_a_request_to_the_ping_endpoint(context, product):
     base_url = None
-    if product == "pfp_apigee" or product == "pfp_aws":
+    if product == "pfp":
         base_url = context.pfp_base_url
     if product == "eps_fhir":
         base_url = context.eps_fhir_base_url
