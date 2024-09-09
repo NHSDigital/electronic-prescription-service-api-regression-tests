@@ -11,7 +11,9 @@ load_dotenv(override=True)
 INTERNAL_QA_BASE_URL = "https://internal-qa.api.service.nhs.uk/"
 INTERNAL_DEV_BASE_URL = "https://internal-dev.api.service.nhs.uk/"
 PFP_AWS_PR_URL = "https://pfp-{{aws_pull_request_id}}.dev.eps.national.nhs.uk/"
-PFP_AWS_SANDBOX_PR_URL = "https://pfp-{{aws_pull_request_id}}-sandbox.dev.eps.national.nhs.uk/"
+PFP_AWS_SANDBOX_PR_URL = (
+    "https://pfp-{{aws_pull_request_id}}-sandbox.dev.eps.national.nhs.uk/"
+)
 INT_BASE_URL = "https://int.api.service.nhs.uk/"
 SANDBOX_DEV_BASE_URL = "https://internal-dev-sandbox.api.service.nhs.uk/"
 SANDBOX_INT_BASE_URL = "https://sandbox.api.service.nhs.uk/"
@@ -103,7 +105,6 @@ def get_url_with_pr(context, env, product):
             context.pfp_base_url = PFP_AWS_SANDBOX_PR_URL.replace(
                 "{{aws_pull_request_id}}", PULL_REQUEST_ID
             )
-
 
     if product == "PSU":
         context.psu_base_url = os.path.join(
