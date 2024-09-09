@@ -85,6 +85,7 @@ def before_all(context):
 
 
 def get_url_with_pr(context, env, product):
+    assert PULL_REQUEST_ID is not None
     if product == "EPS-FHIR":
         context.eps_fhir_base_url = os.path.join(
             INTERNAL_DEV_BASE_URL, f"{EPS_FHIR_SUFFIX}-{PULL_REQUEST_ID}"
