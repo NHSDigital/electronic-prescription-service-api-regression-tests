@@ -8,10 +8,12 @@ from dotenv import load_dotenv
 
 load_dotenv(override=True)
 
-
 INTERNAL_QA_BASE_URL = "https://internal-qa.api.service.nhs.uk/"
 INTERNAL_DEV_BASE_URL = "https://internal-dev.api.service.nhs.uk/"
 PFP_AWS_PR_URL = "https://pfp-{{aws_pull_request_id}}.dev.eps.national.nhs.uk/"
+PFP_AWS_SANDBOX_PR_URL = (
+    "https://pfp-{{aws_pull_request_id}}-sandbox.dev.eps.national.nhs.uk/"
+)
 INT_BASE_URL = "https://int.api.service.nhs.uk/"
 SANDBOX_DEV_BASE_URL = "https://internal-dev-sandbox.api.service.nhs.uk/"
 SANDBOX_INT_BASE_URL = "https://sandbox.api.service.nhs.uk/"
@@ -48,7 +50,7 @@ JWT_PRIVATE_KEY = os.getenv("JWT_PRIVATE_KEY")
 JWT_KID = os.getenv("JWT_KID")
 
 EPS_FHIR_SUFFIX = "electronic-prescriptions"
-PFP_APIGEE_SUFFIX = "prescriptions-for-patients"
+PFP_SUFFIX = "prescriptions-for-patients"
 PSU_SUFFIX = "prescription-status-update"
 
 
@@ -71,30 +73,44 @@ def before_all(context):
         env = context.config.userdata["env"].upper()
         product = context.config.userdata["product"].upper()
         context.eps_fhir_base_url = os.path.join(select_base_url(env), EPS_FHIR_SUFFIX)
-        context.pfp_base_url = os.path.join(select_base_url(env), PFP_APIGEE_SUFFIX)
+        context.pfp_base_url = os.path.join(select_base_url(env), PFP_SUFFIX)
         context.psu_base_url = os.path.join(select_base_url(env), PSU_SUFFIX)
         if PULL_REQUEST_ID:
-            if product == "EPS-FHIR":
-                context.eps_fhir_base_url = os.path.join(
-                    INTERNAL_DEV_BASE_URL, f"{EPS_FHIR_SUFFIX}-{PULL_REQUEST_ID}"
-                )
-            if product == "PFP-APIGEE":
-                context.pfp_base_url = os.path.join(
-                    INTERNAL_DEV_BASE_URL, f"{PFP_APIGEE_SUFFIX}-{PULL_REQUEST_ID}"
-                )
-            if product == "PFP-AWS":
-                context.pfp_base_url = PFP_AWS_PR_URL.replace(
-                    "{{aws_pull_request_id}}", PULL_REQUEST_ID
-                )
-            if product == "PSU":
-                context.psu_base_url = os.path.join(
-                    INTERNAL_DEV_BASE_URL, f"{PSU_SUFFIX}-{PULL_REQUEST_ID}"
-                )
+            get_url_with_pr(context, env, product)
     else:
         raise RuntimeError("no tests to run. Check your tags and try again")
     print("EPS: ", context.eps_fhir_base_url)
     print("PFP: ", context.pfp_base_url)
     print("PSU: ", context.psu_base_url)
+
+
+def get_url_with_pr(context, env, product):
+    assert PULL_REQUEST_ID is not None
+    if product == "EPS-FHIR":
+        context.eps_fhir_base_url = os.path.join(
+            INTERNAL_DEV_BASE_URL, f"{EPS_FHIR_SUFFIX}-{PULL_REQUEST_ID}"
+        )
+    if product == "PFP-APIGEE":
+        context.pfp_base_url = os.path.join(
+            INTERNAL_DEV_BASE_URL, f"{PFP_SUFFIX}-{PULL_REQUEST_ID}"
+        )
+    if product == "PFP-AWS":
+        context.pfp_base_url = os.path.join(
+            INTERNAL_DEV_BASE_URL, f"{PFP_SUFFIX}-{PULL_REQUEST_ID}"
+        )
+        if env == "INTERNAL-DEV":
+            context.pfp_base_url = PFP_AWS_PR_URL.replace(
+                "{{aws_pull_request_id}}", PULL_REQUEST_ID
+            )
+        if env == "INTERNAL-DEV-SANDBOX":
+            context.pfp_base_url = PFP_AWS_SANDBOX_PR_URL.replace(
+                "{{aws_pull_request_id}}", PULL_REQUEST_ID
+            )
+
+    if product == "PSU":
+        context.psu_base_url = os.path.join(
+            INTERNAL_DEV_BASE_URL, f"{PSU_SUFFIX}-{PULL_REQUEST_ID}"
+        )
 
 
 def after_all(context):
