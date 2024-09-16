@@ -76,7 +76,9 @@ def before_all(context):
         context.pfp_base_url = os.path.join(select_base_url(env), PFP_SUFFIX)
         context.psu_base_url = os.path.join(select_base_url(env), PSU_SUFFIX)
         if PULL_REQUEST_ID:
-            get_url_with_pr(context, env, product)
+            pull_request_id = PULL_REQUEST_ID.lower()
+            if "pr-" in pull_request_id:
+                get_url_with_pr(context, env, product)
     else:
         raise RuntimeError("no tests to run. Check your tags and try again")
     print("EPS: ", context.eps_fhir_base_url)
