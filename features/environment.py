@@ -122,17 +122,19 @@ def after_all(context):
         product = context.config.userdata["product"].upper()
         properties_dict = {"PRODUCT": product, "ENV": env}
         if PULL_REQUEST_ID:
-            env = os.path.join("PULL-REQUEST", PULL_REQUEST_ID)
-            pull_request_link = os.path.join(
-                select_repository_base_url(product),
-                "pull",
-                PULL_REQUEST_ID.upper().replace("PR-", ""),
-            )
-            properties_dict = {
-                "PRODUCT": product,
-                "ENV": env,
-                "PULL-REQUEST": pull_request_link,
-            }
+            pull_request_id = PULL_REQUEST_ID.lower()
+            if "pr-" in pull_request_id:
+                env = os.path.join("PULL-REQUEST", PULL_REQUEST_ID)
+                pull_request_link = os.path.join(
+                    select_repository_base_url(product),
+                    "pull",
+                    PULL_REQUEST_ID.upper().replace("PR-", ""),
+                )
+                properties_dict = {
+                    "PRODUCT": product,
+                    "ENV": env,
+                    "PULL-REQUEST": pull_request_link,
+                }
 
         file_path = "./allure-results/environment.properties"
         write_properties_file(file_path, properties_dict)
