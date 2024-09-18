@@ -37,7 +37,9 @@ def i_send_an_update(context, status, terminal):
     send_status_update(context)
 
 
-@then("The prescription item has a status of Collected with a terminal status of completed")
+@then(
+    "The prescription item has a status of Collected with a terminal status of completed"
+)
 def prescription_has_status_with_terminal_status(context):
     pfp_api_steps.i_am_authenticated(context)
     pfp_api_steps.i_request_my_prescriptions(context)
@@ -50,13 +52,8 @@ def prescription_has_status_with_terminal_status(context):
     expected_item_id = context.prescription_item_id
     expected_item_status = context.item_status
     expected_terminal_status = context.terminal_status
-    assert_that(bundle["identifier"][0]["value"].lower()).is_equal_to(
-        expected_item_id
-    )
-    assert_that(bundle["status"]).is_equal_to(
-        expected_terminal_status
-    )
-    assert_that(bundle["extension"][0]["extension"][0]["valueCoding"]["code"]).is_equal_to(
-        expected_item_status
-    )
-
+    assert_that(bundle["identifier"][0]["value"].lower()).is_equal_to(expected_item_id)
+    assert_that(bundle["status"]).is_equal_to(expected_terminal_status)
+    assert_that(
+        bundle["extension"][0]["extension"][0]["valueCoding"]["code"]
+    ).is_equal_to(expected_item_status)
