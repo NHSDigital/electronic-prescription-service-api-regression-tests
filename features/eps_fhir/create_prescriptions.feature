@@ -6,7 +6,7 @@ Feature: I can create prescriptions
     Given I am an authorised prescriber
     And I successfully prepare and sign a <Type> prescription
     When I am an authorised dispenser
-    And I release a prescription
+    And I release the prescription
     Then the response indicates a success
     And the response body indicates a successful release action
     Examples:

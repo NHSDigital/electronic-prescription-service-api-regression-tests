@@ -34,7 +34,7 @@ def a_prescription_has_been_created_and_released(context):
     i_am_an_authorised_user(context, "prescriber")
     i_prepare_and_sign_a_prescription(context)
     i_am_an_authorised_user(context, "dispenser")
-    i_release_a_prescription(context)
+    i_release_the_prescription(context)
     indicate_successful_response(context)
 
 
@@ -68,8 +68,8 @@ def i_sign_a_new_prescription(context):
     create_signed_prescription(context)
 
 
-@when("I release a prescription")
-def i_release_a_prescription(context):
+@when("I release the prescription")
+def i_release_the_prescription(context):
     release_signed_prescription(context)
 
 
