@@ -2,16 +2,20 @@ import uuid
 from requests import get as api_get_request
 from requests import post as api_post_request
 from methods.shared import common
-
+import logging
 
 def get(context, **kwargs):
+    logging.debug(f"request {kwargs.get("data")}")
     context.response = api_get_request(**kwargs)
+    logging.debug(context.response)
     common.attach_api_information(context)
     return context.response
 
 
 def post(context, **kwargs):
+    logging.debug(f"request {kwargs.get("data")}")
     context.response = api_post_request(**kwargs)
+    logging.debug(f"Response:{context.response.content}")
     common.attach_api_information(context)
     return context.response
 
