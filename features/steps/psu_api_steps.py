@@ -23,13 +23,10 @@ def i_am_authorised_to_send_prescription_updates(context):
 
 @when("I send an {status} update with a terminal status of {terminal}")
 def i_send_an_update(context, status, terminal):
-    if context.receiver_ods_code is None:
+    if "e2e" not in context.tags:
         context.receiver_ods_code = "FA565"
-    if context.prescription_id is None:
         context.prescription_id = generate_short_form_id(context.receiver_ods_code)
-    if context.prescription_item_id is None:
         context.prescription_item_id = uuid.uuid4()
-    if context.nhs_number is None:
         context.nhs_number = generate_single()
     context.terminal_status = terminal
     context.item_status = status
