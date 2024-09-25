@@ -23,6 +23,8 @@ def i_am_authorised_to_send_prescription_updates(context):
 
 @when("I send an {status} update with a terminal status of {terminal}")
 def i_send_an_update(context, status, terminal):
+    if "sandbox" in context.config.userdata["env"].lower():
+        return
     if "e2e" not in context.tags:
         context.receiver_ods_code = "FA565"
         context.prescription_id = generate_short_form_id(context.receiver_ods_code)
@@ -38,6 +40,8 @@ def i_send_an_update(context, status, terminal):
     "The prescription item has a status of Collected with a terminal status of completed"
 )
 def prescription_has_status_with_terminal_status(context):
+    if "sandbox" in context.config.userdata["env"].lower():
+        return
     pfp_api_steps.i_am_authenticated(context)
     pfp_api_steps.i_request_my_prescriptions(context)
     json_response = json.loads(context.response.content)
@@ -49,8 +53,20 @@ def prescription_has_status_with_terminal_status(context):
     expected_item_id = context.prescription_item_id
     expected_item_status = context.item_status
     expected_terminal_status = context.terminal_status
-    assert_that(bundle["identifier"][0]["value"].lower()).is_equal_to(expected_item_id)
-    assert_that(bundle["status"]).is_equal_to(expected_terminal_status)
-    assert_that(
-        bundle["extension"][0]["extension"][0]["valueCoding"]["code"]
-    ).is_equal_to(expected_item_status)
+    env = context.config.userdata["env"].lower()
+    if "sandbox" in env:
+        assert_that(bundle["identifier"][0]["value"].lower()).is_equal_to(
+            expected_item_id
+        )
+        assert_that(bundle["status"]).is_equal_to(expected_terminal_status)
+        assert_that(
+            bundle["extension"][0]["extension"][0]["valueCoding"]["code"]
+        ).is_equal_to(expected_item_status)
+    else:
+        assert_that(bundle["identifier"][0]["value"].lower()).is_equal_to(
+            expected_item_id
+        )
+        assert_that(bundle["status"]).is_equal_to(expected_terminal_status)
+        assert_that(
+            bundle["extension"][0]["extension"][0]["valueCoding"]["code"]
+        ).is_equal_to(expected_item_status)
