@@ -31,6 +31,8 @@ def i_prepare_and_sign_a_type_prescription(context, prescription_type):
 
 @given("a prescription has been created and released")
 def a_prescription_has_been_created_and_released(context):
+    if "sandbox" in context.config.userdata["env"].lower():
+        return
     i_am_an_authorised_user(context, "prescriber")
     i_prepare_and_sign_a_prescription(context)
     i_am_an_authorised_user(context, "dispenser")

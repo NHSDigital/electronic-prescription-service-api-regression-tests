@@ -27,8 +27,6 @@ def indicate_successful_response(context):
 
 @then("the response indicates a record was created")
 def indicate_record_created(context):
-    if "sandbox" in context.config.userdata["env"].lower():
-        return
     common.the_expected_response_code_is_returned(context, 201)
 
 
