@@ -17,6 +17,8 @@ def i_am_authenticated(context):
 
 @when("I request my prescriptions")
 def i_request_my_prescriptions(context):
+    if "sandbox" in context.config.userdata["env"].lower() and "PFP" in context.config.userdata["product"].upper():
+        context.nhs_number = "9449304130"
     get_prescriptions(context)
 
 
