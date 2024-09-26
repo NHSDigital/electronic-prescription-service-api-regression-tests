@@ -19,6 +19,8 @@ from utils.random_nhs_number_generator import generate_single
 
 @given("I successfully prepare and sign a prescription")
 def i_prepare_and_sign_a_prescription(context):
+    if "sandbox" in context.config.userdata["env"].lower() and context.config.userdata["product"].upper() != "EPS-FHIR":
+        return
     i_prepare_a_new_prescription(context, "nominated")
     i_sign_a_new_prescription(context=context)
 
