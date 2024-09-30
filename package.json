@@ -3,7 +3,7 @@
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/release-notes-generator": "^14.0.1",
     "conventional-changelog-eslint": "^6.0.0",
-    "semantic-release": "^24.1.1"
+    "semantic-release": "^24.1.2"
   },
   "dependencies": {
     "npm": "^10.8.3"
