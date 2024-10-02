@@ -60,11 +60,9 @@ def dispense_prescription(context):
     additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
     headers = get_headers(context, additional_headers)
 
-    print(context.config.userdata["env"])
-    print(context.config.userdata["product"])
     if (
         "sandbox" in context.config.userdata["env"].lower()
-        and context.config.userdata["product"].upper() != "EPS-FHIR"
+        and context.config.userdata["product"].upper() == "EPS-FHIR"
     ):
         return
     dispense_notification = DispenseNotification(context, False).body
