@@ -44,10 +44,7 @@ def a_prescription_has_been_created_and_released(context):
 
 @given("a new prescription has been dispensed")
 def a_new_prescription_has_been_dispensed(context):
-    if (
-        "sandbox" in context.config.userdata["env"].lower()
-        and context.config.userdata["product"].upper() == "EPS-FHIR"
-    ):
+    if "sandbox" in context.config.userdata["env"].lower():
         return
     a_prescription_has_been_created_and_released(context)
     i_dispense_the_prescription(context)
@@ -84,10 +81,7 @@ def i_release_the_prescription(context):
 
 @when("I return the prescription")
 def i_return_the_prescription(context):
-    if (
-        "sandbox" in context.config.userdata["env"].lower()
-        and context.config.userdata["product"].upper() == "EPS-FHIR"
-    ):
+    if "sandbox" in context.config.userdata["env"].lower():
         return
     return_prescription(context)
 
@@ -99,10 +93,7 @@ def i_cancel_all_line_items(context):
 
 @when("I dispense the prescription")
 def i_dispense_the_prescription(context):
-    if (
-        "sandbox" in context.config.userdata["env"].lower()
-        and context.config.userdata["product"].upper() == "EPS-FHIR"
-    ):
+    if "sandbox" in context.config.userdata["env"].lower():
         return
     dispense_prescription(context)
 
