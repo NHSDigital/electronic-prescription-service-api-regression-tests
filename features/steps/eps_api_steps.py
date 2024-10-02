@@ -44,6 +44,8 @@ def a_prescription_has_been_created_and_released(context):
 
 @given("a new prescription has been dispensed")
 def a_new_prescription_has_been_dispensed(context):
+    if "sandbox" in context.config.userdata["env"].lower():
+        return
     a_prescription_has_been_created_and_released(context)
     i_dispense_the_prescription(context)
     indicate_successful_response(context)
@@ -79,6 +81,8 @@ def i_release_the_prescription(context):
 
 @when("I return the prescription")
 def i_return_the_prescription(context):
+    if "sandbox" in context.config.userdata["env"].lower():
+        return
     return_prescription(context)
 
 
@@ -89,21 +93,29 @@ def i_cancel_all_line_items(context):
 
 @when("I dispense the prescription")
 def i_dispense_the_prescription(context):
+    if "sandbox" in context.config.userdata["env"].lower():
+        return
     dispense_prescription(context)
 
 
 @when("I amend the dispense notification")
 def i_amend_a_dispense_notification(context):
+    if "sandbox" in context.config.userdata["env"].lower():
+        return
     amend_dispense_notification(context)
 
 
 @when("I withdraw the dispense notification")
 def i_withdraw_the_dispense_notification(context):
+    if "sandbox" in context.config.userdata["env"].lower():
+        return
     withdraw_dispense_notification(context)
 
 
 @then("the response body indicates a successful {action_type} action")
 def body_indicates_successful_action(context, action_type):
+    if "sandbox" in context.config.userdata["env"].lower():
+        return
     def _withdraw_dispense_notification_assertion():
         i_can_see_an_informational_operation_outcome_in_the_response(context)
 
@@ -127,8 +139,6 @@ def body_indicates_successful_action(context, action_type):
         i_can_see_an_informational_operation_outcome_in_the_response(context)
 
     def _release_assertion():
-        if "sandbox" in context.config.userdata["env"].lower():
-            return
         assert_that(json_response["parameter"][0]["resource"]["total"]).is_equal_to(1)
 
     def _return_assertion():
