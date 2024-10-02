@@ -107,10 +107,7 @@ def i_amend_a_dispense_notification(context):
 
 @when("I withdraw the dispense notification")
 def i_withdraw_the_dispense_notification(context):
-    if (
-        "sandbox" in context.config.userdata["env"].lower()
-        and context.config.userdata["product"].upper() == "EPS-FHIR"
-    ):
+    if "sandbox" in context.config.userdata["env"].lower():
         return
     withdraw_dispense_notification(context)
 
