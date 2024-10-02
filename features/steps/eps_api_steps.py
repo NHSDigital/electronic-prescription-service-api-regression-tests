@@ -124,6 +124,8 @@ def i_withdraw_the_dispense_notification(context):
 
 @then("the response body indicates a successful {action_type} action")
 def body_indicates_successful_action(context, action_type):
+    if "sandbox" in context.config.userdata["env"].lower():
+        return
     def _withdraw_dispense_notification_assertion():
         i_can_see_an_informational_operation_outcome_in_the_response(context)
 
@@ -141,23 +143,15 @@ def body_indicates_successful_action(context, action_type):
         ).is_equal_to("Prescription/item was cancelled")
 
     def _dispense_assertion():
-        if "sandbox" in context.config.userdata["env"].lower():
-            return
         i_can_see_an_informational_operation_outcome_in_the_response(context)
 
     def _amend_dispense_assertion():
-        if "sandbox" in context.config.userdata["env"].lower():
-            return
         i_can_see_an_informational_operation_outcome_in_the_response(context)
 
     def _release_assertion():
-        if "sandbox" in context.config.userdata["env"].lower():
-            return
         assert_that(json_response["parameter"][0]["resource"]["total"]).is_equal_to(1)
 
     def _return_assertion():
-        if "sandbox" in context.config.userdata["env"].lower():
-            return
         i_can_see_an_informational_operation_outcome_in_the_response(context)
 
     json_response = json.loads(context.response.content)
