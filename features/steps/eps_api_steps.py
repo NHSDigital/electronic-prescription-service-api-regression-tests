@@ -109,6 +109,8 @@ def i_dispense_the_prescription(context):
 
 @when("I amend the dispense notification")
 def i_amend_a_dispense_notification(context):
+    if "sandbox" in context.config.userdata["env"].lower():
+        return
     amend_dispense_notification(context)
 
 
