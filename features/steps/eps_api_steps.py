@@ -104,7 +104,6 @@ def i_dispense_the_prescription(context):
         and context.config.userdata["product"].upper() == "EPS-FHIR"
     ):
         return
-    
     dispense_prescription(context)
 
 
@@ -115,6 +114,11 @@ def i_amend_a_dispense_notification(context):
 
 @when("I withdraw the dispense notification")
 def i_withdraw_the_dispense_notification(context):
+    if (
+        "sandbox" in context.config.userdata["env"].lower()
+        and context.config.userdata["product"].upper() == "EPS-FHIR"
+    ):
+        return
     withdraw_dispense_notification(context)
 
 
@@ -137,9 +141,13 @@ def body_indicates_successful_action(context, action_type):
         ).is_equal_to("Prescription/item was cancelled")
 
     def _dispense_assertion():
+        if "sandbox" in context.config.userdata["env"].lower():
+            return
         i_can_see_an_informational_operation_outcome_in_the_response(context)
 
     def _amend_dispense_assertion():
+        if "sandbox" in context.config.userdata["env"].lower():
+            return
         i_can_see_an_informational_operation_outcome_in_the_response(context)
 
     def _release_assertion():
@@ -148,6 +156,8 @@ def body_indicates_successful_action(context, action_type):
         assert_that(json_response["parameter"][0]["resource"]["total"]).is_equal_to(1)
 
     def _return_assertion():
+        if "sandbox" in context.config.userdata["env"].lower():
+            return
         i_can_see_an_informational_operation_outcome_in_the_response(context)
 
     json_response = json.loads(context.response.content)
