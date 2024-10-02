@@ -74,6 +74,11 @@ def amend_dispense_notification(context):
     additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
     headers = get_headers(context, additional_headers)
 
+    if (
+        "sandbox" in context.config.userdata["env"].lower()
+        and context.config.userdata["product"].upper() == "EPS-FHIR"
+    ):
+        return
     amended_dispense_notification = DispenseNotification(context, True).body
     post(data=amended_dispense_notification, url=url, context=context, headers=headers)
 
@@ -100,7 +105,7 @@ def return_prescription(context):
 
     if (
         "sandbox" in context.config.userdata["env"].lower()
-        and context.config.userdata["product"].upper() != "EPS-FHIR"
+        and context.config.userdata["product"].upper() == "EPS-FHIR"
     ):
         return
     context.return_body = Return(context).body
