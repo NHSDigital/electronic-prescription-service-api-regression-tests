@@ -24,12 +24,26 @@ if __name__ == "__main__":
 
     # Convert to behave commandline args
     product_tag = argument.product.lower().replace("-", "_")
-    if argument.tags:
-        tags = f" --tags {product_tag} --tags {argument.tags} "
+    if product_tag in ["eps_fhir_prescribing", "eps_fhir_dispensing"]:
+        base_product_tag = "eps_fhir"
+        endpoint_tag = product_tag.replace("eps_fhir_", "")
+        tags = f" --tags {base_product_tag} --tags {endpoint_tag}"
     else:
         tags = f" --tags {product_tag}"
+
+    if argument.tags:
+        tags += f" --tags {argument.tags}"
+
     PRODUCT = f" -D product={argument.product}"
     ENV = f" -D env={argument.env}"
+    # Convert to behave commandline args
+    # product_tag = argument.product.lower().replace("-", "_")
+    # if argument.tags:
+    #     tags = f" --tags {product_tag} --tags {argument.tags} "
+    # else:
+    #     tags = f" --tags {product_tag}"
+    # PRODUCT = f" -D product={argument.product}"
+    # ENV = f" -D env={argument.env}"
 
     # complete command
     command = (
