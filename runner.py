@@ -36,14 +36,6 @@ if __name__ == "__main__":
 
     PRODUCT = f" -D product={argument.product}"
     ENV = f" -D env={argument.env}"
-    # Convert to behave commandline args
-    # product_tag = argument.product.lower().replace("-", "_")
-    # if argument.tags:
-    #     tags = f" --tags {product_tag} --tags {argument.tags} "
-    # else:
-    #     tags = f" --tags {product_tag}"
-    # PRODUCT = f" -D product={argument.product}"
-    # ENV = f" -D env={argument.env}"
 
     # complete command
     command = (

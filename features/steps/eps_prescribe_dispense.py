@@ -1,10 +1,9 @@
 import json
 
-# import os
 # pylint: disable=no-name-in-module
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 from features.steps.common_steps import indicate_successful_response
-from methods.api.eps_split_endpoints_api_methods import (
+from methods.api.eps_prescribe_dispense_api_methods import (
     create_signed_prescription_prescribing_endpoint,
     release_signed_prescription_prescribing_endpoint,
     dispense_prescription_dispensing_endpoint,
@@ -16,13 +15,6 @@ from methods.api.eps_split_endpoints_api_methods import (
 )
 from methods.shared.common import assert_that, get_auth
 from utils.random_nhs_number_generator import generate_single
-
-# @given("I am using the split endpoints")
-# def using_split_endpoints(context):
-#     context.prescribing_endpoint = os.getenv('PRESCRIBING_ENDPOINT')
-#     context.dispensing_endpoint = os.getenv('DISPENSING_ENDPOINT')
-#     assert context.prescribing_endpoint, "PRESCRIBING_ENDPOINT is not set"
-#     assert context.dispensing_endpoint, "DISPENSING_ENDPOINT is not set"
 
 
 @given("I successfully prepare and sign a prescription using the prescribing endpoint")
@@ -63,6 +55,7 @@ def a_new_prescription_has_been_dispensed_dispensing_endpoint(context):
 
 
 @given("I am an authorised prescriber")
+@when("I am an authorised dispenser")
 def i_am_an_authorised_prescriber(context, user):
     if "sandbox" in context.config.userdata["env"].lower():
         return
@@ -71,6 +64,7 @@ def i_am_an_authorised_prescriber(context, user):
     context.auth_token = get_auth(env, "EPS-FHIR-PRESCRIBING", user)
 
 
+@given("I am an authorised prescriber")
 @when("I am an authorised dispenser")
 def i_am_an_authorised_dispenser(context, user):
     context.auth = get_auth(context, "dispenser")
