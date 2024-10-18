@@ -1,6 +1,7 @@
 import json
 from typing import Any
 from uuid import uuid4
+import datetime
 
 from features.environment import CIS2_USERS
 from utils.prescription_id_generator import generate_short_form_id
@@ -107,6 +108,10 @@ class Prescription:
         return message_header
 
     def create_medication_request(self):
+        today = datetime.datetime.now()
+        yesterday = today - datetime.timedelta(days=1)
+        future_time = today + datetime.timedelta(days=90)
+
         medication_request = {
             "fullUrl": "urn:uuid:a54219b8-f741-4c47-b662-e4f8dfa49ab6",
             "resource": {
@@ -193,7 +198,10 @@ class Prescription:
                     }
                 ],
                 "dispenseRequest": {
-                    "validityPeriod": {"start": "2024-04-29", "end": "2024-07-28"},
+                    "validityPeriod": {
+                        "start": yesterday.strftime("%Y-%m-%d"),
+                        "end": future_time.strftime("%Y-%m-%d"),
+                    },
                     "expectedSupplyDuration": {
                         "value": 30,
                         "unit": "day",

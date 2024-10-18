@@ -17,6 +17,8 @@ on:
         type: choice
         options:
           - EPS-FHIR
+          - EPS-FHIR-PRESCRIBING
+          - EPS-FHIR-DISPENSING
           - PFP-APIGEE
           - PFP-AWS
           - PSU
@@ -128,13 +130,10 @@ jobs:
           owner: "NHSDigital"
           repositories: "electronic-prescription-service-api-regression-tests,eps-test-reports"
 
-      - name: Send Results
-        run: |
-          poetry run python scripts/send_test_results.py --token=${{ steps.generate-token.outputs.token }} --run_id ${{GITHUB.RUN_ID}}
-
       - name: Report failure on test failure
         if: steps.tests.outcome != 'success'
         run: |
+          poetry run python scripts/send_test_results.py --token=${{ steps.generate-token.outputs.token }} --run_id ${{GITHUB.RUN_ID}}
           echo The regression tests step failed, this likely means there are test failures.
-          echo The report will be generated shortly
+          echo A test report will be generated shortly and can be viewed at: https://nhsdigital.github.io/eps-test-reports
           exit 1

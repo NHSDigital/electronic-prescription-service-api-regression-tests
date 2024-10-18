@@ -11,9 +11,24 @@ from messages.eps_fhir.withdraw_dispense_notification import (
 from methods.api.common_api_methods import get_headers, post
 from methods.shared.common import the_expected_response_code_is_returned
 
+PRESCRIBING_BASE_URL = ""
+DISPENSING_BASE_URL = ""
+
+
+def calculate_eps_fhir_base_url(context):
+    product = context.config.userdata["product"].upper()
+    global PRESCRIBING_BASE_URL
+    global DISPENSING_BASE_URL
+    if product != "EPS-FHIR-DISPENSING" and product != "EPS-FHIR-PRESCRIBING":
+        PRESCRIBING_BASE_URL = context.eps_fhir_base_url
+        DISPENSING_BASE_URL = context.eps_fhir_base_url
+    else:
+        PRESCRIBING_BASE_URL = context.eps_fhir_prescribing_base_url
+        DISPENSING_BASE_URL = context.eps_fhir_dispensing_base_url
+
 
 def prepare_prescription(context):
-    url = f"{context.eps_fhir_base_url}/FHIR/R4/$prepare"
+    url = f"{PRESCRIBING_BASE_URL}/FHIR/R4/$prepare"
     additional_headers = {"Content-Type": "application/json"}
     headers = get_headers(context, additional_headers)
 
@@ -29,7 +44,7 @@ def prepare_prescription(context):
 
 
 def create_signed_prescription(context):
-    url = f"{context.eps_fhir_base_url}/FHIR/R4/$process-message#prescription-order"
+    url = f"{PRESCRIBING_BASE_URL}/FHIR/R4/$process-message#prescription-order"
     headers = get_headers(context)
 
     context.signed_body = SignedPrescription(context).body
@@ -38,7 +53,7 @@ def create_signed_prescription(context):
 
 
 def release_signed_prescription(context):
-    url = f"{context.eps_fhir_base_url}/FHIR/R4/Task/$release"
+    url = f"{PRESCRIBING_BASE_URL}/FHIR/R4/Task/$release"
     additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
     headers = get_headers(context, additional_headers)
 
@@ -47,7 +62,7 @@ def release_signed_prescription(context):
 
 
 def cancel_all_line_items(context):
-    url = f"{context.eps_fhir_base_url}/FHIR/R4/$process-message"
+    url = f"{PRESCRIBING_BASE_URL}/FHIR/R4/$process-message"
     additional_headers = {"NHSD-Session-URID": CIS2_USERS["prescriber"]["role_id"]}
     headers = get_headers(context, additional_headers)
 
@@ -56,7 +71,7 @@ def cancel_all_line_items(context):
 
 
 def dispense_prescription(context):
-    url = f"{context.eps_fhir_base_url}/FHIR/R4/$process-message#dispense-notification"
+    url = f"{DISPENSING_BASE_URL}/FHIR/R4/$process-message#dispense-notification"
     additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
     headers = get_headers(context, additional_headers)
 
@@ -65,7 +80,7 @@ def dispense_prescription(context):
 
 
 def amend_dispense_notification(context):
-    url = f"{context.eps_fhir_base_url}/FHIR/R4/$process-message#dispense-notification"
+    url = f"{DISPENSING_BASE_URL}/FHIR/R4/$process-message#dispense-notification"
     additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
     headers = get_headers(context, additional_headers)
 
@@ -74,7 +89,7 @@ def amend_dispense_notification(context):
 
 
 def withdraw_dispense_notification(context):
-    url = f"{context.eps_fhir_base_url}/FHIR/R4/Task"
+    url = f"{DISPENSING_BASE_URL}/FHIR/R4/Task"
     additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
     headers = get_headers(context, additional_headers)
 
@@ -89,7 +104,7 @@ def withdraw_dispense_notification(context):
 
 
 def return_prescription(context):
-    url = f"{context.eps_fhir_base_url}/FHIR/R4/Task"
+    url = f"{DISPENSING_BASE_URL}/FHIR/R4/Task"
     additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
     headers = get_headers(context, additional_headers)
 

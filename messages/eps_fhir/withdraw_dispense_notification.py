@@ -2,7 +2,7 @@ import json
 from typing import Any
 from uuid import uuid4
 
-from messages.eps_fhir.common import create_task
+from messages.eps_fhir.common import create_withdraw_task
 
 
 class WithdrawDispenseNotificationValues:
@@ -40,7 +40,7 @@ class WithdrawDispenseNotification:
             ]
         }
 
-        body = create_task(
+        body = create_withdraw_task(
             values.dispense_notification_id,
             values.practitioner_role_id,
             values.organization_id,
