@@ -1,5 +1,7 @@
 project_name = electronic-prescription-service-api-regression-tests
 
+.PHONY: test
+
 guard-%:
 	@ if [ "${${*}}" = "" ]; then \
 		echo "Environment variable $* not set"; \
