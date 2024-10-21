@@ -50,6 +50,8 @@ JWT_PRIVATE_KEY = os.getenv("JWT_PRIVATE_KEY")
 JWT_KID = os.getenv("JWT_KID")
 
 EPS_FHIR_SUFFIX = "electronic-prescriptions"
+EPS_FHIR_PRESCRIBING_SUFFIX = "electronic-prescribing"
+EPS_FHIR_DISPENSING_SUFFIX = "electronic-dispensing"
 PFP_SUFFIX = "prescriptions-for-patients"
 PSU_SUFFIX = "prescription-status-update"
 
@@ -73,6 +75,12 @@ def before_all(context):
         env = context.config.userdata["env"].upper()
         product = context.config.userdata["product"].upper()
         context.eps_fhir_base_url = os.path.join(select_base_url(env), EPS_FHIR_SUFFIX)
+        context.eps_fhir_prescribing_base_url = os.path.join(
+            select_base_url(env), EPS_FHIR_PRESCRIBING_SUFFIX
+        )
+        context.eps_fhir_dispensing_base_url = os.path.join(
+            select_base_url(env), EPS_FHIR_DISPENSING_SUFFIX
+        )
         context.pfp_base_url = os.path.join(select_base_url(env), PFP_SUFFIX)
         context.psu_base_url = os.path.join(select_base_url(env), PSU_SUFFIX)
         if PULL_REQUEST_ID:
@@ -82,6 +90,8 @@ def before_all(context):
     else:
         raise RuntimeError("no tests to run. Check your tags and try again")
     print("EPS: ", context.eps_fhir_base_url)
+    print("EPS-PRESCRIBING: ", context.eps_fhir_prescribing_base_url)
+    print("EPS-DISPENSING: ", context.eps_fhir_dispensing_base_url)
     print("PFP: ", context.pfp_base_url)
     print("PSU: ", context.psu_base_url)
 
@@ -91,6 +101,14 @@ def get_url_with_pr(context, env, product):
     if product == "EPS-FHIR":
         context.eps_fhir_base_url = os.path.join(
             INTERNAL_DEV_BASE_URL, f"{EPS_FHIR_SUFFIX}-{PULL_REQUEST_ID}"
+        )
+    if product == "EPS-FHIR-PRESCRIBING":
+        context.eps_fhir_prescribing_base_url = os.path.join(
+            INTERNAL_DEV_BASE_URL, f"{EPS_FHIR_PRESCRIBING_SUFFIX}-{PULL_REQUEST_ID}"
+        )
+    if product == "EPS-FHIR-DISPENSING":
+        context.eps_fhir_dispensing_base_url = os.path.join(
+            INTERNAL_DEV_BASE_URL, f"{EPS_FHIR_DISPENSING_SUFFIX}-{PULL_REQUEST_ID}"
         )
     if product == "PFP-APIGEE":
         context.pfp_base_url = os.path.join(
