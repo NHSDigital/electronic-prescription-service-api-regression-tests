@@ -66,7 +66,7 @@ class DispenseNotification:
                 },
                 "display": "Jackie Clark",
             },
-            "organization": {"reference": f"urn:uuid:{self.values.organization_id}"},
+            "organization": {"reference": f"{self.values.organization_id}"},
             "code": [
                 {
                     "coding": [
@@ -124,7 +124,7 @@ class DispenseNotification:
             },
             "subject": {"reference": f"urn:uuid:{uuid4()}"},
             "authoredOn": datetime.now(UTC).isoformat(),
-            "requester": {"reference": f"urn:uuid:{self.values.practitioner_role_id}"},
+            "requester": {"reference": f"{self.values.practitioner_role_id}"},
             "groupIdentifier": {
                 "extension": [
                     {
