@@ -35,7 +35,7 @@ def create_task(
                     },
                     "display": "Jackie Clark",
                 },
-                "organization": {"reference": f"#{organization_id}"},
+                "organization": {"reference": f"urn:uuid:{organization_id}"},
                 "code": [
                     {
                         "coding": [
