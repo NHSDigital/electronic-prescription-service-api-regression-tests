@@ -21,7 +21,7 @@ def create_task(
         "contained": [
             {
                 "resourceType": "PractitionerRole",
-                "id": f"{practitioner_role_id}",
+                "id": f"urn:uuid:{practitioner_role_id}",
                 "identifier": [
                     {
                         "system": "https://fhir.nhs.uk/Id/sds-role-profile-id",
@@ -35,7 +35,7 @@ def create_task(
                     },
                     "display": "Jackie Clark",
                 },
-                "organization": {"reference": f"#{organization_id}"},
+                "organization": {"reference": f"#urn:uuid:{organization_id}"},
                 "code": [
                     {
                         "coding": [
@@ -51,7 +51,7 @@ def create_task(
             },
             {
                 "resourceType": "Organization",
-                "id": f"{organization_id}",
+                "id": f"urn:uuid:{organization_id}",
                 "identifier": [
                     {
                         "system": "https://fhir.nhs.uk/Id/ods-organization-code",
@@ -106,7 +106,7 @@ def create_task(
             }
         },
         "authoredOn": datetime.now(UTC).isoformat(),
-        "requester": {"reference": f"urn:uuid:{practitioner_role_id}"},
+        "requester": {"reference": f"#urn:uuid:{practitioner_role_id}"},
         "reasonCode": {
             "coding": [
                 {
