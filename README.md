@@ -81,6 +81,9 @@ allure_behave.formatter:AllureFormatter -o allure-results -f pretty features --n
 Change the `env` variable accordingly to either `INT` or `INTERNAL-DEV`.
 If you wish to test a different product i.e. `PFP-APIGEE` then you must change `product=` and `--tags` respectively.
 
+### Method 5:
+Run the tests by pushing changes to github in a pull request and running the regression tests job
+
 ### Getting the token to check the endpoint calls on Postman
 On the root of the project is a file `get_token.py` <br>
 This interactive Python script will assist you in generating a CIS2 authentication token that you can use elsewhere to make API calls (e.g. in Postman)
@@ -99,3 +102,21 @@ Pre commit hooks run checks on your code to ensure quality before being allowed 
 
 This process will stop after the first program detects an error or if Black modified any files.
 You may need to run this multiple times to ensure everything is ok before committing.
+
+
+### Generating the allure report from a github test run
+To generate and view the results of a github test run, first authenticate to github by running this and following instructions
+```
+gh auth login
+```
+Then download the alluere results by noting the github run id in a browser and running this
+```
+rm -rf allure-report
+rm -rf allure-results
+gh run download <GITHUB RUN ID>
+```
+Then generate and view the report by running this and opening the link display
+```
+allure generate
+allure open
+```
