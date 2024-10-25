@@ -234,7 +234,7 @@ def create_withdraw_task(
             }
         },
         "authoredOn": datetime.now(UTC).isoformat(),
-        "requester": {"reference": f"#urn:uuid:{practitioner_role_id}"},
+        "requester": {"reference": f"#{practitioner_role_id}"},
         "reasonCode": {
             "coding": [
                 {
