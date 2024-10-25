@@ -3,3 +3,4 @@ poetry 1.8.3
 shellcheck 0.10.0
 nodejs 22.9.0
 actionlint 1.7.1
+allure 2.31.0
