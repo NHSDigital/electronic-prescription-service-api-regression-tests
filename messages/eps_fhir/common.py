@@ -35,7 +35,7 @@ def create_task(
                     },
                     "display": "Jackie Clark",
                 },
-                "organization": {"reference": f"#urn:uuid:{organization_id}"},
+                "organization": {"reference": f"#{organization_id}"},
                 "code": [
                     {
                         "coding": [
@@ -51,7 +51,7 @@ def create_task(
             },
             {
                 "resourceType": "Organization",
-                "id": f"urn:uuid:{organization_id}",
+                "id": f"{organization_id}",
                 "identifier": [
                     {
                         "system": "https://fhir.nhs.uk/Id/ods-organization-code",
