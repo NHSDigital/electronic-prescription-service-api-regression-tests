@@ -52,7 +52,7 @@ class DispenseNotification:
     def practitioner_role(self):
         return {
             "resourceType": "PractitionerRole",
-            "id": f"urn:uuid:{self.values.practitioner_role_id}",
+            "id": f"{self.values.practitioner_role_id}",
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/sds-role-profile-id",
