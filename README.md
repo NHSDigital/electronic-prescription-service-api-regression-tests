@@ -122,4 +122,4 @@ gh auth login
 Then download the alluere results by noting the github run id in a browser and running this
 ```
 GITHUB_RUN_ID=11523235428 make download-allure-report 
- ```
+```
