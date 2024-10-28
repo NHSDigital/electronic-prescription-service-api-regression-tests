@@ -82,7 +82,17 @@ Change the `env` variable accordingly to either `INT` or `INTERNAL-DEV`.
 If you wish to test a different product i.e. `PFP-APIGEE` then you must change `product=` and `--tags` respectively.
 
 ### Method 5:
-Run the tests by pushing changes to github in a pull request and running the regression tests job
+Run the tests by pushing changes to github in a pull request and running the regression tests job.   
+You can do this by the browser or by running this
+```
+BRANCH=fix_tests_take_2
+gh workflow run regression_tests.yml \
+    --ref ${BRANCH} \
+    -f tags=@regression \
+    -f environment=INTERNAL-DEV \
+    -f pull_request_id=pr-2877 \
+    -f github_tag=${BRANCH}
+```
 
 ### Getting the token to check the endpoint calls on Postman
 On the root of the project is a file `get_token.py` <br>
@@ -111,12 +121,5 @@ gh auth login
 ```
 Then download the alluere results by noting the github run id in a browser and running this
 ```
-rm -rf allure-report
-rm -rf allure-results
-gh run download <GITHUB RUN ID>
-```
-Then generate and view the report by running this and opening the link display
-```
-allure generate
-allure open
-```
+GITHUB_RUN_ID=11523235428 make download-allure-report 
+ ```
