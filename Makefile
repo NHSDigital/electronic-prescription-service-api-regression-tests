@@ -66,3 +66,10 @@ deep-clean-install:
 
 pre-commit:
 	poetry run pre-commit run --all-files
+
+download-allure-report: guard-GITHUB_RUN_ID
+	rm -rf allure-report
+	rm -rf allure-results
+	gh run download ${GITHUB_RUN_ID}
+	allure generate
+	allure open

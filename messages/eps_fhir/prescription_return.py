@@ -1,7 +1,7 @@
 import json
 from typing import Any
 from uuid import uuid4
-from messages.eps_fhir.common import create_task
+from messages.eps_fhir.common import create_return_task
 
 
 class ReturnValues:
@@ -37,7 +37,7 @@ class Return:
             ]
         }
 
-        body = create_task(
+        body = create_return_task(
             values.task_id,
             values.practitioner_role_id,
             values.organization_id,

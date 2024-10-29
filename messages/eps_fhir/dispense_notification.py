@@ -52,7 +52,7 @@ class DispenseNotification:
     def practitioner_role(self):
         return {
             "resourceType": "PractitionerRole",
-            "id": f"urn:uuid:{self.values.practitioner_role_id}",
+            "id": f"{self.values.practitioner_role_id}",
             "identifier": [
                 {
                     "system": "https://fhir.nhs.uk/Id/sds-role-profile-id",
@@ -84,7 +84,7 @@ class DispenseNotification:
     def medication_request(self):
         return {
             "resourceType": "MedicationRequest",
-            "id": f"urn:uuid:{self.values.medication_request_id}",
+            "id": f"{self.values.medication_request_id}",
             "extension": [
                 {
                     "url": "https://fhir.nhs.uk/StructureDefinition/Extension-DM-PrescriptionType",
@@ -220,12 +220,12 @@ class DispenseNotification:
                 "performer": [
                     {
                         "actor": {
-                            "reference": f"#urn:uuid:{self.values.practitioner_role_id}"
+                            "reference": f"#{self.values.practitioner_role_id}"
                         }
                     }
                 ],
                 "authorizingPrescription": [
-                    {"reference": f"#urn:uuid:{self.values.medication_request_id}"}
+                    {"reference": f"#{self.values.medication_request_id}"}
                 ],
                 "quantity": {
                     "value": 1,
