@@ -218,11 +218,7 @@ class DispenseNotification:
                     }
                 ],
                 "performer": [
-                    {
-                        "actor": {
-                            "reference": f"#{self.values.practitioner_role_id}"
-                        }
-                    }
+                    {"actor": {"reference": f"#{self.values.practitioner_role_id}"}}
                 ],
                 "authorizingPrescription": [
                     {"reference": f"#{self.values.medication_request_id}"}

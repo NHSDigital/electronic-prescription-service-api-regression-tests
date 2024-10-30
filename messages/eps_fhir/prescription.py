@@ -198,7 +198,10 @@ class Prescription:
                     }
                 ],
                 "dispenseRequest": {
-                    "validityPeriod": {"start": yesterday.strftime('%Y-%m-%d'), "end": future_time.strftime('%Y-%m-%d')},
+                    "validityPeriod": {
+                        "start": yesterday.strftime("%Y-%m-%d"),
+                        "end": future_time.strftime("%Y-%m-%d"),
+                    },
                     "expectedSupplyDuration": {
                         "value": 30,
                         "unit": "day",

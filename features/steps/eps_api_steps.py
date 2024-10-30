@@ -119,6 +119,7 @@ def i_withdraw_the_dispense_notification(context):
 def body_indicates_successful_action(context, action_type):
     if "sandbox" in context.config.userdata["env"].lower():
         return
+
     def _withdraw_dispense_notification_assertion():
         i_can_see_an_informational_operation_outcome_in_the_response(context)
 

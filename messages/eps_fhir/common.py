@@ -181,7 +181,7 @@ def create_withdraw_task(
                             {
                                 "system": "https://fhir.nhs.uk/CodeSystem/organisation-role",
                                 "code": "182",
-                                "display": "PHARMACY"
+                                "display": "PHARMACY",
                             }
                         ]
                     }
@@ -309,7 +309,7 @@ def create_return_task(
                             {
                                 "system": "https://fhir.nhs.uk/CodeSystem/organisation-role",
                                 "code": "182",
-                                "display": "PHARMACY"
+                                "display": "PHARMACY",
                             }
                         ]
                     }
