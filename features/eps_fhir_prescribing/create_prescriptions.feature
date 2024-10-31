@@ -1,6 +1,6 @@
 @eps_fhir_prescribing @smoke @regression @blocker @create
 
-@allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-3847
+@allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4432
 Feature: I can create prescriptions
 
   Scenario Outline: I can create, sign and release a prescription

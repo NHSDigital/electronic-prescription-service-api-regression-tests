@@ -1,5 +1,5 @@
 @eps_fhir_prescribing @cancel @regression @blocker @smoke
-@allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-3869
+@allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4432
 Feature: I can cancel prescriptions
 
   Scenario: I can cancel a prescription
