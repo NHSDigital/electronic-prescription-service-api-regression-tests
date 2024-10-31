@@ -19,7 +19,10 @@ from utils.random_nhs_number_generator import generate_single
 
 @given("I successfully prepare and sign a prescription")
 def i_prepare_and_sign_a_prescription(context):
-    if "sandbox" in context.config.userdata["env"].lower() and context.config.userdata["product"].upper() != "EPS-FHIR":
+    if (
+        "sandbox" in context.config.userdata["env"].lower()
+        and context.config.userdata["product"].upper() != "EPS-FHIR"
+    ):
         return
     i_prepare_a_new_prescription(context, "nominated")
     i_sign_a_new_prescription(context=context)
@@ -116,6 +119,7 @@ def i_withdraw_the_dispense_notification(context):
 def body_indicates_successful_action(context, action_type):
     if "sandbox" in context.config.userdata["env"].lower():
         return
+
     def _withdraw_dispense_notification_assertion():
         i_can_see_an_informational_operation_outcome_in_the_response(context)
 

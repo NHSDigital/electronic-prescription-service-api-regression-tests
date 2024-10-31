@@ -17,6 +17,8 @@ on:
         type: choice
         options:
           - EPS-FHIR
+          - EPS-FHIR-PRESCRIBING
+          - EPS-FHIR-DISPENSING
           - PFP-APIGEE
           - PFP-AWS
           - PSU
