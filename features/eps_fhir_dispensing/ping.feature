@@ -1,4 +1,4 @@
-@eps_fhir @smoke @regression @ping @blocker
+@eps_fhir_dispensing @smoke @regression @ping @blocker
 @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4432
 Feature: I can ping the API
 
