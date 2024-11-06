@@ -19,7 +19,7 @@ def calculate_eps_fhir_base_url(context):
     product = context.config.userdata["product"].upper()
     global PRESCRIBING_BASE_URL
     global DISPENSING_BASE_URL
-    if product == "EPS-FHIR":
+    if product != "EPS-FHIR-DISPENSING" and product != "EPS-FHIR-PRESCRIBING":
         PRESCRIBING_BASE_URL = context.eps_fhir_base_url
         DISPENSING_BASE_URL = context.eps_fhir_base_url
     else:
