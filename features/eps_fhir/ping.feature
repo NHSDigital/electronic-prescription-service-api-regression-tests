@@ -4,5 +4,5 @@ Feature: I can ping the API
 
   Scenario: I can ping the API
     When I make a request to the "eps_fhir" ping endpoint
-    Then I get a 500 response code
+    Then the response indicates a server error
     And I can see the ping information in the response

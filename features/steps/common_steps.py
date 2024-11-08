@@ -22,6 +22,13 @@ def i_make_a_request_to_the_ping_endpoint(context, product):
         raise ValueError(f"unable to find base url for '{product}'")
 
 
+@then("the response indicates a server error")
+def indicate_successful_response(context):
+    if "sandbox" in context.config.userdata["env"].lower():
+        return
+    common.the_expected_response_code_is_returned(context, 500)
+
+
 @then("the response indicates a success")
 def indicate_successful_response(context):
     if "sandbox" in context.config.userdata["env"].lower():
