@@ -19,6 +19,11 @@ from utils.random_nhs_number_generator import generate_single
 
 @given("I successfully prepare and sign a prescription")
 def i_prepare_and_sign_a_prescription(context):
+    if (
+        "sandbox" in context.config.userdata["env"].lower()
+        and context.config.userdata["product"].upper() != "EPS-FHIR"
+    ):
+        return
     i_prepare_a_new_prescription(context, "nominated")
     i_sign_a_new_prescription(context=context)
 
@@ -31,15 +36,19 @@ def i_prepare_and_sign_a_type_prescription(context, prescription_type):
 
 @given("a prescription has been created and released")
 def a_prescription_has_been_created_and_released(context):
+    if "sandbox" in context.config.userdata["env"].lower():
+        return
     i_am_an_authorised_user(context, "prescriber")
     i_prepare_and_sign_a_prescription(context)
     i_am_an_authorised_user(context, "dispenser")
-    i_release_a_prescription(context)
+    i_release_the_prescription(context)
     indicate_successful_response(context)
 
 
 @given("a new prescription has been dispensed")
 def a_new_prescription_has_been_dispensed(context):
+    if "sandbox" in context.config.userdata["env"].lower():
+        return
     a_prescription_has_been_created_and_released(context)
     i_dispense_the_prescription(context)
     indicate_successful_response(context)
@@ -52,7 +61,7 @@ def i_am_an_authorised_user(context, user):
         return
     env = context.config.userdata["env"]
     context.user = user
-    context.auth_token = get_auth(user, env)
+    context.auth_token = get_auth(env, "EPS-FHIR", user)
 
 
 def i_prepare_a_new_prescription(context, prescription_type):
@@ -68,13 +77,15 @@ def i_sign_a_new_prescription(context):
     create_signed_prescription(context)
 
 
-@when("I release a prescription")
-def i_release_a_prescription(context):
+@when("I release the prescription")
+def i_release_the_prescription(context):
     release_signed_prescription(context)
 
 
 @when("I return the prescription")
 def i_return_the_prescription(context):
+    if "sandbox" in context.config.userdata["env"].lower():
+        return
     return_prescription(context)
 
 
@@ -85,21 +96,30 @@ def i_cancel_all_line_items(context):
 
 @when("I dispense the prescription")
 def i_dispense_the_prescription(context):
+    if "sandbox" in context.config.userdata["env"].lower():
+        return
     dispense_prescription(context)
 
 
 @when("I amend the dispense notification")
 def i_amend_a_dispense_notification(context):
+    if "sandbox" in context.config.userdata["env"].lower():
+        return
     amend_dispense_notification(context)
 
 
 @when("I withdraw the dispense notification")
 def i_withdraw_the_dispense_notification(context):
+    if "sandbox" in context.config.userdata["env"].lower():
+        return
     withdraw_dispense_notification(context)
 
 
 @then("the response body indicates a successful {action_type} action")
 def body_indicates_successful_action(context, action_type):
+    if "sandbox" in context.config.userdata["env"].lower():
+        return
+
     def _withdraw_dispense_notification_assertion():
         i_can_see_an_informational_operation_outcome_in_the_response(context)
 
@@ -123,8 +143,6 @@ def body_indicates_successful_action(context, action_type):
         i_can_see_an_informational_operation_outcome_in_the_response(context)
 
     def _release_assertion():
-        if "sandbox" in context.config.userdata["env"].lower():
-            return
         assert_that(json_response["parameter"][0]["resource"]["total"]).is_equal_to(1)
 
     def _return_assertion():

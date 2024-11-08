@@ -6,8 +6,9 @@ import sys
 from behave.model import Scenario
 from dotenv import load_dotenv
 
-load_dotenv(override=True)
+from methods.api import eps_api_methods
 
+load_dotenv(override=True)
 
 INTERNAL_QA_BASE_URL = "https://internal-qa.api.service.nhs.uk/"
 INTERNAL_DEV_BASE_URL = "https://internal-dev.api.service.nhs.uk/"
@@ -15,6 +16,12 @@ INT_BASE_URL = "https://int.api.service.nhs.uk/"
 SANDBOX_DEV_BASE_URL = "https://internal-dev-sandbox.api.service.nhs.uk/"
 SANDBOX_INT_BASE_URL = "https://sandbox.api.service.nhs.uk/"
 REF_BASE_URL = "https://ref.api.service.nhs.uk/"
+
+PFP_AWS_PR_URL = "https://pfp-{{aws_pull_request_id}}.dev.eps.national.nhs.uk/"
+PFP_AWS_SANDBOX_PR_URL = (
+    "https://pfp-{{aws_pull_request_id}}-sandbox.dev.eps.national.nhs.uk/"
+)
+
 
 ENVS = {
     "INTERNAL-DEV": INTERNAL_DEV_BASE_URL,
@@ -33,7 +40,10 @@ LOGIN_USERS = {"user_id": "9449304130"}
 
 REPOS = {
     "EPS-FHIR": "https://github.com/NHSDigital/electronic-prescription-service-api",
+    # TODO Add EPS Dispensing and Prescribing repo URLs
     "PFP-APIGEE": "https://github.com/NHSDigital/prescriptions-for-patients",
+    "PFP-AWS": "https://github.com/NHSDigital/prescriptionsforpatients",
+    "PSU": "https://github.com/NHSDigital/eps-prescription-status-update-api",
 }
 
 CERTIFICATE = os.getenv("CERTIFICATE")
@@ -41,9 +51,14 @@ PRIVATE_KEY = os.getenv("PRIVATE_KEY")
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 PULL_REQUEST_ID = os.getenv("PULL_REQUEST_ID")
+JWT_PRIVATE_KEY = os.getenv("JWT_PRIVATE_KEY")
+JWT_KID = os.getenv("JWT_KID")
 
 EPS_FHIR_SUFFIX = "electronic-prescriptions"
-PFP_APIGEE_SUFFIX = "prescriptions-for-patients"
+EPS_FHIR_PRESCRIBING_SUFFIX = "fhir-prescribing"
+EPS_FHIR_DISPENSING_SUFFIX = "fhir-dispensing"
+PFP_SUFFIX = "prescriptions-for-patients"
+PSU_SUFFIX = "prescription-status-update"
 
 
 def count_of_scenarios_to_run(context):
@@ -65,23 +80,63 @@ def before_all(context):
         env = context.config.userdata["env"].upper()
         product = context.config.userdata["product"].upper()
         context.eps_fhir_base_url = os.path.join(select_base_url(env), EPS_FHIR_SUFFIX)
-        context.pfp_apigee_base_url = os.path.join(
-            select_base_url(env), PFP_APIGEE_SUFFIX
+        context.eps_fhir_prescribing_base_url = os.path.join(
+            select_base_url(env), EPS_FHIR_PRESCRIBING_SUFFIX
         )
-        # This will need rework when the pack includes additional products to test
+        context.eps_fhir_dispensing_base_url = os.path.join(
+            select_base_url(env), EPS_FHIR_DISPENSING_SUFFIX
+        )
+        context.pfp_base_url = os.path.join(select_base_url(env), PFP_SUFFIX)
+        context.psu_base_url = os.path.join(select_base_url(env), PSU_SUFFIX)
         if PULL_REQUEST_ID:
-            if product == "EPS-FHIR":
-                context.eps_fhir_base_url = os.path.join(
-                    INTERNAL_DEV_BASE_URL, f"{EPS_FHIR_SUFFIX}-{PULL_REQUEST_ID}"
-                )
-            if product == "PFP-APIGEE":
-                context.pfp_apigee_base_url = os.path.join(
-                    INTERNAL_DEV_BASE_URL, f"{PFP_APIGEE_SUFFIX}-{PULL_REQUEST_ID}"
-                )
+            pull_request_id = PULL_REQUEST_ID.lower()
+            if "pr-" in pull_request_id:
+                get_url_with_pr(context, env, product)
     else:
         raise RuntimeError("no tests to run. Check your tags and try again")
+    eps_api_methods.calculate_eps_fhir_base_url(context)
     print("EPS: ", context.eps_fhir_base_url)
-    print("PFP: ", context.pfp_apigee_base_url)
+    print("EPS-PRESCRIBING: ", context.eps_fhir_prescribing_base_url)
+    print("EPS-DISPENSING: ", context.eps_fhir_dispensing_base_url)
+    print("PFP: ", context.pfp_base_url)
+    print("PSU: ", context.psu_base_url)
+
+
+def get_url_with_pr(context, env, product):
+    assert PULL_REQUEST_ID is not None
+    if product == "EPS-FHIR":
+        context.eps_fhir_base_url = os.path.join(
+            INTERNAL_DEV_BASE_URL, f"{EPS_FHIR_SUFFIX}-{PULL_REQUEST_ID}"
+        )
+    if product == "EPS-FHIR-PRESCRIBING":
+        context.eps_fhir_prescribing_base_url = os.path.join(
+            INTERNAL_DEV_BASE_URL, f"{EPS_FHIR_PRESCRIBING_SUFFIX}-{PULL_REQUEST_ID}"
+        )
+    if product == "EPS-FHIR-DISPENSING":
+        context.eps_fhir_dispensing_base_url = os.path.join(
+            INTERNAL_DEV_BASE_URL, f"{EPS_FHIR_DISPENSING_SUFFIX}-{PULL_REQUEST_ID}"
+        )
+    if product == "PFP-APIGEE":
+        context.pfp_base_url = os.path.join(
+            INTERNAL_DEV_BASE_URL, f"{PFP_SUFFIX}-{PULL_REQUEST_ID}"
+        )
+    if product == "PFP-AWS":
+        context.pfp_base_url = os.path.join(
+            INTERNAL_DEV_BASE_URL, f"{PFP_SUFFIX}-{PULL_REQUEST_ID}"
+        )
+        if env == "INTERNAL-DEV":
+            context.pfp_base_url = PFP_AWS_PR_URL.replace(
+                "{{aws_pull_request_id}}", PULL_REQUEST_ID
+            )
+        if env == "INTERNAL-DEV-SANDBOX":
+            context.pfp_base_url = PFP_AWS_SANDBOX_PR_URL.replace(
+                "{{aws_pull_request_id}}", PULL_REQUEST_ID
+            )
+
+    if product == "PSU":
+        context.psu_base_url = os.path.join(
+            INTERNAL_DEV_BASE_URL, f"{PSU_SUFFIX}-{PULL_REQUEST_ID}"
+        )
 
 
 def after_all(context):
@@ -91,17 +146,19 @@ def after_all(context):
         product = context.config.userdata["product"].upper()
         properties_dict = {"PRODUCT": product, "ENV": env}
         if PULL_REQUEST_ID:
-            env = os.path.join("PULL-REQUEST", PULL_REQUEST_ID)
-            pull_request_link = os.path.join(
-                select_repository_base_url(product),
-                "pull",
-                PULL_REQUEST_ID.upper().replace("PR-", ""),
-            )
-            properties_dict = {
-                "PRODUCT": product,
-                "ENV": env,
-                "PULL-REQUEST": pull_request_link,
-            }
+            pull_request_id = PULL_REQUEST_ID.lower()
+            if "pr-" in pull_request_id:
+                env = os.path.join("PULL-REQUEST", PULL_REQUEST_ID)
+                pull_request_link = os.path.join(
+                    select_repository_base_url(product),
+                    "pull",
+                    PULL_REQUEST_ID.upper().replace("PR-", ""),
+                )
+                properties_dict = {
+                    "PRODUCT": product,
+                    "ENV": env,
+                    "PULL-REQUEST": pull_request_link,
+                }
 
         file_path = "./allure-results/environment.properties"
         write_properties_file(file_path, properties_dict)

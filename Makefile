@@ -1,5 +1,7 @@
 project_name = electronic-prescription-service-api-regression-tests
 
+.PHONY: test
+
 guard-%:
 	@ if [ "${${*}}" = "" ]; then \
 		echo "Environment variable $* not set"; \
@@ -53,16 +55,23 @@ deep-clean-install:
 	asdf plugin remove nodejs
 	asdf plugin remove actionlint
 	asdf plugin add python
-	asdf install python
 	asdf plugin add poetry
-	asdf install poetry
 	asdf plugin add shellcheck
-	asdf install shellcheck
 	asdf plugin add nodejs
-	asdf install nodejs
 	asdf plugin add actionlint
+	asdf install python
+	asdf install poetry
+	asdf install shellcheck
+	asdf install nodejs
 	asdf install actionlint
 	make install
 
 pre-commit:
 	poetry run pre-commit run --all-files
+
+download-allure-report: guard-GITHUB_RUN_ID
+	rm -rf allure-report
+	rm -rf allure-results
+	gh run download ${GITHUB_RUN_ID}
+	allure generate
+	allure open

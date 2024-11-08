@@ -8,10 +8,14 @@ from methods.shared.common import assert_that
 @when('I make a request to the "{product}" ping endpoint')
 def i_make_a_request_to_the_ping_endpoint(context, product):
     base_url = None
-    if product == "pfp_apigee":
-        base_url = context.pfp_apigee_base_url
+    if product == "pfp":
+        base_url = context.pfp_base_url
     if product == "eps_fhir":
         base_url = context.eps_fhir_base_url
+    if product == "eps_fhir_prescribing":
+        base_url = context.eps_fhir_prescribing_base_url
+    if product == "eps_fhir_dispensing":
+        base_url = context.eps_fhir_dispensing_base_url
     if base_url is not None:
         request_ping(context, base_url)
     else:
@@ -23,6 +27,11 @@ def indicate_successful_response(context):
     if "sandbox" in context.config.userdata["env"].lower():
         return
     common.the_expected_response_code_is_returned(context, 200)
+
+
+@then("the response indicates a record was created")
+def indicate_record_created(context):
+    common.the_expected_response_code_is_returned(context, 201)
 
 
 @then("I can see the version information in the response")
