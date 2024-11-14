@@ -1,0 +1,15 @@
+char\[\] password = System\.getenv\("MVNW_PASSWORD"\)\.toCharArray\(\);
+wget --http-user=\$MVNW_USERNAME --http-.*
+<version>1\.8\.0\.1<\/version>
+github-token: ?"?\$\{\{\s*secrets\.GITHUB_TOKEN\s*\}\}"?
+"code": "1\.2\.840\.10065\.1\.12\.1\.1"
+java corretto-21\.0\.2\.14\.1
+CidrIp: "0\.0\.0\.0\/0"
+CidrBlock:\s?"?10\.0\.\d+\.\d+\/\d+"
+.*cloudfront\/IOPSValidation\.yaml.*
+.*tcp:\/\/0\.0\.0\.0:8888.*
+.*\.gitallowed.*
+.*steps\.generate-token\.outputs\.token.*
+.*token_response\[\"access_token\"\].*
+.*password=None.*
+.*secrets.REGRESSION_TESTS_PAT.*
