@@ -50,4 +50,4 @@ repos:
 
 
 fail_fast: false
-default_stages: [pre-commit, commit]
+default_stages: [pre-commit, pre-commit]
