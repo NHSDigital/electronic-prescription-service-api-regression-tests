@@ -5,11 +5,11 @@ import sys
 
 from behave.model import Scenario
 from dotenv import load_dotenv
-
+from playwright.sync_api import sync_playwright
 from methods.api import eps_api_methods
 
 load_dotenv(override=True)
-
+global _page
 INTERNAL_QA_BASE_URL = "https://internal-qa.api.service.nhs.uk/"
 INTERNAL_DEV_BASE_URL = "https://internal-dev.api.service.nhs.uk/"
 INT_BASE_URL = "https://int.api.service.nhs.uk/"
@@ -17,19 +17,32 @@ SANDBOX_DEV_BASE_URL = "https://internal-dev-sandbox.api.service.nhs.uk/"
 SANDBOX_INT_BASE_URL = "https://sandbox.api.service.nhs.uk/"
 REF_BASE_URL = "https://ref.api.service.nhs.uk/"
 
+AWS_BASE_URL = ".eps.national.nhs.uk/"
 PFP_AWS_PR_URL = "https://pfp-{{aws_pull_request_id}}.dev.eps.national.nhs.uk/"
 PFP_AWS_SANDBOX_PR_URL = (
     "https://pfp-{{aws_pull_request_id}}-sandbox.dev.eps.national.nhs.uk/"
 )
+CPTS_UI_PR_URL = "https://cpt-ui-{{aws_pull_request_id}}.dev.eps.national.nhs.uk/"
+CPTS_UI_SANDBOX_PR_URL = (
+    "https://cpt-ui-{{aws_pull_request_id}}sandbox.dev.eps.national.nhs.uk/"
+)
 
-
-ENVS = {
+APIGEE_ENVS = {
     "INTERNAL-DEV": INTERNAL_DEV_BASE_URL,
     "INTERNAL-QA": INTERNAL_QA_BASE_URL,
     "INT": INT_BASE_URL,
     "REF": REF_BASE_URL,
     "INTERNAL-DEV-SANDBOX": SANDBOX_DEV_BASE_URL,
     "SANDBOX": SANDBOX_INT_BASE_URL,
+}
+
+AWS_ENVS = {
+    "INTERNAL-DEV": f".dev{AWS_BASE_URL}",
+    "INTERNAL-QA": f".qa{AWS_BASE_URL}",
+    "INT": f".int{AWS_BASE_URL}",
+    "REF": f".ref{AWS_BASE_URL}",
+    "INTERNAL-DEV-SANDBOX": f".sandbox{AWS_BASE_URL}",
+    "SANDBOX": f".sandbox.dev{AWS_BASE_URL}",
 }
 
 CIS2_USERS = {
@@ -39,8 +52,10 @@ CIS2_USERS = {
 LOGIN_USERS = {"user_id": "9449304130"}
 
 REPOS = {
+    "CPTS-UI": "https://github.com/NHSDigital/eps-prescription-tracker-ui",
     "EPS-FHIR": "https://github.com/NHSDigital/electronic-prescription-service-api",
-    # TODO Add EPS Dispensing and Prescribing repo URLs
+    "EPS-FHIR-PRESCRIBING": "https://github.com/NHSDigital/electronic-prescription-service-api",
+    "EPS-FHIR-DISPENSING": "https://github.com/NHSDigital/electronic-prescription-service-api",
     "PFP-APIGEE": "https://github.com/NHSDigital/prescriptions-for-patients",
     "PFP-AWS": "https://github.com/NHSDigital/prescriptionsforpatients",
     "PSU": "https://github.com/NHSDigital/eps-prescription-status-update-api",
@@ -54,6 +69,7 @@ PULL_REQUEST_ID = os.getenv("PULL_REQUEST_ID")
 JWT_PRIVATE_KEY = os.getenv("JWT_PRIVATE_KEY")
 JWT_KID = os.getenv("JWT_KID")
 
+CPTS_UI_PREFIX = "cpt-ui"
 EPS_FHIR_SUFFIX = "electronic-prescriptions"
 EPS_FHIR_PRESCRIBING_SUFFIX = "fhir-prescribing"
 EPS_FHIR_DISPENSING_SUFFIX = "fhir-dispensing"
@@ -76,25 +92,41 @@ def count_of_scenarios_to_run(context):
 
 
 def before_all(context):
+    product = context.config.userdata["product"].upper()
     if count_of_scenarios_to_run(context) != 0:
         env = context.config.userdata["env"].upper()
-        product = context.config.userdata["product"].upper()
-        context.eps_fhir_base_url = os.path.join(select_base_url(env), EPS_FHIR_SUFFIX)
+        context.cpts_ui_base_url = f"https://{CPTS_UI_PREFIX}" + select_aws_base_url(
+            env
+        )
+        context.eps_fhir_base_url = os.path.join(
+            select_apigee_base_url(env), EPS_FHIR_SUFFIX
+        )
         context.eps_fhir_prescribing_base_url = os.path.join(
-            select_base_url(env), EPS_FHIR_PRESCRIBING_SUFFIX
+            select_apigee_base_url(env), EPS_FHIR_PRESCRIBING_SUFFIX
         )
         context.eps_fhir_dispensing_base_url = os.path.join(
-            select_base_url(env), EPS_FHIR_DISPENSING_SUFFIX
+            select_apigee_base_url(env), EPS_FHIR_DISPENSING_SUFFIX
         )
-        context.pfp_base_url = os.path.join(select_base_url(env), PFP_SUFFIX)
-        context.psu_base_url = os.path.join(select_base_url(env), PSU_SUFFIX)
+        context.pfp_base_url = os.path.join(select_apigee_base_url(env), PFP_SUFFIX)
+        context.psu_base_url = os.path.join(select_apigee_base_url(env), PSU_SUFFIX)
         if PULL_REQUEST_ID:
             pull_request_id = PULL_REQUEST_ID.lower()
             if "pr-" in pull_request_id:
                 get_url_with_pr(context, env, product)
     else:
         raise RuntimeError("no tests to run. Check your tags and try again")
+    if product == "CPTS-UI":
+        global _page
+        playwright = sync_playwright().start()
+        browser = playwright.chromium.launch(
+            headless=True, slow_mo=1000, channel="chrome"
+        )
+        context.page = browser.new_page()
+        _page = context.page
+        set_page(context, _page)
+
     eps_api_methods.calculate_eps_fhir_base_url(context)
+    print("CPTS-UI: ", context.cpts_ui_base_url)
     print("EPS: ", context.eps_fhir_base_url)
     print("EPS-PRESCRIBING: ", context.eps_fhir_prescribing_base_url)
     print("EPS-DISPENSING: ", context.eps_fhir_dispensing_base_url)
@@ -120,22 +152,43 @@ def get_url_with_pr(context, env, product):
         context.pfp_base_url = os.path.join(
             INTERNAL_DEV_BASE_URL, f"{PFP_SUFFIX}-{PULL_REQUEST_ID}"
         )
-    if product == "PFP-AWS":
-        context.pfp_base_url = os.path.join(
-            INTERNAL_DEV_BASE_URL, f"{PFP_SUFFIX}-{PULL_REQUEST_ID}"
-        )
-        if env == "INTERNAL-DEV":
-            context.pfp_base_url = PFP_AWS_PR_URL.replace(
-                "{{aws_pull_request_id}}", PULL_REQUEST_ID
-            )
-        if env == "INTERNAL-DEV-SANDBOX":
-            context.pfp_base_url = PFP_AWS_SANDBOX_PR_URL.replace(
-                "{{aws_pull_request_id}}", PULL_REQUEST_ID
-            )
-
     if product == "PSU":
         context.psu_base_url = os.path.join(
             INTERNAL_DEV_BASE_URL, f"{PSU_SUFFIX}-{PULL_REQUEST_ID}"
+        )
+    if product == "PFP-AWS":
+        handle_pfp_aws_pr_url(context, env)
+    if product == "CPTS-UI":
+        handle_cpt_ui_pr_url(context, env)
+
+
+def handle_cpt_ui_pr_url(context, env):
+    assert PULL_REQUEST_ID is not None
+    context.cpts_ui_base_url = (
+        f"https://{CPTS_UI_PREFIX}-{PULL_REQUEST_ID}{select_apigee_base_url(env)}"
+    )
+    if env == "INTERNAL-DEV":
+        context.cpts_ui_base_url = CPTS_UI_PR_URL.replace(
+            "{{aws_pull_request_id}}", PULL_REQUEST_ID
+        )
+    if env == "INTERNAL-DEV-SANDBOX":
+        context.cpts_ui_base_url = CPTS_UI_SANDBOX_PR_URL.replace(
+            "{{aws_pull_request_id}}", PULL_REQUEST_ID
+        )
+
+
+def handle_pfp_aws_pr_url(context, env):
+    assert PULL_REQUEST_ID is not None
+    context.pfp_base_url = os.path.join(
+        INTERNAL_DEV_BASE_URL, f"{PFP_SUFFIX}-{PULL_REQUEST_ID}"
+    )
+    if env == "INTERNAL-DEV":
+        context.pfp_base_url = PFP_AWS_PR_URL.replace(
+            "{{aws_pull_request_id}}", PULL_REQUEST_ID
+        )
+    if env == "INTERNAL-DEV-SANDBOX":
+        context.pfp_base_url = PFP_AWS_SANDBOX_PR_URL.replace(
+            "{{aws_pull_request_id}}", PULL_REQUEST_ID
         )
 
 
@@ -167,6 +220,8 @@ def after_all(context):
         if os.path.exists(directory_path) and os.path.isdir(directory_path):
             print(f"Directory '{directory_path}' exists. Deleting...")
             shutil.rmtree(directory_path)
+        if _page:
+            _page.close()
 
 
 def setup_logging(level: int = logging.INFO):
@@ -179,9 +234,16 @@ def setup_logging(level: int = logging.INFO):
     )
 
 
-def select_base_url(env):
-    if env in ENVS:
-        return ENVS[env]
+def select_apigee_base_url(env):
+    if env in APIGEE_ENVS:
+        return APIGEE_ENVS[env]
+    else:
+        raise ValueError(f"Unknown environment or missing base URL for: {env} .")
+
+
+def select_aws_base_url(env):
+    if env in AWS_ENVS:
+        return AWS_ENVS[env]
     else:
         raise ValueError(f"Unknown environment or missing base URL for: {env} .")
 
@@ -199,3 +261,11 @@ def write_properties_file(file_path, properties_dict):
     with open(file_path, "w") as file:
         for key, value in properties_dict.items():
             file.write(f"{key}={value}\n")
+
+
+def get_page(self):
+    return self._page
+
+
+def set_page(self, _page):
+    self._page = _page
