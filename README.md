@@ -82,7 +82,7 @@ Change the `env` variable accordingly to either `INT` or `INTERNAL-DEV`.
 If you wish to test a different product i.e. `PFP-APIGEE` then you must change `product=` and `--tags` respectively.
 
 ### Method 5:
-Run the tests by pushing changes to github in a pull request and running the regression tests job.   
+Run the tests by pushing changes to github in a pull request and running the regression tests job.
 You can do this by the browser or by running this
 ```
 BRANCH=fix_tests_take_2
@@ -114,12 +114,20 @@ This process will stop after the first program detects an error or if Black modi
 You may need to run this multiple times to ensure everything is ok before committing.
 
 
-### Generating the allure report from a github test run
-To generate and view the results of a github test run, first authenticate to github by running this and following instructions
+### Generating the allure report from a GitHub test run
+To generate and view the results of a GitHub test run, first authenticate to GitHub by running this and following instructions
 ```
 gh auth login
 ```
-Then download the alluere results by noting the github run id in a browser and running this
+Then download the allure results by noting the GitHub run ID in a browser and running this
 ```
-GITHUB_RUN_ID=11523235428 make download-allure-report 
+GITHUB_RUN_ID=11523235428 make download-allure-report
 ```
+
+# UI testing
+This pack has recently been updated to include UI-based testing using Playwright for CPTS-UI. It will run headless using the Chrome browser
+
+## Recording new tests:
+Playwright contains a handy (but not perfect) feature which will record actions you make and give you the code for them
+to begin, run the command: <br />
+`playwright codegen`
