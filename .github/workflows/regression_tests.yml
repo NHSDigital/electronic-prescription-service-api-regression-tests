@@ -16,6 +16,7 @@ on:
         description: 'The product we are testing'
         type: choice
         options:
+          - CPTS-UI
           - EPS-FHIR
           - EPS-FHIR-PRESCRIBING
           - EPS-FHIR-DISPENSING

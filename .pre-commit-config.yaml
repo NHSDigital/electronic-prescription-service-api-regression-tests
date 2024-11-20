@@ -47,7 +47,17 @@ repos:
       entry: flake8
       language: system
       types: [python]
-
+        
+  - repo: local
+    hooks:
+      - id: git-secrets
+        name: Git Secrets
+        description: git-secrets scans commits, commit messages, and --no-ff merges to prevent adding secrets into your git repositories.
+        entry: bash
+        args:
+          - -c
+          - 'docker run -v "$LOCAL_WORKSPACE_FOLDER:/src" git-secrets --pre_commit_hook'
+        language: system
 
 fail_fast: false
-default_stages: [pre-commit, commit]
+default_stages: [pre-commit, pre-commit]
