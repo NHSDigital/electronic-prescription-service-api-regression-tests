@@ -31,7 +31,7 @@ lint-black:
 	poetry run black .
 
 lint-pyright:
-	export PYRIGHT_PYTHON_GLOBAL_NODE=on; poetry run pyright .
+	export PYRIGHT_PYTHON_GLOBAL_NODE=0; poetry run pyright .
 
 lint-flake8:
 	poetry run flake8 .
