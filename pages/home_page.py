@@ -10,3 +10,6 @@ class HomePage:
         expect(
             self.page.get_by_role("link", name="Clinical prescription")
         ).to_be_visible()
+
+    def verify_footer_is_visible(self):
+        self.page.is_visible("[id='eps_footer']")
