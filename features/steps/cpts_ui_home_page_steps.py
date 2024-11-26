@@ -12,3 +12,9 @@ def goto_page(context):
 def verify_on_page(context):
     home_page = HomePage(context.page)
     home_page.verify_header_link()
+
+
+@then("I can see the footer")
+def i_can_see_the_footer(context):
+    home_page = HomePage(context.page)
+    home_page.verify_footer_is_visible()

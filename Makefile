@@ -31,7 +31,7 @@ lint-black:
 	poetry run black .
 
 lint-pyright:
-	export PYRIGHT_PYTHON_GLOBAL_NODE=on; poetry run pyright .
+	export PYRIGHT_PYTHON_GLOBAL_NODE=0; poetry run pyright .
 
 lint-flake8:
 	poetry run flake8 .
@@ -66,8 +66,13 @@ deep-clean-install:
 	asdf install actionlint
 	make install
 
-pre-commit:
+pre-commit: git-secrets-docker-setup
 	poetry run pre-commit run --all-files
+
+git-secrets-docker-setup:
+	LOCAL_WORKSPACE_FOLDER=$(pwd)
+	export LOCAL_WORKSPACE_FOLDER=$(LOCAL_WORKSPACE_FOLDER)
+	docker build -f https://raw.githubusercontent.com/NHSDigital/eps-workflow-quality-checks/refs/tags/v4.0.4/dockerfiles/nhsd-git-secrets.dockerfile -t git-secrets .
 
 download-allure-report: guard-GITHUB_RUN_ID
 	rm -rf allure-report
