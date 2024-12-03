@@ -20,5 +20,5 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4513
   Scenario: user sees a menu with links when the screen size is small
     Given I am on the homepage
-    When I have a screen size of 900 pixels wide
+    When I have a screen size of 90 pixels wide
     Then I can see the header links in a dropdown menu
