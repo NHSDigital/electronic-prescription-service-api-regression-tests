@@ -118,9 +118,7 @@ def before_all(context):
     if product == "CPTS-UI":
         global _page
         playwright = sync_playwright().start()
-        browser = playwright.chromium.launch(
-            headless=True, slow_mo=1000, channel="chrome"
-        )
+        browser = playwright.chromium.launch(headless=True, channel="chrome")
         context.page = browser.new_page()
         _page = context.page
         set_page(context, _page)

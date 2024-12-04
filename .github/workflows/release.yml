@@ -1,7 +1,8 @@
 name: release workflow
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [main]
 
 env:
   BRANCH_NAME: ${{ github.event.ref.BRANCH_NAME }}
