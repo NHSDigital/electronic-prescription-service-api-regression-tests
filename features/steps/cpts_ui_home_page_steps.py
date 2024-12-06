@@ -47,4 +47,4 @@ def i_have_a_screen_size_of_x_pixels_wide(context, pixel_width):
 @then("I can see the header links in a dropdown menu")
 def i_can_see_the_header_links_in_a_dropdown_menu(context):
     home_page = HomePage(context.page)
-    home_page.verify_header_links_900_pixels_wide_view()
+    home_page.verify_header_links_short_width_view()
