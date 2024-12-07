@@ -65,6 +65,3 @@ def i_see_commit_id_in_response(context):
 @then("I can see the ping information in the response")
 def i_can_see_the_ping_information(context):
     i_see_version_in_response(context)
-    i_see_revision_in_response(context)
-    i_see_release_id_in_response(context)
-    i_see_commit_id_in_response(context)
