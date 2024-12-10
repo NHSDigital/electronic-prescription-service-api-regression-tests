@@ -53,7 +53,7 @@ def create_signed_prescription(context):
 
 
 def release_signed_prescription(context):
-    url = f"{PRESCRIBING_BASE_URL}/FHIR/R4/Task/$release"
+    url = f"{DISPENSING_BASE_URL}/FHIR/R4/Task/$release"
     additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
     headers = get_headers(context, additional_headers)
 
