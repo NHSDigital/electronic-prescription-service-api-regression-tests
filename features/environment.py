@@ -95,8 +95,6 @@ def before_scenario(context, scenario):
     product = context.config.userdata["product"].upper()
     if product == "CPTS-UI":
         global _page
-        # playwright = sync_playwright().start()
-        # context.browser = playwright.chromium.launch(headless=True, channel="chrome")
         context.page = context.browser.new_page()
         _page = context.page
         set_page(context, _page)
