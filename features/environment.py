@@ -91,6 +91,17 @@ def count_of_scenarios_to_run(context):
     return total_scenarios
 
 
+def before_scenario(context, scenario):
+    product = context.config.userdata["product"].upper()
+    if product == "CPTS-UI":
+        global _page
+        # playwright = sync_playwright().start()
+        # context.browser = playwright.chromium.launch(headless=True, channel="chrome")
+        context.page = context.browser.new_page()
+        _page = context.page
+        set_page(context, _page)
+
+
 def before_all(context):
     product = context.config.userdata["product"].upper()
     if count_of_scenarios_to_run(context) != 0:
@@ -118,10 +129,7 @@ def before_all(context):
     if product == "CPTS-UI":
         global _page
         playwright = sync_playwright().start()
-        browser = playwright.chromium.launch(headless=True, channel="chrome")
-        context.page = browser.new_page()
-        _page = context.page
-        set_page(context, _page)
+        context.browser = playwright.chromium.launch(headless=True, channel="chrome")
 
     eps_api_methods.calculate_eps_fhir_base_url(context)
     print("CPTS-UI: ", context.cpts_ui_base_url)
