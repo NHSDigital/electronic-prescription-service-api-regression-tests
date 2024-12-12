@@ -83,7 +83,7 @@ def get_auth(env, product, user="prescriber"):
         raise ValueError(f"Unknown product {product}")
     env = env.lower()
     url = f"https://{env}.api.service.nhs.uk/oauth2-mock"
-    if product == "EPS-FHIR":
+    if product in ["EPS-FHIR", "EPS-FHIR-DISPENSING", "EPS-FHIR-PRESCRIBING"]:
         authenticator = get_eps_fhir_authenticator(user, env, url)
     if product == "PFP-APIGEE":
         authenticator = get_pfp_apigee_authenticator(env, url)
