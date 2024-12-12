@@ -138,13 +138,14 @@ def get_url_with_pr(context, env, product):
         context.eps_fhir_base_url = os.path.join(
             INTERNAL_DEV_BASE_URL, f"{EPS_FHIR_SUFFIX}-{PULL_REQUEST_ID}"
         )
-    if product == "EPS-FHIR-PRESCRIBING":
+    if product in ["EPS-FHIR-PRESCRIBING", "EPS-FHIR-DISPENSING"]:
         context.eps_fhir_prescribing_base_url = os.path.join(
-            INTERNAL_DEV_BASE_URL, f"{EPS_FHIR_PRESCRIBING_SUFFIX}-{PULL_REQUEST_ID}"
+            INTERNAL_DEV_BASE_URL,
+            f"{EPS_FHIR_PRESCRIBING_SUFFIX}-{PULL_REQUEST_ID}",
         )
-    if product == "EPS-FHIR-DISPENSING":
         context.eps_fhir_dispensing_base_url = os.path.join(
-            INTERNAL_DEV_BASE_URL, f"{EPS_FHIR_DISPENSING_SUFFIX}-{PULL_REQUEST_ID}"
+            INTERNAL_DEV_BASE_URL,
+            f"{EPS_FHIR_DISPENSING_SUFFIX}-{PULL_REQUEST_ID}",
         )
     if product == "PFP-APIGEE":
         context.pfp_base_url = os.path.join(
