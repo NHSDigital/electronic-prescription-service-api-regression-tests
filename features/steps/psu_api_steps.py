@@ -50,7 +50,9 @@ def prescription_has_status_with_terminal_status(context):
     ][0]["resource"]["entry"][0]["resource"]
     expected_item_id = context.prescription_item_id
     expected_item_status = context.item_status
-    expected_terminal_status = context.terminal_status
+    expected_terminal_status = (
+        "active"  # should be active due to 7 days remaining active
+    )
 
     assert_that(bundle["identifier"][0]["value"].lower()).is_equal_to(expected_item_id)
     assert_that(bundle["status"]).is_equal_to(expected_terminal_status)
