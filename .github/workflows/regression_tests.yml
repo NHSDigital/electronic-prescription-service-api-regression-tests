@@ -40,7 +40,8 @@ on:
       run_sha1_tests:
         description: whether to also run against a sha1 enabled apigee app
         required: false
-        default: "false"
+        type: boolean
+        default: false
 
 jobs:
   regression_tests:
