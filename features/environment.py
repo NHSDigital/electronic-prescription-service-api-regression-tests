@@ -119,6 +119,7 @@ def before_all(context):
         context.pfp_base_url = os.path.join(select_apigee_base_url(env), PFP_SUFFIX)
         context.psu_base_url = os.path.join(select_apigee_base_url(env), PSU_SUFFIX)
         if PULL_REQUEST_ID:
+            print(f"--- Using pull request id: '{PULL_REQUEST_ID}'")
             pull_request_id = PULL_REQUEST_ID.lower()
             if "pr-" in pull_request_id:
                 get_url_with_pr(context, env, product)
@@ -127,7 +128,7 @@ def before_all(context):
     if product == "CPTS-UI":
         global _page
         playwright = sync_playwright().start()
-        context.browser = playwright.chromium.launch(headless=True, channel="chrome")
+        context.browser = playwright.chromium.launch(headless=False, channel="chrome")
 
     eps_api_methods.calculate_eps_fhir_base_url(context)
     print("CPTS-UI: ", context.cpts_ui_base_url)
