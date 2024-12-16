@@ -122,7 +122,7 @@ jobs:
       - name: SHA1 Regression Tests
         id: sha1_tests
         continue-on-error: true
-        if: inputs.run_sha1_tests == 'true'
+        if: inputs.run_sha1_tests == true
         env:
           PRODUCT: ${{ inputs.product }}
           ENVIRONMENT: ${{ inputs.environment }}

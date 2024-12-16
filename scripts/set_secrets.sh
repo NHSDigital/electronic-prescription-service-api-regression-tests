@@ -15,7 +15,10 @@ set_environment_secret() {
         echo "value passed for secret ${secret_name} is unset or set to the empty string. Not setting"
         return 0
     fi
-    echo "setting value for ${secret_name}"
+    echo
+    echo "*****************************************"
+    echo
+    echo "setting value for ${secret_name} in environment ${environment}"
     echo "secret_value: ${secret_value}"
     read -r -p "Press Enter to set secret or ctrl+c to exit"
     gh secret set "${secret_name}" \
@@ -32,6 +35,9 @@ set_repository_secret() {
         echo "value passed for secret ${secret_name} is unset or set to the empty string. Not setting"
         return 0
     fi
+    echo
+    echo "*****************************************"
+    echo
     echo "setting value for ${secret_name}"
     echo "secret_value: ${secret_value}"
     read -r -p "Press Enter to set secret or ctrl+c to exit"
