@@ -128,7 +128,7 @@ def before_all(context):
     if product == "CPTS-UI":
         global _page
         playwright = sync_playwright().start()
-        context.browser = playwright.chromium.launch(headless=False, channel="chrome")
+        context.browser = playwright.chromium.launch(headless=True, channel="chrome")
 
     eps_api_methods.calculate_eps_fhir_base_url(context)
     print("CPTS-UI: ", context.cpts_ui_base_url)
