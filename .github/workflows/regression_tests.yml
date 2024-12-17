@@ -37,6 +37,11 @@ on:
         description: 'The github tag to run the test pack from'
         required: false
         default: "main"
+      run_sha1_tests:
+        description: whether to also run against a sha1 enabled apigee app
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   regression_tests:
@@ -115,6 +120,32 @@ jobs:
             echo Pull request ID = "$PULL_REQUEST_ID"
             poetry run python ./runner.py --env="$ENVIRONMENT" --product="$PRODUCT" --tags="$TAGS"
 
+      - name: SHA1 Regression Tests
+        id: sha1_tests
+        continue-on-error: true
+        if: inputs.run_sha1_tests == true
+        env:
+          PRODUCT: ${{ inputs.product }}
+          ENVIRONMENT: ${{ inputs.environment }}
+          PULL_REQUEST_ID: ${{ inputs.pull_request_id }}
+          TAGS: ${{ inputs.tags }}
+          CLIENT_ID: ${{ secrets.SHA1_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.SHA1_CLIENT_SECRET }}
+          CERTIFICATE: ${{ secrets.CERTIFICATE }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          JWT_KID: ${{ secrets.JWT_KID }}
+          JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
+        run: |
+            export CLIENT_ID="$CLIENT_ID"
+            export CLIENT_SECRET="$CLIENT_SECRET"
+            export CERTIFICATE="$CERTIFICATE"
+            export PRIVATE_KEY="$PRIVATE_KEY"
+            export JWT_KID="$JWT_KID"
+            export JWT_PRIVATE_KEY="$JWT_PRIVATE_KEY"
+            export PULL_REQUEST_ID="$PULL_REQUEST_ID"
+            echo Pull request ID = "$PULL_REQUEST_ID"
+            poetry run python ./runner.py --env="$ENVIRONMENT" --product="$PRODUCT" --tags="$TAGS"
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -132,7 +163,7 @@ jobs:
           repositories: "electronic-prescription-service-api-regression-tests,eps-test-reports"
 
       - name: Report failure on test failure
-        if: steps.tests.outcome != 'success'
+        if: steps.tests.outcome != 'success' || steps.sha1_tests.outcome != 'success'
         run: |
           poetry run python scripts/send_test_results.py --token=${{ steps.generate-token.outputs.token }} --run_id ${{GITHUB.RUN_ID}}
           echo The regression tests step failed, this likely means there are test failures.
