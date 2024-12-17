@@ -16,8 +16,12 @@ Feature: Role selection page renders roles properly when logged in
         And I cannot see the summary table body
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4653
-    Scenario: User can expand the summary table to see the contents
+    Scenario: User can expand the summary table to see the contents. Clicking again hides it
         When I click on the summary expander
         Then I can see the summary table body
         And I can see the table body has a header row
         And I can see the table body has data
+        When I click on the summary expander
+        Then I can see the summary container
+        And I cannot see the summary table body
+        
