@@ -4,11 +4,11 @@ Feature: Role selection page renders roles properly when logged in
 
     Background:
         Given I am logged in
-        And I am on the SLR page
+        And I am on the select_your_role page
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4653
-    Scenario: User can navigate to the SLR page
-        Then I am on the SLR page
+    Scenario: User can navigate to the select_your_role page
+        Then I am on the select_your_role page
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4653
     Scenario: User can see the summary container, but not the table contents by default
