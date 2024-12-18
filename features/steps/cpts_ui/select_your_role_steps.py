@@ -70,3 +70,34 @@ def i_can_see_the_table_body_data(context):
 def click_on_summary_expander(context):
     select_your_role_page = SelectYourRole(context.page)
     select_your_role_page.summary.click()
+
+
+@then("I can see the roles with access cards")
+def i_can_see_the_roles_with_access_cards(context):
+    select_your_role_page = SelectYourRole(context.page)
+    try:
+        expect(select_your_role_page.first_role_card).to_be_visible(timeout=5000)
+        print("Verified that at least one role card is displayed.")
+    except Exception as e:
+        print("Error verifying roles with access cards:", str(e))
+        print("Page content during error:")
+        print(context.page.content())
+        raise
+
+
+@then("I can navigate to the your_selected_role page by clicking a card")
+def i_can_navigate_to_the_your_selected_role_page(context):
+    select_your_role_page = SelectYourRole(context.page)
+    try:
+        expect(select_your_role_page.first_role_card).to_be_visible(timeout=5000)
+        select_your_role_page.first_role_card.click()
+        context.page.wait_for_url(select_your_role_page.selected_role_url)
+        print(
+            "Navigation to your_selected_role page successful. Current URL:",
+            context.page.url,
+        )
+    except Exception as e:
+        print("Error navigating to your_selected_role page:", str(e))
+        print("Page content during error:")
+        print(context.page.content())
+        raise

@@ -19,5 +19,11 @@ class SelectYourRole:
             "cell", name="Registration Authority Agent"
         ).first
 
+        self.roles_with_access_cards = page.locator(".nhsuk-card--clickable")
+        self.first_role_card = self.roles_with_access_cards.first
+        self.role_card_headings = page.locator(".nhsuk-card__heading")
+        self.role_card_descriptions = page.locator(".eps-card__roleName")
+        self.selected_role_url = "**/site/yourselectedrole"
+
         self.header = "[id='eps_header']"
         self.footer = "[id='eps_footer']"
