@@ -32,3 +32,11 @@ Feature: Role selection page renders roles properly when logged in
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4651
     Scenario: User can navigate to the your_selected_role page
         Then I can navigate to the your_selected_role page by clicking a card
+
+    @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4658
+    Scenario: User can see the header on the select_your_role page
+        Then I can see the your_selected_role header
+
+    @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4658
+    Scenario: User can see the subheader on the select_your_role page
+        Then I can see the your_selected_role subheader
