@@ -101,3 +101,35 @@ def i_can_navigate_to_the_your_selected_role_page(context):
         print("Page content during error:")
         print(context.page.content())
         raise
+
+
+@then("I can see the your_selected_role header")
+def i_can_see_select_your_role_header(context):
+    select_your_role_page = SelectYourRole(context.page)
+    try:
+        # Validate only the title text
+        expect(select_your_role_page.select_role_header).to_have_text(
+            select_your_role_page.select_role_header_text, timeout=5000
+        )
+        print("Verified the your_selected_role header text is correct.")
+    except Exception as e:
+        print("Error verifying the your_selected_role header text:", str(e))
+        print("Page content during error:")
+        print(context.page.content())
+        raise
+
+
+@then("I can see the your_selected_role subheader")
+def i_can_see_select_your_role_subheader(context):
+    select_your_role_page = SelectYourRole(context.page)
+    try:
+        # Validate the subheader text
+        expect(select_your_role_page.select_role_subheader).to_have_text(
+            f"- {select_your_role_page.select_role_subheader_text}", timeout=5000
+        )
+        print("Verified the your_selected_role subheader text is correct.")
+    except Exception as e:
+        print("Error verifying the your_selected_role subheader text:", str(e))
+        print("Page content during error:")
+        print(context.page.content())
+        raise
