@@ -4,11 +4,11 @@ Feature: Role selection page renders roles properly when logged in
 
     Background:
         Given I am logged in
-        And I am on the select_your_role page
+        And I am on the select your role page
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4653
     Scenario: User can navigate to the select_your_role page
-        Then I am on the select_your_role page
+        Then I am on the select your role page
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4653
     Scenario: User can see the summary container, but not the table contents by default
@@ -24,11 +24,19 @@ Feature: Role selection page renders roles properly when logged in
         When I click on the summary expander
         Then I can see the summary container
         And I cannot see the summary table body
-        
+
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4651
     Scenario: User can see roles with access cards
         Then I can see the roles with access cards
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4651
-    Scenario: User can navigate to the your_selected_role page
-        Then I can navigate to the your_selected_role page by clicking a card
+    Scenario: User can navigate to the your selected role page
+        Then I can navigate to the your selected role page by clicking a card
+
+    @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4658
+    Scenario: User can see the header on the select your role page
+        Then I can see the your selected role header
+
+    @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4658
+    Scenario: User can see the subheader on the select your role page
+        Then I can see the your selected role subheader
