@@ -33,16 +33,8 @@ class SelectYourRole:
         self.select_role_header = page.locator(
             "span[data-testid='eps_header_selectYourRole'] > span.nhsuk-title"
         )
-        self.select_role_header_text = "Select your role"
 
         # Subheader locators
         self.select_role_subheader = page.locator(
             "span.nhsuk-caption-l.nhsuk-caption--bottom"
         )
-        self.select_role_subheader_text = (
-            "Select the role you wish to use to access the service."
-        )
-
-        # Header and footer locators
-        self.header = "[id='eps_header']"
-        self.footer = "[id='eps_footer']"

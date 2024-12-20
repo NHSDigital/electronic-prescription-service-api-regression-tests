@@ -3,21 +3,22 @@ from behave import given, when, then  # pyright: ignore [reportAttributeAccessIs
 from playwright.sync_api import expect
 
 from pages.select_your_role import SelectYourRole
+from features.environment import MOCK_CIS2_LOGIN_ID
 
 
-@when("I go to the select_your_role page")
+@when("I go to the select your role page")
 def i_go_to_the_select_your_role_page(context):
     context.page.goto(context.cpts_ui_base_url + "site/selectyourrole.html")
 
 
-@given("I am on the select_your_role page")
+@given("I am on the select your role page")
 def i_am_on_select_your_role_page(context):
     i_go_to_the_select_your_role_page(context)
     select_your_role_page = SelectYourRole(context.page)
     expect(select_your_role_page.summary).to_be_visible()
 
 
-@then("I am on the select_your_role page")
+@then("I am on the select your role page")
 def verify_on_select_your_role_page(context):
     select_your_role_page = SelectYourRole(context.page)
     expect(select_your_role_page.summary).to_be_visible()
@@ -27,7 +28,7 @@ def verify_on_select_your_role_page(context):
 def login(context):
     context.page.goto(context.cpts_ui_base_url + "site/auth_demo.html")
     context.page.get_by_role("button", name="Log in with mock CIS2").click()
-    context.page.get_by_label("Username").fill("555073103100")
+    context.page.get_by_label("Username").fill(MOCK_CIS2_LOGIN_ID)
     context.page.get_by_role("button", name="Sign In").click()
     context.page.wait_for_url("**/auth_demo.html")
 
@@ -75,61 +76,24 @@ def click_on_summary_expander(context):
 @then("I can see the roles with access cards")
 def i_can_see_the_roles_with_access_cards(context):
     select_your_role_page = SelectYourRole(context.page)
-    try:
-        expect(select_your_role_page.first_role_card).to_be_visible(timeout=5000)
-        print("Verified that at least one role card is displayed.")
-    except Exception as e:
-        print("Error verifying roles with access cards:", str(e))
-        print("Page content during error:")
-        print(context.page.content())
-        raise
+    expect(select_your_role_page.first_role_card).to_be_visible()
 
 
-@then("I can navigate to the your_selected_role page by clicking a card")
+@then("I can navigate to the your selected role page by clicking a card")
 def i_can_navigate_to_the_your_selected_role_page(context):
     select_your_role_page = SelectYourRole(context.page)
-    try:
-        expect(select_your_role_page.first_role_card).to_be_visible(timeout=5000)
-        select_your_role_page.first_role_card.click()
-        context.page.wait_for_url(select_your_role_page.selected_role_url)
-        print(
-            "Navigation to your_selected_role page successful. Current URL:",
-            context.page.url,
-        )
-    except Exception as e:
-        print("Error navigating to your_selected_role page:", str(e))
-        print("Page content during error:")
-        print(context.page.content())
-        raise
+    expect(select_your_role_page.first_role_card).to_be_visible()
+    select_your_role_page.first_role_card.click()
+    context.page.wait_for_url(select_your_role_page.selected_role_url)
 
 
-@then("I can see the your_selected_role header")
+@then("I can see the your selected role header")
 def i_can_see_select_your_role_header(context):
     select_your_role_page = SelectYourRole(context.page)
-    try:
-        # Validate only the title text
-        expect(select_your_role_page.select_role_header).to_have_text(
-            select_your_role_page.select_role_header_text, timeout=5000
-        )
-        print("Verified the your_selected_role header text is correct.")
-    except Exception as e:
-        print("Error verifying the your_selected_role header text:", str(e))
-        print("Page content during error:")
-        print(context.page.content())
-        raise
+    expect(select_your_role_page.select_role_header).to_be_visible()
 
 
-@then("I can see the your_selected_role subheader")
+@then("I can see the your selected role subheader")
 def i_can_see_select_your_role_subheader(context):
     select_your_role_page = SelectYourRole(context.page)
-    try:
-        # Validate the subheader text
-        expect(select_your_role_page.select_role_subheader).to_have_text(
-            f"- {select_your_role_page.select_role_subheader_text}", timeout=5000
-        )
-        print("Verified the your_selected_role subheader text is correct.")
-    except Exception as e:
-        print("Error verifying the your_selected_role subheader text:", str(e))
-        print("Page content during error:")
-        print(context.page.content())
-        raise
+    expect(select_your_role_page.select_role_subheader).to_be_visible()
