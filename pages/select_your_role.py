@@ -27,3 +27,13 @@ class SelectYourRole:
 
         self.header = "[id='eps_header']"
         self.footer = "[id='eps_footer']"
+
+        self.select_role_header = page.locator(
+            "span[data-testid='eps_header_selectYourRole'] > span.nhsuk-title"
+        )
+
+        self.no_access_header = page.locator(".nhsuk-heading-xl")
+        self.no_access_message = page.get_by_text("None of the roles on your")
+        self.roles_without_access_header = page.get_by_role(
+            "heading", name="Your roles without access"
+        )

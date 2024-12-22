@@ -32,6 +32,15 @@ def login(context):
     context.page.wait_for_url("**/auth_demo.html")
 
 
+@given("I am logged in without access")
+def login_without_access(context):
+    context.page.goto(context.cpts_ui_base_url + "site/auth_demo.html")
+    context.page.get_by_role("button", name="Log in with mock CIS2").click()
+    context.page.get_by_label("Username").fill("555083343101")
+    context.page.get_by_role("button", name="Sign In").click()
+    context.page.wait_for_url("**/auth_demo.html")
+
+
 @then("I can see the summary container")
 def i_can_see_the_summary_container(context):
     select_your_role_page = SelectYourRole(context.page)
@@ -101,3 +110,21 @@ def i_can_navigate_to_the_your_selected_role_page(context):
         print("Page content during error:")
         print(context.page.content())
         raise
+
+
+@then("I cannot see the your selected role header")
+def i_cannot_see_select_your_role_header(context):
+    select_your_role_page = SelectYourRole(context.page)
+    expect(select_your_role_page.select_role_header).to_be_visible(visible=False)
+
+
+@then("I can see the no access header")
+def i_can_see_select_your_role_header(context):
+    select_your_role_page = SelectYourRole(context.page)
+    expect(select_your_role_page.no_access_header).to_be_visible()
+
+
+@then("I can see the no access message")
+def i_can_see_select_your_role_subheader(context):
+    select_your_role_page = SelectYourRole(context.page)
+    expect(select_your_role_page.no_access_message).to_be_visible()
