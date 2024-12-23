@@ -9,6 +9,7 @@ from features.environment import MOCK_CIS2_LOGIN_ID
 @when("I go to the select your role page")
 def i_go_to_the_select_your_role_page(context):
     context.page.goto(context.cpts_ui_base_url + "site/selectyourrole.html")
+    context.page.wait_for_url("**/selectyourrole.html")
 
 
 @given("I am on the select your role page")
@@ -26,11 +27,12 @@ def verify_on_select_your_role_page(context):
 
 @given("I am logged in")
 def login(context):
-    context.page.goto(context.cpts_ui_base_url + "site/login")
+    # FIXME: This will need to be updated when the SPA is fixed! Remove the .html
+    context.page.goto(context.cpts_ui_base_url + "site/login.html")
     context.page.get_by_role("button", name="Log in with mock CIS2").click()
     context.page.get_by_label("Username").fill(MOCK_CIS2_LOGIN_ID)
     context.page.get_by_role("button", name="Sign In").click()
-    context.page.wait_for_url("**/login.html")
+    context.page.wait_for_url("**/selectyourrole.html")
 
 
 @then("I can see the summary container")

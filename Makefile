@@ -8,7 +8,7 @@ guard-%:
 		exit 1; \
 	fi
 
-install: install-python install-hooks install-node
+install: install-python install-hooks install-node install-playwright
 
 update: update-poetry update-node install
 
@@ -20,6 +20,11 @@ update-poetry:
 
 install-python:
 	poetry install
+
+install-playwright:
+	playwright install
+	playwright install-deps
+	playwright install --force chrome
 
 install-hooks: install-python
 	poetry run pre-commit install --install-hooks --overwrite
