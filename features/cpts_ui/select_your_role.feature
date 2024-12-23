@@ -43,12 +43,31 @@ Feature: Role selection page renders roles properly when logged in
     Scenario: User without access can see the header on the select your role page
         Given I am logged in without access
         And I am on the select_your_role page
-        Then I cannot see the your selected role header
+        Then I cannot see the your selected role subheader
         And I can see the no access header
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4655
     Scenario: User without access can see the message on the select your role page
         Given I am logged in without access
         And I am on the select_your_role page
-        Then I cannot see the your selected role header
+        Then I cannot see the your selected role subheader
         And I can see the no access message
+
+    @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4655
+    Scenario: User without access can see the summary container, but not the table contents by default
+        Given I am logged in without access
+        And I am on the select_your_role page
+        Then I can see the summary container
+        And I cannot see the summary table body
+
+    @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4655
+    Scenario: User without access can expand the summary table to see the contents. Clicking again hides it
+        Given I am logged in without access
+        And I am on the select_your_role page
+        When I click on the summary expander
+        Then I can see the summary table body
+        And I can see the table body has a header row
+        And I can see the no access table body has data
+        When I click on the summary expander
+        Then I can see the summary container
+        And I cannot see the summary table body
