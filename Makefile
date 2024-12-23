@@ -8,7 +8,7 @@ guard-%:
 		exit 1; \
 	fi
 
-install: install-python install-hooks install-node install-playwright
+install: install-python install-hooks install-node
 
 update: update-poetry update-node install
 
