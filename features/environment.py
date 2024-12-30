@@ -50,6 +50,8 @@ CIS2_USERS = {
     "dispenser": {"user_id": "555260695103", "role_id": "555265434108"},
 }
 LOGIN_USERS = {"user_id": "9449304130"}
+MOCK_CIS2_LOGIN_ID_1 = "555083343101"
+MOCK_CIS2_LOGIN_ID_2 = "555073103100"
 
 REPOS = {
     "CPTS-UI": "https://github.com/NHSDigital/eps-prescription-tracker-ui",
