@@ -26,7 +26,7 @@ Feature: Role selection page renders roles properly when logged in
         When I click on the summary expander
         Then I can see the summary container
         And I cannot see the summary table body
-        
+
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4651
     Scenario: User can see roles with access cards
         Given I am logged in
