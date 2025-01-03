@@ -3,7 +3,7 @@ from behave import given, when, then  # pyright: ignore [reportAttributeAccessIs
 from playwright.sync_api import expect
 
 from pages.select_your_role import SelectYourRole
-from features.environment import MOCK_CIS2_LOGIN_ID
+from features.environment import MOCK_CIS2_LOGIN_ID_1, MOCK_CIS2_LOGIN_ID_2
 
 
 @when("I go to the select your role page")
@@ -28,7 +28,16 @@ def verify_on_select_your_role_page(context):
 def login(context):
     context.page.goto(context.cpts_ui_base_url + "site/auth_demo.html")
     context.page.get_by_role("button", name="Log in with mock CIS2").click()
-    context.page.get_by_label("Username").fill(MOCK_CIS2_LOGIN_ID)
+    context.page.get_by_label("Username").fill(MOCK_CIS2_LOGIN_ID_1)
+    context.page.get_by_role("button", name="Sign In").click()
+    context.page.wait_for_url("**/auth_demo.html")
+
+
+@given("I am logged in without access")
+def login_without_access(context):
+    context.page.goto(context.cpts_ui_base_url + "site/auth_demo.html")
+    context.page.get_by_role("button", name="Log in with mock CIS2").click()
+    context.page.get_by_label("Username").fill(MOCK_CIS2_LOGIN_ID_2)
     context.page.get_by_role("button", name="Sign In").click()
     context.page.wait_for_url("**/auth_demo.html")
 
@@ -87,13 +96,32 @@ def i_can_navigate_to_the_your_selected_role_page(context):
     context.page.wait_for_url(select_your_role_page.selected_role_url)
 
 
+@then("I cannot see the your selected role subheader")
+def i_can_see_select_your_role_subheader(context):
+    select_your_role_page = SelectYourRole(context.page)
+    expect(select_your_role_page.select_role_subheader).to_be_visible(visible=False)
+
+
 @then("I can see the your selected role header")
 def i_can_see_select_your_role_header(context):
     select_your_role_page = SelectYourRole(context.page)
     expect(select_your_role_page.select_role_header).to_be_visible()
 
 
-@then("I can see the your selected role subheader")
-def i_can_see_select_your_role_subheader(context):
+@then("I can see the no access header")
+def i_can_see_the_no_access_header(context):
     select_your_role_page = SelectYourRole(context.page)
-    expect(select_your_role_page.select_role_subheader).to_be_visible()
+    expect(select_your_role_page.no_access_header).to_be_visible()
+
+
+@then("I can see the no access message")
+def i_can_see_the_no_access_message(context):
+    select_your_role_page = SelectYourRole(context.page)
+    expect(select_your_role_page.no_access_message).to_be_visible()
+
+
+@then("I can see the no access table body has data")
+def i_can_see_the_no_access_table_body_data(context):
+    select_your_role_page = SelectYourRole(context.page)
+    expect(select_your_role_page.first_row_org_name_no_access).to_be_visible()
+    expect(select_your_role_page.first_row_role_name_no_access).to_be_visible()
