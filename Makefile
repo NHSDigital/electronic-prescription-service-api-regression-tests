@@ -21,6 +21,11 @@ update-poetry:
 install-python:
 	poetry install
 
+install-playwright:
+	playwright install
+	playwright install-deps
+	playwright install --force chrome
+
 install-hooks: install-python
 	poetry run pre-commit install --install-hooks --overwrite
 

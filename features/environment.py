@@ -69,6 +69,7 @@ CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 PULL_REQUEST_ID = os.getenv("PULL_REQUEST_ID")
 JWT_PRIVATE_KEY = os.getenv("JWT_PRIVATE_KEY")
 JWT_KID = os.getenv("JWT_KID")
+HEADLESS = os.getenv("HEADLESS", "True").lower() in ("true", "1", "yes")
 
 CPTS_UI_PREFIX = "cpt-ui"
 EPS_FHIR_SUFFIX = "electronic-prescriptions"
@@ -129,7 +130,9 @@ def before_all(context):
     if product == "CPTS-UI":
         global _page
         playwright = sync_playwright().start()
-        context.browser = playwright.chromium.launch(headless=True, channel="chrome")
+        context.browser = playwright.chromium.launch(
+            headless=HEADLESS, channel="chrome"
+        )
 
     eps_api_methods.calculate_eps_fhir_base_url(context)
     print("CPTS-UI: ", context.cpts_ui_base_url)
