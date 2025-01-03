@@ -3,7 +3,7 @@
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/release-notes-generator": "^14.0.2",
     "conventional-changelog-eslint": "^6.0.0",
-    "semantic-release": "^24.2.0"
+    "semantic-release": "^24.2.1"
   },
   "dependencies": {
     "@playwright/test": "^1.49.1",
