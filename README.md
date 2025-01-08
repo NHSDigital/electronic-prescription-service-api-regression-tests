@@ -65,8 +65,8 @@ If your IDE supports it, you can directly run the .feature files within `/featur
 Make sure that your behave run configuration includes the `--product=` & `--env=` <B>These are mandatory</B>
 
 ### Method 3:
-Run the tests by calling the Make command `make run-tests`. This requires the parameters `product=` and `env=` to be passed in
-* This will run the tests without tags so will run everything
+Run the tests by calling the Make command `make run-tests`. This requires the parameters `product=` and `env=` to be passed in.
+Optionally, you can pass in tags to be run, for example `tags=cpt-ui` will run all CPT-UI-tagged tests.
 
 ### Method 4 (Not Recommended):
 Run the tests by running `behave` in a command prompt or terminal window.
