@@ -6,12 +6,6 @@ from pages.select_your_role import SelectYourRole
 from features.environment import MOCK_CIS2_LOGIN_ID_1
 
 
-@then("I am on the select your role page")
-def verify_on_select_your_role_page(context):
-    select_your_role_page = SelectYourRole(context.page)
-    expect(select_your_role_page.summary).to_be_visible()
-
-
 @given("I am logged in")
 def login(context):
     context.page.goto(context.cpts_ui_base_url + "site/auth_demo.html")
@@ -19,6 +13,12 @@ def login(context):
     context.page.get_by_label("Username").fill(MOCK_CIS2_LOGIN_ID_1)
     context.page.get_by_role("button", name="Sign In").click()
     context.page.wait_for_url("**/selectyourrole.html")
+
+
+@then("I am on the select your role page")
+def i_am_on_the_select_your_role_page(context):
+    select_your_role_page = SelectYourRole(context.page)
+    expect(select_your_role_page.summary).to_be_visible()
 
 
 @then("I can see the summary container")
