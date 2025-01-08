@@ -4,6 +4,16 @@ from playwright.sync_api import expect
 
 from pages.home import Home
 from pages.search_for_a_prescription import SearchForAPrescription
+from features.environment import MOCK_CIS2_LOGIN_ID_3
+
+
+@given("I am logged in with a single access role")
+def login_single_role(context):
+    context.page.goto(context.cpts_ui_base_url + "site/auth_demo.html")
+    context.page.get_by_role("button", name="Log in with mock CIS2").click()
+    context.page.get_by_label("Username").fill(MOCK_CIS2_LOGIN_ID_3)
+    context.page.get_by_role("button", name="Sign In").click()
+    context.page.wait_for_url("**/searchforaprescription")
 
 
 @when("I go to the search for a prescription page")
@@ -21,7 +31,8 @@ def go_to_search_prescription_page(context):
 
 @then("I am on the search for a prescription page")
 def i_am_on_the_search_prescription_page(context):
-    expect(context.page).to_have_title("Search for a prescription")
+    search_for_a_prescription = SearchForAPrescription(context.page)
+    expect(search_for_a_prescription.temp_text).to_be_visible()
 
 
 @when("I click on tab {}")
