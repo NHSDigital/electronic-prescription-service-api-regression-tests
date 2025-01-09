@@ -24,6 +24,11 @@ install-python:
 install-hooks: install-python
 	poetry run pre-commit install --install-hooks --overwrite
 
+install-playwright:
+	playwright install
+	playwright install-deps
+	playwright install --force chrome
+
 install-node:
 	npm ci
 
@@ -40,7 +45,7 @@ lint: lint-black lint-pyright lint-flake8
 
 run-tests: guard-product guard-env
 	echo "Running Regression Tests"
-	poetry run python ./runner.py --product=$(product) --env=$(env) --tags=${tags}
+	poetry run python ./runner.py --product=$(product) --env=$(env) --tags=$(tags)
 
 check-licenses:
 	scripts/check_python_licenses.sh
