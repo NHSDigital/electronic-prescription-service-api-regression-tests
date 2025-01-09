@@ -1,7 +1,7 @@
 # pylint: disable=no-name-in-module
 from behave import given, then  # pyright: ignore [reportAttributeAccessIssue]
 
-from features.environment import MOCK_CIS2_LOGIN_ID
+from features.environment import MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES
 
 
 @then("I am logged out")
@@ -21,7 +21,7 @@ def login(context):
     # TODO: This /site/ is not generic. Also, the .html will need to be removed when the SPA is fixed
     context.page.goto(context.cpts_ui_base_url + "site/login.html")
     context.page.get_by_role("button", name="Log in with mock CIS2").click()
-    context.page.get_by_label("Username").fill(MOCK_CIS2_LOGIN_ID)
+    context.page.get_by_label("Username").fill(MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES)
     context.page.get_by_role("button", name="Sign In").click()
     context.page.wait_for_url("**/selectyourrole.html")
 
