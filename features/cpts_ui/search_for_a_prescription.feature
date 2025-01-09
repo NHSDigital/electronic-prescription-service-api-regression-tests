@@ -1,6 +1,11 @@
-@cpts_ui @home @regression @blocker @smoke @ui
+@cpts_ui @search_for_a_prescription @regression @blocker @smoke @ui
 @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4460
 Feature: I can visit the Clinical Prescription Tracker Service Website
+
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4653
+  Scenario: User is redirected to the Search For A Prescription Page
+      Given I am logged in with a single access role
+      Then I am on the search for a prescription page
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4516
   Scenario: User can view the Search For A Prescription Page
