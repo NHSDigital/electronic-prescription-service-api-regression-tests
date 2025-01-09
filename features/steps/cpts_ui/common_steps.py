@@ -1,7 +1,10 @@
 # pylint: disable=no-name-in-module
 from behave import given, then  # pyright: ignore [reportAttributeAccessIssue]
 
-from features.environment import MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES
+from features.environment import (
+    MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES,
+    MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE,
+)
 
 
 @then("I am logged out")
@@ -40,6 +43,15 @@ def login(context):
     context.page.goto(context.cpts_ui_base_url + "site/auth_demo.html")
     context.page.get_by_role("button", name="Log in with mock CIS2").click()
     context.page.get_by_label("Username").fill(MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES)
+    context.page.get_by_role("button", name="Sign In").click()
+    context.page.wait_for_url("**/selectyourrole.html")
+
+
+@given("I am logged in without access")
+def login_without_access(context):
+    context.page.goto(context.cpts_ui_base_url + "site/auth_demo.html")
+    context.page.get_by_role("button", name="Log in with mock CIS2").click()
+    context.page.get_by_label("Username").fill(MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE)
     context.page.get_by_role("button", name="Sign In").click()
     context.page.wait_for_url("**/selectyourrole.html")
 

@@ -38,7 +38,7 @@ Feature: Role selection page renders roles properly when logged in
         Then I can see the roles with access cards
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4651
-    Scenario: User can navigate to the your_selected_role page
+    Scenario: User can navigate to the your selected role page
         Given I am logged in
         Then I am on the select your role page
         Then I can navigate to the your selected role page by clicking a card

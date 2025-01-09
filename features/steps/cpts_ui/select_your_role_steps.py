@@ -3,7 +3,6 @@ from behave import given, when, then  # pyright: ignore [reportAttributeAccessIs
 from playwright.sync_api import expect
 
 from pages.select_your_role import SelectYourRole
-from features.environment import MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE
 
 
 @when("I go to the select your role page")
@@ -17,15 +16,6 @@ def i_am_on_select_your_role_page(context):
     i_go_to_the_select_your_role_page(context)
     select_your_role_page = SelectYourRole(context.page)
     expect(select_your_role_page.summary).to_be_visible()
-
-
-@given("I am logged in without access")
-def login_without_access(context):
-    context.page.goto(context.cpts_ui_base_url + "site/auth_demo.html")
-    context.page.get_by_role("button", name="Log in with mock CIS2").click()
-    context.page.get_by_label("Username").fill(MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE)
-    context.page.get_by_role("button", name="Sign In").click()
-    context.page.wait_for_url("**/selectyourrole.html")
 
 
 @then("I am on the select your role page")
