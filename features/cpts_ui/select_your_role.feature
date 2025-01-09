@@ -4,10 +4,9 @@ Feature: Role selection page renders roles properly when logged in
 
     Background:
         Given I am logged in
-        And I am on the select your role page
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4653
-    Scenario: User can navigate to the select_your_role page
+    Scenario: User is redirected to the select your role page
         Then I am on the select your role page
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4653

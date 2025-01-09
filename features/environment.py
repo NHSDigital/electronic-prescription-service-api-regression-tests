@@ -50,7 +50,9 @@ CIS2_USERS = {
     "dispenser": {"user_id": "555260695103", "role_id": "555265434108"},
 }
 LOGIN_USERS = {"user_id": "9449304130"}
-MOCK_CIS2_LOGIN_ID = "555073103100"
+MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES = "555073103100"
+MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE = "555083343101"
+MOCK_CIS2_LOGIN_ID_SINGLE_ACCESS_ROLE = "555043300081"
 
 REPOS = {
     "CPTS-UI": "https://github.com/NHSDigital/eps-prescription-tracker-ui",
@@ -69,6 +71,7 @@ CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 PULL_REQUEST_ID = os.getenv("PULL_REQUEST_ID")
 JWT_PRIVATE_KEY = os.getenv("JWT_PRIVATE_KEY")
 JWT_KID = os.getenv("JWT_KID")
+HEADLESS = os.getenv("HEADLESS", "True").lower() in ("true", "1", "yes")
 
 CPTS_UI_PREFIX = "cpt-ui"
 EPS_FHIR_SUFFIX = "electronic-prescriptions"
@@ -129,7 +132,9 @@ def before_all(context):
     if product == "CPTS-UI":
         global _page
         playwright = sync_playwright().start()
-        context.browser = playwright.chromium.launch(headless=True, channel="chrome")
+        context.browser = playwright.chromium.launch(
+            headless=HEADLESS, channel="chrome"
+        )
 
     eps_api_methods.calculate_eps_fhir_base_url(context)
     print("CPTS-UI: ", context.cpts_ui_base_url)
