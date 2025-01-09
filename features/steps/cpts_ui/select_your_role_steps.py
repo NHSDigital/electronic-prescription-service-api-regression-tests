@@ -3,7 +3,10 @@ from behave import given, when, then  # pyright: ignore [reportAttributeAccessIs
 from playwright.sync_api import expect
 
 from pages.select_your_role import SelectYourRole
-from features.environment import MOCK_CIS2_LOGIN_ID_1, MOCK_CIS2_LOGIN_ID_2
+from features.environment import (
+    MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES,
+    MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE,
+)
 
 
 @when("I go to the select your role page")
@@ -28,18 +31,18 @@ def verify_on_select_your_role_page(context):
 def login(context):
     context.page.goto(context.cpts_ui_base_url + "site/auth_demo.html")
     context.page.get_by_role("button", name="Log in with mock CIS2").click()
-    context.page.get_by_label("Username").fill(MOCK_CIS2_LOGIN_ID_1)
+    context.page.get_by_label("Username").fill(MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES)
     context.page.get_by_role("button", name="Sign In").click()
-    context.page.wait_for_url("**/auth_demo.html")
+    context.page.wait_for_url("**/selectyourrole.html")
 
 
 @given("I am logged in without access")
 def login_without_access(context):
     context.page.goto(context.cpts_ui_base_url + "site/auth_demo.html")
     context.page.get_by_role("button", name="Log in with mock CIS2").click()
-    context.page.get_by_label("Username").fill(MOCK_CIS2_LOGIN_ID_2)
+    context.page.get_by_label("Username").fill(MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE)
     context.page.get_by_role("button", name="Sign In").click()
-    context.page.wait_for_url("**/auth_demo.html")
+    context.page.wait_for_url("**/selectyourrole.html")
 
 
 @then("I can see the summary container")
