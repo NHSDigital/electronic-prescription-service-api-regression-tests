@@ -5,7 +5,7 @@ These tests will automate End-to-End regression testing for:
 * [Electronic Prescription Service (EPS-FHIR)](https://digital.nhs.uk/developer/api-catalogue/electronic-prescription-service-fhir)
 * [Prescriptions for Patients (PfP)](https://digital.nhs.uk/developer/api-catalogue/prescriptions-for-patients)
 * [Prescription Status Update (PSU)](https://digital.nhs.uk/developer/api-catalogue/prescription-status-update-fhir/)
-*
+* [Clinical Prescription Tracker UI (CPT-UI)](https://github.com/NHSDigital/eps-prescription-tracker-ui)
 
 ## General usage
 These tests are run automatically during deployment and shouldn't need to be touched unless performing debugging or
@@ -67,6 +67,12 @@ Make sure that your behave run configuration includes the `--product=` & `--env=
 ### Method 3:
 Run the tests by calling the Make command `make run-tests`. This requires the parameters `product=` and `env=` to be passed in.
 Optionally, you can pass in tags to be run, for example `tags=cpt-ui` will run all CPT-UI-tagged tests.
+Further, if you want to actually see the tests being executed, you can pass a `HEADLESS=true` to the makefile.
+
+For example:
+```
+product=cpts-ui env=internal-dev PULL_REQUEST_ID=pr-300 tags=cpt-ui HEADLESS=true make run-tests
+```
 
 ### Method 4 (Not Recommended):
 Run the tests by running `behave` in a command prompt or terminal window.
