@@ -11,6 +11,9 @@ These tests will automate End-to-End regression testing for:
 These tests are run automatically during deployment and shouldn't need to be touched unless performing debugging or
 adding/removing/changing test cases <br />
 If there are any test failures, this will report a failed build
+
+When developing new features that need to be regression tested, you'll need to create a new PR for them on this repository. When you are happy with the tests and the feature, merge the regression tests first. This will create a new tagged release, which you should then reference in the counterpart feature pull request before merging the code.
+
 ## Setup
 
 ### Environment Variables
