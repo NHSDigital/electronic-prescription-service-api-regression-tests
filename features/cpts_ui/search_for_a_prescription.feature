@@ -2,7 +2,7 @@
 @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4460
 Feature: I can visit the Clinical Prescription Tracker Service Website
 
-  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4653
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4656
   Scenario: User is redirected to the Search For A Prescription Page
       Given I am logged in with a single access role
       Then I am on the search for a prescription page

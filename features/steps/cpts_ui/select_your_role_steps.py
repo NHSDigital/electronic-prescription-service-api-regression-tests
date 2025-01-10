@@ -78,13 +78,32 @@ def i_can_navigate_to_the_your_selected_role_page(context):
     context.page.wait_for_url(select_your_role_page.selected_role_url)
 
 
+@then("I cannot see the your selected role subheader")
+def i_can_see_select_your_role_subheader(context):
+    select_your_role_page = SelectYourRole(context.page)
+    expect(select_your_role_page.select_role_subheader).to_be_visible(visible=False)
+
+
 @then("I can see the your selected role header")
 def i_can_see_select_your_role_header(context):
     select_your_role_page = SelectYourRole(context.page)
     expect(select_your_role_page.select_role_header).to_be_visible()
 
 
-@then("I can see the your selected role subheader")
-def i_can_see_select_your_role_subheader(context):
+@then("I can see the no access header")
+def i_can_see_the_no_access_header(context):
     select_your_role_page = SelectYourRole(context.page)
-    expect(select_your_role_page.select_role_subheader).to_be_visible()
+    expect(select_your_role_page.no_access_header).to_be_visible()
+
+
+@then("I can see the no access message")
+def i_can_see_the_no_access_message(context):
+    select_your_role_page = SelectYourRole(context.page)
+    expect(select_your_role_page.no_access_message).to_be_visible()
+
+
+@then("I can see the no access table body has data")
+def i_can_see_the_no_access_table_body_data(context):
+    select_your_role_page = SelectYourRole(context.page)
+    expect(select_your_role_page.first_row_org_name_no_access).to_be_visible()
+    expect(select_your_role_page.first_row_role_name_no_access).to_be_visible()
