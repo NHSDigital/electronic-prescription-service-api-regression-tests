@@ -4,16 +4,6 @@ from playwright.sync_api import expect
 
 from pages.home import Home
 from pages.search_for_a_prescription import SearchForAPrescription
-from features.environment import MOCK_CIS2_LOGIN_ID_SINGLE_ACCESS_ROLE
-
-
-@given("I am logged in with a single access role")
-def login_single_role(context):
-    context.page.goto(context.cpts_ui_base_url + "site/auth_demo.html")
-    context.page.get_by_role("button", name="Log in with mock CIS2").click()
-    context.page.get_by_label("Username").fill(MOCK_CIS2_LOGIN_ID_SINGLE_ACCESS_ROLE)
-    context.page.get_by_role("button", name="Sign In").click()
-    context.page.wait_for_url("**/searchforaprescription")
 
 
 @when("I go to the search for a prescription page")
