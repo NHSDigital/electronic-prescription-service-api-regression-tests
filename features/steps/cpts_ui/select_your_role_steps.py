@@ -5,21 +5,15 @@ from playwright.sync_api import expect
 from pages.select_your_role import SelectYourRole
 
 
-@when("I go to the select your role page")
+@given("I go to the select your role page")
 def i_go_to_the_select_your_role_page(context):
-    # TODO: This site/*.html is not generic. Also, the .html will need to be removed when the SPA is fixed
-    context.page.goto(context.cpts_ui_base_url + "site/selectyourrole.html")
+    context.page.goto(context.cpts_ui_base_url + "site/")
+    context.page.get_by_test_id("eps_header_selectYourRoleLink").click()
 
 
 @given("I am on the select your role page")
 def i_am_on_select_your_role_page(context):
-    i_go_to_the_select_your_role_page(context)
-    select_your_role_page = SelectYourRole(context.page)
-    expect(select_your_role_page.summary).to_be_visible()
-
-
-@then("I am on the select your role page")
-def verify_on_select_your_role_page(context):
+    context.execute_steps("given I go to the select your role page")
     select_your_role_page = SelectYourRole(context.page)
     expect(select_your_role_page.summary).to_be_visible()
 

@@ -17,6 +17,8 @@ SANDBOX_DEV_BASE_URL = "https://internal-dev-sandbox.api.service.nhs.uk/"
 SANDBOX_INT_BASE_URL = "https://sandbox.api.service.nhs.uk/"
 REF_BASE_URL = "https://ref.api.service.nhs.uk/"
 
+LOCALHOST_URL = "http://localhost:3000/"
+
 AWS_BASE_URL = ".eps.national.nhs.uk/"
 PFP_AWS_PR_URL = "https://pfp-{{aws_pull_request_id}}.dev.eps.national.nhs.uk/"
 PFP_AWS_SANDBOX_PR_URL = (
@@ -34,6 +36,7 @@ APIGEE_ENVS = {
     "REF": REF_BASE_URL,
     "INTERNAL-DEV-SANDBOX": SANDBOX_DEV_BASE_URL,
     "SANDBOX": SANDBOX_INT_BASE_URL,
+    "LOCALHOST": LOCALHOST_URL,
 }
 
 AWS_ENVS = {
@@ -109,9 +112,17 @@ def before_all(context):
     product = context.config.userdata["product"].upper()
     if count_of_scenarios_to_run(context) != 0:
         env = context.config.userdata["env"].upper()
-        context.cpts_ui_base_url = f"https://{CPTS_UI_PREFIX}" + select_aws_base_url(
-            env
-        )
+        print(f"Environment: {env}")
+
+        # Currently, only the CPT-UI product is supported for local testing
+        if env == "LOCALHOST":
+            context.cpts_ui_base_url = LOCALHOST_URL
+
+        else:
+            context.cpts_ui_base_url = (
+                f"https://{CPTS_UI_PREFIX}" + select_aws_base_url(env)
+            )
+
         context.eps_fhir_base_url = os.path.join(
             select_apigee_base_url(env), EPS_FHIR_SUFFIX
         )
@@ -123,11 +134,13 @@ def before_all(context):
         )
         context.pfp_base_url = os.path.join(select_apigee_base_url(env), PFP_SUFFIX)
         context.psu_base_url = os.path.join(select_apigee_base_url(env), PSU_SUFFIX)
+
         if PULL_REQUEST_ID:
             print(f"--- Using pull request id: '{PULL_REQUEST_ID}'")
             pull_request_id = PULL_REQUEST_ID.lower()
             if "pr-" in pull_request_id:
                 get_url_with_pr(context, env, product)
+
     else:
         raise RuntimeError("no tests to run. Check your tags and try again")
     if product == "CPTS-UI":

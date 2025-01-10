@@ -103,3 +103,8 @@ def then_i_see_logout_successful_page(context):
     logout_page = Logout(context.page)
     expect(logout_page.logout_page_heading).to_be_visible()
     expect(logout_page.logout_page_content).to_be_visible()
+
+
+@then("I am on the login page")
+def then_i_am_on_login_page(context):
+    context.page.wait_for_url("**/login")
