@@ -9,11 +9,13 @@ class ChangeRole:
         self.page = page
 
         # Title and summary locators
-        self.summary = page.locator("summary")
-        self.organisation_column_header = page.get_by_role(
+        self.roles_without_access_table = page.locator("summary")
+        self.roles_without_access_organisation_column_header = page.get_by_role(
             "columnheader", name="Organisation"
         )
-        self.role_column_header = page.get_by_role("columnheader", name="Role")
+        self.roles_without_access_role_column_header = page.get_by_role(
+            "columnheader", name="Role"
+        )
         self.roles_without_access_table_body = page.get_by_role("group").locator("div")
         # TODO: This needs to be more generic
         self.first_row_org_name = page.get_by_role(
@@ -29,7 +31,6 @@ class ChangeRole:
         self.first_role_card = self.roles_with_access_cards.first
         self.role_card_headings = page.locator(".nhsuk-card__heading")
         self.role_card_descriptions = page.locator(".eps-card__roleName")
-        self.selected_role_url = "**/site/yourselectedrole"
 
         # Header locators
         self.select_role_header = page.locator(

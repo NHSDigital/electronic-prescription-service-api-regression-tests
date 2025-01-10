@@ -3,36 +3,11 @@
 Feature: Users are able to change their roles, if they have one role with access.
 
   Background:
-    Given I am on the change role page with one role with access
+    Given I am logged in with a single access role
 
   ############################################################################
   # Successfully changing role scenarios
   ############################################################################
-  Scenario: User can change their role
-    When I click on a new role
-    Then I am redirected to the role selected page
-
-  Scenario: Summary table body is not visible by default
-    Then the summary table body is not visible
-
-  ############################################################################
-  # Expanding/collapsing the summary
-  ############################################################################
-  Scenario: User can expand the change role 'Roles without access' to see table contents
-    When I click on the change role 'Roles without access' expander
-    Then I see the summary table body with a header row and data
-
-  Scenario: User can collapse the change role 'Roles without access' to hide table contents
-    Given the change role 'Roles without access' table body is displayed
-    When I click on the change role 'Roles without access' expander
-    Then the change role 'Roles without access' table body is not visible
-
-  ############################################################################
-  # Viewing roles & navigation
-  ############################################################################
-  Scenario: User can see change role page roles with access cards
-    Then I see the roles with access cards on the change role page
-
-  Scenario: User can navigate to the 'your selected role' page by clicking a card
-    When I click a role card
-    Then I am on the 'your selected role' page
+  Scenario: User is automatically redirected to the 'search for a prescription' page
+    When I click the change role header link
+    Then I am on the search for a prescription page

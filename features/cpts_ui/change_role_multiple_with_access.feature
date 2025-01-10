@@ -3,36 +3,32 @@
 Feature: Users are able to change their roles, if they have multiple roles with access.
 
   Background:
-    Given I am on the change role page with multiple roles with access
+    Given I am logged in
+    And I am on the change your role page
 
   ############################################################################
   # Successfully changing role scenarios
   ############################################################################
   Scenario: User can change their role
-    When I click on a new role
-    Then I am redirected to the role selected page
+    When I click a change role role card
+    Then I am on the 'your selected role' page
 
-  Scenario: Summary table body is not visible by default
-    Then the summary table body is not visible
+  Scenario: User can see roles with access cards
+    Then I see the change role roles with access cards
+    And I can see multiple change role roles with access cards
 
   ############################################################################
   # Expanding/collapsing the summary
   ############################################################################
+
+  Scenario: Change role roles without access table body is not visible by default
+    Then the change role roles without access table body is not visible
+
   Scenario: User can expand the change role 'Roles without access' to see table contents
-    When I click on the change role 'Roles without access' expander
-    Then I see the summary table body with a header row and data
+    When I click on the change role summary expander
+    Then I see the change role roles without access table
 
   Scenario: User can collapse the change role 'Roles without access' to hide table contents
-    Given the change role 'Roles without access' table body is displayed
-    When I click on the change role 'Roles without access' expander
-    Then the change role 'Roles without access' table body is not visible
-
-  ############################################################################
-  # Viewing roles & navigation
-  ############################################################################
-  Scenario: User can see change role page roles with access cards
-    Then I see the roles with access cards on the change role page
-
-  Scenario: User can navigate to the 'your selected role' page by clicking a card
-    When I click a role card
-    Then I am on the 'your selected role' page
+    Given the summary table body is displayed
+    When I click on the change role summary expander
+    Then The change role roles without access table body is not visible
