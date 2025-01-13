@@ -14,13 +14,12 @@ class SelectYourRole:
             "columnheader", name="Organisation"
         )
         self.role_column_header = page.get_by_role("columnheader", name="Role")
+
+        # Roles without access
         self.roles_without_access_table_body = page.get_by_role("group").locator("div")
-        self.first_row_org_name = page.get_by_role(
-            "cell", name="No Org Name (ODS: X09)"
-        ).first
-        self.first_row_role_name = page.get_by_role(
-            "cell", name="Registration Authority Agent"
-        ).first
+
+        self.first_row_org_name = page.get_by_test_id("change-role-name-cell").first
+        self.first_row_role_name = page.get_by_test_id("change-role-role-cell").first
 
         # Role cards - roles with access
         self.roles_with_access_cards = page.locator(".nhsuk-card--clickable")
