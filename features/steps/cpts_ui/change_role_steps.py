@@ -72,7 +72,7 @@ def when_i_click_change_role_header_link(context):
 def when_i_navigate_to_the_change_your_role_page(context):
     change_role_page = ChangeRole(context.page)
 
-    change_role_page.page.goto(context.cpts_ui_base_url + "/site")
+    change_role_page.page.goto(context.cpts_ui_base_url + "site")
     change_role_page.change_role_header.click()
     change_role_page.page.wait_for_url(change_role_url_pattern, timeout=5000)
 
