@@ -43,7 +43,8 @@
             "timonwong.shellcheck",
             "github.vscode-github-actions",
             "ms-python.pylint",
-            "ms-python.black-formatter"
+            "ms-python.black-formatter",
+            "jimasp.behave-vsc"
         ],
         "settings": {
           "python.defaultInterpreterPath": "/workspaces/electronic-prescription-service-api-regression-tests/venv/bin/python",

@@ -23,7 +23,7 @@ def i_am_on_home_page(context):
 @given("I am on the login page")
 def i_am_on_login_page(context):
     context.execute_steps("given I am on the home page")
-    context.page.get_by_test_id("eps_header_placeholder2").click()
+    context.page.get_by_test_id("eps_header_serviceName").click()
 
 
 @given("I am logged in")

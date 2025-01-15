@@ -4,7 +4,7 @@ Feature: The user is able to logout of the application
 
     Background:
         Given I am logged in
-        And I am on the select your role page
+        And I go to the select your role page
 
     ############################################################################
     # Logging out

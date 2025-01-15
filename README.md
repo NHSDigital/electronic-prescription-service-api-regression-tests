@@ -36,6 +36,8 @@ Any file that begins with `.env` is automatically ignored by Git
 This test pack utilises the power of Docker to quickly and easily spin up a dev environment for you to work in
 the Dockerfile is located in `{project_root}/.devcontainer/Dockerfile`
 
+You may need to run `poetry shell` to activate the poetry shell, followed by `make install-playwright` to install the playwright tools. To check if these are installed properly, run `playwright codegen` and check that you see a browser window pop up.
+
 ### Setup without docker development environment
 If you'd like to use your own machine without containerisation. You will need the following;
 * Ubuntu (WSL)
@@ -48,7 +50,7 @@ If you'd like to use your own machine without containerisation. You will need th
 #### Once the plugins are added you can install them
 `asdf install` This will install the versions as described in .tool-versions
 
-Now you can run `make install` to install the virtualenv and packages
+Now you can run `make install` to install the virtualenv and packages. You may need to run `poetry shell` to activate the poetry shell, followed by `make install-playwright` to install the playwright tools. To check if these are installed properly, run `playwright codegen` and check that you see a browser window pop up.
 
 ## Developing/Debugging Tests
 
