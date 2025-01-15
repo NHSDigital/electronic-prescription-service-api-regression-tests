@@ -15,7 +15,6 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
   Scenario: user can see the header
     Given I am on the homepage
     Then I can see the header
-    # And I can see the links on the header
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4513
   Scenario: user sees a menu with links when the screen size is small

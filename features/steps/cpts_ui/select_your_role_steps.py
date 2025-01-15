@@ -11,6 +11,14 @@ def i_go_to_the_select_your_role_page(context):
     context.page.get_by_test_id("eps_header_selectYourRoleLink").click()
 
 
+@given("I have a selected role")
+def i_have_selected_role(context):
+    context.execute_steps("given I go to the select your role page")
+
+    select_your_role_page = SelectYourRole(context.page)
+    select_your_role_page.first_role_card.click()
+
+
 @then("I can see the summary container")
 def i_can_see_the_summary_container(context):
     select_your_role_page = SelectYourRole(context.page)
