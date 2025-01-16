@@ -73,7 +73,6 @@ Feature: Header links are displayed according to the user's state and the curren
   #   And I go to the select your role page
   #   Then I do not see the "Change Role" link
 
-  @testme
   Scenario: Change Role link is not shown if I am on the change role page
     Given I am logged in
     When I go to change my role
