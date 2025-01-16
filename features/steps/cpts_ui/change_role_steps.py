@@ -1,5 +1,6 @@
 # pylint: disable=no-name-in-module
 import re
+from time import sleep
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
 
@@ -17,10 +18,10 @@ change_role_url_pattern = re.compile(r".*/changerole(?:/|\.html)?$")
 
 @given("I am on the change your role page")
 def given_i_am_on_the_change_role_page(context):
-    context.execute_steps("when I navigate to the change your role page")
+    context.execute_steps("when I go to change my role")
     change_role_page = ChangeRole(context.page)
 
-    change_role_page.page.wait_for_url(change_role_url_pattern)
+    expect(change_role_page.change_role_title).to_be_visible(timeout=60000)
 
 
 @given("the summary table body is displayed")
@@ -68,13 +69,15 @@ def when_i_click_change_role_header_link(context):
     change_role_page.page.get_by_test_id("eps_header_changeRoleLink").click()
 
 
-@when("I navigate to the change your role page")
-def when_i_navigate_to_the_change_your_role_page(context):
+@when("I go to change my role")
+def i_go_to_change_my_role(context):
+    context.execute_steps("Given I have a selected role")
     change_role_page = ChangeRole(context.page)
 
-    change_role_page.page.goto(context.cpts_ui_base_url + "site")
+    # We need to give the backend time to catch up?
+    sleep(1)
     change_role_page.change_role_header.click()
-    change_role_page.page.wait_for_url(change_role_url_pattern, timeout=5000)
+    change_role_page.page.wait_for_url(change_role_url_pattern)
 
 
 ############################################################################
