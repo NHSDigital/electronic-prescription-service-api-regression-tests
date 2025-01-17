@@ -171,8 +171,12 @@ def i_can_see_an_informational_operation_outcome_in_the_response(context):
     assert_that(json_response["issue"][0]["severity"]).is_equal_to("information")
 
 
-@when("I make a request to the {product} validator endpoint")
-def i_make_a_request_to_the_validator_endpoint(context, product):
+@when(
+    "I make a {validity} request to the {product} validator endpoint with show validation set to {show_validation}"
+)
+def i_make_a_request_to_the_validator_endpoint(
+    context, validity, product, show_validation
+):
     base_url = None
     if product == "eps_fhir":
         base_url = context.eps_fhir_base_url
@@ -182,20 +186,42 @@ def i_make_a_request_to_the_validator_endpoint(context, product):
         base_url = context.eps_fhir_dispensing_base_url
     if base_url is not None:
         url = f"{base_url}/FHIR/R4/$validate"
-        additional_headers = {"Content-Type": "application/json"}
+        additional_headers = {
+            "Content-Type": "application/json",
+            "x-show-validation-warnings": show_validation,
+        }
         headers = get_headers(context, additional_headers)
 
         context.nhs_number = generate_single()
         context.nomination_code = "0004"
-        context.prepare_body = Prescription(context).body
+        if validity == "valid":
+            context.prepare_body = Prescription(context).body
+        else:
+            context.prepare_body = "foo"
         post(data=context.prepare_body, url=url, context=context, headers=headers)
     else:
         raise ValueError(f"unable to find base url for '{product}'")
 
 
-@then("the validator response has {issue_count} {issue_type} issue")
-def validator_response_has_n_issues_of_type(context, issue_count, issue_type):
+@then("the validator response has {expected_issue_count} {issue_type} issue")
+def validator_response_has_n_issues_of_type(context, expected_issue_count, issue_type):
     json_response = json.loads(context.response.content)
     assert_that(json_response["resourceType"]).is_equal_to("OperationOutcome")
-    assert_that(json_response["issue"][0]["code"]).is_equal_to("informational")
-    assert_that(json_response["issue"][0]["severity"]).is_equal_to("information")
+    actual_issue_count = sum(
+        p["severity"] == issue_type for p in json_response["issue"]
+    )
+    if expected_issue_count == "many":
+        assert_that(expected_issue_count).is_greater_than(0)
+    else:
+        assert_that(expected_issue_count).is_equal_to(actual_issue_count)
+
+
+@then("the validator response has error with diagnostic {diagnostic}")
+def validator_response_has_error_issue_with_diagnostic(context, diagnostic):
+    json_response = json.loads(context.response.content)
+    assert_that(json_response["resourceType"]).is_equal_to("OperationOutcome")
+    actual_issue_count = sum(
+        p["severity"] == "error" and p["diagnostics"] == diagnostic
+        for p in json_response["issue"]
+    )
+    assert_that(actual_issue_count).is_equal_to(1)
