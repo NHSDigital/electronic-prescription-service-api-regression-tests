@@ -9,6 +9,7 @@ class ChangeRole:
         self.page = page
 
         # Title and summary locators
+        self.change_role_title = page.get_by_text("Change your role")
         self.roles_without_access_table = page.locator("summary")
         self.roles_without_access_organisation_column_header = page.get_by_role(
             "columnheader", name="Organisation"
