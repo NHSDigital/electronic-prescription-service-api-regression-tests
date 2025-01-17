@@ -1,4 +1,4 @@
-@eps_fhir @smoke @regression @ping @blocker
+@eps_fhir_prescribing @smoke @regression @ping @blocker
 @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4895
 Feature: I can call the validator endpoint
 
