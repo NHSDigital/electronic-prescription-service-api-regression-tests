@@ -20,4 +20,4 @@ Feature: I can call the validator endpoint
     When I make a invalid request to the eps_fhir validator endpoint with show validation set to false
     Then the response indicates a bad request
     And the validator response has many error issue
-    And the validator response has error with diagnostic containing Failed to parse JSON encoded FHIR content
+    And the validator response has error with diagnostic Failed to parse JSON encoded FHIR content: Content does not appear to be FHIR JSON, first non-whitespace character was: '\"' (must be '{')

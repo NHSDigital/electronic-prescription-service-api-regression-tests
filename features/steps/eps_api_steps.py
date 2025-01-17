@@ -220,9 +220,9 @@ def validator_response_has_n_issues_of_type(context, expected_issue_count, issue
 def validator_response_has_error_issue_with_diagnostic(context, diagnostic):
     json_response = json.loads(context.response.content)
     assert_that(json_response["resourceType"]).is_equal_to("OperationOutcome")
-    print(f"expected diagnostic: ${diagnostic}")
+    print(f"expected diagnostic: {diagnostic}")
     actual_issue_count = sum(
-        p["severity"] == "error" and diagnostic in p["diagnostics"]
+        p["severity"] == "error" and p["diagnostics"] == diagnostic
         for p in json_response["issue"]
     )
     assert_that(actual_issue_count).is_equal_to(1)
