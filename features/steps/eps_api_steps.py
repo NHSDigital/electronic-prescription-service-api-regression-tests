@@ -12,8 +12,7 @@ from methods.api.eps_api_methods import (
     release_signed_prescription,
     return_prescription,
     withdraw_dispense_notification,
-    get_headers,
-    post,
+    call_validator,
 )
 from methods.shared.common import assert_that, get_auth
 from utils.random_nhs_number_generator import generate_single
@@ -177,30 +176,13 @@ def i_can_see_an_informational_operation_outcome_in_the_response(context):
 def i_make_a_request_to_the_validator_endpoint(
     context, validity, product, show_validation
 ):
-    base_url = None
-    if product == "eps_fhir":
-        base_url = context.eps_fhir_base_url
-    if product == "eps_fhir_prescribing":
-        base_url = context.eps_fhir_prescribing_base_url
-    if product == "eps_fhir_dispensing":
-        base_url = context.eps_fhir_dispensing_base_url
-    if base_url is not None:
-        url = f"{base_url}/FHIR/R4/$validate"
-        additional_headers = {
-            "Content-Type": "application/json",
-            "x-show-validation-warnings": show_validation,
-        }
-        headers = get_headers(context, additional_headers)
-
+    if validity == "valid":
         context.nhs_number = generate_single()
         context.nomination_code = "0004"
-        if validity == "valid":
-            context.prepare_body = Prescription(context).body
-        else:
-            context.prepare_body = "foo"
-        post(data=context.prepare_body, url=url, context=context, headers=headers)
+        validate_body = Prescription(context).body
     else:
-        raise ValueError(f"unable to find base url for '{product}'")
+        validate_body = "foo"
+    call_validator(context, show_validation, validate_body)
 
 
 @then("the validator response has {expected_issue_count} {issue_type} issue")
