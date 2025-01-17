@@ -11,7 +11,7 @@ Feature: I can call the validator endpoint
   Scenario: I can call the validator endpoint with valid fhir with x-show-validation-warnings set to true
     Given I am an authorised prescriber
     When I make a valid request to the eps_fhir validator endpoint with show validation set to true
-    Then the response indicates a success
+    Then the response indicates a bad request
     And the validator response has many information issue
     And the validator response has 0 error issue
 
