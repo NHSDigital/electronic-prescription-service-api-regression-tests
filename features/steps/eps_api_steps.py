@@ -211,7 +211,7 @@ def validator_response_has_n_issues_of_type(context, expected_issue_count, issue
         p["severity"] == issue_type for p in json_response["issue"]
     )
     if expected_issue_count == "many":
-        assert_that(expected_issue_count).is_greater_than(0)
+        assert_that(actual_issue_count).is_greater_than(0)
     else:
         assert_that(int(expected_issue_count)).is_equal_to(actual_issue_count)
 
