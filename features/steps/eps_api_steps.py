@@ -185,6 +185,8 @@ def i_make_a_request_to_the_validator_endpoint(context, product):
         additional_headers = {"Content-Type": "application/json"}
         headers = get_headers(context, additional_headers)
 
+        context.nhs_number = generate_single()
+        context.nomination_code = "0004"
         context.prepare_body = Prescription(context).body
         post(data=context.prepare_body, url=url, context=context, headers=headers)
     else:
