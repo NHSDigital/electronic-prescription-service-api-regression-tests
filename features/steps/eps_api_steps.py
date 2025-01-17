@@ -12,9 +12,12 @@ from methods.api.eps_api_methods import (
     release_signed_prescription,
     return_prescription,
     withdraw_dispense_notification,
+    get_headers,
+    post,
 )
 from methods.shared.common import assert_that, get_auth
 from utils.random_nhs_number_generator import generate_single
+from messages.eps_fhir.prescription import Prescription
 
 
 @given("I successfully prepare and sign a prescription")
@@ -162,6 +165,34 @@ def body_indicates_successful_action(context, action_type):
 
 @then("I can see an informational operation outcome in the response")
 def i_can_see_an_informational_operation_outcome_in_the_response(context):
+    json_response = json.loads(context.response.content)
+    assert_that(json_response["resourceType"]).is_equal_to("OperationOutcome")
+    assert_that(json_response["issue"][0]["code"]).is_equal_to("informational")
+    assert_that(json_response["issue"][0]["severity"]).is_equal_to("information")
+
+
+@when("I make a request to the {product} validator endpoint")
+def i_make_a_request_to_the_validator_endpoint(context, product):
+    base_url = None
+    if product == "eps_fhir":
+        base_url = context.eps_fhir_base_url
+    if product == "eps_fhir_prescribing":
+        base_url = context.eps_fhir_prescribing_base_url
+    if product == "eps_fhir_dispensing":
+        base_url = context.eps_fhir_dispensing_base_url
+    if base_url is not None:
+        url = f"{base_url}/FHIR/R4/$validate"
+        additional_headers = {"Content-Type": "application/json"}
+        headers = get_headers(context, additional_headers)
+
+        context.prepare_body = Prescription(context).body
+        post(data=context.prepare_body, url=url, context=context, headers=headers)
+    else:
+        raise ValueError(f"unable to find base url for '{product}'")
+
+
+@then("the validator response has {issue_count} {issue_type} issue")
+def validator_response_has_n_issues_of_type(context, issue_count, issue_type):
     json_response = json.loads(context.response.content)
     assert_that(json_response["resourceType"]).is_equal_to("OperationOutcome")
     assert_that(json_response["issue"][0]["code"]).is_equal_to("informational")
