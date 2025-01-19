@@ -182,7 +182,7 @@ def i_make_a_request_to_the_validator_endpoint(
         validate_body = Prescription(context).body
     else:
         validate_body = "foo"
-    call_validator(context, show_validation, validate_body)
+    call_validator(context, product, show_validation, validate_body)
 
 
 @then("the validator response has {expected_issue_count} {issue_type} issue")
