@@ -19,9 +19,7 @@ change_role_url_pattern = re.compile(r".*/changerole(?:/|\.html)?$")
 @given("I am on the change your role page")
 def given_i_am_on_the_change_role_page(context):
     context.execute_steps("when I go to change my role")
-    change_role_page = ChangeRole(context.page)
-
-    expect(change_role_page.change_role_title).to_be_visible(timeout=60000)
+    context.execute_steps("then I am on the change role page")
 
 
 @given("the summary table body is displayed")
@@ -83,6 +81,12 @@ def i_go_to_change_my_role(context):
 ############################################################################
 # THEN STEPS
 ############################################################################
+
+
+@then("I am on the change role page")
+def i_am_on_the_change_role_page(context):
+    change_role_page = ChangeRole(context.page)
+    expect(change_role_page.change_role_title).to_be_visible(timeout=60000)
 
 
 @then("I see the change role roles without access table")
