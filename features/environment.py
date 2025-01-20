@@ -135,7 +135,7 @@ def before_all(context):
         context.pfp_base_url = os.path.join(select_apigee_base_url(env), PFP_SUFFIX)
         context.psu_base_url = os.path.join(select_apigee_base_url(env), PSU_SUFFIX)
 
-        if PULL_REQUEST_ID:
+        if PULL_REQUEST_ID and env != "LOCALHOST":
             print(f"--- Using pull request id: '{PULL_REQUEST_ID}'")
             pull_request_id = PULL_REQUEST_ID.lower()
             if "pr-" in pull_request_id:

@@ -79,7 +79,7 @@ For example:
 product=cpts-ui env=internal-dev PULL_REQUEST_ID=pr-300 tags=cpt-ui HEADLESS=true make run-tests
 ```
 
-Note that CPT-UI supports localhost testing. To do this, use the `env=localhost` variable. Make sure your localhost server is running!
+Note that CPT-UI supports localhost testing. To do this, use the `env=localhost` variable - but ensure you have *not* set the `PULL_REQUEST_ID` variable, as it is not needed and will break the tests. Make sure your localhost server is running!
 
 ### Method 4 (Not Recommended):
 Run the tests by running `behave` in a command prompt or terminal window.
