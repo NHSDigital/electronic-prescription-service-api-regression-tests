@@ -34,6 +34,13 @@ def indicate_record_created(context):
     common.the_expected_response_code_is_returned(context, 201)
 
 
+@then("the response indicates a bad request")
+def indicate_bad_request_response(context):
+    if "sandbox" in context.config.userdata["env"].lower():
+        return
+    common.the_expected_response_code_is_returned(context, 400)
+
+
 @then("I can see the version information in the response")
 def i_see_version_in_response(context):
     response = context.response.json()
