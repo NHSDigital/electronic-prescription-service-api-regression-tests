@@ -110,3 +110,24 @@ def return_prescription(context):
 
     context.return_body = Return(context).body
     post(data=context.return_body, url=url, context=context, headers=headers)
+
+
+def call_validator(context, product, show_validation, validate_body):
+    if product == "eps_fhir_dispensing":
+        base_url = context.eps_fhir_dispensing_base_url
+    elif product == "eps_fhir_prescribing":
+        base_url = context.eps_fhir_prescribing_base_url
+    else:
+        base_url = context.eps_fhir_base_url
+    url = f"{base_url}/FHIR/R4/$validate"
+    if show_validation == "false" or show_validation == "true":
+        additional_headers = {
+            "Content-Type": "application/json",
+            "x-show-validation-warnings": show_validation,
+        }
+    else:
+        additional_headers = {"Content-Type": "application/json"}
+    headers = get_headers(context, additional_headers)
+
+    context.validate_body = validate_body
+    post(data=context.validate_body, url=url, context=context, headers=headers)
