@@ -12,9 +12,11 @@ from methods.api.eps_api_methods import (
     release_signed_prescription,
     return_prescription,
     withdraw_dispense_notification,
+    call_validator,
 )
 from methods.shared.common import assert_that, get_auth
 from utils.random_nhs_number_generator import generate_single
+from messages.eps_fhir.prescription import Prescription
 
 
 @given("I successfully prepare and sign a prescription")
@@ -166,3 +168,43 @@ def i_can_see_an_informational_operation_outcome_in_the_response(context):
     assert_that(json_response["resourceType"]).is_equal_to("OperationOutcome")
     assert_that(json_response["issue"][0]["code"]).is_equal_to("informational")
     assert_that(json_response["issue"][0]["severity"]).is_equal_to("information")
+
+
+@when(
+    "I make a {validity} request to the {product} validator endpoint with show validation set to {show_validation}"
+)
+def i_make_a_request_to_the_validator_endpoint(
+    context, validity, product, show_validation
+):
+    if validity == "valid":
+        context.nhs_number = generate_single()
+        context.nomination_code = "0004"
+        validate_body = Prescription(context).body
+    else:
+        validate_body = "foo"
+    call_validator(context, product, show_validation, validate_body)
+
+
+@then("the validator response has {expected_issue_count} {issue_type} issue")
+def validator_response_has_n_issues_of_type(context, expected_issue_count, issue_type):
+    json_response = json.loads(context.response.content)
+    assert_that(json_response["resourceType"]).is_equal_to("OperationOutcome")
+    actual_issue_count = sum(
+        p["severity"] == issue_type for p in json_response["issue"]
+    )
+    if expected_issue_count == "many":
+        assert_that(actual_issue_count).is_greater_than(0)
+    else:
+        assert_that(int(expected_issue_count)).is_equal_to(actual_issue_count)
+
+
+@then("the validator response has error with diagnostic containing {diagnostic}")
+def validator_response_has_error_issue_with_diagnostic(context, diagnostic):
+    json_response = json.loads(context.response.content)
+    assert_that(json_response["resourceType"]).is_equal_to("OperationOutcome")
+    print(f"expected diagnostic: {diagnostic}")
+    actual_issue_count = sum(
+        p["severity"] == "error" and diagnostic in p["diagnostics"]
+        for p in json_response["issue"]
+    )
+    assert_that(actual_issue_count).is_equal_to(1)
