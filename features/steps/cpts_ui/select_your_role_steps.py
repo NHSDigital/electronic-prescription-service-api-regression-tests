@@ -110,7 +110,7 @@ def i_can_see_the_no_access_table_body_data(context):
 
 
 @then("Then I can see the role that has been pre-selected")
-def i_see_logged_in_message(context, pharmacy, role):
+def i_see_logged_in_message(context):
     select_your_role_page = SelectYourRole(context.page)
     pre_selected_element = select_your_role_page.page.get_by_test_id(
         "eps_select_your_role_pre_role_selected_information"
