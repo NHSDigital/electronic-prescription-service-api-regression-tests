@@ -15,12 +15,6 @@ class SelectYourRole:
         )
         self.role_column_header = page.get_by_role("columnheader", name="Role")
 
-        # Logged-in message
-        self.logged_in_message_container = page.get_by_text(
-            "Information: Information: You"
-        )
-        self.logged_in_message = page.get_by_text("You are currently logged in")
-
         # Roles without access
         self.roles_without_access_table_body = page.get_by_role("group").locator("div")
 

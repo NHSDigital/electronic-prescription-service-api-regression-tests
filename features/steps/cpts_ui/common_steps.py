@@ -6,6 +6,7 @@ from features.environment import (
     MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES,
     MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE,
     MOCK_CIS2_LOGIN_ID_SINGLE_ACCESS_ROLE,
+    MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES_WITH_SELECTED_ROLE,
 )
 
 select_your_role_url_pattern = re.compile(r".*/selectyourrole(?:/|\.html)$")
@@ -61,6 +62,17 @@ def login_single_role(context):
 
     context.page.get_by_role("button", name="Log in with mock CIS2").click()
     context.page.get_by_label("Username").fill(MOCK_CIS2_LOGIN_ID_SINGLE_ACCESS_ROLE)
+    context.page.get_by_role("button", name="Sign In").click()
+    context.page.wait_for_url(select_your_role_url_pattern)
+
+
+@given("I am logged in as a user with a pre selected role")
+def login_pre_role_selected(context):
+    context.execute_steps("given I am on the login page")
+    context.page.get_by_role("button", name="Log in with mock CIS2").click()
+    context.page.get_by_label("Username").fill(
+        MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES_WITH_SELECTED_ROLE
+    )
     context.page.get_by_role("button", name="Sign In").click()
     context.page.wait_for_url(select_your_role_url_pattern)
 

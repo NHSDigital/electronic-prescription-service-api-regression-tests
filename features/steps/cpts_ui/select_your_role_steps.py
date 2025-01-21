@@ -19,6 +19,11 @@ def i_have_selected_role(context):
     select_your_role_page.first_role_card.click()
 
 
+@given("I am logged in as a user with a pre selected role")
+def i_have_a_pre_selected_role(context):
+    context.execute_steps("given I go to the select your role page")
+
+
 @then("I can see the summary container")
 def i_can_see_the_summary_container(context):
     select_your_role_page = SelectYourRole(context.page)
@@ -104,11 +109,10 @@ def i_can_see_the_no_access_table_body_data(context):
     expect(select_your_role_page.first_row_role_name_no_access).to_be_visible()
 
 
-@then('I see a message saying "You are currently logged in at {pharmacy} with {role}."')
+@then("Then I can see the role that has been pre-selected")
 def i_see_logged_in_message(context, pharmacy, role):
     select_your_role_page = SelectYourRole(context.page)
-    message = f"You are currently logged in at {pharmacy} with {role}."
-    expect(select_your_role_page.logged_in_message_container).to_contain_text(
-        "Information: Information: You"
+    pre_selected_element = select_your_role_page.page.get_by_test_id(
+        "eps_select_your_role_pre_role_selected_information"
     )
-    expect(select_your_role_page.logged_in_message).to_contain_text(message)
+    expect(pre_selected_element).to_be_visible()
