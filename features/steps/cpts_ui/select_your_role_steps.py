@@ -102,3 +102,12 @@ def i_can_see_the_no_access_table_body_data(context):
     select_your_role_page = SelectYourRole(context.page)
     expect(select_your_role_page.first_row_org_name_no_access).to_be_visible()
     expect(select_your_role_page.first_row_role_name_no_access).to_be_visible()
+
+
+@then("I can see the role that has been pre selected")
+def i_see_logged_in_message(context):
+    select_your_role_page = SelectYourRole(context.page)
+    pre_selected_element = select_your_role_page.page.get_by_test_id(
+        "eps_select_your_role_pre_role_selected"
+    )
+    expect(pre_selected_element).to_be_visible()
