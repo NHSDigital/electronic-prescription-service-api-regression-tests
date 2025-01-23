@@ -17,6 +17,7 @@ from methods.api.eps_api_methods import (
 from methods.shared.common import assert_that, get_auth
 from utils.random_nhs_number_generator import generate_single
 from messages.eps_fhir.prescription import Prescription
+from jycm.jycm import YouchamaJsonDiffer
 
 
 @given("I successfully prepare and sign a prescription")
@@ -222,4 +223,6 @@ def validator_response_matches_file(context, filename):
     with open(f"messages/examples/{filename}") as f:
         expected_response = json.load(f)
     json_response = json.loads(context.response.content)
-    assert_that(json_response).is_equal_to(expected_response)
+    ycm = YouchamaJsonDiffer(expected_response, json_response)
+    ycm.diff()
+    assert ycm.to_dict(no_pairs=True) == {}  # aka no diff
