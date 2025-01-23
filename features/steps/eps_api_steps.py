@@ -190,7 +190,7 @@ def i_make_a_request_to_the_validator_endpoint(
 def i_make_a_request_to_the_validator_endpoint_with_file(context, filename, product):
     with open(f"messages/examples/{filename}") as f:
         validate_body = json.load(f)
-    call_validator(context, product, "unset", validate_body)
+    call_validator(context, product, "unset", json.dumps(validate_body))
 
 
 @then("the validator response has {expected_issue_count} {issue_type} issue")
