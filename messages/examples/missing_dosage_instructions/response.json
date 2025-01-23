@@ -9,15 +9,15 @@
                 },
                 {
                     "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-col",
-                    "valueInteger": 1063
+                    "valueInteger": 3274
                 }
             ],
             "severity": "warning",
             "code": "processing",
             "diagnostics": "Constraint failed: dom-6: 'A resource should have narrative for robust management' (defined in http://hl7.org/fhir/StructureDefinition/DomainResource) (Best Practice Recommendation)",
             "location": [
-                "Bundle.entry[0].resource/*MessageHeader/null*/",
-                "Line[1] Col[1063]"
+                "Bundle.entry[1].resource/*MedicationRequest/null*/",
+                "Line[1] Col[3274]"
             ]
         },
         {
@@ -28,15 +28,15 @@
                 },
                 {
                     "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-col",
-                    "valueInteger": 3274
+                    "valueInteger": 1063
                 }
             ],
             "severity": "warning",
             "code": "processing",
             "diagnostics": "Constraint failed: dom-6: 'A resource should have narrative for robust management' (defined in http://hl7.org/fhir/StructureDefinition/DomainResource) (Best Practice Recommendation)",
             "location": [
-                "Bundle.entry[1].resource/*MedicationRequest/null*/",
-                "Line[1] Col[3274]"
+                "Bundle.entry[0].resource/*MessageHeader/null*/",
+                "Line[1] Col[1063]"
             ]
         },
         {
