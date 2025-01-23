@@ -28,26 +28,7 @@
                 },
                 {
                     "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-col",
-                    "valueInteger": 3274
-                }
-            ],
-            "severity": "warning",
-            "code": "processing",
-            "diagnostics": "Constraint failed: dom-6: 'A resource should have narrative for robust management' (defined in http://hl7.org/fhir/StructureDefinition/DomainResource) (Best Practice Recommendation)",
-            "location": [
-                "Bundle.entry[1].resource/*MedicationRequest/null*/",
-                "Line[1] Col[3274]"
-            ]
-        },
-        {
-            "extension": [
-                {
-                    "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-line",
-                    "valueInteger": 1
-                },
-                {
-                    "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-col",
-                    "valueInteger": 3274
+                    "valueInteger": 3342
                 },
                 {
                     "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-message-id",
@@ -64,10 +45,10 @@
                     }
                 ]
             },
-            "diagnostics": "MedicationRequest.dosageInstruction: minimum required = 1, but only found 0 (from https://fhir.nhs.uk/StructureDefinition/NHSDigital-MedicationRequest-Message)",
+            "diagnostics": "MedicationRequest.medication[x]: minimum required = 1, but only found 0 (from http://hl7.org/fhir/StructureDefinition/MedicationRequest|4.0.1)",
             "location": [
                 "Bundle.entry[1].resource/*MedicationRequest/null*/",
-                "Line[1] Col[3274]"
+                "Line[1] Col[3342]"
             ]
         },
         {
@@ -78,7 +59,57 @@
                 },
                 {
                     "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-col",
-                    "valueInteger": 1983
+                    "valueInteger": 3342
+                }
+            ],
+            "severity": "warning",
+            "code": "processing",
+            "diagnostics": "Constraint failed: dom-6: 'A resource should have narrative for robust management' (defined in http://hl7.org/fhir/StructureDefinition/DomainResource) (Best Practice Recommendation)",
+            "location": [
+                "Bundle.entry[1].resource/*MedicationRequest/null*/",
+                "Line[1] Col[3342]"
+            ]
+        },
+        {
+            "extension": [
+                {
+                    "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-line",
+                    "valueInteger": 1
+                },
+                {
+                    "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-col",
+                    "valueInteger": 3342
+                },
+                {
+                    "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-message-id",
+                    "valueString": "Validation_VAL_Profile_Minimum"
+                }
+            ],
+            "severity": "error",
+            "code": "processing",
+            "details": {
+                "coding": [
+                    {
+                        "system": "http://hl7.org/fhir/java-core-messageId",
+                        "code": "Validation_VAL_Profile_Minimum"
+                    }
+                ]
+            },
+            "diagnostics": "MedicationRequest.medication[x]: minimum required = 1, but only found 0 (from https://fhir.nhs.uk/StructureDefinition/NHSDigital-MedicationRequest-Message)",
+            "location": [
+                "Bundle.entry[1].resource/*MedicationRequest/null*/",
+                "Line[1] Col[3342]"
+            ]
+        },
+        {
+            "extension": [
+                {
+                    "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-line",
+                    "valueInteger": 1
+                },
+                {
+                    "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-col",
+                    "valueInteger": 2730
                 },
                 {
                     "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-message-id",
@@ -97,8 +128,8 @@
             },
             "diagnostics": "Unable to expand ValueSet because CodeSystem has CodeSystem.content=not-present but contents were not found: http://snomed.info/sct",
             "location": [
-                "Bundle.entry[1].resource/*MedicationRequest/null*/.medication.ofType(CodeableConcept)",
-                "Line[1] Col[1983]"
+                "Bundle.entry[1].resource/*MedicationRequest/null*/.dosageInstruction[0].route",
+                "Line[1] Col[2730]"
             ]
         },
         {
@@ -109,27 +140,27 @@
                 },
                 {
                     "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-col",
-                    "valueInteger": 1983
+                    "valueInteger": 3342
                 },
                 {
                     "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-message-id",
-                    "valueString": "Terminology_TX_NoValid_2_CC"
+                    "valueString": "https://fhir.nhs.uk/StructureDefinition/NHSDigital-MedicationRequest#eps-1"
                 }
             ],
-            "severity": "warning",
+            "severity": "error",
             "code": "processing",
             "details": {
                 "coding": [
                     {
                         "system": "http://hl7.org/fhir/java-core-messageId",
-                        "code": "Terminology_TX_NoValid_2_CC"
+                        "code": "https://fhir.nhs.uk/StructureDefinition/NHSDigital-MedicationRequest#eps-1"
                     }
                 ]
             },
-            "diagnostics": "None of the codings provided are in the value set 'NHS Digital Medication Code' (https://fhir.nhs.uk/ValueSet/NHSDigital-MedicationCode|2.1.0), and a coding should come from this value set unless it has no suitable code (note that the validator cannot judge what is suitable) (codes = http://snomed.info/sct#39113611000001102)",
+            "diagnostics": "Constraint failed: eps-1: 'medication[x] - Only one of medicationReference or medicationCodeableConcept should be provided' (defined in https://fhir.nhs.uk/StructureDefinition/NHSDigital-MedicationRequest)",
             "location": [
-                "Bundle.entry[1].resource/*MedicationRequest/null*/.medication.ofType(CodeableConcept)",
-                "Line[1] Col[1983]"
+                "Bundle.entry[1].resource/*MedicationRequest/null*/",
+                "Line[1] Col[3342]"
             ]
         },
         {
@@ -140,26 +171,7 @@
                 },
                 {
                     "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-col",
-                    "valueInteger": 1981
-                }
-            ],
-            "severity": "warning",
-            "code": "processing",
-            "diagnostics": "Unable to validate medication codes",
-            "location": [
-                "Bundle.entry[1].resource/*MedicationRequest/null*/.medication.ofType(CodeableConcept).coding[0]",
-                "Line[1] Col[1981]"
-            ]
-        },
-        {
-            "extension": [
-                {
-                    "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-line",
-                    "valueInteger": 1
-                },
-                {
-                    "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-col",
-                    "valueInteger": 3878
+                    "valueInteger": 3946
                 }
             ],
             "severity": "warning",
@@ -167,7 +179,7 @@
             "diagnostics": "Constraint failed: dom-6: 'A resource should have narrative for robust management' (defined in http://hl7.org/fhir/StructureDefinition/DomainResource) (Best Practice Recommendation)",
             "location": [
                 "Bundle.entry[2].resource/*Patient/null*/",
-                "Line[1] Col[3878]"
+                "Line[1] Col[3946]"
             ]
         },
         {
@@ -178,7 +190,7 @@
                 },
                 {
                     "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-col",
-                    "valueInteger": 4346
+                    "valueInteger": 4414
                 }
             ],
             "severity": "warning",
@@ -186,7 +198,7 @@
             "diagnostics": "Constraint failed: dom-6: 'A resource should have narrative for robust management' (defined in http://hl7.org/fhir/StructureDefinition/DomainResource) (Best Practice Recommendation)",
             "location": [
                 "Bundle.entry[3].resource/*Practitioner/null*/",
-                "Line[1] Col[4346]"
+                "Line[1] Col[4414]"
             ]
         },
         {
@@ -197,7 +209,7 @@
                 },
                 {
                     "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-col",
-                    "valueInteger": 4346
+                    "valueInteger": 4414
                 }
             ],
             "severity": "warning",
@@ -205,7 +217,7 @@
             "diagnostics": "Constraint failed: prac-gmc: 'GMC must be of the format CNNNNNNN' (defined in https://fhir.nhs.uk/StructureDefinition/NHSDigital-Practitioner)",
             "location": [
                 "Bundle.entry[3].resource/*Practitioner/null*/",
-                "Line[1] Col[4346]"
+                "Line[1] Col[4414]"
             ]
         },
         {
@@ -216,7 +228,7 @@
                 },
                 {
                     "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-col",
-                    "valueInteger": 5011
+                    "valueInteger": 5079
                 }
             ],
             "severity": "warning",
@@ -224,7 +236,7 @@
             "diagnostics": "Constraint failed: dom-6: 'A resource should have narrative for robust management' (defined in http://hl7.org/fhir/StructureDefinition/DomainResource) (Best Practice Recommendation)",
             "location": [
                 "Bundle.entry[4].resource/*PractitionerRole/null*/",
-                "Line[1] Col[5011]"
+                "Line[1] Col[5079]"
             ]
         },
         {
@@ -235,7 +247,7 @@
                 },
                 {
                     "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-col",
-                    "valueInteger": 5784
+                    "valueInteger": 5852
                 }
             ],
             "severity": "warning",
@@ -243,7 +255,7 @@
             "diagnostics": "Constraint failed: dom-6: 'A resource should have narrative for robust management' (defined in http://hl7.org/fhir/StructureDefinition/DomainResource) (Best Practice Recommendation)",
             "location": [
                 "Bundle.entry[5].resource/*Organization/null*/",
-                "Line[1] Col[5784]"
+                "Line[1] Col[5852]"
             ]
         },
         {
@@ -254,7 +266,7 @@
                 },
                 {
                     "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-col",
-                    "valueInteger": 6366
+                    "valueInteger": 6434
                 }
             ],
             "severity": "warning",
@@ -262,7 +274,7 @@
             "diagnostics": "Constraint failed: dom-6: 'A resource should have narrative for robust management' (defined in http://hl7.org/fhir/StructureDefinition/DomainResource) (Best Practice Recommendation)",
             "location": [
                 "Bundle.entry[6].resource/*HealthcareService/null*/",
-                "Line[1] Col[6366]"
+                "Line[1] Col[6434]"
             ]
         },
         {
@@ -273,7 +285,7 @@
                 },
                 {
                     "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-col",
-                    "valueInteger": 6085
+                    "valueInteger": 6153
                 },
                 {
                     "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-message-id",
@@ -293,7 +305,7 @@
             "diagnostics": "This element does not match any known slice defined in the profile https://fhir.nhs.uk/StructureDefinition/NHSDigital-HealthcareService (this may not be a problem, but you should check that it's not intended to match a slice) - Bundle.entry[6].resource/*HealthcareService/null*/.identifier[0]: Does not match slice 'ersServiceId' (discriminator: ('https://fhir.nhs.uk/Id/ers-service' in system))",
             "location": [
                 "Bundle.entry[6].resource/*HealthcareService/null*/.identifier[0]",
-                "Line[1] Col[6085]"
+                "Line[1] Col[6153]"
             ]
         },
         {
@@ -304,7 +316,7 @@
                 },
                 {
                     "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-col",
-                    "valueInteger": 6085
+                    "valueInteger": 6153
                 },
                 {
                     "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-message-id",
@@ -324,7 +336,7 @@
             "diagnostics": "This element does not match any known slice defined in the profile https://fhir.nhs.uk/StructureDefinition/NHSDigital-HealthcareService (this may not be a problem, but you should check that it's not intended to match a slice) - Bundle.entry[6].resource/*HealthcareService/null*/.identifier[0]: Does not match slice 'dosServiceId' (discriminator: ('http://fhir.nhs.uk/Id/dos-service-id' in system))",
             "location": [
                 "Bundle.entry[6].resource/*HealthcareService/null*/.identifier[0]",
-                "Line[1] Col[6085]"
+                "Line[1] Col[6153]"
             ]
         },
         {
@@ -335,7 +347,7 @@
                 },
                 {
                     "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-col",
-                    "valueInteger": 6729
+                    "valueInteger": 6797
                 }
             ],
             "severity": "warning",
@@ -343,7 +355,7 @@
             "diagnostics": "Constraint failed: dom-6: 'A resource should have narrative for robust management' (defined in http://hl7.org/fhir/StructureDefinition/DomainResource) (Best Practice Recommendation)",
             "location": [
                 "Bundle.entry[7].resource/*Location/null*/",
-                "Line[1] Col[6729]"
+                "Line[1] Col[6797]"
             ]
         },
         {
@@ -354,7 +366,7 @@
                 },
                 {
                     "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-col",
-                    "valueInteger": 6585
+                    "valueInteger": 6653
                 },
                 {
                     "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-message-id",
@@ -374,7 +386,7 @@
             "diagnostics": "This element does not match any known slice defined in the profile https://fhir.hl7.org.uk/StructureDefinition/UKCore-Location|2.2.0 (this may not be a problem, but you should check that it's not intended to match a slice) - Bundle.entry[7].resource/*Location/null*/.identifier[0]: Does not match slice 'odsSiteCode' (discriminator: ('https://fhir.nhs.uk/Id/ods-site-code' in system))",
             "location": [
                 "Bundle.entry[7].resource/*Location/null*/.identifier[0]",
-                "Line[1] Col[6585]"
+                "Line[1] Col[6653]"
             ]
         },
         {
@@ -385,7 +397,7 @@
                 },
                 {
                     "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-col",
-                    "valueInteger": 6367
+                    "valueInteger": 6435
                 },
                 {
                     "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-message-id",
@@ -405,7 +417,7 @@
             "diagnostics": "Entry 'urn:uuid:54b0506d-49af-4245-9d40-d7d64902055e' isn't reachable by traversing links (forward or backward) from the MessageHeader, so its presence should be reviewed (is it needed to process the message?)",
             "location": [
                 "Bundle.entry[7]",
-                "Line[1] Col[6367]"
+                "Line[1] Col[6435]"
             ]
         },
         {
@@ -416,7 +428,7 @@
                 },
                 {
                     "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-issue-col",
-                    "valueInteger": 6730
+                    "valueInteger": 6798
                 },
                 {
                     "url": "http://hl7.org/fhir/StructureDefinition/operationoutcome-message-id",
@@ -436,7 +448,7 @@
             "diagnostics": "Entry 'urn:uuid:8a5d7d67-64fb-44ec-9802-2dc214bb3dcb' isn't reachable by traversing links (forward or backward) from the MessageHeader, so its presence should be reviewed (is it needed to process the message?)",
             "location": [
                 "Bundle.entry[8]",
-                "Line[1] Col[6730]"
+                "Line[1] Col[6798]"
             ]
         }
     ]
