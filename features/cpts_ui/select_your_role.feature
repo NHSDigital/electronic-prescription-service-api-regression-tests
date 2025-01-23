@@ -2,10 +2,12 @@
 @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4653
 Feature: Role selection page renders roles properly when logged in
 
+    @rbac_banner
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4653
     Scenario: User can navigate to the select your role page
         Given I am logged in
         And I go to the select your role page
+        Then I can not see the RBAC banner
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4656
     Scenario: User is redirected to the select your role page
