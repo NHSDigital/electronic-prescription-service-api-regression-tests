@@ -187,7 +187,7 @@ def i_make_a_request_to_the_validator_endpoint(
 
 @when("I make a request with file {filename} to the {product} validator endpoint")
 def i_make_a_request_to_the_validator_endpoint_with_file(context, filename, product):
-    with open(f"../../messages/examples/{filename}") as f:
+    with open(f"messages/examples/{filename}") as f:
         validate_body = json.load(f)
     call_validator(context, product, "unset", validate_body)
 
@@ -219,7 +219,7 @@ def validator_response_has_error_issue_with_diagnostic(context, diagnostic):
 
 @then("the validator response matches {filename}")
 def validator_response_matches_file(context, filename):
-    with open(f"../../messages/examples/{filename}") as f:
+    with open(f"messages/examples/{filename}") as f:
         expected_response = json.load(f)
     json_response = json.loads(context.response.content)
     assert_that(json_response).is_equal_to(expected_response)
