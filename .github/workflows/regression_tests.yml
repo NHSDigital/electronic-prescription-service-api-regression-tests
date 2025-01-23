@@ -99,8 +99,7 @@ jobs:
         name: upload poetry.lock
         with:
           name: poetry
-          path: |
-            poetry.lock
+          path: ./poetry.lock
     
       - name: Regression Tests
         id: tests
