@@ -27,7 +27,7 @@ Feature: Header links are displayed according to the user's state and the curren
     Then I see the "Logout" link
 
   Scenario: Logout link is not shown if user is not logged in
-    Given I am on the home page
+    When I am on the homepage
     Then I do not see the "Logout" link
 
   ############################################################################
@@ -35,7 +35,7 @@ Feature: Header links are displayed according to the user's state and the curren
   ############################################################################
   Scenario: Select Your Role link is shown on the homepage, if we dont select a role
     Given I am logged in
-    And I am on the home page
+    When I am on the homepage
     Then I see the "Select Your Role" link
 
   Scenario: Select Your Role link is not shown if I go to the select your role page
@@ -45,7 +45,7 @@ Feature: Header links are displayed according to the user's state and the curren
 
   Scenario: Select Your Role link is not shown if I already have a selected role
     Given I am logged in
-    And I have a selected role
+    When I have a selected role
     And I am on the homepage
     Then I do not see the "Select Your Role" link
 
@@ -54,13 +54,13 @@ Feature: Header links are displayed according to the user's state and the curren
   ############################################################################
   Scenario: Change Role link is shown if the user has a selected role
     Given I am logged in
-    And I have a selected role
-    And I am on the home page
+    When I have a selected role
+    When I am on the homepage
     Then I see the "Change Role" link
 
   Scenario: Change Role link is not shown if the user has no selected role
     Given I am logged in
-    And I am on the homepage
+    When I am on the homepage
     Then I do not see the "Change Role" link
 
   # FIXME: Address this when the SPA is fixed!
@@ -69,8 +69,8 @@ Feature: Header links are displayed according to the user's state and the curren
   # @fixme
   # Scenario: Change Role link is not shown if I go to the select your role page
   #   Given I am logged in
-  #   And I have a selected role
-  #   When I go to the select your role page
+  #   When I have a selected role
+  #   And I go to the select your role page
   #   Then I do not see the "Change Role" link
 
   Scenario: Change Role link is not shown if I am on the change role page

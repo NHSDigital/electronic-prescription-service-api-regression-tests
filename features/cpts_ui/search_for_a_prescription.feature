@@ -30,5 +30,5 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
   @rbac_banner
   Scenario: User can see their RBAC banner when a role is selected
     Given I am logged in
-    And I have a selected role
+    When I have a selected role
     Then I can see the RBAC banner

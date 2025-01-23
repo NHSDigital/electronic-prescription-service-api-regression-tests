@@ -4,7 +4,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
 
   @rbac_banner
   Scenario: user can navigate to the Clinical Prescription Tracker Service Website homepage
-    When I go to the homepage
+    When I am on the homepage
     Then I am on the homepage
     And I can not see the RBAC banner
 
