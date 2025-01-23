@@ -40,7 +40,7 @@ Feature: Header links are displayed according to the user's state and the curren
 
   Scenario: Select Your Role link is not shown if I go to the select your role page
     Given I am logged in
-    And I go to the select your role page
+    When I go to the select your role page
     Then I do not see the "Select Your Role" link
 
   Scenario: Select Your Role link is not shown if I already have a selected role
@@ -70,7 +70,7 @@ Feature: Header links are displayed according to the user's state and the curren
   # Scenario: Change Role link is not shown if I go to the select your role page
   #   Given I am logged in
   #   And I have a selected role
-  #   And I go to the select your role page
+  #   When I go to the select your role page
   #   Then I do not see the "Change Role" link
 
   Scenario: Change Role link is not shown if I am on the change role page

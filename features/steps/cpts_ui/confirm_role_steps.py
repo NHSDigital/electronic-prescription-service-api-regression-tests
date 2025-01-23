@@ -12,7 +12,6 @@ from pages.confirm_role import ConfirmRole
 
 @given("I am on the confirm your role page")
 def i_am_on_the_confirm_your_role_page(context):
-    context.execute_steps("given I go to the select your role page")
     context.execute_steps("given I have a selected role")
     context.execute_steps("then I see the 'confirm your role' page")
 
