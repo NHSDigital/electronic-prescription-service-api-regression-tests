@@ -185,6 +185,13 @@ def i_make_a_request_to_the_validator_endpoint(
     call_validator(context, product, show_validation, validate_body)
 
 
+@when("I make a request with file {filename} to the {product} validator endpoint")
+def i_make_a_request_to_the_validator_endpoint_with_file(context, filename, product):
+    with open(f"../../messages/examples/{filename}") as f:
+        validate_body = json.load(f)
+    call_validator(context, product, "unset", validate_body)
+
+
 @then("the validator response has {expected_issue_count} {issue_type} issue")
 def validator_response_has_n_issues_of_type(context, expected_issue_count, issue_type):
     json_response = json.loads(context.response.content)
@@ -208,3 +215,11 @@ def validator_response_has_error_issue_with_diagnostic(context, diagnostic):
         for p in json_response["issue"]
     )
     assert_that(actual_issue_count).is_equal_to(1)
+
+
+@then("the validator response matches {filename}")
+def validator_response_matches_file(context, filename):
+    with open(f"../../messages/examples/{filename}") as f:
+        expected_response = json.load(f)
+    json_response = json.loads(context.response.content)
+    assert_that(json_response).is_equal_to(expected_response)
