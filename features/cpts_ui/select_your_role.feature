@@ -77,3 +77,10 @@ Feature: Role selection page renders roles properly when logged in
         When I click on the summary expander
         Then I can see the summary container
         And I cannot see the summary table body
+
+
+    @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4645
+    Scenario: User with a pre selected role sees their pre selected role
+        Given I am logged in as a user with a pre selected role
+        And I go to the select your role page
+        Then I can see the role that has been pre selected
