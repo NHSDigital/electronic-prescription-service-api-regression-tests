@@ -118,7 +118,6 @@ jobs:
             export JWT_PRIVATE_KEY="$JWT_PRIVATE_KEY"
             export PULL_REQUEST_ID="$PULL_REQUEST_ID"
             echo Pull request ID = "$PULL_REQUEST_ID"
-            poetry add jycm
             poetry run python ./runner.py --env="$ENVIRONMENT" --product="$PRODUCT" --tags="$TAGS"
 
       - name: SHA1 Regression Tests
