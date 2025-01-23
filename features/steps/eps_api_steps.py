@@ -225,4 +225,4 @@ def validator_response_matches_file(context, filename):
     json_response = json.loads(context.response.content)
     ycm = YouchamaJsonDiffer(expected_response, json_response)
     diff_result = ycm.get_diff()  # new API
-    assert_that(diff_result).is_equal_to({})
+    assert_that(diff_result).is_equal_to({"just4vis:pairs": []})
