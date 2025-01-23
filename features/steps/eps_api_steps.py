@@ -224,5 +224,5 @@ def validator_response_matches_file(context, filename):
         expected_response = json.load(f)
     json_response = json.loads(context.response.content)
     ycm = YouchamaJsonDiffer(expected_response, json_response)
-    ycm.diff()
-    assert ycm.to_dict(no_pairs=True) == {}  # aka no diff
+    diff_result = ycm.get_diff()  # new API
+    assert_that(diff_result).is_equal_to({})
