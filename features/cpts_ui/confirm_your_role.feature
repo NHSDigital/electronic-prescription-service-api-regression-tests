@@ -9,15 +9,15 @@ Feature: When the user selects a role, they see a confirmation page
         When I go to the select your role page
         And I have a selected role
         Then I see the 'confirm your role' page
-        And I can see the RBAC banner
-    
+And I can see the RBAC banner
+
     Scenario: user can change their role, and see a confirmation page
         Given I am on the change your role page
         When I click a change role role card
         Then I see the 'confirm your role' page
         And I can see the RBAC banner
 
-    Scenario: user can select a role, then change their mind with the first change link 
+    Scenario: user can select a role, then change their mind with the first change link
         Given I am on the confirm your role page
         When I click the change link next to the role text
         Then I am on the change role page
@@ -32,7 +32,7 @@ Feature: When the user selects a role, they see a confirmation page
         # TODO: As above
         # And I can see the RBAC banner
 
-    Scenario: user is sent from role confirmation page to the search for a prescription page
+  Scenario: user is sent from role confirmation page to the search for a prescription page
         Given I am on the confirm your role page
         When I click the confirm and continue button on the confirm role page
         Then I am on the search for a prescription page
