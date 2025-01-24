@@ -1,5 +1,6 @@
 @eps_fhir @smoke @regression @blocker @validator
 @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4895
+@allure.tms:https://jsondiff.tooliverse.io/
 Feature: I can call the validator endpoint
 
   Scenario: I can call the validator endpoint with valid fhir with x-show-validation-warnings set to false
