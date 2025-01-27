@@ -29,7 +29,7 @@ pytest-nhsd-apim = "^4.0.0"
 requests-oauthlib = "^2.0.0"
 nhs-number-generator = {git = "https://github.com/Iain-S/nhs_number_generator.git"}
 pyright = "^1.1.389"
-playwright = "^1.48.0"
+playwright = "^1.49.1"
 jycm = "^1.5.0"
 
 
