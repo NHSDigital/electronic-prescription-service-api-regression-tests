@@ -1,6 +1,4 @@
 # pylint: disable=no-name-in-module
-import time
-
 from behave import when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
 
@@ -19,13 +17,6 @@ def i_have_selected_role(context):
 
     select_your_role_page = SelectYourRole(context.page)
     select_your_role_page.first_role_card.click()
-
-
-@when("I wait for {seconds} seconds")
-def i_wait_for_seconds(_context, seconds):
-    wait_time = int(seconds)
-    time.sleep(wait_time)
-    print(f"Waited for {wait_time} seconds")
 
 
 @then("I can see the summary container")

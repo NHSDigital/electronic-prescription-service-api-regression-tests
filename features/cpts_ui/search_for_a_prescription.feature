@@ -29,7 +29,5 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4535
   @rbac_banner
   Scenario: User can see their RBAC banner when a role is selected
-    Given I am logged in
-    When I have a selected role
-    And I wait for 2 seconds
+    Given I am logged in with a single access role
     Then I can see the RBAC banner
