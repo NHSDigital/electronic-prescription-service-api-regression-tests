@@ -31,4 +31,5 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
   Scenario: User can see their RBAC banner when a role is selected
     Given I am logged in
     When I have a selected role
+    Then I wait for 2 seconds
     Then I can see the RBAC banner
