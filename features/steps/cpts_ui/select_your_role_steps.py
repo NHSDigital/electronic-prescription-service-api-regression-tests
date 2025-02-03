@@ -1,6 +1,4 @@
 # pylint: disable=no-name-in-module
-import time
-
 from behave import when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
 
@@ -113,10 +111,3 @@ def i_see_logged_in_message(context):
         "eps_select_your_role_pre_role_selected"
     )
     expect(pre_selected_element).to_be_visible()
-
-
-@then("I wait for {seconds} seconds")
-def i_wait_for_seconds(_context, seconds):
-    wait_time = int(seconds)
-    time.sleep(wait_time)
-    print(f"Waited for {wait_time} seconds")
