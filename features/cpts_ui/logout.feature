@@ -24,7 +24,6 @@ Feature: The user is able to logout of the application
     Scenario: User can log back in from the logout successful page
         Given I am on the logout successful page
         When I click the "log back in" button
-        Then I wait for 2 seconds
         Then I am on the login page
         And I can not see the RBAC banner
 

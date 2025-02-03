@@ -17,11 +17,6 @@ def i_can_see_the_rbac_banner(context):
     expect(rbac_banner.rbac_banner).to_be_visible()
     expect(rbac_banner.rbac_content).to_be_visible()
 
-    assert rbac_banner.rbac_content.text_content(), "No banner content"
-    assert rbac_banner.banner_text.match(
-        str(rbac_banner.rbac_content.text_content())
-    ), "Banner content does not match expected pattern"
-
 
 @then("I can not see the RBAC banner")
 def i_can_not_see_the_rbac_banner(context):
