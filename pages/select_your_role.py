@@ -8,6 +8,8 @@ class SelectYourRole:
         """
         self.page = page
 
+        self.page_loaded_indicator = page.get_by_test_id("eps_roleSelectionComponent")
+
         # Title and summary locators
         self.summary = page.locator("summary")
         self.organisation_column_header = page.get_by_role(
@@ -26,7 +28,6 @@ class SelectYourRole:
         self.first_role_card = self.roles_with_access_cards.first
         self.role_card_headings = page.locator(".nhsuk-card__heading")
         self.role_card_descriptions = page.locator(".eps-card__roleName")
-        self.selected_role_url = "**/site/yourselectedrole"
 
         self.select_role_header = page.locator(
             "span[data-testid='eps_header_selectYourRole'] > span.nhsuk-title"

@@ -1,11 +1,13 @@
 from playwright.sync_api import Page
 
 
-class ConfirmRole:
+class YourSelectedRole:
     def __init__(self, page: Page):
         self.page = page
 
-        self.header = page.get_by_test_id("eps_header_yourSelectedRole")
+        self.page_loaded_indicator = page.get_by_test_id("eps_yourSelectedRole_page")
+
+        self.header = page.get_by_test_id("eps_yourSelectedRole_page")
         self.role_label_cell = page.get_by_test_id("role-label")
         self.org_label_cell = page.get_by_test_id("org-label")
         self.org_text_cell = page.get_by_test_id("org-text")
