@@ -26,7 +26,6 @@ class SelectYourRole:
         self.first_role_card = self.roles_with_access_cards.first
         self.role_card_headings = page.locator(".nhsuk-card__heading")
         self.role_card_descriptions = page.locator(".eps-card__roleName")
-        self.selected_role_url = "**/site/yourselectedrole"
 
         self.select_role_header = page.locator(
             "span[data-testid='eps_header_selectYourRole'] > span.nhsuk-title"
