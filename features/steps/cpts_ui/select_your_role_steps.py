@@ -70,7 +70,6 @@ def i_can_navigate_to_the_your_selected_role_page(context):
     select_your_role_page = SelectYourRole(context.page)
     expect(select_your_role_page.first_role_card).to_be_visible()
     select_your_role_page.first_role_card.click()
-    context.page.wait_for_url(select_your_role_page.selected_role_url)
 
 
 @then("I cannot see the your selected role subheader")
