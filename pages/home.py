@@ -7,7 +7,9 @@ class Home:
         self.page = page
         self.header = "[id='eps_header']"
         self.footer = "[id='eps_footer']"
-        self.confirm_role_link = self.page.get_by_test_id("eps_header_confirmRoleLink")
+        self.confirm_role_link = self.page.get_by_test_id(
+            "eps_header_YourSelectedRoleLink"
+        )
         self.find_a_prescription_link = self.page.get_by_test_id(
             "eps_header_prescriptionSearchLink"
         )

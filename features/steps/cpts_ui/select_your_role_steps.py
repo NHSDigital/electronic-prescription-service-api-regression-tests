@@ -7,8 +7,6 @@ from pages.select_your_role import SelectYourRole
 
 @when("I go to the select your role page")
 def i_go_to_the_select_your_role_page(context):
-    context.page.goto(context.cpts_ui_base_url + "site/")
-    context.page.get_by_test_id("eps_header_selectYourRoleLink").click()
     select_your_role_page = SelectYourRole(context.page)
     expect(select_your_role_page.page_loaded_indicator).to_be_visible()
 
