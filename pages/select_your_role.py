@@ -8,6 +8,8 @@ class SelectYourRole:
         """
         self.page = page
 
+        self.page_loaded_indicator = page.get_by_test_id("eps_roleSelectionComponent")
+
         # Title and summary locators
         self.summary = page.locator("summary")
         self.organisation_column_header = page.get_by_role(
