@@ -251,6 +251,3 @@ node_modules
 # VSCODE specific
 .vscode
 vscode
-
-# poetry.lock
-poetry.lock

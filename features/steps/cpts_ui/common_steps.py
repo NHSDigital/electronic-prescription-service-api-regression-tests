@@ -16,14 +16,9 @@ select_your_role_url_pattern = re.compile(r".*/selectyourrole(?:/|\.html)$")
 ###############################################################################
 
 
-@given("I am on the home page")
-def i_am_on_home_page(context):
-    context.page.goto(context.cpts_ui_base_url + "site/")
-
-
 @given("I am on the login page")
 def i_am_on_login_page(context):
-    context.execute_steps("given I am on the home page")
+    context.execute_steps("when I am on the homepage")
     context.page.get_by_test_id("eps_header_serviceName").click()
 
 

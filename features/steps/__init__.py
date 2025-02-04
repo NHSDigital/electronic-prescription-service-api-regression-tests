@@ -6,3 +6,4 @@ from cpts_ui.change_role_steps import *  # noqa: F403,F401
 from cpts_ui.logout_steps import *  # noqa: F403,F401
 from cpts_ui.header_steps import *  # noqa: F403,F401
 from cpts_ui.confirm_role_steps import *  # noqa: F403,F401
+from cpts_ui.rbac_banner import *  # noqa: F403,F401

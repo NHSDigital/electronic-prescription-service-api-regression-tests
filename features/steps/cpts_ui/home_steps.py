@@ -5,7 +5,7 @@ from playwright.sync_api import expect
 from pages.home import Home
 
 
-@when("I go to the homepage")
+@when("I am on the homepage")
 def goto_page(context):
     context.page.goto(context.cpts_ui_base_url + "site/")
 

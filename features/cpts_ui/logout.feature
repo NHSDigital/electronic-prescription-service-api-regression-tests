@@ -4,7 +4,7 @@ Feature: The user is able to logout of the application
 
     Background:
         Given I am logged in
-        And I go to the select your role page
+        When I go to the select your role page
 
     ############################################################################
     # Logging out
@@ -13,15 +13,19 @@ Feature: The user is able to logout of the application
         When I click the logout button
         Then I see the logout confirmation modal
 
+    @rbac_banner
     Scenario: User confirms logout
         Given the logout confirmation modal is displayed
         When I confirm the logout
         Then I see the logout successful page
+        And I can not see the RBAC banner
 
+    @rbac_banner
     Scenario: User can log back in from the logout successful page
         Given I am on the logout successful page
         When I click the "log back in" button
         Then I am on the login page
+        And I can not see the RBAC banner
 
     ############################################################################
     # Closing the logout modal 
