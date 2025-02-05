@@ -1,14 +1,9 @@
 # pylint: disable=no-name-in-module
-import re
-from time import sleep
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
 
 from pages.change_role import ChangeRole
-
-
-selected_role_url_pattern = re.compile(r".*/yourselectedrole(?:/|\.html)?$")
-change_role_url_pattern = re.compile(r".*/changerole(?:/|\.html)?$")
+from pages.your_selected_role import YourSelectedRole
 
 
 ############################################################################
@@ -57,9 +52,6 @@ def when_i_click_a_role_card(context):
     expect(change_role_page.first_role_card).to_be_visible()
     change_role_page.first_role_card.click()
 
-    # Wait for the page or route change
-    context.page.wait_for_url(selected_role_url_pattern)
-
 
 @when("I click the change role header link")
 def when_i_click_change_role_header_link(context):
@@ -71,11 +63,7 @@ def when_i_click_change_role_header_link(context):
 def i_go_to_change_my_role(context):
     context.execute_steps("when I have a selected role")
     change_role_page = ChangeRole(context.page)
-
-    # We need to give the backend time to catch up?
-    sleep(1)
     change_role_page.change_role_header.click()
-    change_role_page.page.wait_for_url(change_role_url_pattern)
 
 
 ############################################################################
@@ -137,7 +125,8 @@ def then_i_cant_see_roles_with_access_cards(context):
 
 @then("I am on the 'your selected role' page")
 def then_i_am_on_your_selected_role_page(context):
-    context.page.wait_for_url(selected_role_url_pattern)
+    your_selected_role_page = YourSelectedRole(context.page)
+    expect(your_selected_role_page.page_loaded_indicator).to_be_visible()
 
 
 @then("I do not see the change role page header link")
