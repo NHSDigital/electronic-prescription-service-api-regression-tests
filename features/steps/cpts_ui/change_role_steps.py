@@ -35,6 +35,13 @@ def given_i_am_on_your_selected_role_page(context):
     expect(change_role_page.select_role_header).to_be_visible()
 
 
+@given("I click a change role role card")
+def given_i_click_a_role_card(context):
+    change_role_page = ChangeRole(context.page)
+    expect(change_role_page.first_role_card).to_be_visible()
+    change_role_page.first_role_card.click()
+
+
 ############################################################################
 # WHEN STEPS
 ############################################################################

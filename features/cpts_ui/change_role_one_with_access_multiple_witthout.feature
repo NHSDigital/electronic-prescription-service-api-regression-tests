@@ -9,11 +9,10 @@ Feature: Users are able to change their roles, if they have one role with access
   # Successfully changing role scenarios
   ############################################################################
   Scenario: User can change their role and see the correct message on the change role page
-    When I click a change role role card
-    Then I am on the 'your selected role' page
+    And I click a change role role card
     When I click the change link next to the role text
     Then I am on the change role page
-    Then I can see the role that has been pre selected
+    And I can see the role that has been pre selected
     And I cannot see the no access message
     And I cannot see any change role roles with access cards
 
