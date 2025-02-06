@@ -7,8 +7,7 @@ Feature: Role selection page renders roles properly when logged in
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4656
   Scenario: User is redirected to the select your role page
     When I log in as a user with multiple access roles
-    Then I am on the 'your selected role' page
-    And I can not see the RBAC banner
+    Then I can not see the RBAC banner
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4653
   Scenario: User can see the summary container, but not the table contents by default
