@@ -96,6 +96,12 @@ def i_can_see_the_no_access_message(context):
     expect(select_your_role_page.no_access_message).to_be_visible()
 
 
+@then("I cannot see the no access message")
+def i_can_not_see_the_no_access_message(context):
+    select_your_role_page = SelectYourRole(context.page)
+    expect(select_your_role_page.no_access_message).not_to_be_visible()
+
+
 @then("I can see the no access table body has data")
 def i_can_see_the_no_access_table_body_data(context):
     select_your_role_page = SelectYourRole(context.page)

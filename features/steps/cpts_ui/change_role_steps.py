@@ -35,6 +35,13 @@ def given_i_am_on_your_selected_role_page(context):
     expect(change_role_page.select_role_header).to_be_visible()
 
 
+@given("I click a change role role card")
+def given_i_click_a_role_card(context):
+    change_role_page = ChangeRole(context.page)
+    expect(change_role_page.first_role_card).to_be_visible()
+    change_role_page.first_role_card.click()
+
+
 ############################################################################
 # WHEN STEPS
 ############################################################################
@@ -110,8 +117,8 @@ def then_i_see_multiple_change_role_roles_with_access_cards(context):
     assert change_role_page.roles_with_access_cards.count() > 1
 
 
-@then("I can see one change role roles with access cards")
-def then_i_see_one_change_role_roles_with_access_cards(context):
+@then("I can see one change role roles with access card")
+def then_i_see_one_change_role_roles_with_access_card(context):
     change_role_page = ChangeRole(context.page)
     assert change_role_page.roles_with_access_cards.count() == 1
 
