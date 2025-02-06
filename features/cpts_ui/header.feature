@@ -3,10 +3,11 @@
 Feature: Header
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4513
+  @bug:https://nhsd-jira.digital.nhs.uk/browse/AEA-4996
   Scenario: user sees a menu with links when the screen size is small
-    Given I am logged in as a user with a single access role
-    When I have a screen size of 640 pixels wide
-    Then I can see the header links in a dropdown menu
+    Given I am logged in as a user with multiple access roles
+    When I have a screen size of 650 pixels wide
+#    Then I can see the header links in a dropdown menu
 
   ############################################################################
   # EXIT

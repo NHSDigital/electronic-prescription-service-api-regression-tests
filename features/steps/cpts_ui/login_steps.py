@@ -47,6 +47,13 @@ def login_pre_role_selected(context):
     context.execute_steps("when I log in as a user with a pre selected role")
 
 
+@given("I am logged in with a single access role and multiple without access")
+def login_single_role_with_access_multiple_without(context):
+    context.execute_steps(
+        "when I log in with a single access role and multiple without access"
+    )
+
+
 ###############################################################################
 # WHEN
 ###############################################################################
@@ -77,8 +84,8 @@ def login_with_without_access(context):
     context.page.get_by_role("button", name="Sign In").click()
 
 
-@given("I am logged in with a single access role and multiple without access")
-def login_single_role_with_access_multiple_without(context):
+@when("I log in with a single access role and multiple without access")
+def login_with_single_role_with_access_multiple_without(context):
     context.execute_steps("given I am on the login page")
 
     context.page.get_by_role("button", name="Log in with mock CIS2").click()
