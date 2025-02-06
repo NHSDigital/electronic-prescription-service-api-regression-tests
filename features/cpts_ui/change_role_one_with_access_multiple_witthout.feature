@@ -2,7 +2,7 @@
 @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4974
 Feature: Users are able to change their roles, if they have one role with access and multiple roles without access.
 
-  Background:e
+  Background:
     Given I am logged in with a single access role and multiple without access
 
   ############################################################################
