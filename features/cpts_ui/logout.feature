@@ -3,8 +3,7 @@
 Feature: The user is able to logout of the application
 
     Background:
-        Given I am logged in
-        When I go to the select your role page
+        Given I am logged in as a user with multiple access roles
 
     ############################################################################
     # Logging out
@@ -28,7 +27,7 @@ Feature: The user is able to logout of the application
         And I can not see the RBAC banner
 
     ############################################################################
-    # Closing the logout modal 
+    # Closing the logout modal
     ############################################################################
     Scenario: Close the modal with the cross icon
         Given the logout confirmation modal is displayed

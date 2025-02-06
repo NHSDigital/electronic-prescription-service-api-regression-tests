@@ -61,7 +61,6 @@ def when_i_click_change_role_header_link(context):
 
 @when("I go to change my role")
 def i_go_to_change_my_role(context):
-    context.execute_steps("when I have a selected role")
     change_role_page = ChangeRole(context.page)
     change_role_page.change_role_header.click()
 

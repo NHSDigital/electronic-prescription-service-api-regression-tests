@@ -1,20 +1,20 @@
 # pylint: disable=no-name-in-module
-from behave import when, then  # pyright: ignore [reportAttributeAccessIssue]
+from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
 
 from pages.select_your_role import SelectYourRole
 
 
-@when("I go to the select your role page")
-def i_go_to_the_select_your_role_page(context):
-    select_your_role_page = SelectYourRole(context.page)
-    expect(select_your_role_page.page_loaded_indicator).to_be_visible()
-
-
-@when("I have a selected role")
+@given("I have selected a role")
 def i_have_selected_role(context):
-    context.execute_steps("when I go to the select your role page")
+    context.execute_steps("when I select a role")
 
+    select_your_role_page = SelectYourRole(context.page)
+    select_your_role_page.first_role_card.click()
+
+
+@when("I select a role")
+def i_select_a_role(context):
     select_your_role_page = SelectYourRole(context.page)
     select_your_role_page.first_role_card.click()
 

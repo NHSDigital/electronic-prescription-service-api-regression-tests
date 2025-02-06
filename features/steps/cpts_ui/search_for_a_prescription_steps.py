@@ -2,15 +2,7 @@
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
 
-from pages.home import Home
 from pages.search_for_a_prescription import SearchForAPrescription
-
-
-@when("I go to the search for a prescription page")
-def goto_page(context):
-    context.page.goto(context.cpts_ui_base_url + "site/")
-    home = Home(context.page)
-    home.find_a_prescription_link.click()
 
 
 @given("I am on the search for a prescription page")

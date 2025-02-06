@@ -157,7 +157,7 @@ def before_all(context):
         global _playwright
         _playwright = sync_playwright().start()
         context.browser = _playwright.chromium.launch(
-            headless=False, channel="chrome"
+            headless=HEADLESS, channel="chrome"
         )
 
     eps_api_methods.calculate_eps_fhir_base_url(context)

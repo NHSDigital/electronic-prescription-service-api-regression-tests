@@ -2,10 +2,11 @@
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
 
-from pages.home import Home
+from pages.header import Header
+from pages.footer import Footer
 
 
-@when("I am on the homepage")
+@when("I go to the homepage")
 def goto_page(context):
     context.page.goto(context.cpts_ui_base_url + "site/")
 
@@ -13,33 +14,33 @@ def goto_page(context):
 @given("I am on the homepage")
 def i_am_on_the_home_page(context):
     goto_page(context)
-    home_page = Home(context.page)
-    home_page.page.is_visible(home_page.header)
+    header = Header(context.page)
+    header.page.is_visible(header.header)
 
 
 @then("I am on the homepage")
 def verify_on_home_page(context):
-    home_page = Home(context.page)
-    home_page.page.is_visible(home_page.header)
+    header = Header(context.page)
+    header.page.is_visible(header.header)
 
 
 @then("I can see the footer")
 def i_can_see_the_footer(context):
-    home_page = Home(context.page)
-    home_page.page.is_visible(home_page.footer)
+    footer = Footer(context.page)
+    footer.page.is_visible(footer.footer)
 
 
 @then("I can see the header")
 def i_can_see_the_header(context):
-    home_page = Home(context.page)
-    home_page.page.is_visible(home_page.header)
+    header = Header(context.page)
+    header.page.is_visible(header.header)
 
 
 @then("I can see the links on the header")
 def i_can_see_the_links_on_the_header(context):
-    home_page = Home(context.page)
-    expect(home_page.confirm_role_link).to_be_visible()
-    expect(home_page.find_a_prescription_link).to_be_visible()
+    header = Header(context.page)
+    expect(header.change_role_link).to_be_visible()
+    expect(header.logout_link).to_be_visible()
 
 
 @when("I have a screen size of {pixel_width} pixels wide")
@@ -49,17 +50,11 @@ def i_have_a_screen_size_of_x_pixels_wide(context, pixel_width):
 
 @then("I can see the header links in a dropdown menu")
 def i_can_see_the_header_links_in_a_dropdown_menu(context):
-    home_page = Home(context.page)
-    expect(home_page.menu_button).to_be_visible()
-    home_page.menu_button.click()
-    expect(home_page.confirm_role_link).to_be_visible()
-    expect(home_page.find_a_prescription_link).to_be_visible()
-    home_page.menu_button.click()
-    expect(home_page.confirm_role_link).to_be_visible(visible=False)
-    expect(home_page.find_a_prescription_link).to_be_visible(visible=False)
-
-
-@when("I click on Find a prescription")
-def step_impl(context):
-    home_page = Home(context.page)
-    home_page.find_a_prescription_link.click()
+    header = Header(context.page)
+    expect(header.menu_button).to_be_visible()
+    header.menu_button.click()
+    expect(header.change_role_link).to_be_visible()
+    expect(header.logout_link).to_be_visible()
+    header.menu_button.click()
+    expect(header.change_role_link).to_be_visible(visible=False)
+    expect(header.logout_link).to_be_visible(visible=False)
