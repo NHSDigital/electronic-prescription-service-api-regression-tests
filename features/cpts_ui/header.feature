@@ -3,7 +3,10 @@
 Feature: Header
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4513
-  @bug:https://nhsd-jira.digital.nhs.uk/browse/AEA-4996
+  # FIXME: Address this when the SPA is fixed!
+  # The menu is broken and needs to be fixed. This test will not pass until it's fixed
+  # @fixme
+  # bug ticket: AEA-4996
   Scenario: user sees a menu with links when the screen size is small
     Given I am logged in as a user with multiple access roles
     When I have a screen size of 650 pixels wide
