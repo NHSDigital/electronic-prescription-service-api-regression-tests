@@ -4,9 +4,10 @@ from playwright.sync_api import expect
 
 from features.environment import (
     MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES,
-    MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE,
-    MOCK_CIS2_LOGIN_ID_SINGLE_ACCESS_ROLE,
     MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES_WITH_SELECTED_ROLE,
+    MOCK_CIS2_LOGIN_ID_SINGLE_ACCESS_ROLE,
+    MOCK_CIS2_LOGIN_ID_SINGLE_ROLE_WITH_ACCESS_MULTIPLE_WITHOUT,
+    MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE,
 )
 
 from pages.select_your_role import SelectYourRole
@@ -63,6 +64,17 @@ def login_single_role(context):
 
     context.page.get_by_role("button", name="Log in with mock CIS2").click()
     context.page.get_by_label("Username").fill(MOCK_CIS2_LOGIN_ID_SINGLE_ACCESS_ROLE)
+    context.page.get_by_role("button", name="Sign In").click()
+
+
+@given("I am logged in with a single access role and multiple without access")
+def login_single_role_with_access_multiple_without(context):
+    context.execute_steps("given I am on the login page")
+
+    context.page.get_by_role("button", name="Log in with mock CIS2").click()
+    context.page.get_by_label("Username").fill(
+        MOCK_CIS2_LOGIN_ID_SINGLE_ROLE_WITH_ACCESS_MULTIPLE_WITHOUT
+    )
     context.page.get_by_role("button", name="Sign In").click()
 
 

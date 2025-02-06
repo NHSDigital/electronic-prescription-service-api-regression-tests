@@ -60,7 +60,7 @@ MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES_WITH_SELECTED_ROLE = "555043304334"
 # Roles with Access: 1 | Roles without Access: 0 | Selected Role: No
 MOCK_CIS2_LOGIN_ID_SINGLE_ACCESS_ROLE = "555043300081"
 # Roles with Access: 1 | Roles without Access: multiple | Selected Role: No
-MOCK_CIS2_LOGIN_ID_SINGLE_ROLE_WITH_ACCESS = "555043303526"
+MOCK_CIS2_LOGIN_ID_SINGLE_ROLE_WITH_ACCESS_MULTIPLE_WITHOUT = "555043303526"
 # Roles with Access: 0 | Roles without Access: multiple | Selected Role: No
 MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE = "555083343101"
 # Roles with Access: 0 | Roles without Access: 0 | Selected Role: No

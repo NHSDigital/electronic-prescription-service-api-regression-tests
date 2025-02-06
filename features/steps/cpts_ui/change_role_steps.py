@@ -111,8 +111,8 @@ def then_i_see_multiple_change_role_roles_with_access_cards(context):
     assert change_role_page.roles_with_access_cards.count() > 1
 
 
-@then("I can see one change role roles with access cards")
-def then_i_see_one_change_role_roles_with_access_cards(context):
+@then("I can see one change role roles with access card")
+def then_i_see_one_change_role_roles_with_access_card(context):
     change_role_page = ChangeRole(context.page)
     assert change_role_page.roles_with_access_cards.count() == 1
 
