@@ -16,6 +16,14 @@ def i_am_on_the_confirm_your_role_page(context):
     context.execute_steps("then I see the 'your selected role' page")
 
 
+@given("I have confirmed a role")
+def i_have_confirmed_a_role(context):
+    context.execute_steps(
+        """given I have selected a role
+                          when I click the confirm and continue button on the your selected role page"""
+    )
+
+
 ############################################################################
 # WHEN STEPS'
 ############################################################################

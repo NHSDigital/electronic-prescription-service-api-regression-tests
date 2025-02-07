@@ -4,7 +4,6 @@ Feature: When the user selects a role, they see a confirmation page
 
   Background:
     Given I am logged in as a user with multiple access roles
-#    And I am on the your selected role page
 
   Scenario: user is able to select a role, and see a confirmation page
     When I click a change role role card
