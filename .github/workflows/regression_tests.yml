@@ -48,6 +48,26 @@ jobs:
     runs-on: ubuntu-22.04
     environment: ${{ inputs.environment }}
     steps:
+      - name: show_input_parameters
+        env:
+          event_tags: ${{github.event.inputs.tags}}
+          tags: ${{ inputs.tags }}
+          environment: ${{ inputs.environment }}
+          product: ${{ inputs.product }}
+          id: ${{ inputs.id }}
+          pull_request_id: ${{ inputs.pull_request_id }}
+          github_tag: ${{ inputs.github_tag }}
+          run_sha1_tests: ${{ inputs.run_sha1_tests }}
+        run: |
+          echo "event_tags: ${event_tags}"
+          echo "tags: ${tags}"
+          echo "environment: ${environment}"
+          echo "product: ${product}"
+          echo "id: ${id}"
+          echo "pull_request_id: ${pull_request_id}"
+          echo "github_tag: ${github_tag}"
+          echo "run_sha1_tests: ${run_sha1_tests}"
+
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
         with:
