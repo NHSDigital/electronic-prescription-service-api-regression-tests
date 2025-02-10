@@ -108,7 +108,16 @@ def count_of_scenarios_to_run(context):
     return total_scenarios
 
 
+def before_feature(context, feature):
+    if "skip" in feature.tags:
+        feature.skip("Marked with @skip")
+        return
+
+
 def before_scenario(context, scenario):
+    if "skip" in scenario.effective_tags:
+        scenario.skip("Marked with @skip")
+        return
     product = context.config.userdata["product"].upper()
     if product == "CPTS-UI":
         global _playwright
@@ -120,9 +129,11 @@ def before_scenario(context, scenario):
 
 
 def after_scenario(context, scenario):
-    if context.page is not None:
-        global _page
-        _page.close()
+    product = context.config.userdata["product"].upper()
+    if product == "CPTS-UI":
+        if context.page is not None:
+            global _page
+            _page.close()
 
 
 def before_all(context):
