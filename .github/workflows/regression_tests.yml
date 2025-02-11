@@ -50,7 +50,6 @@ jobs:
     steps:
       - name: show_input_parameters
         env:
-          event_tags: ${{github.event.inputs.tags}}
           tags: ${{ inputs.tags }}
           environment: ${{ inputs.environment }}
           product: ${{ inputs.product }}
@@ -123,15 +122,39 @@ jobs:
           ENVIRONMENT: ${{ inputs.environment }}
           PULL_REQUEST_ID: ${{ inputs.pull_request_id }}
           TAGS: ${{ inputs.tags }}
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          EPS_FHIR_CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          EPS_FHIR_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          EPS_FHIR_SHA1_CLIENT_ID: ${{ secrets.SHA1_CLIENT_ID }}
+          EPS_FHIR_SHA1_CLIENT_SECRET: ${{ secrets.SHA1_CLIENT_SECRET }}
+          EPS_FHIR_PRESCRIBING_CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          EPS_FHIR_PRESCRIBING_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          EPS_FHIR_SHA1_PRESCRIBING_CLIENT_ID: ${{ secrets.SHA1_CLIENT_ID }}
+          EPS_FHIR_SHA1_PRESCRIBING_CLIENT_SECRET: ${{ secrets.SHA1_CLIENT_SECRET }}
+          EPS_FHIR_DISPENSING_CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          EPS_FHIR_DISPENSING_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          PFP_CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          PFP_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          PSU_CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          PSU_CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
           CERTIFICATE: ${{ secrets.CERTIFICATE }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           JWT_KID: ${{ secrets.JWT_KID }}
           JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
         run: |
-            export CLIENT_ID="$CLIENT_ID"
-            export CLIENT_SECRET="$CLIENT_SECRET"
+            export EPS_FHIR_CLIENT_ID="$EPS_FHIR_CLIENT_ID"
+            export EPS_FHIR_CLIENT_SECRET="$EPS_FHIR_CLIENT_SECRET"
+            export EPS_FHIR_SHA1_CLIENT_ID="$EPS_FHIR_SHA1_CLIENT_ID"
+            export EPS_FHIR_SHA1_CLIENT_SECRET="$EPS_FHIR_SHA1_CLIENT_SECRET"
+            export EPS_FHIR_PRESCRIBING_CLIENT_ID="$EPS_FHIR_PRESCRIBING_CLIENT_ID"
+            export EPS_FHIR_PRESCRIBING_CLIENT_SECRET="$EPS_FHIR_PRESCRIBING_CLIENT_SECRET"
+            export EPS_FHIR_SHA1_PRESCRIBING_CLIENT_ID="$EPS_FHIR_SHA1_PRESCRIBING_CLIENT_ID"
+            export EPS_FHIR_SHA1_PRESCRIBING_CLIENT_SECRET="$EPS_FHIR_SHA1_PRESCRIBING_CLIENT_SECRET"
+            export EPS_FHIR_DISPENSING_CLIENT_ID="$EPS_FHIR_DISPENSING_CLIENT_ID"
+            export EPS_FHIR_DISPENSING_CLIENT_SECRET="$EPS_FHIR_DISPENSING_CLIENT_SECRET"
+            export PFP_CLIENT_ID="$PFP_CLIENT_ID"
+            export PFP_CLIENT_SECRET="$PFP_CLIENT_SECRET"
+            export PSU_CLIENT_ID="$PSU_CLIENT_ID"
+            export PSU_CLIENT_SECRET="$PSU_CLIENT_SECRET"
             export CERTIFICATE="$CERTIFICATE"
             export PRIVATE_KEY="$PRIVATE_KEY"
             export JWT_KID="$JWT_KID"
