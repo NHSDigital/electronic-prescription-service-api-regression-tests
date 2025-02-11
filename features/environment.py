@@ -274,7 +274,6 @@ def after_all(context):
         if os.path.exists(directory_path) and os.path.isdir(directory_path):
             print(f"Directory '{directory_path}' exists. Deleting...")
             shutil.rmtree(directory_path)
-        global _page
         if _page:
             _page.close()
 
