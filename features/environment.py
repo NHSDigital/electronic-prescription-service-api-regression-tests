@@ -140,11 +140,19 @@ def before_feature(context, feature):
     if "skip" in feature.tags:
         feature.skip("Marked with @skip")
         return
+    environment = context.config.userdata["env"].lower()
+    if "skip-sandbox" in feature.tags and "sandbox" in environment:
+        feature.skip("Marked with @skip-sandbox")
+        return
 
 
 def before_scenario(context, scenario):
     if "skip" in scenario.effective_tags:
         scenario.skip("Marked with @skip")
+        return
+    environment = context.config.userdata["env"].lower()
+    if "skip-sandbox" in scenario.effective_tags and "sandbox" in environment:
+        scenario.skip("Marked with @skip-sandbox")
         return
     product = context.config.userdata["product"].upper()
     if product == "CPTS-UI":

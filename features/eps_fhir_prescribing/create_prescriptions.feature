@@ -14,11 +14,13 @@ Feature: I can create prescriptions
       | nominated     |
       | non-nominated |
 
+  @skip-sandbox
   Scenario: I can create a prescription with sha256
     Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app
     And I successfully prepare a nominated prescription
     Then the signing algorithm is RS256
 
+  @skip-sandbox
   Scenario: I can create a prescription with sha1
     Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING-SHA1 app
     And I successfully prepare a nominated prescription
