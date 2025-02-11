@@ -69,6 +69,7 @@ MOCK_CIS2_LOGIN_ID_NO_ROLES = "555073103101"
 
 REPOS = {
     "CPTS-UI": "https://github.com/NHSDigital/eps-prescription-tracker-ui",
+    "CPTS-API": "https://github.com/NHSDigital/electronic-prescription-service-clinical-prescription-tracker",
     "EPS-FHIR": "https://github.com/NHSDigital/electronic-prescription-service-api",
     "EPS-FHIR-PRESCRIBING": "https://github.com/NHSDigital/electronic-prescription-service-api",
     "EPS-FHIR-DISPENSING": "https://github.com/NHSDigital/electronic-prescription-service-api",
@@ -92,6 +93,7 @@ EPS_FHIR_PRESCRIBING_SUFFIX = "fhir-prescribing"
 EPS_FHIR_DISPENSING_SUFFIX = "fhir-dispensing"
 PFP_SUFFIX = "prescriptions-for-patients"
 PSU_SUFFIX = "prescription-status-update"
+CPTS_API_SUFIX = "clinical-prescription-tracker"
 
 
 def count_of_scenarios_to_run(context):
@@ -120,9 +122,10 @@ def before_scenario(context, scenario):
 
 
 def after_scenario(context, scenario):
-    if context.page is not None:
-        global _page
-        _page.close()
+    if hasattr(context, "page"):
+        if context.page is not None:
+            global _page
+            _page.close()
 
 
 def before_all(context):
@@ -151,6 +154,9 @@ def before_all(context):
         )
         context.pfp_base_url = os.path.join(select_apigee_base_url(env), PFP_SUFFIX)
         context.psu_base_url = os.path.join(select_apigee_base_url(env), PSU_SUFFIX)
+        context.eps_cpts_api_base_url = os.path.join(
+            select_apigee_base_url(env), CPTS_API_SUFIX
+        )
 
         if PULL_REQUEST_ID and env != "LOCALHOST":
             print(f"--- Using pull request id: '{PULL_REQUEST_ID}'")
@@ -169,6 +175,7 @@ def before_all(context):
 
     eps_api_methods.calculate_eps_fhir_base_url(context)
     print("CPTS-UI: ", context.cpts_ui_base_url)
+    print("CPTS-API: ", context.eps_cpts_api_base_url)
     print("EPS: ", context.eps_fhir_base_url)
     print("EPS-PRESCRIBING: ", context.eps_fhir_prescribing_base_url)
     print("EPS-DISPENSING: ", context.eps_fhir_dispensing_base_url)
@@ -203,6 +210,10 @@ def get_url_with_pr(context, env, product):
         handle_pfp_aws_pr_url(context, env)
     if product == "CPTS-UI":
         handle_cpt_ui_pr_url(context, env)
+    if product == "CPTS-API":
+        context.eps_cpts_api_base_url = os.path.join(
+            INTERNAL_DEV_BASE_URL, f"{CPTS_API_SUFIX}-{PULL_REQUEST_ID}"
+        )
 
 
 def handle_cpt_ui_pr_url(context, env):
