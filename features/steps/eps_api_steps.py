@@ -31,11 +31,6 @@ def i_prepare_and_sign_a_prescription(context):
     i_sign_a_new_prescription(context=context)
 
 
-@then("the signing algorithm is {algorithm}")
-def the_signing_algoritm_is(context, algorithm):
-    assert_that(algorithm).is_equal_to(context.algorithm)
-
-
 @given("I successfully prepare and sign a {prescription_type} prescription")
 def i_prepare_and_sign_a_type_prescription(context, prescription_type):
     i_prepare_a_new_prescription(context, prescription_type)
@@ -243,3 +238,8 @@ def validator_response_matches_file(context, filename):
     diff_result = ycm.get_diff()
     # and there should be none
     assert_that(diff_result).is_equal_to({"just4vis:pairs": []})
+
+
+@then("the signing algorithm is {algorithm}")
+def the_signing_algoritm_is(context, algorithm):
+    assert_that(algorithm).is_equal_to(context.algorithm)
