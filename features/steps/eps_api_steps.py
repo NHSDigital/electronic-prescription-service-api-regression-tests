@@ -37,7 +37,7 @@ def i_prepare_and_sign_a_type_prescription(context, prescription_type):
     i_sign_a_new_prescription(context=context)
 
 
-@given("a prescription has been created and released")
+@given("a prescription has been created and released using {deployment_method} apis")
 def a_prescription_has_been_created_and_released(context, deployment_method):
     if "sandbox" in context.config.userdata["env"].lower():
         return
