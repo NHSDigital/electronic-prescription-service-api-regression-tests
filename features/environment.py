@@ -63,8 +63,8 @@ APIGEE_APPS = {
         "client_secret": os.getenv("EPS_FHIR_PRESCRIBING_CLIENT_SECRET"),
     },
     "EPS-FHIR-PRESCRIBING-SHA1": {
-        "client_id": os.getenv("EPS_FHIR_SHA1_PRESCRIBING_CLIENT_ID"),
-        "client_secret": os.getenv("EPS_FHIR_SHA1_PRESCRIBING_CLIENT_SECRET"),
+        "client_id": os.getenv("EPS_FHIR_PRESCRIBING_SHA1_CLIENT_ID"),
+        "client_secret": os.getenv("EPS_FHIR_PRESCRIBING_SHA1_CLIENT_SECRET"),
     },
     "EPS-FHIR-DISPENSING": {
         "client_id": os.getenv("EPS_FHIR_DISPENSING_CLIENT_ID"),

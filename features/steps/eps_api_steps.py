@@ -37,7 +37,7 @@ def i_prepare_and_sign_a_type_prescription(context, prescription_type):
     i_sign_a_new_prescription(context=context)
 
 
-@given("a prescription has been created and released using {deployment_method} apis")
+@given("a prescription has been created and released")
 def a_prescription_has_been_created_and_released(context, deployment_method):
     if "sandbox" in context.config.userdata["env"].lower():
         return
@@ -65,14 +65,14 @@ def a_new_prescription_has_been_dispensed(context, deployment_method):
     indicate_successful_response(context)
 
 
-@given("I am an authorised {user} on {product}")
-@when("I am an authorised {user} on {product}")
-def i_am_an_authorised_user(context, user, product):
+@given("I am an authorised {user} with {app} app")
+@when("I am an authorised {user} with {app} app")
+def i_am_an_authorised_user(context, user, app):
     if "sandbox" in context.config.userdata["env"].lower():
         return
     env = context.config.userdata["env"]
     context.user = user
-    context.auth_token = get_auth(env, product, user)
+    context.auth_token = get_auth(env, app, user)
 
 
 @given("I successfully prepare a {prescription_type} prescription")
