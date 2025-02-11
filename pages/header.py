@@ -1,10 +1,12 @@
 from playwright.sync_api import Page
 
 
-class HeaderLinks:
+class Header:
     def __init__(self, page: Page):
         self.page = page
+        self.header = "[id='eps_header']"
 
+        self.menu_button = self.page.get_by_role("button", name="Browse Menu")
         self.exit_link = page.get_by_test_id("eps_header_exit")
         self.logout_link = page.get_by_test_id("eps_header_logout")
         self.select_role_link = page.get_by_test_id("eps_header_selectYourRoleLink")

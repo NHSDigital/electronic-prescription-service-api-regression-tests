@@ -10,6 +10,7 @@ from methods.api import eps_api_methods
 
 load_dotenv(override=True)
 global _page
+global _playwright
 INTERNAL_QA_BASE_URL = "https://internal-qa.api.service.nhs.uk/"
 INTERNAL_DEV_BASE_URL = "https://internal-dev.api.service.nhs.uk/"
 INT_BASE_URL = "https://int.api.service.nhs.uk/"
@@ -110,10 +111,18 @@ def count_of_scenarios_to_run(context):
 def before_scenario(context, scenario):
     product = context.config.userdata["product"].upper()
     if product == "CPTS-UI":
+        global _playwright
         global _page
+        context.browser = context.browser.new_context()
         context.page = context.browser.new_page()
         _page = context.page
         set_page(context, _page)
+
+
+def after_scenario(context, scenario):
+    if context.page is not None:
+        global _page
+        _page.close()
 
 
 def before_all(context):
@@ -152,9 +161,9 @@ def before_all(context):
     else:
         raise RuntimeError("no tests to run. Check your tags and try again")
     if product == "CPTS-UI":
-        global _page
-        playwright = sync_playwright().start()
-        context.browser = playwright.chromium.launch(
+        global _playwright
+        _playwright = sync_playwright().start()
+        context.browser = _playwright.chromium.launch(
             headless=HEADLESS, channel="chrome"
         )
 
