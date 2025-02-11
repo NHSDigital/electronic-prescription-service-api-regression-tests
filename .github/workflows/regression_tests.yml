@@ -58,7 +58,6 @@ jobs:
           github_tag: ${{ inputs.github_tag }}
           run_sha1_tests: ${{ inputs.run_sha1_tests }}
         run: |
-          echo "event_tags: ${event_tags}"
           echo "tags: ${tags}"
           echo "environment: ${environment}"
           echo "product: ${product}"
