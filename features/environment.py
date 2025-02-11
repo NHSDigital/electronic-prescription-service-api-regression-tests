@@ -247,6 +247,7 @@ def handle_pfp_aws_pr_url(context, env):
 
 
 def after_all(context):
+    global _page
     # Add anything you want to happen after all the tests have completed here
     if count_of_scenarios_to_run(context) != 0:
         env = context.config.userdata["env"].upper()
@@ -274,7 +275,6 @@ def after_all(context):
         if os.path.exists(directory_path) and os.path.isdir(directory_path):
             print(f"Directory '{directory_path}' exists. Deleting...")
             shutil.rmtree(directory_path)
-        global _page
         if _page:
             _page.close()
 
@@ -292,22 +292,19 @@ def setup_logging(level: int = logging.INFO):
 def select_apigee_base_url(env):
     if env in APIGEE_ENVS:
         return APIGEE_ENVS[env]
-    else:
-        raise ValueError(f"Unknown environment or missing base URL for: {env} .")
+    raise ValueError(f"Unknown environment or missing base URL for: {env} .")
 
 
 def select_aws_base_url(env):
     if env in AWS_ENVS:
         return AWS_ENVS[env]
-    else:
-        raise ValueError(f"Unknown environment or missing base URL for: {env} .")
+    raise ValueError(f"Unknown environment or missing base URL for: {env} .")
 
 
 def select_repository_base_url(product):
     if product in REPOS:
         return REPOS[product]
-    else:
-        raise ValueError(f"Unknown product or missing repository URL for: {product} .")
+    raise ValueError(f"Unknown product or missing repository URL for: {product} .")
 
 
 def write_properties_file(file_path, properties_dict):
