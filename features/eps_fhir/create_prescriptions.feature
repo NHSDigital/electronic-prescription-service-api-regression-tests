@@ -2,7 +2,7 @@
 @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-3847
 Feature: I can create prescriptions
 
-  Scenario Outline: I can create, sign and release a prescription
+  Scenario: I can create, sign and release a prescription
     Given I am an authorised prescriber on EPS-FHIR
     And I successfully prepare and sign a <Type> prescription
     When I am an authorised dispenser on EPS-FHIR
@@ -14,12 +14,12 @@ Feature: I can create prescriptions
       | nominated     |
       | non-nominated |
 
-  Scenario Outline: I can create a prescription with sha256
+  Scenario: I can create a prescription with sha256
     Given I am an authorised prescriber on EPS-FHIR
     And I successfully prepare a nominated prescription
     Then the signing algorithm is RS256
 
-  Scenario Outline: I can create a prescription with sha1
+  Scenario: I can create a prescription with sha1
     Given I am an authorised prescriber on EPS-FHIR-SHA1
     And I successfully prepare a nominated prescription
     Then the signing algorithm is RS1
