@@ -3,16 +3,18 @@
 Feature: I can create prescriptions
 
   Scenario Outline: I can create, sign and release a prescription
-    Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app
+    Given I am an authorised prescriber with <App> app
     And I successfully prepare and sign a <Type> prescription
     When I am an authorised dispenser with EPS-FHIR-DISPENSING app
     And I release the prescription
     Then the response indicates a success
     And the response body indicates a successful release action
     Examples:
-      | Type          |
-      | nominated     |
-      | non-nominated |
+      | Type          | App                       |
+      | nominated     | EPS-FHIR-PRESCRIBING      |
+      | non-nominated | EPS-FHIR-PRESCRIBING      |
+      | nominated     | EPS-FHIR-PRESCRIBING-SHA1 |
+      | non-nominated | EPS-FHIR-PRESCRIBING-SHA1 |
 
   @skip-sandbox
   Scenario: I can create a prescription with sha256
