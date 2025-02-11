@@ -2,7 +2,7 @@
 @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-3847
 Feature: I can create prescriptions
 
-  Scenario: I can create, sign and release a prescription
+  Scenario Outline: I can create, sign and release a prescription
     Given I am an authorised prescriber on EPS-FHIR
     And I successfully prepare and sign a <Type> prescription
     When I am an authorised dispenser on EPS-FHIR
