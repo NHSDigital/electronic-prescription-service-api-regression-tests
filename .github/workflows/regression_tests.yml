@@ -43,22 +43,6 @@ jobs:
     runs-on: ubuntu-22.04
     environment: ${{ inputs.environment }}
     steps:
-      - name: show_input_parameters
-        env:
-          tags: ${{ inputs.tags }}
-          environment: ${{ inputs.environment }}
-          product: ${{ inputs.product }}
-          id: ${{ inputs.id }}
-          pull_request_id: ${{ inputs.pull_request_id }}
-          github_tag: ${{ inputs.github_tag }}
-        run: |
-          echo "tags: ${tags}"
-          echo "environment: ${environment}"
-          echo "product: ${product}"
-          echo "id: ${id}"
-          echo "pull_request_id: ${pull_request_id}"
-          echo "github_tag: ${github_tag}"
-
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
         with:
@@ -74,6 +58,22 @@ jobs:
         run: |
           echo run identifier "$ID"-"$PRODUCT"-"$ENV"-"$PULL_REQUEST_ID"
           echo run identifier "$ID"-"$PRODUCT"-"$ENV"-"$PULL_REQUEST_ID"  >> "$GITHUB_STEP_SUMMARY"
+
+      - name: show_input_parameters
+        env:
+          tags: ${{ inputs.tags }}
+          environment: ${{ inputs.environment }}
+          product: ${{ inputs.product }}
+          id: ${{ inputs.id }}
+          pull_request_id: ${{ inputs.pull_request_id }}
+          github_tag: ${{ inputs.github_tag }}
+        run: |
+          echo "tags: ${tags}"
+          echo "environment: ${environment}"
+          echo "product: ${product}"
+          echo "id: ${id}"
+          echo "pull_request_id: ${pull_request_id}"
+          echo "github_tag: ${github_tag}"
 
       # using git commit sha for version of action to ensure we have stable version
       - name: Install asdf
