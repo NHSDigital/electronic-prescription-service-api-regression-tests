@@ -17,7 +17,7 @@ on:
         type: choice
         options:
           - CPTS-UI
-          - CPT-API
+          - CPTS-API
           - EPS-FHIR
           - EPS-FHIR-PRESCRIBING
           - EPS-FHIR-DISPENSING

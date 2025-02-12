@@ -16,8 +16,8 @@ def i_make_a_request_to_the_ping_endpoint(context, product):
         base_url = context.eps_fhir_prescribing_base_url
     if product == "eps_fhir_dispensing":
         base_url = context.eps_fhir_dispensing_base_url
-    if product == "cpt_api":
-        base_url = context.cpt_api_base_url
+    if product == "cpts_api":
+        base_url = context.cpts_api_base_url
     if base_url is not None:
         request_ping(context, base_url)
     else:
