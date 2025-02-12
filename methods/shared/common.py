@@ -65,17 +65,16 @@ def get_eps_fhir_authenticator(user, env, url, product):
 def get_pfp_apigee_authenticator(env, url):
     scope = "nhs-login"
     login_form = {"username": LOGIN_USERS["user_id"]}
-    if (
-        APIGEE_APPS["PFP-APIGEE"]["client_id"] is None
-        or APIGEE_APPS["PFP-APIGEE"]["client_secret"] is None
-    ):
+    client_id = APIGEE_APPS["PFP-APIGEE"]["client_id"]
+    client_secret = APIGEE_APPS["PGP-APIGEE"]["client_secret"]
+    if client_id is None or client_secret is None:
         raise ValueError("You must provide BOTH CLIENT_ID and CLIENT_SECRET")
     config = AuthorizationCodeConfig(
         environment=env,
         identity_service_base_url=url,  # pyright: ignore [reportArgumentType]
         callback_url="https://example.org/",  # pyright: ignore [reportArgumentType]
-        client_id=APIGEE_APPS["PFP-APIGEE"]["client_id"],
-        client_secret=APIGEE_APPS["PFP-APIGEE"]["client_secret"],
+        client_id=client_id,
+        client_secret=client_secret,
         scope=scope,
         login_form=login_form,
     )
