@@ -40,7 +40,7 @@ def i_send_an_update(context, status, terminal):
 def prescription_has_status_with_terminal_status(context):
     if "sandbox" in context.config.userdata["env"].lower():
         return
-    pfp_api_steps.i_am_authenticated(context)
+    pfp_api_steps.i_am_authenticated(context, "PFP-APIGEE")
     pfp_api_steps.i_request_my_prescriptions(context)
     json_response = json.loads(context.response.content)
     logging.debug(context.response.content)

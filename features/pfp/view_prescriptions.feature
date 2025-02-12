@@ -5,6 +5,6 @@ Feature: I can see my prescriptions
   Scenario: I can see a single prescription
     Given I am an authorised prescriber with EPS-FHIR app
     And I successfully prepare and sign a prescription
-    When I am authenticated
+    When I am authenticated with PFP-APIGEE app
     And I request my prescriptions
     Then I can see my prescription
