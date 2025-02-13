@@ -49,6 +49,36 @@ AWS_ENVS = {
     "SANDBOX": f".sandbox.dev{AWS_BASE_URL}",
 }
 
+APIGEE_APPS = {
+    "EPS-FHIR": {
+        "client_id": os.getenv("EPS_FHIR_CLIENT_ID"),
+        "client_secret": os.getenv("EPS_FHIR_CLIENT_SECRET"),
+    },
+    "EPS-FHIR-SHA1": {
+        "client_id": os.getenv("EPS_FHIR_SHA1_CLIENT_ID"),
+        "client_secret": os.getenv("EPS_FHIR_SHA1_CLIENT_SECRET"),
+    },
+    "EPS-FHIR-PRESCRIBING": {
+        "client_id": os.getenv("EPS_FHIR_PRESCRIBING_CLIENT_ID"),
+        "client_secret": os.getenv("EPS_FHIR_PRESCRIBING_CLIENT_SECRET"),
+    },
+    "EPS-FHIR-PRESCRIBING-SHA1": {
+        "client_id": os.getenv("EPS_FHIR_PRESCRIBING_SHA1_CLIENT_ID"),
+        "client_secret": os.getenv("EPS_FHIR_PRESCRIBING_SHA1_CLIENT_SECRET"),
+    },
+    "EPS-FHIR-DISPENSING": {
+        "client_id": os.getenv("EPS_FHIR_DISPENSING_CLIENT_ID"),
+        "client_secret": os.getenv("EPS_FHIR_DISPENSING_CLIENT_SECRET"),
+    },
+    "PFP-APIGEE": {
+        "client_id": os.getenv("PFP_CLIENT_ID"),
+        "client_secret": os.getenv("PFP_CLIENT_SECRET"),
+    },
+    "PSU": {
+        "client_id": os.getenv("PSU_CLIENT_ID"),
+        "client_secret": os.getenv("PSU_CLIENT_SECRET"),
+    },
+}
 CIS2_USERS = {
     "prescriber": {"user_id": "656005750107", "role_id": "555254242105"},
     "dispenser": {"user_id": "555260695103", "role_id": "555265434108"},
@@ -82,8 +112,6 @@ REPOS = {
 
 CERTIFICATE = os.getenv("CERTIFICATE")
 PRIVATE_KEY = os.getenv("PRIVATE_KEY")
-CLIENT_ID = os.getenv("CLIENT_ID")
-CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 PULL_REQUEST_ID = os.getenv("PULL_REQUEST_ID")
 JWT_PRIVATE_KEY = os.getenv("JWT_PRIVATE_KEY")
 JWT_KID = os.getenv("JWT_KID")
@@ -112,7 +140,24 @@ def count_of_scenarios_to_run(context):
     return total_scenarios
 
 
+def before_feature(context, feature):
+    if "skip" in feature.tags:
+        feature.skip("Marked with @skip")
+        return
+    environment = context.config.userdata["env"].lower()
+    if "skip-sandbox" in feature.tags and "sandbox" in environment:
+        feature.skip("Marked with @skip-sandbox")
+        return
+
+
 def before_scenario(context, scenario):
+    if "skip" in scenario.effective_tags:
+        scenario.skip("Marked with @skip")
+        return
+    environment = context.config.userdata["env"].lower()
+    if "skip-sandbox" in scenario.effective_tags and "sandbox" in environment:
+        scenario.skip("Marked with @skip-sandbox")
+        return
     product = context.config.userdata["product"].upper()
     if product == "CPTS-UI":
         global _playwright
@@ -124,10 +169,12 @@ def before_scenario(context, scenario):
 
 
 def after_scenario(context, scenario):
-    if hasattr(context, "page"):
-        if context.page is not None:
-            global _page
-            _page.close()
+    product = context.config.userdata["product"].upper()
+    if product == "CPTS-UI":
+        if hasattr(context, "page"):
+            if context.page is not None:
+                global _page
+                _page.close()
 
 
 def before_all(context):
