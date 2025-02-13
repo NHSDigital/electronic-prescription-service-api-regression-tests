@@ -19,16 +19,13 @@ from features.environment import (
 
 
 def get_psu_authenticator(env, url):
-    if (
-        APIGEE_APPS["PSU"]["client_id"] is None
-        or JWT_KID is None
-        or JWT_PRIVATE_KEY is None
-    ):
+    client_id = APIGEE_APPS["PSU"]["client_id"]
+    if client_id is None or JWT_KID is None or JWT_PRIVATE_KEY is None:
         raise ValueError("You must provide CLIENT_ID, JWT_KID and JWT_PRIVATE_KEY")
     config = ClientCredentialsConfig(
         environment=env,
         identity_service_base_url=url,  # pyright: ignore [reportArgumentType]
-        client_id=APIGEE_APPS["PSU"]["client_id"],
+        client_id=client_id,
         jwt_private_key=JWT_PRIVATE_KEY,
         jwt_kid=JWT_KID,
     )
