@@ -63,7 +63,7 @@ def get_pfp_apigee_authenticator(env, url):
     scope = "nhs-login"
     login_form = {"username": LOGIN_USERS["user_id"]}
     client_id = APIGEE_APPS["PFP-APIGEE"]["client_id"]
-    client_secret = APIGEE_APPS["PGP-APIGEE"]["client_secret"]
+    client_secret = APIGEE_APPS["PFP-APIGEE"]["client_secret"]
     if client_id is None or client_secret is None:
         raise ValueError("You must provide BOTH CLIENT_ID and CLIENT_SECRET")
     config = AuthorizationCodeConfig(
