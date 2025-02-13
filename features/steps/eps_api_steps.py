@@ -37,36 +37,45 @@ def i_prepare_and_sign_a_type_prescription(context, prescription_type):
     i_sign_a_new_prescription(context=context)
 
 
-@given("a prescription has been created and released")
-def a_prescription_has_been_created_and_released(context):
+@given("a prescription has been created and released using {deployment_method} apis")
+def a_prescription_has_been_created_and_released(context, deployment_method):
     if "sandbox" in context.config.userdata["env"].lower():
         return
-    i_am_an_authorised_user(context, "prescriber")
+    if deployment_method == "apim":
+        prescribe_product = "EPS-FHIR"
+        dispense_product = "EPS-FHIR"
+    elif deployment_method == "proxygen":
+        prescribe_product = "EPS-FHIR-PRESCRIBING"
+        dispense_product = "EPS-FHIR-DISPENSING"
+    else:
+        raise ValueError(f"Unknown deployment_method {deployment_method}")
+    i_am_an_authorised_user(context, "prescriber", prescribe_product)
     i_prepare_and_sign_a_prescription(context)
-    i_am_an_authorised_user(context, "dispenser")
+    i_am_an_authorised_user(context, "dispenser", dispense_product)
     i_release_the_prescription(context)
     indicate_successful_response(context)
 
 
-@given("a new prescription has been dispensed")
-def a_new_prescription_has_been_dispensed(context):
+@given("a new prescription has been dispensed using {deployment_method} apis")
+def a_new_prescription_has_been_dispensed(context, deployment_method):
     if "sandbox" in context.config.userdata["env"].lower():
         return
-    a_prescription_has_been_created_and_released(context)
+    a_prescription_has_been_created_and_released(context, deployment_method)
     i_dispense_the_prescription(context)
     indicate_successful_response(context)
 
 
-@given("I am an authorised {user}")
-@when("I am an authorised {user}")
-def i_am_an_authorised_user(context, user):
+@given("I am an authorised {user} with {app} app")
+@when("I am an authorised {user} with {app} app")
+def i_am_an_authorised_user(context, user, app):
     if "sandbox" in context.config.userdata["env"].lower():
         return
     env = context.config.userdata["env"]
     context.user = user
-    context.auth_token = get_auth(env, "EPS-FHIR", user)
+    context.auth_token = get_auth(env, app, user)
 
 
+@given("I successfully prepare a {prescription_type} prescription")
 def i_prepare_a_new_prescription(context, prescription_type):
     context.nhs_number = generate_single()
     if prescription_type == "non-nominated":
@@ -229,3 +238,8 @@ def validator_response_matches_file(context, filename):
     diff_result = ycm.get_diff()
     # and there should be none
     assert_that(diff_result).is_equal_to({"just4vis:pairs": []})
+
+
+@then("the signing algorithm is {algorithm}")
+def the_signing_algoritm_is(context, algorithm):
+    assert_that(algorithm).is_equal_to(context.algorithm)

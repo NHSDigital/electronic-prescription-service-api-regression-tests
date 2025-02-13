@@ -7,12 +7,12 @@ from methods.api.pfp_api_methods import get_prescriptions
 from methods.shared.common import assert_that, get_auth
 
 
-@when("I am authenticated")
-def i_am_authenticated(context):
+@when("I am authenticated with {app} app")
+def i_am_authenticated(context, app):
     env = context.config.userdata["env"].lower()
     if "sandbox" in env:
         return
-    context.auth_token = get_auth(env, "PFP-APIGEE")
+    context.auth_token = get_auth(env, app)
 
 
 @when("I request my prescriptions")

@@ -37,11 +37,6 @@ on:
         description: 'The github tag to run the test pack from'
         required: false
         default: "main"
-      run_sha1_tests:
-        description: whether to also run against a sha1 enabled apigee app
-        required: false
-        type: boolean
-        default: false
 
 jobs:
   regression_tests:
@@ -63,6 +58,22 @@ jobs:
         run: |
           echo run identifier "$ID"-"$PRODUCT"-"$ENV"-"$PULL_REQUEST_ID"
           echo run identifier "$ID"-"$PRODUCT"-"$ENV"-"$PULL_REQUEST_ID"  >> "$GITHUB_STEP_SUMMARY"
+
+      - name: show_input_parameters
+        env:
+          tags: ${{ inputs.tags }}
+          environment: ${{ inputs.environment }}
+          product: ${{ inputs.product }}
+          id: ${{ inputs.id }}
+          pull_request_id: ${{ inputs.pull_request_id }}
+          github_tag: ${{ inputs.github_tag }}
+        run: |
+          echo "tags: ${tags}"
+          echo "environment: ${environment}"
+          echo "product: ${product}"
+          echo "id: ${id}"
+          echo "pull_request_id: ${pull_request_id}"
+          echo "github_tag: ${github_tag}"
 
       # using git commit sha for version of action to ensure we have stable version
       - name: Install asdf
@@ -103,41 +114,39 @@ jobs:
           ENVIRONMENT: ${{ inputs.environment }}
           PULL_REQUEST_ID: ${{ inputs.pull_request_id }}
           TAGS: ${{ inputs.tags }}
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          EPS_FHIR_CLIENT_ID: ${{ secrets.EPS_FHIR_CLIENT_ID }}
+          EPS_FHIR_CLIENT_SECRET: ${{ secrets.EPS_FHIR_CLIENT_SECRET }}
+          EPS_FHIR_SHA1_CLIENT_ID: ${{ secrets.EPS_FHIR_SHA1_CLIENT_ID }}
+          EPS_FHIR_SHA1_CLIENT_SECRET: ${{ secrets.EPS_FHIR_SHA1_CLIENT_SECRET }}
+          EPS_FHIR_PRESCRIBING_CLIENT_ID: ${{ secrets.EPS_FHIR_PRESCRIBING_CLIENT_ID }}
+          EPS_FHIR_PRESCRIBING_CLIENT_SECRET: ${{ secrets.EPS_FHIR_PRESCRIBING_CLIENT_SECRET }}
+          EPS_FHIR_PRESCRIBING_SHA1_CLIENT_ID: ${{ secrets.EPS_FHIR_PRESCRIBING_SHA1_CLIENT_ID }}
+          EPS_FHIR_PRESCRIBING_SHA1_CLIENT_SECRET: ${{ secrets.EPS_FHIR_PRESCRIBING_SHA1_CLIENT_SECRET }}
+          EPS_FHIR_DISPENSING_CLIENT_ID: ${{ secrets.EPS_FHIR_DISPENSING_CLIENT_ID }}
+          EPS_FHIR_DISPENSING_CLIENT_SECRET: ${{ secrets.EPS_FHIR_DISPENSING_CLIENT_SECRET }}
+          PFP_CLIENT_ID: ${{ secrets.PFP_CLIENT_ID }}
+          PFP_CLIENT_SECRET: ${{ secrets.PFP_CLIENT_SECRET }}
+          PSU_CLIENT_ID: ${{ secrets.PSU_CLIENT_ID }}
+          PSU_CLIENT_SECRET: ${{ secrets.PSU_CLIENT_SECRET }}
           CERTIFICATE: ${{ secrets.CERTIFICATE }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           JWT_KID: ${{ secrets.JWT_KID }}
           JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
         run: |
-            export CLIENT_ID="$CLIENT_ID"
-            export CLIENT_SECRET="$CLIENT_SECRET"
-            export CERTIFICATE="$CERTIFICATE"
-            export PRIVATE_KEY="$PRIVATE_KEY"
-            export JWT_KID="$JWT_KID"
-            export JWT_PRIVATE_KEY="$JWT_PRIVATE_KEY"
-            export PULL_REQUEST_ID="$PULL_REQUEST_ID"
-            echo Pull request ID = "$PULL_REQUEST_ID"
-            poetry run python ./runner.py --env="$ENVIRONMENT" --product="$PRODUCT" --tags="$TAGS"
-
-      - name: SHA1 Regression Tests
-        id: sha1_tests
-        continue-on-error: true
-        if: inputs.run_sha1_tests == true
-        env:
-          PRODUCT: ${{ inputs.product }}
-          ENVIRONMENT: ${{ inputs.environment }}
-          PULL_REQUEST_ID: ${{ inputs.pull_request_id }}
-          TAGS: ${{ inputs.tags }}
-          CLIENT_ID: ${{ secrets.SHA1_CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.SHA1_CLIENT_SECRET }}
-          CERTIFICATE: ${{ secrets.CERTIFICATE }}
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-          JWT_KID: ${{ secrets.JWT_KID }}
-          JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
-        run: |
-            export CLIENT_ID="$CLIENT_ID"
-            export CLIENT_SECRET="$CLIENT_SECRET"
+            export EPS_FHIR_CLIENT_ID="$EPS_FHIR_CLIENT_ID"
+            export EPS_FHIR_CLIENT_SECRET="$EPS_FHIR_CLIENT_SECRET"
+            export EPS_FHIR_SHA1_CLIENT_ID="$EPS_FHIR_SHA1_CLIENT_ID"
+            export EPS_FHIR_SHA1_CLIENT_SECRET="$EPS_FHIR_SHA1_CLIENT_SECRET"
+            export EPS_FHIR_PRESCRIBING_CLIENT_ID="$EPS_FHIR_PRESCRIBING_CLIENT_ID"
+            export EPS_FHIR_PRESCRIBING_CLIENT_SECRET="$EPS_FHIR_PRESCRIBING_CLIENT_SECRET"
+            export EPS_FHIR_PRESCRIBING_SHA1_CLIENT_ID="$EPS_FHIR_PRESCRIBING_SHA1_CLIENT_ID"
+            export EPS_FHIR_PRESCRIBING_SHA1_CLIENT_SECRET="$EPS_FHIR_PRESCRIBING_SHA1_CLIENT_SECRET"
+            export EPS_FHIR_DISPENSING_CLIENT_ID="$EPS_FHIR_DISPENSING_CLIENT_ID"
+            export EPS_FHIR_DISPENSING_CLIENT_SECRET="$EPS_FHIR_DISPENSING_CLIENT_SECRET"
+            export PFP_CLIENT_ID="$PFP_CLIENT_ID"
+            export PFP_CLIENT_SECRET="$PFP_CLIENT_SECRET"
+            export PSU_CLIENT_ID="$PSU_CLIENT_ID"
+            export PSU_CLIENT_SECRET="$PSU_CLIENT_SECRET"
             export CERTIFICATE="$CERTIFICATE"
             export PRIVATE_KEY="$PRIVATE_KEY"
             export JWT_KID="$JWT_KID"
@@ -163,7 +172,7 @@ jobs:
           repositories: "electronic-prescription-service-api-regression-tests,eps-test-reports"
 
       - name: Report failure on test failure
-        if: steps.tests.outcome != 'success' || ( steps.sha1_tests.outcome != 'success' && steps.sha1_tests.outcome != 'skipped' )
+        if: steps.tests.outcome != 'success'
         run: |
           poetry run python scripts/send_test_results.py --token=${{ steps.generate-token.outputs.token }} --run_id ${{GITHUB.RUN_ID}}
           echo The regression tests step failed, this likely means there are test failures.
