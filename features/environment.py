@@ -158,6 +158,9 @@ def before_scenario(context, scenario):
     if "skip-sandbox" in scenario.effective_tags and "sandbox" in environment:
         scenario.skip("Marked with @skip-sandbox")
         return
+    if "deployed_only" in scenario.effective_tags and environment == "localhost":
+        scenario.skip("Marked as only to run in deployed environments")
+        return
     product = context.config.userdata["product"].upper()
     if product == "CPTS-UI":
         global _playwright
