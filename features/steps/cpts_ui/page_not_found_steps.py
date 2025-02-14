@@ -27,5 +27,6 @@ def i_am_on_page_not_found_a(context):
 @then("I am on the logged in Page Not Found page")
 def i_am_on_page_not_found_b(context):
     context.execute_steps("then I am on the logged out Page Not Found page")
+
     page = PageNotFound(context.page)
     expect(page.body3).to_be_visible()
