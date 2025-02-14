@@ -10,3 +10,8 @@ Feature: The site has a 404 not found page
         Given I am logged in as a user with multiple access roles
         When I navigate to a non-existent page
         Then I am on the Page Not Found page
+
+    @deployed_only
+    Scenario: The user sees a "Page not found" error page when they navigate to a url that is not under /site
+        When I navigate outside the react app route
+        Then I am on the Page Not Found page

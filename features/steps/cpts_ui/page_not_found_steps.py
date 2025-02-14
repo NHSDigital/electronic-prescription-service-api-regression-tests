@@ -10,6 +10,11 @@ def i_navigate_to_a_nonexistent_page(context):
     context.page.goto(context.cpts_ui_base_url + "site/spamandeggs")
 
 
+@when("I navigate outside the react app route")
+def i_navigate_to_a_non_app_page(context):
+    context.page.goto(context.cpts_ui_base_url + "spamandeggs")
+
+
 @then("I am on the Page Not Found page")
 def i_am_on_page_not_found(context):
     page = PageNotFound(context.page)
