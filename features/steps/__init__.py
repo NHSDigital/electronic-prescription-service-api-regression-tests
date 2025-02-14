@@ -7,3 +7,4 @@ from cpts_ui.rbac_banner import *  # noqa: F403,F401
 from cpts_ui.search_for_a_prescription_steps import *  # noqa: F403,F401
 from cpts_ui.select_your_role_steps import *  # noqa: F403,F401
 from cpts_ui.your_selected_role_steps import *  # noqa: F403,F401
+from cpts_ui.page_not_found_steps import *  # noqa: F403,F401
