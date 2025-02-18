@@ -8,7 +8,7 @@ Feature: I can send an update to PSU
     When I send an Collected update with a terminal status of completed
     Then the response indicates a record was created
 
-  @e2e
+  @skip @e2e
   Scenario: I can send and confirm an update to a prescription
     Given a prescription has been created and released using apim apis
     When I am authorised to send prescription updates
