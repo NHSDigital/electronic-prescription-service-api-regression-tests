@@ -45,3 +45,8 @@ def get_headers(context, additional_headers=None):
 def request_ping(context, base_url):
     url = f"{base_url}/_ping"
     get(context=context, url=url, headers=_get_default_headers())
+
+
+def request_metadata(context, base_url):
+    url = f"{base_url}/metadata"
+    get(context=context, url=url, headers=_get_default_headers())
