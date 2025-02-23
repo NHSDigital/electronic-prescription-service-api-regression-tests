@@ -14,6 +14,7 @@ from methods.api.eps_api_methods import (
     withdraw_dispense_notification,
     call_validator,
 )
+from features.environment import APIGEE_APPS
 from methods.shared.common import assert_that, get_auth
 from utils.random_nhs_number_generator import generate_single
 from messages.eps_fhir.prescription import Prescription
@@ -73,6 +74,7 @@ def i_am_an_authorised_user(context, user, app):
     env = context.config.userdata["env"]
     context.user = user
     context.auth_token = get_auth(env, app, user)
+    context.api_key = APIGEE_APPS[app]["client_id"]
 
 
 @given("I successfully prepare a {prescription_type} prescription")
