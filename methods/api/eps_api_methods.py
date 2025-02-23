@@ -30,7 +30,7 @@ def calculate_eps_fhir_base_url(context):
 def prepare_prescription(context):
     url = f"{PRESCRIBING_BASE_URL}/FHIR/R4/$prepare"
     additional_headers = {"Content-Type": "application/json"}
-    headers = get_headers(context, "ouath2", additional_headers)
+    headers = get_headers(context, "oauth2", additional_headers)
 
     context.prepare_body = Prescription(context).body
     response = post(
