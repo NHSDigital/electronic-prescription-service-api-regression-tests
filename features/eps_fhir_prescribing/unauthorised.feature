@@ -4,6 +4,6 @@ Feature: I can not call api when unauthorised
 
   @skip-sandbox
   Scenario: I can not call prepare endpoint when using api key
-    Given I am an authorised "api user" with EPS-FHIR-PRESCRIBING app
+    Given I am an authorised api user with EPS-FHIR-PRESCRIBING app
     When I try to prepare a nominated prescription
     Then the response indicates unauthorised
