@@ -9,6 +9,7 @@ from methods.api.eps_api_methods import (
     dispense_prescription,
     amend_dispense_notification,
     prepare_prescription,
+    try_prepare_prescription,
     release_signed_prescription,
     return_prescription,
     withdraw_dispense_notification,
@@ -72,9 +73,13 @@ def i_am_an_authorised_user(context, user, app):
     if "sandbox" in context.config.userdata["env"].lower():
         return
     env = context.config.userdata["env"]
-    context.user = user
-    context.auth_token = get_auth(env, app, user)
-    context.api_key = APIGEE_APPS[app]["client_id"]
+    if user == "api user":
+        context.api_key = APIGEE_APPS[app]["client_id"]
+        context.auth_method = "api_key"
+    else:
+        context.user = user
+        context.auth_token = get_auth(env, app, user)
+        context.auth_method = "oauth2"
 
 
 @given("I successfully prepare a {prescription_type} prescription")
@@ -87,11 +92,22 @@ def i_prepare_a_new_prescription(context, prescription_type):
     prepare_prescription(context)
 
 
+@when("I try to prepare a {prescription_type} prescription")
+def i_try_to_prepare_a_new_prescription(context, prescription_type):
+    context.nhs_number = generate_single()
+    if prescription_type == "non-nominated":
+        context.nomination_code = "0004"
+    if prescription_type == "nominated":
+        context.nomination_code = "P1"
+    try_prepare_prescription(context)
+
+
 def i_sign_a_new_prescription(context):
     create_signed_prescription(context)
 
 
 @when("I release the prescription")
+@given("I try to release the prescription")
 def i_release_the_prescription(context):
     release_signed_prescription(context)
 

@@ -56,4 +56,4 @@ def request_ping(context, base_url):
 
 def request_metadata(context, base_url):
     url = f"{base_url}/metadata"
-    get(context=context, url=url, headers=get_headers(context, "api_key"))
+    get(context=context, url=url, headers=get_headers(context, context.auth_method))
