@@ -1,4 +1,4 @@
-@eps_fhir_dispensing @regression @blocker @smoke
+@eps_fhir_prescribing @regression @blocker @smoke
 @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4896
 Feature: I can retrieve metadata
 

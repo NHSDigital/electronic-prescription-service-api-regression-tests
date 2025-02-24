@@ -1,4 +1,4 @@
-@eps_fhir_prescribing @smoke @regression @blocker @create
+@eps_fhir_dispensing @smoke @regression @blocker @create
 @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4432
 Feature: I can not call api when unauthorised
 
