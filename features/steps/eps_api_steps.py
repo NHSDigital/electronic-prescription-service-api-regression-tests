@@ -109,8 +109,8 @@ def i_sign_a_new_prescription(context):
     create_signed_prescription(context)
 
 
+@when("I try to release the prescription")
 @when("I release the prescription")
-@given("I try to release the prescription")
 def i_release_the_prescription(context):
     release_signed_prescription(context)
 
