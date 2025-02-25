@@ -11,15 +11,17 @@ RUN apt-get update \
     libreadline-dev libsqlite3-dev wget llvm libncurses5-dev libncursesw5-dev \
     xz-utils tk-dev liblzma-dev netcat
 
+# Install ASDF
+RUN wget -O /tmp/asdf.tar.gz https://github.com/asdf-vm/asdf/releases/download/v0.16.4/asdf-v0.16.4-linux-amd64.tar.gz; \
+    tar -xvzf /tmp/asdf.tar.gz; \
+    mv asdf /usr/bin
+    
 USER vscode
 
-# Install ASDF
-RUN git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.11.3; \
-    echo '. $HOME/.asdf/asdf.sh' >> ~/.bashrc; \
-    echo '. $HOME/.asdf/completions/asdf.bash' >> ~/.bashrc;
-
-ENV PATH="$PATH:/home/vscode/.asdf/bin/"
-
+ENV PATH="/home/vscode/.asdf/shims/:$PATH"
+RUN \
+    echo 'PATH="/home/vscode/.asdf/shims/:$PATH"' >> ~/.bashrc; \
+    echo '. <(asdf completion bash)' >> ~/.bashrc;
 
 # Install ASDF plugins
 RUN asdf plugin add python; \
