@@ -73,9 +73,7 @@ def i_am_an_authorised_user(context, user, app):
     if "sandbox" in context.config.userdata["env"].lower():
         return
     env = context.config.userdata["env"]
-    print("foo")
     print(user)
-    print("bar")
     if user == "api user":
         context.api_key = APIGEE_APPS[app]["client_id"]
         context.auth_method = "api_key"
