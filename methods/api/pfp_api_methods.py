@@ -8,5 +8,5 @@ def get_prescriptions(context):
         "nhsd-nhslogin-user": "P9:" + context.nhs_number,
     }
 
-    headers = get_headers(context, additional_headers)
+    headers = get_headers(context, "oauth2", additional_headers)
     context.response = get(url=url, context=context, headers=headers)
