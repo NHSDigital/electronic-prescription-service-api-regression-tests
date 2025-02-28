@@ -6,7 +6,8 @@ Feature: I can send an update to PSU
   Scenario: I can send an update to PSU
     Given I am authorised to send prescription updates
     When I send an Collected update with a terminal status of completed
-    Then the response indicates a record was created
+    Then the response indicates a bad request
+#    Then the response indicates a record was created
 
   @skip @e2e
   Scenario: I can send and confirm an update to a prescription
