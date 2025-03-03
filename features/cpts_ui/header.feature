@@ -10,7 +10,7 @@ Feature: Header
   Scenario: user sees a menu with links when the screen size is small
     Given I am logged in as a user with multiple access roles
     When I have a screen size of 650 pixels wide
-#    Then I can see the header links in a dropdown menu
+    Then I can see the header links in a dropdown menu
 
   ############################################################################
   # EXIT
