@@ -48,6 +48,13 @@ set_repository_secret() {
 }
 
 check_gh_logged_in
+# CPT_FHIR credentials
+set_environment_secret CPT_FHIR_CLIENT_ID "${REF_CPT_FHIR_CLIENT_ID}" REF
+set_environment_secret CPT_FHIR_CLIENT_ID "${INTERNAL_DEV_SANDBOX_CPT_FHIR_CLIENT_ID}" INTERNAL-DEV-SANDBOX
+set_environment_secret CPT_FHIR_CLIENT_ID "${INTERNAL_DEV_CPT_FHIR_CLIENT_ID}" INTERNAL-DEV
+set_environment_secret CPT_FHIR_CLIENT_ID "${INT_CPT_FHIR_CLIENT_ID}" INT
+set_environment_secret CPT_FHIR_CLIENT_ID "${INTERNAL_QA_CPT_FHIR_CLIENT_ID}" INTERNAL-QA
+
 # EPS_FHIR credentials
 set_environment_secret EPS_FHIR_CLIENT_ID "${REF_EPS_FHIR_CLIENT_ID}" REF
 set_environment_secret EPS_FHIR_CLIENT_ID "${INTERNAL_DEV_SANDBOX_EPS_FHIR_CLIENT_ID}" INTERNAL-DEV-SANDBOX
