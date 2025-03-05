@@ -50,6 +50,10 @@ AWS_ENVS = {
 }
 
 APIGEE_APPS = {
+    "CPTS-FHIR": {
+        "client_id": os.getenv("CPT_FHIR_CLIENT_ID"),
+        "client_secret": os.getenv("CPT_FHIR_CLIENT_SECRET"),
+    },
     "EPS-FHIR": {
         "client_id": os.getenv("EPS_FHIR_CLIENT_ID"),
         "client_secret": os.getenv("EPS_FHIR_CLIENT_SECRET"),
@@ -118,12 +122,12 @@ JWT_KID = os.getenv("JWT_KID")
 HEADLESS = os.getenv("HEADLESS", "True").lower() in ("true", "1", "yes")
 
 CPTS_UI_PREFIX = "cpt-ui"
+CPTS_API_SUFFIX = "clinical-prescription-tracker"
 EPS_FHIR_SUFFIX = "electronic-prescriptions"
 EPS_FHIR_PRESCRIBING_SUFFIX = "fhir-prescribing"
 EPS_FHIR_DISPENSING_SUFFIX = "fhir-dispensing"
 PFP_SUFFIX = "prescriptions-for-patients"
 PSU_SUFFIX = "prescription-status-update"
-CPTS_API_SUFIX = "clinical-prescription-tracker"
 
 
 def count_of_scenarios_to_run(context):
@@ -207,7 +211,7 @@ def before_all(context):
         context.pfp_base_url = os.path.join(select_apigee_base_url(env), PFP_SUFFIX)
         context.psu_base_url = os.path.join(select_apigee_base_url(env), PSU_SUFFIX)
         context.cpts_api_base_url = os.path.join(
-            select_apigee_base_url(env), CPTS_API_SUFIX
+            select_apigee_base_url(env), CPTS_API_SUFFIX
         )
 
         if PULL_REQUEST_ID and env != "LOCALHOST":
@@ -264,7 +268,7 @@ def get_url_with_pr(context, env, product):
         handle_cpt_ui_pr_url(context, env)
     if product == "CPTS-API":
         context.cpts_api_base_url = os.path.join(
-            INTERNAL_DEV_BASE_URL, f"{CPTS_API_SUFIX}-{PULL_REQUEST_ID}"
+            INTERNAL_DEV_BASE_URL, f"{CPTS_API_SUFFIX}-{PULL_REQUEST_ID}"
         )
 
 
