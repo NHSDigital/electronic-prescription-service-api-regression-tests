@@ -84,7 +84,7 @@ def get_pfp_apigee_authenticator(env, url):
 def get_auth(env, product, user="prescriber"):
     authenticator = None
     if product not in [
-        "CPT-FHIR",
+        "CPTS-FHIR",
         "EPS-FHIR",
         "EPS-FHIR-SHA1",
         "EPS-FHIR-PRESCRIBING",
@@ -97,7 +97,7 @@ def get_auth(env, product, user="prescriber"):
     env = env.lower()
     url = f"https://{env}.api.service.nhs.uk/oauth2-mock"
     if product in [
-        "CPT-FHIR",
+        "CPTS-FHIR",
         "EPS-FHIR",
         "EPS-FHIR-DISPENSING",
         "EPS-FHIR-PRESCRIBING",
