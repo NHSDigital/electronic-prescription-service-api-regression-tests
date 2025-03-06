@@ -2,6 +2,7 @@
 @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-3847
 Feature: I can create prescriptions
 
+  @skip-sandbox
   Scenario Outline: I can create, sign and release a prescription
     Given I am an authorised prescriber with <App> app
     And I successfully prepare and sign a <Type> prescription
