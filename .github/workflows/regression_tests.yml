@@ -119,6 +119,8 @@ jobs:
           ENVIRONMENT: ${{ inputs.environment }}
           PULL_REQUEST_ID: ${{ inputs.pull_request_id }}
           TAGS: ${{ inputs.tags }}
+          CPT_FHIR_CLIENT_ID: ${{ secrets.CPT_FHIR_CLIENT_ID }}
+          CPT_FHIR_CLIENT_SECRET: ${{ secrets.CPT_FHIR_CLIENT_SECRET }}
           EPS_FHIR_CLIENT_ID: ${{ secrets.EPS_FHIR_CLIENT_ID }}
           EPS_FHIR_CLIENT_SECRET: ${{ secrets.EPS_FHIR_CLIENT_SECRET }}
           EPS_FHIR_SHA1_CLIENT_ID: ${{ secrets.EPS_FHIR_SHA1_CLIENT_ID }}
@@ -138,27 +140,29 @@ jobs:
           JWT_KID: ${{ secrets.JWT_KID }}
           JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
         run: |
-            export EPS_FHIR_CLIENT_ID="$EPS_FHIR_CLIENT_ID"
-            export EPS_FHIR_CLIENT_SECRET="$EPS_FHIR_CLIENT_SECRET"
-            export EPS_FHIR_SHA1_CLIENT_ID="$EPS_FHIR_SHA1_CLIENT_ID"
-            export EPS_FHIR_SHA1_CLIENT_SECRET="$EPS_FHIR_SHA1_CLIENT_SECRET"
-            export EPS_FHIR_PRESCRIBING_CLIENT_ID="$EPS_FHIR_PRESCRIBING_CLIENT_ID"
-            export EPS_FHIR_PRESCRIBING_CLIENT_SECRET="$EPS_FHIR_PRESCRIBING_CLIENT_SECRET"
-            export EPS_FHIR_PRESCRIBING_SHA1_CLIENT_ID="$EPS_FHIR_PRESCRIBING_SHA1_CLIENT_ID"
-            export EPS_FHIR_PRESCRIBING_SHA1_CLIENT_SECRET="$EPS_FHIR_PRESCRIBING_SHA1_CLIENT_SECRET"
-            export EPS_FHIR_DISPENSING_CLIENT_ID="$EPS_FHIR_DISPENSING_CLIENT_ID"
-            export EPS_FHIR_DISPENSING_CLIENT_SECRET="$EPS_FHIR_DISPENSING_CLIENT_SECRET"
-            export PFP_CLIENT_ID="$PFP_CLIENT_ID"
-            export PFP_CLIENT_SECRET="$PFP_CLIENT_SECRET"
-            export PSU_CLIENT_ID="$PSU_CLIENT_ID"
-            export PSU_CLIENT_SECRET="$PSU_CLIENT_SECRET"
-            export CERTIFICATE="$CERTIFICATE"
-            export PRIVATE_KEY="$PRIVATE_KEY"
-            export JWT_KID="$JWT_KID"
-            export JWT_PRIVATE_KEY="$JWT_PRIVATE_KEY"
-            export PULL_REQUEST_ID="$PULL_REQUEST_ID"
-            echo Pull request ID = "$PULL_REQUEST_ID"
-            poetry run python ./runner.py --env="$ENVIRONMENT" --product="$PRODUCT" --tags="$TAGS"
+          export CPT_FHIR_CLIENT_ID="$CPT_FHIR_CLIENT_ID"
+          export CPT_FHIR_CLIENT_SECRET="$CPT_FHIR_CLIENT_SECRET"
+          export EPS_FHIR_CLIENT_ID="$EPS_FHIR_CLIENT_ID"
+          export EPS_FHIR_CLIENT_SECRET="$EPS_FHIR_CLIENT_SECRET"
+          export EPS_FHIR_SHA1_CLIENT_ID="$EPS_FHIR_SHA1_CLIENT_ID"
+          export EPS_FHIR_SHA1_CLIENT_SECRET="$EPS_FHIR_SHA1_CLIENT_SECRET"
+          export EPS_FHIR_PRESCRIBING_CLIENT_ID="$EPS_FHIR_PRESCRIBING_CLIENT_ID"
+          export EPS_FHIR_PRESCRIBING_CLIENT_SECRET="$EPS_FHIR_PRESCRIBING_CLIENT_SECRET"
+          export EPS_FHIR_PRESCRIBING_SHA1_CLIENT_ID="$EPS_FHIR_PRESCRIBING_SHA1_CLIENT_ID"
+          export EPS_FHIR_PRESCRIBING_SHA1_CLIENT_SECRET="$EPS_FHIR_PRESCRIBING_SHA1_CLIENT_SECRET"
+          export EPS_FHIR_DISPENSING_CLIENT_ID="$EPS_FHIR_DISPENSING_CLIENT_ID"
+          export EPS_FHIR_DISPENSING_CLIENT_SECRET="$EPS_FHIR_DISPENSING_CLIENT_SECRET"
+          export PFP_CLIENT_ID="$PFP_CLIENT_ID"
+          export PFP_CLIENT_SECRET="$PFP_CLIENT_SECRET"
+          export PSU_CLIENT_ID="$PSU_CLIENT_ID"
+          export PSU_CLIENT_SECRET="$PSU_CLIENT_SECRET"
+          export CERTIFICATE="$CERTIFICATE"
+          export PRIVATE_KEY="$PRIVATE_KEY"
+          export JWT_KID="$JWT_KID"
+          export JWT_PRIVATE_KEY="$JWT_PRIVATE_KEY"
+          export PULL_REQUEST_ID="$PULL_REQUEST_ID"
+          echo Pull request ID = "$PULL_REQUEST_ID"
+          poetry run python ./runner.py --env="$ENVIRONMENT" --product="$PRODUCT" --tags="$TAGS"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
