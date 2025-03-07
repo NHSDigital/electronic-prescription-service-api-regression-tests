@@ -128,7 +128,6 @@ EPS_FHIR_PRESCRIBING_SUFFIX = "fhir-prescribing"
 EPS_FHIR_DISPENSING_SUFFIX = "fhir-dispensing"
 PFP_SUFFIX = "prescriptions-for-patients"
 PSU_SUFFIX = "prescription-status-update"
-CPTS_API_SUFIX = "clinical-prescription-tracker"
 
 
 def count_of_scenarios_to_run(context):
@@ -212,7 +211,7 @@ def before_all(context):
         context.pfp_base_url = os.path.join(select_apigee_base_url(env), PFP_SUFFIX)
         context.psu_base_url = os.path.join(select_apigee_base_url(env), PSU_SUFFIX)
         context.cpts_fhir_base_url = os.path.join(
-            select_apigee_base_url(env), CPTS_FHIR_SUFIX
+            select_apigee_base_url(env), CPTS_FHIR_SUFFIX
         )
 
         if PULL_REQUEST_ID and env != "LOCALHOST":
@@ -268,8 +267,8 @@ def get_url_with_pr(context, env, product):
     if product == "CPTS-UI":
         handle_cpt_ui_pr_url(context, env)
     if product == "CPTS-FHIR":
-        context.cpts_api_base_url = os.path.join(
-            INTERNAL_DEV_BASE_URL, f"{CPTS_FHIR_SUFIX}-{PULL_REQUEST_ID}"
+        context.cpts_fhir_base_url = os.path.join(
+            INTERNAL_DEV_BASE_URL, f"{CPTS_FHIR_SUFFIX}-{PULL_REQUEST_ID}"
         )
 
 
