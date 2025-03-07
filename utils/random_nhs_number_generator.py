@@ -1,6 +1,5 @@
 from nhs_number_generator.generate_nhs_numbers import random_nhs_number_generator
 
-
 def generate_multiple(
     nhs_number_range=(
         (311300000, 319999999),

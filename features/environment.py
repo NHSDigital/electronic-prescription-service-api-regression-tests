@@ -50,6 +50,10 @@ AWS_ENVS = {
 }
 
 APIGEE_APPS = {
+    "CPTS-FHIR": {
+        "client_id": os.getenv("CPT_FHIR_CLIENT_ID"),
+        "client_secret": os.getenv("CPT_FHIR_CLIENT_SECRET"),
+    },
     "EPS-FHIR": {
         "client_id": os.getenv("EPS_FHIR_CLIENT_ID"),
         "client_secret": os.getenv("EPS_FHIR_CLIENT_SECRET"),
@@ -101,7 +105,7 @@ MOCK_CIS2_LOGIN_ID_NO_ROLES = "555073103101"
 
 REPOS = {
     "CPTS-UI": "https://github.com/NHSDigital/eps-prescription-tracker-ui",
-    "CPTS-API": "https://github.com/NHSDigital/electronic-prescription-service-clinical-prescription-tracker",
+    "CPTS-FHIR": "https://github.com/NHSDigital/electronic-prescription-service-clinical-prescription-tracker",
     "EPS-FHIR": "https://github.com/NHSDigital/electronic-prescription-service-api",
     "EPS-FHIR-PRESCRIBING": "https://github.com/NHSDigital/electronic-prescription-service-api",
     "EPS-FHIR-DISPENSING": "https://github.com/NHSDigital/electronic-prescription-service-api",
@@ -118,6 +122,7 @@ JWT_KID = os.getenv("JWT_KID")
 HEADLESS = os.getenv("HEADLESS", "True").lower() in ("true", "1", "yes")
 
 CPTS_UI_PREFIX = "cpt-ui"
+CPTS_FHIR_SUFFIX = "clinical-prescription-tracker"
 EPS_FHIR_SUFFIX = "electronic-prescriptions"
 EPS_FHIR_PRESCRIBING_SUFFIX = "fhir-prescribing"
 EPS_FHIR_DISPENSING_SUFFIX = "fhir-dispensing"
@@ -206,8 +211,8 @@ def before_all(context):
         )
         context.pfp_base_url = os.path.join(select_apigee_base_url(env), PFP_SUFFIX)
         context.psu_base_url = os.path.join(select_apigee_base_url(env), PSU_SUFFIX)
-        context.cpts_api_base_url = os.path.join(
-            select_apigee_base_url(env), CPTS_API_SUFIX
+        context.cpts_fhir_base_url = os.path.join(
+            select_apigee_base_url(env), CPTS_FHIR_SUFIX
         )
 
         if PULL_REQUEST_ID and env != "LOCALHOST":
@@ -227,7 +232,7 @@ def before_all(context):
 
     eps_api_methods.calculate_eps_fhir_base_url(context)
     print("CPTS-UI: ", context.cpts_ui_base_url)
-    print("CPTS-API: ", context.cpts_api_base_url)
+    print("CPTS-FHIR: ", context.cpts_fhir_base_url)
     print("EPS: ", context.eps_fhir_base_url)
     print("EPS-PRESCRIBING: ", context.eps_fhir_prescribing_base_url)
     print("EPS-DISPENSING: ", context.eps_fhir_dispensing_base_url)
@@ -262,9 +267,9 @@ def get_url_with_pr(context, env, product):
         handle_pfp_aws_pr_url(context, env)
     if product == "CPTS-UI":
         handle_cpt_ui_pr_url(context, env)
-    if product == "CPTS-API":
+    if product == "CPTS-FHIR":
         context.cpts_api_base_url = os.path.join(
-            INTERNAL_DEV_BASE_URL, f"{CPTS_API_SUFIX}-{PULL_REQUEST_ID}"
+            INTERNAL_DEV_BASE_URL, f"{CPTS_FHIR_SUFIX}-{PULL_REQUEST_ID}"
         )
 
 
