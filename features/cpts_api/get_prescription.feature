@@ -1,4 +1,4 @@
-@cpts_api @smoke @regression @blocker
+@cpts_fhir @smoke @regression @blocker
 @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4930
 Feature: Users are able to get prescriptions from CPTS-FHIR
 

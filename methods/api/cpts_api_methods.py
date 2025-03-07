@@ -1,12 +1,19 @@
 import json
 
+from features.environment import CIS2_USERS
 from methods.api.common_api_methods import get_headers, get
 from methods.shared.common import assert_that
 
 
 def get_prescription_details(context):
     url = f"{context.cpts_fhir_base_url}/RequestGroup/{context.prescription_id}"
-    additional_headers = {"Content-Type": "application/json"}
+    print(url)
+    additional_headers = {
+        "Content-Type": "application/json",
+        "nhsd-organization-uuid": "A83008",
+        "nhsd-session-urid": CIS2_USERS["prescriber"]["role_id"],
+        "nhsd-session-jobrole": "S0030:G0100:R0570",
+    }
     headers = get_headers(context, context.auth_method, additional_headers)
 
     context.response = get(url=url, context=context, headers=headers)

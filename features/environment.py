@@ -122,7 +122,7 @@ JWT_KID = os.getenv("JWT_KID")
 HEADLESS = os.getenv("HEADLESS", "True").lower() in ("true", "1", "yes")
 
 CPTS_UI_PREFIX = "cpt-ui"
-CPTS_API_SUFFIX = "clinical-prescription-tracker"
+CPTS_FHIR_SUFFIX = "clinical-prescription-tracker"
 EPS_FHIR_SUFFIX = "electronic-prescriptions"
 EPS_FHIR_PRESCRIBING_SUFFIX = "fhir-prescribing"
 EPS_FHIR_DISPENSING_SUFFIX = "fhir-dispensing"
@@ -210,8 +210,8 @@ def before_all(context):
         )
         context.pfp_base_url = os.path.join(select_apigee_base_url(env), PFP_SUFFIX)
         context.psu_base_url = os.path.join(select_apigee_base_url(env), PSU_SUFFIX)
-        context.cpts_api_base_url = os.path.join(
-            select_apigee_base_url(env), CPTS_API_SUFFIX
+        context.cpts_fhir_base_url = os.path.join(
+            select_apigee_base_url(env), CPTS_FHIR_SUFFIX
         )
 
         if PULL_REQUEST_ID and env != "LOCALHOST":
@@ -231,7 +231,7 @@ def before_all(context):
 
     eps_api_methods.calculate_eps_fhir_base_url(context)
     print("CPTS-UI: ", context.cpts_ui_base_url)
-    print("CPTS-FHIR: ", context.cpts_api_base_url)
+    print("CPTS-FHIR: ", context.cpts_fhir_base_url)
     print("EPS: ", context.eps_fhir_base_url)
     print("EPS-PRESCRIBING: ", context.eps_fhir_prescribing_base_url)
     print("EPS-DISPENSING: ", context.eps_fhir_dispensing_base_url)
@@ -267,8 +267,8 @@ def get_url_with_pr(context, env, product):
     if product == "CPTS-UI":
         handle_cpt_ui_pr_url(context, env)
     if product == "CPTS-FHIR":
-        context.cpts_api_base_url = os.path.join(
-            INTERNAL_DEV_BASE_URL, f"{CPTS_API_SUFFIX}-{PULL_REQUEST_ID}"
+        context.cpts_fhir_base_url = os.path.join(
+            INTERNAL_DEV_BASE_URL, f"{CPTS_FHIR_SUFFIX}-{PULL_REQUEST_ID}"
         )
 
 
