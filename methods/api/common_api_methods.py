@@ -8,7 +8,7 @@ import logging
 def get(context, **kwargs):
     logging.debug(f"Request Body: {kwargs.get("data")}")
     context.response = api_get_request(**kwargs)
-    logging.debug(f"Response Body: {context.response}")
+    logging.debug(f"Response Body: {context.response.content}")
     common.attach_api_information(context)
     return context.response
 
