@@ -4,9 +4,11 @@ from features.environment import CIS2_USERS
 from methods.api.common_api_methods import get_headers, get
 from methods.shared.common import assert_that
 
+PRESCRIPTION_DISPENSED = "9D4C80-A83008-5EA4D3"
+
 
 def get_prescription_details(context):
-    url = f"{context.cpts_fhir_base_url}/RequestGroup/{context.prescription_id}"
+    url = f"{context.cpts_fhir_base_url}/RequestGroup/{PRESCRIPTION_DISPENSED}"
     print(url)
     additional_headers = {
         "Content-Type": "application/json",
