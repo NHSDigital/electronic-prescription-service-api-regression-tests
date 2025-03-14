@@ -88,8 +88,6 @@ jobs:
           path: |
             ~/.asdf
           key: ${{ runner.os }}-asdf-${{ hashFiles('**/.tool-versions') }}
-          restore-keys: |
-            ${{ runner.os }}-asdf-
 
       - name: Install asdf dependencies in .tool-versions
         uses: asdf-vm/actions/install@1117842ea70e2711a0072e3a71265cbfe2c830be
@@ -104,8 +102,6 @@ jobs:
         with:
           path: .venv
           key: ${{ runner.os }}-venv-${{ hashFiles('pyproject.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-venv-
 
       - name: Install Dependencies
         if: steps.cache-venv.outputs.cache-hit != 'true'
