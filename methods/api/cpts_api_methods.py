@@ -4,12 +4,9 @@ from features.environment import CIS2_USERS
 from methods.api.common_api_methods import get_headers, get
 from methods.shared.common import assert_that
 
-PRESCRIPTION_ID_DISPENSED = "9D4C80-A83008-5EA4D3"
-NHS_NUMBER = "5839945242"
-
 
 def get_prescription_details(context):
-    url = f"{context.cpts_fhir_base_url}/RequestGroup/{PRESCRIPTION_ID_DISPENSED}"
+    url = f"{context.cpts_fhir_base_url}/RequestGroup/{context.prescription_id}"
     print(url)
     additional_headers = {
         "Content-Type": "application/json",
@@ -24,9 +21,11 @@ def get_prescription_details(context):
 
 def assert_prescription_details(context):
     json_response = json.loads(context.response.content)
+    expected_nhs_number = context.nhs_number
+    expected_prescription_id = context.prescription_id
     assert_that(json_response["contained"][0]["identifier"][0]["value"]).is_equal_to(
-        NHS_NUMBER
+        expected_nhs_number
     )
     assert_that(json_response["identifier"][0]["value"]).is_equal_to(
-        PRESCRIPTION_ID_DISPENSED
+        expected_prescription_id
     )
