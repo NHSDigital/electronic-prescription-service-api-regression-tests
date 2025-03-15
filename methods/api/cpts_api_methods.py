@@ -51,3 +51,9 @@ def assert_prescription_not_found(context):
     json_response = json.loads(context.response.content)
     print(json_response)
     assert_that(json_response["issue"][0]["code"]).is_equal_to("not-found")
+
+
+def assert_path_parameter_not_provided(context):
+    json_response = json.loads(context.response.content)
+    print(json_response)
+    assert_that(json_response["issue"][0]["code"]).is_equal_to("value")

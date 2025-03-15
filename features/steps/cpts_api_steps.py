@@ -5,6 +5,7 @@ from methods.api.cpts_api_methods import (
     get_prescription_not_found_message,
     assert_prescription_details,
     assert_prescription_not_found,
+    assert_path_parameter_not_provided,
 )
 
 
@@ -26,3 +27,8 @@ def verify_prescription_details(context):
 @then("I can see the prescription not found message")
 def i_can_see_prescription_not_found_message(context):
     assert_prescription_not_found(context)
+
+
+@then("I can see the missing required path parameter message")
+def i_can_see_missing_required_path_parameter_message(context):
+    assert_path_parameter_not_provided(context)
