@@ -23,6 +23,6 @@ Feature: Users are able to get prescriptions from CPTS-FHIR
   @get_prescription
   Scenario: I can see the missing required path parameter when prescription id is not provided
     Given I am an authorised prescriber with CPTS-FHIR app
-    When I request the prescription details with a non-existent prescription id
+    When I request the prescription details without a path parameter
     Then the response indicates a bad request
     And I can see the missing required path parameter message

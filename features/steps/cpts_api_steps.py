@@ -2,7 +2,8 @@
 from behave import when, then  # pyright: ignore [reportAttributeAccessIssue]
 from methods.api.cpts_api_methods import (
     get_prescription_details,
-    get_prescription_not_found_message,
+    get_prescription_not_found,
+    get_path_parameter_not_provided,
     assert_prescription_details,
     assert_prescription_not_found,
     assert_path_parameter_not_provided,
@@ -16,7 +17,12 @@ def request_prescription_details(context):
 
 @when("I request the prescription details with a non-existent prescription id")
 def request_prescription_details_with_incorrect_prescription_id(context):
-    get_prescription_not_found_message(context)
+    get_prescription_not_found(context)
+
+
+@when("I request the prescription details without a path parameter")
+def request_prescription_details_without_path_parameter(context):
+    get_path_parameter_not_provided(context)
 
 
 @then("I can see the prescription details")

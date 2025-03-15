@@ -33,7 +33,7 @@ def assert_prescription_details(context):
     )
 
 
-def get_prescription_not_found_message(context):
+def get_prescription_not_found(context):
     url = f"{context.cpts_fhir_base_url}/RequestGroup/{PRESCRIPTION_ID_NOT_EXIST}"
     print(url)
     additional_headers = {
@@ -51,6 +51,15 @@ def assert_prescription_not_found(context):
     json_response = json.loads(context.response.content)
     print(json_response)
     assert_that(json_response["issue"][0]["code"]).is_equal_to("not-found")
+
+
+def get_path_parameter_not_provided(context):
+    url = f"{context.cpts_fhir_base_url}/RequestGroup/"
+    print(url)
+
+    headers = get_headers(context, context.auth_method)
+
+    context.response = get(url=url, context=context, headers=headers)
 
 
 def assert_path_parameter_not_provided(context):
