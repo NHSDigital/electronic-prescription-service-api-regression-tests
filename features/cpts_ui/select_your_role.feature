@@ -12,7 +12,6 @@ Feature: Role selection page renders roles properly when logged in
     And I can see the summary container
     And I cannot see the summary table body
 
-  @testme
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5061
   Scenario: I am redirected to the select your role page if I have no role selected
     When I log in as a user with multiple access roles

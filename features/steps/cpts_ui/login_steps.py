@@ -32,7 +32,6 @@ def login_single_role(context):
 @given("I am logged in as a user with multiple access roles")
 def login_multiple_access_roles(context):
     context.execute_steps("when I log in as a user with multiple access roles")
-    context.execute_steps("When I select a role")
 
 
 @given("I am logged in as a user with only roles that do not have access")

@@ -12,8 +12,10 @@ def goto_page(context, page):
 
     if page == "home":
         target = ""
-    if page == "search for a prescription":
+    elif page == "search for a prescription":
         target = "searchforaprescription"
+    elif page == "select your role":
+        target = "selectyourrole"
 
     url = f"{context.cpts_ui_base_url}site/{target}"
     context.page.goto(url)
