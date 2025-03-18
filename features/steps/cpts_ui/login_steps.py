@@ -127,7 +127,14 @@ def login_with_single_role(context):
 
 @when("The login has finished")
 def the_login_is_finished(context):
-    context.page.wait_for_url(f"{context.cpts_ui_base_url}site/selectyourrole/")
+    def logged_in_urls(url):
+        valid_urls = [
+            f"{context.cpts_ui_base_url}site/selectyourrole",
+            f"{context.cpts_ui_base_url}site/selectyourrole/",
+        ]
+        return url in valid_urls
+
+    context.page.wait_for_url(logged_in_urls)
     context.execute_steps("then I am logged in")
 
 
