@@ -114,6 +114,12 @@ def login_with_single_role(context):
     context.page.get_by_role("button", name="Sign In").click()
 
 
+@when("The login has finished")
+def the_login_is_finished(context):
+    context.page.wait_for_url(f"{context.cpts_ui_base_url}site/selectyourrole/")
+    context.execute_steps("then I am logged in")
+
+
 ###############################################################################
 # THEN STEPS
 ###############################################################################
