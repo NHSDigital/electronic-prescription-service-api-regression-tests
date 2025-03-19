@@ -2,6 +2,7 @@
 @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-3869
 Feature: I can cancel prescriptions
 
+  @skip-sandbox
   Scenario Outline: I can cancel a prescription
     Given I am an authorised prescriber with <App> app
     And I successfully prepare and sign a non-nominated prescription

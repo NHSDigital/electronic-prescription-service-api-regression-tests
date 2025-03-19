@@ -37,26 +37,20 @@ Feature: Header
     Then I see the "Logout" link
 
   Scenario: Logout link is not shown if user is not logged in
-    When I go to the homepage
+    When I go to the home page
     Then I do not see the "Logout" link
 
   ############################################################################
   # SELECT YOUR ROLE
   ############################################################################
-  Scenario: Select Your Role link is shown on the homepage, if we dont select a role
-    Given I am logged in as a user with multiple access roles
-    When I go to the homepage
-    Then I see the "Select Your Role" link
-
   Scenario: Select Your Role link is not shown if I go to the select your role page
     Given I am logged in as a user with multiple access roles
-    When I go to the homepage
-    And I click the "Select Your Role" link
+    When I go to the select your role page
     Then I do not see the "Select Your Role" link
 
   Scenario: Select Your Role link is not shown if I already have a selected role
     Given I am logged in as a user with a pre selected role
-    When I go to the homepage
+    When I go to the home page
     Then I do not see the "Select Your Role" link
 
   ############################################################################
@@ -64,12 +58,15 @@ Feature: Header
   ############################################################################
   Scenario: Change Role link is shown if the user has a selected role
     Given I am logged in as a user with multiple access roles
-    When I go to the homepage
+    And I have selected a role
+    And I have confirmed a role
+    When I go to the home page
     Then I see the "Change Role" link
 
   Scenario: Change Role link is not shown if the user has no selected role
     Given I am logged in as a user with multiple access roles
-    When I go to the homepage
+    And I have selected a role
+    When I go to the home page
     Then I do not see the "Change Role" link
 
   # FIXME: Address this when the SPA is fixed!
@@ -78,11 +75,12 @@ Feature: Header
   # @fixme
   # Scenario: Change Role link is not shown if I go to the select your role page
   #   Given I am logged in
-  #   When I have a selected role
+  #   When I have selected a role
   #   And I go to the select your role page
   #   Then I do not see the "Change Role" link
 
   Scenario: Change Role link is not shown if I am on the change role page
     Given I am logged in as a user with multiple access roles
+    And I have selected a role
     When I go to change my role
     Then I do not see the "Change Role" link

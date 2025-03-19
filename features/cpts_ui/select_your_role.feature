@@ -12,6 +12,13 @@ Feature: Role selection page renders roles properly when logged in
     And I can see the summary container
     And I cannot see the summary table body
 
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5061
+  Scenario: I am redirected to the select your role page if I have no role selected
+    When I log in as a user with multiple access roles
+    And the login has finished
+    And I go to the search for a prescription page
+    Then I can see the summary container
+
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4653
   Scenario: I can show the available role information
     Given I am logged in as a user with multiple access roles
