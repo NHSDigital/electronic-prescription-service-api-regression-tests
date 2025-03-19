@@ -32,7 +32,6 @@ def login_single_role(context):
 @given("I am logged in as a user with multiple access roles")
 def login_multiple_access_roles(context):
     context.execute_steps("when I log in as a user with multiple access roles")
-    context.execute_steps("When I select a role")
 
 
 @given("I am logged in as a user with only roles that do not have access")
@@ -65,6 +64,8 @@ def login_with_multiple_access_roles(context):
     context.page.get_by_label("Username").fill(MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES)
     context.page.get_by_role("button", name="Sign In").click()
 
+    context.execute_steps("When the login has finished")
+
 
 @when("I log in as a user with no roles")
 def login_with_no_roles(context):
@@ -74,6 +75,8 @@ def login_with_no_roles(context):
     context.page.get_by_label("Username").fill(MOCK_CIS2_LOGIN_ID_NO_ROLES)
     context.page.get_by_role("button", name="Sign In").click()
 
+    context.execute_steps("When the login has finished")
+
 
 @when("I log in as a user with only roles that do not have access")
 def login_with_without_access(context):
@@ -82,6 +85,8 @@ def login_with_without_access(context):
     context.page.get_by_role("button", name="Log in with mock CIS2").click()
     context.page.get_by_label("Username").fill(MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE)
     context.page.get_by_role("button", name="Sign In").click()
+
+    context.execute_steps("When the login has finished")
 
 
 @when("I log in with a single access role and multiple without access")
@@ -94,6 +99,8 @@ def login_with_single_role_with_access_multiple_without(context):
     )
     context.page.get_by_role("button", name="Sign In").click()
 
+    context.execute_steps("When the login has finished")
+
 
 @when("I log in as a user with a pre selected role")
 def login_with_pre_role_selected(context):
@@ -104,6 +111,8 @@ def login_with_pre_role_selected(context):
     )
     context.page.get_by_role("button", name="Sign In").click()
 
+    context.execute_steps("When the login has finished")
+
 
 @when("I log in as a user with a single access role")
 def login_with_single_role(context):
@@ -112,6 +121,21 @@ def login_with_single_role(context):
     context.page.get_by_role("button", name="Log in with mock CIS2").click()
     context.page.get_by_label("Username").fill(MOCK_CIS2_LOGIN_ID_SINGLE_ACCESS_ROLE)
     context.page.get_by_role("button", name="Sign In").click()
+
+    context.execute_steps("When the login has finished")
+
+
+@when("The login has finished")
+def the_login_is_finished(context):
+    def logged_in_urls(url):
+        valid_urls = [
+            f"{context.cpts_ui_base_url}site/selectyourrole",
+            f"{context.cpts_ui_base_url}site/selectyourrole/",
+        ]
+        return url in valid_urls
+
+    context.page.wait_for_url(logged_in_urls)
+    context.execute_steps("then I am logged in")
 
 
 ###############################################################################
