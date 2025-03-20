@@ -78,7 +78,7 @@ jobs:
 
       # using git commit sha for version of action to ensure we have stable version
       - name: Install asdf
-        uses: asdf-vm/actions/setup@1117842ea70e2711a0072e3a71265cbfe2c830be
+        uses: asdf-vm/actions/setup@9cd779f40fe38688dd19505ccbc4eaaf018b44e7
         with:
           asdf_version: 0.16.4
 
@@ -90,7 +90,7 @@ jobs:
           key: ${{ runner.os }}-asdf-${{ hashFiles('**/.tool-versions') }}
 
       - name: Install asdf dependencies in .tool-versions
-        uses: asdf-vm/actions/install@1117842ea70e2711a0072e3a71265cbfe2c830be
+        uses: asdf-vm/actions/install@9cd779f40fe38688dd19505ccbc4eaaf018b44e7
         with:
           asdf_version: 0.16.4
         env:
