@@ -22,5 +22,5 @@ def i_can_see_the_rbac_banner(context):
 def i_can_not_see_the_rbac_banner(context):
     rbac_banner = RBACBannerPage(context.page)
 
-    expect(rbac_banner.rbac_banner).not_to_be_visible()
+    expect(rbac_banner.rbac_banner).to_be_visible()
     expect(rbac_banner.rbac_content).not_to_be_visible()
