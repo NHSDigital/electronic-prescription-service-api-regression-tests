@@ -182,7 +182,7 @@ def after_scenario(context, scenario):
         if hasattr(context, "page"):
             if scenario.status == "failed":
                 allure.attach(
-                    context.page.screenshot,
+                    context.page.screenshot(),
                     attachment_type=allure.attachment_type.PNG,
                 )
             if context.page is not None:
