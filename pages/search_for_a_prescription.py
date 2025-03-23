@@ -22,5 +22,5 @@ class SearchForAPrescription:
         )
         self.nhs_number_search_header = page.get_by_test_id("nhs-number-search-heading")
         self.basic_details_search_header = page.get_by_test_id(
-            "basic-details-search-heading"
+            "basic_details_search_header"
         )
