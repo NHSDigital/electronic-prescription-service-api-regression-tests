@@ -171,6 +171,7 @@ def before_scenario(context, scenario):
         global _playwright
         global _page
         context.browser = context.browser.new_context()
+        context.browser.tracing.start(screenshots=True, snapshots=True, sources=True)
         context.page = context.browser.new_page()
         _page = context.page
         set_page(context, _page)
@@ -179,6 +180,10 @@ def before_scenario(context, scenario):
 def after_scenario(context, scenario):
     product = context.config.userdata["product"].upper()
     if product == "CPTS-UI":
+        context.browser.tracing.stop(path="/tmp/trace.zip")
+        allure.attach.file(
+            "/tmp/trace.zip", name="playwright trace", attachment_type="application/zip"
+        )
         if hasattr(context, "page"):
             if scenario.status == "failed":
                 allure.attach(
