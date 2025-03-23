@@ -181,14 +181,14 @@ def after_scenario(context, scenario):
     product = context.config.userdata["product"].upper()
     if product == "CPTS-UI":
         context.browser.tracing.stop(path="/tmp/trace.zip")
-        allure.attach.file(
-            "/tmp/trace.zip", name="playwright trace", attachment_type="application/zip"
-        )
         if hasattr(context, "page"):
             if scenario.status == "failed":
                 allure.attach(
                     context.page.screenshot(),
                     attachment_type=allure.attachment_type.PNG,
+                )
+                allure.attach.file(
+                    "/tmp/trace.zip", name="playwright_failure_trace.zip", attachment_type="application/zip"
                 )
             if context.page is not None:
                 global _page
