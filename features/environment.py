@@ -7,6 +7,7 @@ from behave.model import Scenario
 from dotenv import load_dotenv
 from playwright.sync_api import sync_playwright
 from methods.api import eps_api_methods
+import allure
 
 load_dotenv(override=True)
 global _page
@@ -179,6 +180,11 @@ def after_scenario(context, scenario):
     product = context.config.userdata["product"].upper()
     if product == "CPTS-UI":
         if hasattr(context, "page"):
+            if scenario.status == "failed":
+                allure.attach(
+                    context.page.screenshot(),
+                    attachment_type=allure.attachment_type.PNG,
+                )
             if context.page is not None:
                 global _page
                 _page.close()

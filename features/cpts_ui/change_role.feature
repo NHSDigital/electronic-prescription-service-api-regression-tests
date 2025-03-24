@@ -9,7 +9,7 @@ Feature: Users are able to change their roles, if they have multiple roles with 
   @multiple_access
   Scenario: User can change their role
     Given I am logged in as a user with multiple access roles
-    And I have selected a role
+    And I have confirmed a role
     And I am on the change your role page
     When I click a change role role card
     Then I am on the 'your selected role' page
@@ -18,7 +18,7 @@ Feature: Users are able to change their roles, if they have multiple roles with 
   @multiple_access
   Scenario: User can see roles with access cards
     Given I am logged in as a user with multiple access roles
-    And I have selected a role
+    And I have confirmed a role
     And I am on the change your role page
     Then I see the change role roles with access cards
     And I can see multiple change role roles with access cards
@@ -31,7 +31,7 @@ Feature: Users are able to change their roles, if they have multiple roles with 
   @multiple_access
   Scenario: Change role roles without access table body is not visible by default
     Given I am logged in as a user with multiple access roles
-    And I have selected a role
+    And I have confirmed a role
     And I am on the change your role page
     Then the change role roles without access table body is not visible
 
@@ -39,7 +39,7 @@ Feature: Users are able to change their roles, if they have multiple roles with 
   @multiple_access
   Scenario: User can expand the change role 'Roles without access' to see table contents
     Given I am logged in as a user with multiple access roles
-    And I have selected a role
+    And I have confirmed a role
     And I am on the change your role page
     When I click on the change role summary expander
     Then I see the change role roles without access table
@@ -48,7 +48,7 @@ Feature: Users are able to change their roles, if they have multiple roles with 
   @multiple_access
   Scenario: User can collapse the change role 'Roles without access' to hide table contents
     Given I am logged in as a user with multiple access roles
-    And I have selected a role
+    And I have confirmed a role
     And I am on the change your role page
     And the summary table body is displayed
     When I click on the change role summary expander
@@ -64,7 +64,7 @@ Feature: Users are able to change their roles, if they have multiple roles with 
 
   Scenario: user can change their role, and see a confirmation page
     Given I am logged in as a user with multiple access roles
-    And I have selected a role
+    And I have confirmed a role
     And I am on the change your role page
     When I click a change role role card
     Then I see the 'your selected role' page
@@ -77,7 +77,6 @@ Feature: Users are able to change their roles, if they have multiple roles with 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4974
   Scenario: User can change their role and see the correct message on the change role page
     Given I am logged in as a user with multiple access roles
-    And I have selected a role
     And I have confirmed a role
     And I am on the change your role page
     And I click a change role role card
