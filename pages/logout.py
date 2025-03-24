@@ -6,6 +6,7 @@ class Logout:
         """
         Initialise the Logout page object with locators and text constants.
         """
+        page.wait_for_load_state()
         self.page = page
 
         # The header link should always be visible
