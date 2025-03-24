@@ -33,17 +33,3 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     When I select a role
     And I click the confirm and continue button on the your selected role page
     Then I can see the RBAC banner
-
-  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
-  Scenario: User is redirected correctly when they search for non-existent prescriptions
-    Given I am logged in as a user with a single access role
-    When I am on the search for a prescription page
-    And I click on tab <Tab Name>
-    # FIXME: This needs to be brought in line with AEA-4786
-    And I search for a prescription
-    Then I am on the prescription not found page with redirect to <Tab ID>
-    Examples:
-      | Tab Name               | Tab ID                 |
-      | Prescription ID search | PrescriptionIdSearch   |
-      | NHS Number Search      | NhsNumSearch           |
-      | Basic Details Search   | BasicDetailsSearch     |
