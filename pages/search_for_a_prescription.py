@@ -4,6 +4,7 @@ from playwright.sync_api import Page
 class SearchForAPrescription:
 
     def __init__(self, page: Page):
+        page.wait_for_load_state()
         self.page = page
         self.temp_text = (
             page.locator("div").filter(has_text="Search for a prescription").nth(2)

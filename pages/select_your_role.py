@@ -6,6 +6,7 @@ class SelectYourRole:
         """
         Initialise the SelectYourRole page object with locators and text constants.
         """
+        page.wait_for_load_state()
         self.page = page
 
         self.page_loaded_indicator = page.get_by_test_id("eps_roleSelectionComponent")

@@ -3,6 +3,7 @@ from playwright.sync_api import Page
 
 class YourSelectedRole:
     def __init__(self, page: Page):
+        page.wait_for_load_state()
         self.page = page
 
         self.page_loaded_indicator = page.get_by_test_id("eps_yourSelectedRole_page")
