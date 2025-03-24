@@ -188,7 +188,9 @@ def after_scenario(context, scenario):
                     attachment_type=allure.attachment_type.PNG,
                 )
                 allure.attach.file(
-                    "/tmp/trace.zip", name="playwright_failure_trace.zip", attachment_type="application/zip"
+                    "/tmp/trace.zip",
+                    name="playwright_failure_trace.zip",
+                    attachment_type="application/zip",
                 )
             if context.page is not None:
                 global _page
