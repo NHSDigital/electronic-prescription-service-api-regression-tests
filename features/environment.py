@@ -7,6 +7,7 @@ from behave.model import Scenario
 from dotenv import load_dotenv
 from playwright.sync_api import sync_playwright
 from methods.api import eps_api_methods
+import allure
 
 load_dotenv(override=True)
 global _page
@@ -179,6 +180,11 @@ def after_scenario(context, scenario):
     product = context.config.userdata["product"].upper()
     if product == "CPTS-UI":
         if hasattr(context, "page"):
+            if scenario.status == "failed":
+                allure.attach(
+                    context.page.screenshot(),
+                    attachment_type=allure.attachment_type.PNG,
+                )
             if context.page is not None:
                 global _page
                 _page.close()
@@ -241,26 +247,27 @@ def before_all(context):
 
 def get_url_with_pr(context, env, product):
     assert PULL_REQUEST_ID is not None
+    pull_request_id = PULL_REQUEST_ID.lower()
     if product == "EPS-FHIR":
         context.eps_fhir_base_url = os.path.join(
-            INTERNAL_DEV_BASE_URL, f"{EPS_FHIR_SUFFIX}-{PULL_REQUEST_ID}"
+            INTERNAL_DEV_BASE_URL, f"{EPS_FHIR_SUFFIX}-{pull_request_id}"
         )
     if product in ["EPS-FHIR-PRESCRIBING", "EPS-FHIR-DISPENSING"]:
         context.eps_fhir_prescribing_base_url = os.path.join(
             INTERNAL_DEV_BASE_URL,
-            f"{EPS_FHIR_PRESCRIBING_SUFFIX}-{PULL_REQUEST_ID}",
+            f"{EPS_FHIR_PRESCRIBING_SUFFIX}-{pull_request_id}",
         )
         context.eps_fhir_dispensing_base_url = os.path.join(
             INTERNAL_DEV_BASE_URL,
-            f"{EPS_FHIR_DISPENSING_SUFFIX}-{PULL_REQUEST_ID}",
+            f"{EPS_FHIR_DISPENSING_SUFFIX}-{pull_request_id}",
         )
     if product == "PFP-APIGEE":
         context.pfp_base_url = os.path.join(
-            INTERNAL_DEV_BASE_URL, f"{PFP_SUFFIX}-{PULL_REQUEST_ID}"
+            INTERNAL_DEV_BASE_URL, f"{PFP_SUFFIX}-{pull_request_id}"
         )
     if product == "PSU":
         context.psu_base_url = os.path.join(
-            INTERNAL_DEV_BASE_URL, f"{PSU_SUFFIX}-{PULL_REQUEST_ID}"
+            INTERNAL_DEV_BASE_URL, f"{PSU_SUFFIX}-{pull_request_id}"
         )
     if product == "PFP-AWS":
         handle_pfp_aws_pr_url(context, env)
@@ -268,37 +275,39 @@ def get_url_with_pr(context, env, product):
         handle_cpt_ui_pr_url(context, env)
     if product == "CPTS-FHIR":
         context.cpts_fhir_base_url = os.path.join(
-            INTERNAL_DEV_BASE_URL, f"{CPTS_FHIR_SUFFIX}-{PULL_REQUEST_ID}"
+            INTERNAL_DEV_BASE_URL, f"{CPTS_FHIR_SUFFIX}-{pull_request_id}"
         )
 
 
 def handle_cpt_ui_pr_url(context, env):
     assert PULL_REQUEST_ID is not None
+    pull_request_id = PULL_REQUEST_ID.lower()
     context.cpts_ui_base_url = (
-        f"https://{CPTS_UI_PREFIX}-{PULL_REQUEST_ID}{select_apigee_base_url(env)}"
+        f"https://{CPTS_UI_PREFIX}-{pull_request_id}{select_apigee_base_url(env)}"
     )
     if env == "INTERNAL-DEV":
         context.cpts_ui_base_url = CPTS_UI_PR_URL.replace(
-            "{{aws_pull_request_id}}", PULL_REQUEST_ID
+            "{{aws_pull_request_id}}", pull_request_id
         )
     if env == "INTERNAL-DEV-SANDBOX":
         context.cpts_ui_base_url = CPTS_UI_SANDBOX_PR_URL.replace(
-            "{{aws_pull_request_id}}", PULL_REQUEST_ID
+            "{{aws_pull_request_id}}", pull_request_id
         )
 
 
 def handle_pfp_aws_pr_url(context, env):
     assert PULL_REQUEST_ID is not None
+    pull_request_id = PULL_REQUEST_ID.lower()
     context.pfp_base_url = os.path.join(
-        INTERNAL_DEV_BASE_URL, f"{PFP_SUFFIX}-{PULL_REQUEST_ID}"
+        INTERNAL_DEV_BASE_URL, f"{PFP_SUFFIX}-{pull_request_id}"
     )
     if env == "INTERNAL-DEV":
         context.pfp_base_url = PFP_AWS_PR_URL.replace(
-            "{{aws_pull_request_id}}", PULL_REQUEST_ID
+            "{{aws_pull_request_id}}", pull_request_id
         )
     if env == "INTERNAL-DEV-SANDBOX":
         context.pfp_base_url = PFP_AWS_SANDBOX_PR_URL.replace(
-            "{{aws_pull_request_id}}", PULL_REQUEST_ID
+            "{{aws_pull_request_id}}", pull_request_id
         )
 
 

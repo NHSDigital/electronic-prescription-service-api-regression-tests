@@ -16,12 +16,10 @@ class SearchForAPrescription:
         self.basic_details_search_tab = page.get_by_role(
             "tab", name="Basic details search"
         )
-        self.prescription_id_search_header = page.get_by_role(
-            "heading", name="Prescription ID Search"
+        self.prescription_id_search_header = page.get_by_test_id(
+            "prescription-id-search-heading"
         )
-        self.nhs_number_search_header = page.get_by_role(
-            "heading", name="NHS Number Search"
-        )
-        self.basic_details_search_header = page.get_by_role(
-            "heading", name="Basic Details Search"
+        self.nhs_number_search_header = page.get_by_test_id("nhs-number-search-heading")
+        self.basic_details_search_header = page.get_by_test_id(
+            "basic-details-search-heading"
         )
