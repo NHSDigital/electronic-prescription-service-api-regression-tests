@@ -3,7 +3,6 @@
 Feature: Prescription List Page in the Clinical Prescription Tracker Service
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4778
-  @test_1
   Scenario: User can access the prescription list page
     Given I am logged in as a user with a single access role
     And I am on the search for a prescription page
