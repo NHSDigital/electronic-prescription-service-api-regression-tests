@@ -1496,14 +1496,14 @@ dev = ["argcomplete", "attrs (>=19.2)", "hypothesis (>=3.56)", "mock", "pygments
 
 [[package]]
 name = "pytest-nhsd-apim"
-version = "4.0.0"
+version = "4.0.1"
 description = "Pytest plugin accessing NHSDigital's APIM proxies"
 optional = false
 python-versions = "<4.0,>=3.8"
 groups = ["main"]
 files = [
-    {file = "pytest_nhsd_apim-4.0.0-py3-none-any.whl", hash = "sha256:cef2e30a74036ffe2e78e1cbb90d496a98afa6faba162a4e7705485d8fed3b6f"},
-    {file = "pytest_nhsd_apim-4.0.0.tar.gz", hash = "sha256:679b93992d8eda64478be21bcc8fd2d44ab77addee506fdfd5ef58bcfdd0830e"},
+    {file = "pytest_nhsd_apim-4.0.1-py3-none-any.whl", hash = "sha256:72250b813d894e82c643976c9a906c39316f0f3ed9497fdb96d795677690338c"},
+    {file = "pytest_nhsd_apim-4.0.1.tar.gz", hash = "sha256:637ac1bdf57245eee66d2df89945aec5072b872698e050cb6b2d29b46b5dcf13"},
 ]
 
 [package.dependencies]
@@ -1516,7 +1516,7 @@ pydantic-settings = ">=2.2.1,<3.0.0"
 PyJWT = ">=2.8.0,<3.0.0"
 pyotp = ">=2.9.0,<3.0.0"
 pytest = ">=8.2.0,<9.0.0"
-requests = ">=2.31.0,<3.0.0"
+requests = ">=2.32.0,<3.0.0"
 toml = ">=0.10.2,<0.11.0"
 typing-extensions = ">=4.11.0,<5.0.0"
 wheel = ">=0.37.1,<0.39.0"
@@ -1538,14 +1538,14 @@ six = ">=1.5"
 
 [[package]]
 name = "python-dotenv"
-version = "1.0.1"
+version = "1.1.0"
 description = "Read key-value pairs from a .env file and set them as environment variables"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "python-dotenv-1.0.1.tar.gz", hash = "sha256:e324ee90a023d808f1959c46bcbc04446a10ced277783dc6ee09987c37ec10ca"},
-    {file = "python_dotenv-1.0.1-py3-none-any.whl", hash = "sha256:f7b63ef50f1b690dddf550d03497b66d609393b40b564ed0d674909a68ebf16a"},
+    {file = "python_dotenv-1.1.0-py3-none-any.whl", hash = "sha256:d7c01d9e2293916c18baf562d95698754b0dbbb5e74d457c45d4f6561fb9d55d"},
+    {file = "python_dotenv-1.1.0.tar.gz", hash = "sha256:41f90bc6f5f177fb41f53e87666db362025010eb28f60a01c9143bfa33a2b2d5"},
 ]
 
 [package.extras]
@@ -1955,4 +1955,4 @@ test = ["pytest (>=3.0.0)"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "bd31afc95faecf272c456581405762c7e6cc6ad610a998e9d176f5e2d6c65ddb"
+content-hash = "998f59aad2d9e42257d1baf878df104e176123c1003a76883cdcbe9c0502820d"
