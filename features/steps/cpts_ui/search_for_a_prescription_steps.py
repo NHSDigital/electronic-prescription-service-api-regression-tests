@@ -87,11 +87,6 @@ def redirected_to_results(context, prescription_id):
     context.page.wait_for_url(lambda url: expected_url in url)
 
 
-@then("I am redirected to the prescription not found page")
-def redirected_to_not_found(context):
-    context.page.wait_for_url(lambda url: "/site/prescription-not-found" in url)
-
-
 @then('I see a validation message saying "{message}"')
 def i_see_validation_message(context, message):
     error_summary = context.page.get_by_test_id("error-summary")

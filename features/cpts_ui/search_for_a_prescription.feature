@@ -13,7 +13,6 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     When I am on the search for a prescription page
     Then I can see the search for a prescription header
 
-
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4518
   Scenario Outline: user can switch between different tabs
     Given I am logged in as a user with a single access role
@@ -44,18 +43,6 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     And I click the Find a prescription button
     Then I am redirected to the prescription results page for "C0C757-A83008-C2D93O"
 
-
-  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4783
-  @find_prescription
-  Scenario: User enters an invalid prescription ID and sees not found page
-    Given I am logged in as a user with a single access role
-    And I am on the search for a prescription page
-    When I click on tab Prescription ID search
-    And I enter prescription ID "111111-222222-333333" into the input
-    And I click the Find a prescription button
-    Then I am redirected to the prescription not found page
-
-  
  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4783
   @find_prescription
   Scenario Outline: User sees validation error for incorrect prescription ID
@@ -72,4 +59,5 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
       | C0C757A83008C2D93OOOOO  | I see a validation message saying "must contain 18 characters"                                     |
       | C0C757A83008C2D9#O      | I see a validation message saying "must contain only letters, numbers, dashes or the + character"  |
       | C0C757A83008C2D93-      | I see a validation message saying "must contain 18 characters"                                     |
+      | 111111-222222-333333    | I see a validation message saying "The prescription ID number is not recognised"                   |
       | c0c757a83008c2d93o      | I am redirected to the prescription results page for "C0C757-A83008-C2D93O"                        |
