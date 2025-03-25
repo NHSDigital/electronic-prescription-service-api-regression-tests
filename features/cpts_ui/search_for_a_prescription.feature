@@ -39,8 +39,8 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     Given I am logged in as a user with a single access role
     When I am on the search for a prescription page
     And I click on tab <Tab Name>
-    # FIXME: This needs to be brought in line with AEA-4786
-    And I search for a prescription
+    # Search for a prescription ID that does NOT return anything
+    And I search for a prescription using a valid prescription ID "209E3D-A83008-327F9F"
     Then I am on the prescription not found page with redirect to <Tab ID>
     Examples:
       | Tab Name               | Tab ID                 |
