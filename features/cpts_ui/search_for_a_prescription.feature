@@ -35,7 +35,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     Then I can see the RBAC banner
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
-  Scenario: User is redirected correctly when they search for non-existent prescriptions
+  Scenario Outline: User is redirected correctly when they search for non-existent prescriptions
     Given I am logged in as a user with a single access role
     When I am on the search for a prescription page
     And I click on tab <Tab Name>
@@ -49,7 +49,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
       | Basic Details Search   | BasicDetailsSearch     |
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
-  Scenario: User is redirected correctly when they hit the "Go Back" button
+  Scenario Outline: User is redirected correctly when they hit the "Go Back" button
     Given I am logged in as a user with a single access role
     When I am on the search for a prescription page
     And I click on tab <Tab Name>
