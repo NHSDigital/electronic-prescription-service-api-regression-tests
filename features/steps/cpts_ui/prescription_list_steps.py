@@ -7,6 +7,10 @@ from pages.search_for_a_prescription import SearchForAPrescription
 
 @when('I search for a prescription using a valid prescription ID "{prescription_id}"')
 def search_using_prescription_id(context, prescription_id):
+    # Fill the input before clicking
+    search_input = context.page.get_by_test_id("prescription-id-input")
+    search_input.fill(prescription_id)
+
     # Use data-testid to find the button instead of text content
     context.page.locator('[data-testid="find-prescription-button"]').click()
 
