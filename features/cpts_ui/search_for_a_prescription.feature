@@ -39,7 +39,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     Given I am logged in as a user with a single access role
     When I am on the search for a prescription page
     And I click on tab <Tab Name>
-    # Search for a prescription ID that does NOT return anything
+    # Search for a prescription ID that DOES NOT return anything
     And I search for a prescription using a valid prescription ID "209E3D-A83008-327F9F"
     Then I am on the prescription not found page with redirect to <Tab ID>
     Examples:
@@ -47,3 +47,18 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
       | Prescription ID search | PrescriptionIdSearch   |
       | NHS Number Search      | NhsNumSearch           |
       | Basic Details Search   | BasicDetailsSearch     |
+
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
+  Scenario: User is redirected correctly when they hit the "Go Back" button
+    Given I am logged in as a user with a single access role
+    When I am on the search for a prescription page
+    And I click on tab <Tab Name>
+    # Search for a prescription ID that DOES NOT return anything
+    And I search for a prescription using a valid prescription ID "209E3D-A83008-327F9F"
+    And I click the Go Back link on the prescription not found page
+    Then I am on tab <Tab Name>
+    Examples:
+      | Tab Name               |
+      | Prescription ID search |
+      | NHS Number Search      |
+      | Basic Details Search   |
