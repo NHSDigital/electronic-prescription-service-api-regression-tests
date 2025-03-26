@@ -35,21 +35,28 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     Then I can see the RBAC banner
 
   # FIXME: These tests need to be updated as the search options are implemented.
+  @testme
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
-  Scenario Outline: User is redirected correctly when they search for non-existent prescriptions
+  Scenario: User is redirected correctly when they search for non-existent prescriptions
     Given I am logged in as a user with a single access role
     When I am on the search for a prescription page
-    And I click on tab <Tab Name>
+    And I click on tab Prescription ID search
     # Search for a prescription ID that DOES NOT return anything
     And I search for a prescription using a valid prescription ID "209E3D-A83008-327F9F"
-    Then I am on the prescription not found page with redirect to <Tab ID>
-    Examples:
-      | Tab Name               | Tab ID                 |
-      | Prescription ID search | PrescriptionIdSearch   |
-      # | NHS Number Search      | NhsNumSearch           |
-      # | Basic Details Search   | BasicDetailsSearch     |
+    Then I am on the prescription not found page with redirect to PrescriptionIdSearch
+    
+  # TODO: Update this test when the NHS number search is implemented
+  # @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
+  # Scenario: User is redirected correctly when they search for non-existent patient
+  #   Given I am logged in as a user with a single access role
+  #   When I am on the search for a prescription page
+  #   And I click on tab NHS Number search
+  #   # Search for a prescription ID that DOES NOT return anything
+  #   And I search for a patient using a valid NHS number "1234567890"
+  #   Then I am on the prescription not found page with redirect to NhsNumSearch
 
   # FIXME: These tests need to be updated as the search options are implemented.
+  @testme
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
   Scenario Outline: User is redirected correctly when they hit the "Go Back" button
     Given I am logged in as a user with a single access role
