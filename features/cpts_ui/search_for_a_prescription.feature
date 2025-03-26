@@ -59,5 +59,5 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
       | C0C757A83008C2D93OOOOO  | I see a validation message saying "must contain 18 characters"                                     |
       | C0C757A83008C2D9#O      | I see a validation message saying "must contain only letters, numbers, dashes or the + character"  |
       | C0C757A83008C2D93-      | I see a validation message saying "must contain 18 characters"                                     |
-      | 111111-222222-333333    | I see a validation message saying "The prescription ID number is not recognised"                   |
+      | H0C757-X83008-C2G93O    | I see a validation message saying "The prescription ID number is not recognised"                   |
       | c0c757a83008c2d93o      | I am redirected to the prescription results page for "C0C757-A83008-C2D93O"                        |
