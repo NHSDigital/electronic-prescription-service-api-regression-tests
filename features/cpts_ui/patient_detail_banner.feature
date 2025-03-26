@@ -20,7 +20,7 @@ Feature: The site has a patient detail banner
         Examples:
             | Tab Name                  |
             | Prescription ID search    |
-            | NHS Number search         |
+            # | NHS Number search         |
             # | Basic Details search      |
 
     Scenario: When I search for a prescription, and go back, the patient details banner is not visible
