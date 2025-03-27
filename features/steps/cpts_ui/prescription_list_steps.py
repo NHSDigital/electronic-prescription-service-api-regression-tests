@@ -7,6 +7,10 @@ from pages.search_for_a_prescription import SearchForAPrescription
 
 @when('I search for a prescription using a valid prescription ID "{prescription_id}"')
 def search_using_prescription_id(context, prescription_id):
+    # Fill the input before clicking
+    search_input = context.page.get_by_test_id("prescription-id-input")
+    search_input.fill(prescription_id)
+
     # Use data-testid to find the button instead of text content
     context.page.locator('[data-testid="find-prescription-button"]').click()
 
@@ -15,7 +19,8 @@ def search_using_prescription_id(context, prescription_id):
 def access_list_page_via_prescription_id(context):
     # Navigate directly to the results page with a prescription ID parameter
     context.page.goto(
-        context.cpts_ui_base_url + "site/prescription-results?prescriptionId=123456"
+        context.cpts_ui_base_url
+        + "site/prescription-results?prescriptionId=C0C757-A83008-C2D93O"
     )
 
     # Verify we're on the prescription list page using data-testid
@@ -39,9 +44,9 @@ def access_list_page_via_nhs_number(context):
     'I am redirected to the prescription list page with prescription ID "{prescription_id}"'
 )
 def verify_prescription_list_page(context, prescription_id):
-    # Instead of checking the exact URL, just verify that:
-    # 1. We're on a prescription-results page
-    # 2. There is a prescriptionId parameter (any value is fine)
+    # Wait until the URL includes prescription-results
+    context.page.wait_for_url(lambda url: "site/prescription-results" in url)
+
     current_url = context.page.url
     assert (
         "site/prescription-results" in current_url

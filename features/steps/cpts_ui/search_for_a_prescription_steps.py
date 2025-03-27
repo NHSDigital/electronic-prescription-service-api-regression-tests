@@ -67,3 +67,32 @@ def i_am_on_tab(context, tab_name):
 def i_can_see_the_search_for_a_prescription_header(context):
     search_for_a_prescription = SearchForAPrescription(context.page)
     expect(search_for_a_prescription.hero_banner).to_be_visible()
+
+
+@when('I enter prescription ID "{prescription_id}" into the input')
+def enter_prescription_id(context, prescription_id):
+    search_input = context.page.get_by_test_id("prescription-id-input")
+    search_input.fill(prescription_id)
+
+
+@when("I click the Find a prescription button")
+def click_search_button(context):
+    button = context.page.get_by_test_id("find-prescription-button")
+    button.click()
+
+
+@then('I am redirected to the prescription results page for "{prescription_id}"')
+def redirected_to_results(context, prescription_id):
+    expected_url = f"/site/prescription-results?prescriptionId={prescription_id}"
+    context.page.wait_for_url(lambda url: expected_url in url)
+
+
+@then('I see a validation message saying "{message}"')
+def i_see_validation_message(context, message):
+    error_summary = context.page.get_by_test_id("error-summary")
+    expect(error_summary).to_contain_text(message)
+
+
+@then("the outcome should be: {outcome}")
+def step_with_dynamic_outcome(context, outcome):
+    context.execute_steps(f"Then {outcome}")
