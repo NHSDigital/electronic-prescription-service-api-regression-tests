@@ -6,8 +6,8 @@ Feature: Prescription List Page in the Clinical Prescription Tracker Service
   Scenario: User can access the prescription list page
     Given I am logged in as a user with a single access role
     And I am on the search for a prescription page
-    When I search for a prescription using a valid prescription ID "123456789"
-    Then I am redirected to the prescription list page with prescription ID "123456789"
+    When I search for a prescription using a valid prescription ID "C0C757-A83008-C2D93O"
+    Then I am redirected to the prescription list page with prescription ID "C0C757-A83008-C2D93O"
     And I can see the heading "Prescriptions list"
     And I can see the results count message
     
