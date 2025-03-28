@@ -7,14 +7,11 @@ from pages.search_for_a_prescription import SearchForAPrescription
 
 @when('I search for a prescription using a valid prescription ID "{prescription_id}"')
 def search_using_prescription_id(context, prescription_id):
-    if prescription_id == "123456789":
-        # Fill the input before clicking
-        search_input = context.page.get_by_test_id("prescription-id-input")
-        search_input.fill(prescription_id)
+    # Fill the input before clicking
+    search_input = context.page.get_by_test_id("prescription-id-input")
+    search_input.fill(prescription_id)
 
-        context.page.get_by_test_id("find-prescription-button").click()
-    else:
-        context.page.get_by_test_id("fail-find-prescription-button").click()
+    context.page.get_by_test_id("find-prescription-button").click()
 
 
 @given("I have accessed the prescription list page using a prescription ID search")
