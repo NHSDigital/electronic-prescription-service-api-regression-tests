@@ -10,29 +10,24 @@ from pages.patient_details_banner import PatientDetailsBanner
 ############################################################################
 
 
-@then("the patient details banner is visible")
-def i_can_see_the_rbac_banner(context):
-    banner = PatientDetailsBanner(context.page)
-
-    expect(banner.patient_details_banner).to_be_visible()
-
-
-@then("the patient details banner is not visible")
-def i_can_not_see_the_rbac_banner(context):
+@then("The patient details banner is not visible")
+def patient_details_not_visible(context):
     banner = PatientDetailsBanner(context.page)
 
     expect(banner.patient_details_banner).not_to_be_visible()
 
 
 @then("The patient details banner reports complete data")
-def the_patient_details_banner_reports_complete_data(context):
+def i_can_not_see_the_rbac_banner(context):
     banner = PatientDetailsBanner(context.page)
 
-    expect(banner.incomplete_patient_details_banner).not_to_be_visible()
+    expect(banner.patient_details_banner).to_be_visible()
+    expect(banner.patient_details_banner).not_to_have_class(banner.incomplete_class)
 
 
 @then("The patient details banner reports incomplete data")
 def the_patient_details_banner_reports_incomplete_data(context):
     banner = PatientDetailsBanner(context.page)
 
-    expect(banner.incomplete_patient_details_banner).to_be_visible()
+    expect(banner.patient_details_banner).to_be_visible()
+    expect(banner.patient_details_banner).to_have_class(banner.incomplete_class)

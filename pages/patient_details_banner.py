@@ -1,4 +1,5 @@
 from playwright.sync_api import Page
+import re
 
 
 class PatientDetailsBanner:
@@ -6,6 +7,6 @@ class PatientDetailsBanner:
         self.page = page
 
         self.patient_details_banner = page.get_by_test_id("patient-details-banner")
-        self.incomplete_patient_details_banner = page.get_by_test_id(
-            "patient-details-banner-incomplete"
-        )
+
+        # This has to match the class with regex
+        self.incomplete_class = re.compile(".*patient-details-partial-data.*")

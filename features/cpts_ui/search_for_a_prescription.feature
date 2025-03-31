@@ -39,7 +39,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     When I am on the search for a prescription page
     And I click on tab Prescription ID search
     # Search for a prescription ID that DOES NOT return anything
-    And I search for a prescription using a valid prescription ID "209E3D-A83008-327F9F"
+    And I search for a prescription using a valid prescription ID "209E3D-A83008-328F9F"
     Then I am on the prescription not found page with redirect to PrescriptionIdSearch
     
   # TODO: Update this test when the NHS number search is implemented
@@ -58,7 +58,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     When I am on the search for a prescription page
     And I click on tab Prescription ID search
     # Search for a prescription ID that DOES NOT return anything
-    And I search for a prescription using a valid prescription ID "209E3D-A83008-327F9F"
+    And I search for a prescription using a valid prescription ID "209E3D-A83008-328F9F"
     And I click the Go Back link on the prescription not found page
     Then I am on tab Prescription ID search
 

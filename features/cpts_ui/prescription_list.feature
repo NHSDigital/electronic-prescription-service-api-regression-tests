@@ -12,7 +12,6 @@ Feature: Prescription List Page in the Clinical Prescription Tracker Service
     And I can see the results count message
     
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4778
-  @testme
   Scenario: Back link navigates to appropriate search tab when accessed from prescription ID search
     Given I am logged in as a user with a single access role
     And I am on the search for a prescription page
