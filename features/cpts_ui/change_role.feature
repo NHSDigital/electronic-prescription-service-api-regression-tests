@@ -84,6 +84,21 @@ Feature: Users are able to change their roles, if they have multiple roles with 
     Then I am on the change role page
     And I can see the role that has been pre selected
 
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5046
+  Scenario: User refreshes the page and retains roles with access
+    Given I am logged in as a user with multiple access roles
+    And I have confirmed a role
+    And I am on the change your role page
+    And I click a change role role card
+    When I click the change link next to the role text
+    Then I am on the change role page
+    And I can see the role that has been pre selected  
+
+    When I refresh the page
+    Then I am on the change role page
+    And I can see the role that has been pre selected
+    And I do not see the change role page header link
+
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4974
   Scenario: User can see roles with access cards
     Given I am logged in with a single access role and multiple without access
