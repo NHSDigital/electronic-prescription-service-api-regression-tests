@@ -73,10 +73,11 @@ Make sure that your behave run configuration includes the `--product=` & `--env=
 Run the tests by calling the Make command `make run-tests`. This requires the parameters `product=` and `env=` to be passed in.
 Optionally, you can pass in tags to be run, for example `tags=cpt-ui` will run all CPT-UI-tagged tests.
 Further, if you want to actually see the tests being executed, you can pass a `HEADLESS=true` to the makefile.
+If you want to throttle the speed that the tests are done, you can insert a delay between each action by passing the `SLOWMO=<delay, ms>` environment variable. This lets a human keep track of what steps are being done.
 
 For example:
 ```
-product=cpts-ui env=internal-dev PULL_REQUEST_ID=pr-300 tags=cpt-ui HEADLESS=true make run-tests
+product=cpts-ui env=internal-dev PULL_REQUEST_ID=pr-300 tags=login HEADLESS=false SLOWMO=2000 make run-tests
 ```
 
 Note that CPT-UI supports localhost testing. To do this, use the `env=localhost` variable - but ensure you have *not* set the `PULL_REQUEST_ID` variable, as it is not needed and will break the tests. Make sure your localhost server is running!
