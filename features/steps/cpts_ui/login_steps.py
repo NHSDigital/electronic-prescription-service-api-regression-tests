@@ -131,6 +131,8 @@ def the_login_is_finished(context):
         valid_urls = [
             f"{context.cpts_ui_base_url}site/select-role",
             f"{context.cpts_ui_base_url}site/select-role/",
+            f"{context.cpts_ui_base_url}site/search",
+            f"{context.cpts_ui_base_url}site/search/",
         ]
         return url in valid_urls
 
