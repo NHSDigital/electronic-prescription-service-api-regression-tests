@@ -129,10 +129,10 @@ def login_with_single_role(context):
 def the_login_is_finished(context):
     def logged_in_urls(url):
         valid_urls = [
-            f"{context.cpts_ui_base_url}site/select-role",
-            f"{context.cpts_ui_base_url}site/select-role/",
-            f"{context.cpts_ui_base_url}site/search",
-            f"{context.cpts_ui_base_url}site/search/",
+            f"{context.cpts_ui_base_url}site/select-your-role",
+            f"{context.cpts_ui_base_url}site/select-your-role/",
+            f"{context.cpts_ui_base_url}site/search-by-prescription-id",
+            f"{context.cpts_ui_base_url}site/search-by-prescription-id/",
         ]
         return url in valid_urls
 

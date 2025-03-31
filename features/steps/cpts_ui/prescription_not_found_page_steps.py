@@ -13,7 +13,7 @@ def i_am_on_prescription_not_found_page(context, tab_name):
     expect(page.body1).to_be_visible()
     expect(page.back_link).to_be_visible()
 
-    url_target = "/site/search"
+    url_target = "/site/search-by-prescription-id"
     if tab_name:
         url_target += f"#{tab_name}"
 
