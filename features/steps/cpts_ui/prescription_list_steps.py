@@ -19,7 +19,7 @@ def access_list_page_via_prescription_id(context):
     # Navigate directly to the results page with a prescription ID parameter
     context.page.goto(
         context.cpts_ui_base_url
-        + "site/prescription-results?prescriptionId=C0C757-A83008-C2D93O"
+        + "site/prescription-list?prescriptionId=C0C757-A83008-C2D93O"
     )
 
     # Verify we're on the prescription list page using data-testid
@@ -31,7 +31,7 @@ def access_list_page_via_prescription_id(context):
 def access_list_page_via_nhs_number(context):
     # Navigate directly to the results page with an NHS number parameter
     context.page.goto(
-        context.cpts_ui_base_url + "site/prescription-results?nhsNumber=123456"
+        context.cpts_ui_base_url + "site/prescription-list?nhsNumber=123456"
     )
 
     # Verify we're on the prescription list page using data-testid
@@ -43,13 +43,13 @@ def access_list_page_via_nhs_number(context):
     'I am redirected to the prescription list page with prescription ID "{prescription_id}"'
 )
 def verify_prescription_list_page(context, prescription_id):
-    # Wait until the URL includes prescription-results
-    context.page.wait_for_url(lambda url: "site/prescription-results" in url)
+    # Wait until the URL includes prescription-list
+    context.page.wait_for_url(lambda url: "site/prescription-list" in url)
 
     current_url = context.page.url
     assert (
-        "site/prescription-results" in current_url
-    ), f"Expected URL to contain 'site/prescription-results', got: {current_url}"
+        "site/prescription-list" in current_url
+    ), f"Expected URL to contain 'site/prescription-list', got: {current_url}"
     assert (
         "prescriptionId=" in current_url
     ), f"Expected URL to contain 'prescriptionId=', got: {current_url}"
@@ -93,8 +93,8 @@ def verify_redirect_to_prescription_id_tab(context):
     # Use more relaxed URL checking
     current_url = context.page.url
     assert (
-        "site/search" in current_url
-    ), f"Expected URL to contain 'site/search', got: {current_url}"
+        "site/search-by-prescription-id" in current_url
+    ), f"Expected URL to contain 'site/search-by-prescription-id', got: {current_url}"
 
     # Use the POM to verify we're on the Prescription ID search tab
     search_page = SearchForAPrescription(context.page)
@@ -106,8 +106,8 @@ def verify_redirect_to_nhs_number_tab(context):
     # Use more relaxed URL checking
     current_url = context.page.url
     assert (
-        "site/search" in current_url
-    ), f"Expected URL to contain 'site/search', got: {current_url}"
+        "site/search-by-nhs-number" in current_url
+    ), f"Expected URL to contain 'site/search-by-nhs-number', got: {current_url}"
 
     # Use the POM to verify we're on the NHS number search tab
     search_page = SearchForAPrescription(context.page)

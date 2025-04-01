@@ -5,7 +5,7 @@ class PrescriptionListPage:
     def __init__(self, page: Page):
         page.wait_for_load_state()
         self.page = page
-        self.url = "/prescription-results"
+        self.url = "/prescription-list"
 
         # Locators for elements on the page with updated data-testid attributes
         self.heading = page.locator("[data-testid='prescription-list-heading']")

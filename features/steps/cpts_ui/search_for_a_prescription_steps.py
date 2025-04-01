@@ -83,7 +83,7 @@ def click_search_button(context):
 
 @then('I am redirected to the prescription results page for "{prescription_id}"')
 def redirected_to_results(context, prescription_id):
-    expected_url = f"/site/prescription-results?prescriptionId={prescription_id}"
+    expected_url = f"/site/prescription-list?prescriptionId={prescription_id}"
     context.page.wait_for_url(lambda url: expected_url in url)
 
 

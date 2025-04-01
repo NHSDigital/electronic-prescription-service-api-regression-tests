@@ -13,9 +13,15 @@ def i_am_on_prescription_not_found_page(context, tab_name):
     expect(page.body1).to_be_visible()
     expect(page.back_link).to_be_visible()
 
-    url_target = "/site/search"
-    if tab_name:
-        url_target += f"#{tab_name}"
+    # Map tab_name to the corresponding URL
+    url_map = {
+        "PrescriptionIdSearch": "/site/search-by-prescription-id",
+        "NhsNumberSearch": "/site/search-by-nhs-number",
+        "BasicDetailsSearch": "/site/search-by-basic-details",
+    }
+
+    # Get the appropriate URL based on tab_name or default to prescription-id search
+    url_target = url_map.get(tab_name, "/site/search-by-prescription-id")
 
     expect(page.back_link).to_have_attribute("href", url_target)
 
