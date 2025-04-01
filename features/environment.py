@@ -121,6 +121,7 @@ PULL_REQUEST_ID = os.getenv("PULL_REQUEST_ID")
 JWT_PRIVATE_KEY = os.getenv("JWT_PRIVATE_KEY")
 JWT_KID = os.getenv("JWT_KID")
 HEADLESS = os.getenv("HEADLESS", "True").lower() in ("true", "1", "yes")
+SLOWMO = float(os.getenv("SLOWMO", "0.0"))
 
 CPTS_UI_PREFIX = "cpt-ui"
 CPTS_FHIR_SUFFIX = "clinical-prescription-tracker"
@@ -239,7 +240,7 @@ def before_all(context):
         global _playwright
         _playwright = sync_playwright().start()
         context.browser = _playwright.chromium.launch(
-            headless=HEADLESS, channel="chrome"
+            headless=HEADLESS, channel="chrome", slow_mo=SLOWMO
         )
 
     eps_api_methods.calculate_eps_fhir_base_url(context)
