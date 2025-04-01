@@ -81,6 +81,93 @@ def verify_results_count(context):
     ), f"Expected 'results' in results count text: {count_text}"
 
 
+@given("I am on the prescription list page for prescription ID {prescription_id}")
+def i_am_on_the_prescription_list_page(context, prescription_id: str):
+    context.execute_steps(
+        f"""
+        Given I am on the search for a prescription page
+        When I search for a prescription using a valid prescription ID {prescription_id}
+        Then I am redirected to the prescription list page with prescription ID {prescription_id}
+        And I can see the heading "Prescriptions list"
+    """
+    )
+
+
+@then("I can see the appropriate prescription results tab headings")
+def i_see_results_headings(context):
+    prescription_list_page = PrescriptionListPage(context.page)
+    expect(
+        prescription_list_page.current_prescriptions_results_tab_heading
+    ).to_be_visible()
+    expect(
+        prescription_list_page.future_prescriptions_results_tab_heading
+    ).to_be_visible()
+    expect(
+        prescription_list_page.past_prescriptions_results_tab_heading
+    ).to_be_visible()
+
+
+@then("I can see the current prescriptions results table")
+def i_see_current_prescriptions_results_tab(context):
+    prescription_list_page = PrescriptionListPage(context.page)
+    expect(
+        prescription_list_page.current_prescriptions_results_tab_table
+    ).to_be_visible()
+
+    expect(
+        prescription_list_page.future_prescriptions_results_tab_table
+    ).not_to_be_visible()
+    expect(
+        prescription_list_page.past_prescriptions_results_tab_table
+    ).not_to_be_visible()
+
+
+@then("I can see the future prescriptions results table")
+def i_see_future_prescriptions_results_tab(context):
+    prescription_list_page = PrescriptionListPage(context.page)
+    expect(
+        prescription_list_page.future_prescriptions_results_tab_table
+    ).to_be_visible()
+
+    expect(
+        prescription_list_page.current_prescriptions_results_tab_table
+    ).not_to_be_visible()
+    expect(
+        prescription_list_page.past_prescriptions_results_tab_table
+    ).not_to_be_visible()
+
+
+@then("I can see the past prescriptions results table")
+def i_see_past_prescriptions_results_tab(context):
+    prescription_list_page = PrescriptionListPage(context.page)
+    expect(prescription_list_page.past_prescriptions_results_tab_table).to_be_visible()
+
+    expect(
+        prescription_list_page.current_prescriptions_results_tab_table
+    ).not_to_be_visible()
+    expect(
+        prescription_list_page.future_prescriptions_results_tab_table
+    ).not_to_be_visible()
+
+
+@when("I click on the current prescriptions tab heading")
+def i_click_current_prescription_tab_heading(context):
+    prescription_list_page = PrescriptionListPage(context.page)
+    prescription_list_page.current_prescriptions_results_tab_heading.click()
+
+
+@when("I click on the past prescriptions tab heading")
+def i_click_past_prescription_tab_heading(context):
+    prescription_list_page = PrescriptionListPage(context.page)
+    prescription_list_page.past_prescriptions_results_tab_heading.click()
+
+
+@when("I click on the future prescriptions tab heading")
+def i_click_future_prescription_tab_heading(context):
+    prescription_list_page = PrescriptionListPage(context.page)
+    prescription_list_page.future_prescriptions_results_tab_heading.click()
+
+
 @when('I click on the "Go back" link')
 def click_go_back_link(context):
     # Use POM
