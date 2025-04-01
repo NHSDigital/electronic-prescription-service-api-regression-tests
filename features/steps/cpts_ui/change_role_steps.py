@@ -73,6 +73,11 @@ def i_go_to_change_my_role(context):
     change_role_page.change_role_header.click()
 
 
+@when("I refresh the page")
+def I_refresh_the_page(context):
+    context.page.reload()
+
+
 ############################################################################
 # THEN STEPS
 ############################################################################
@@ -147,3 +152,10 @@ def i_see_the_change_role_page_no_role_with_access_warning_message(context):
     change_role_page = ChangeRole(context.page)
     expect(change_role_page.no_access_title).to_be_visible()
     expect(change_role_page.no_access_content).to_be_visible()
+
+
+@then("I do not see the change role page 'no role with access' message")
+def then_i_do_not_see_the_no_access_message(context):
+    change_role_page = ChangeRole(context.page)
+    expect(change_role_page.no_access_title).not_to_be_visible()
+    expect(change_role_page.no_access_content).not_to_be_visible()
