@@ -1,5 +1,6 @@
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
+import re
 
 from pages.prescription_list_page import PrescriptionListPage
 from pages.search_for_a_prescription import SearchForAPrescription
@@ -19,7 +20,7 @@ def access_list_page_via_prescription_id(context):
     # Navigate directly to the results page with a prescription ID parameter
     context.page.goto(
         context.cpts_ui_base_url
-        + "site/prescription-list?prescriptionId=C0C757-A83008-C2D93O"
+        + "site/prescription-list-current?prescriptionId=C0C757-A83008-C2D93O"
     )
 
     # Verify we're on the prescription list page using data-testid
@@ -31,7 +32,7 @@ def access_list_page_via_prescription_id(context):
 def access_list_page_via_nhs_number(context):
     # Navigate directly to the results page with an NHS number parameter
     context.page.goto(
-        context.cpts_ui_base_url + "site/prescription-list?nhsNumber=1234567890"
+        context.cpts_ui_base_url + "site/prescription-list-current?nhsNumber=1234567890"
     )
 
     # Verify we're on the prescription list page using data-testid
@@ -43,16 +44,11 @@ def access_list_page_via_nhs_number(context):
     'I am redirected to the prescription list page with prescription ID "{prescription_id}"'
 )
 def verify_prescription_list_page(context, prescription_id):
-    # Wait until the URL includes prescription-list
-    context.page.wait_for_url(lambda url: "site/prescription-list" in url)
-
-    current_url = context.page.url
-    assert (
-        "site/prescription-list" in current_url
-    ), f"Expected URL to contain 'site/prescription-list', got: {current_url}"
-    assert (
-        "prescriptionId=" in current_url
-    ), f"Expected URL to contain 'prescriptionId=', got: {current_url}"
+    expected_url = re.compile(
+        r"/site/prescription-list-(?:current|past|future)\?prescriptionId="
+        + prescription_id
+    )
+    context.page.wait_for_url(expected_url)
 
     # Verify we're on the prescription list page using POM
     prescription_list_page = PrescriptionListPage(context.page)

@@ -20,14 +20,14 @@ class PrescriptionListPage:
         self.results_heading = page.get_by_test_id("results-heading")
         self.results_container = page.get_by_test_id("prescription-results-container")
 
-        self.current_prescriptions_results_tab_heading = page.get_by_test_id(
-            "prescription-results-list-tab-heading current"
+        self.current_prescriptions_results_tab_heading = page.locator(
+            '[data-testid^="eps-tab-heading /prescription-list-current"]'
         )
-        self.past_prescriptions_results_tab_heading = page.get_by_test_id(
-            "prescription-results-list-tab-heading past"
+        self.past_prescriptions_results_tab_heading = page.locator(
+            '[data-testid^="eps-tab-heading /prescription-list-past"]'
         )
-        self.future_prescriptions_results_tab_heading = page.get_by_test_id(
-            "prescription-results-list-tab-heading future"
+        self.future_prescriptions_results_tab_heading = page.locator(
+            '[data-testid^="eps-tab-heading /prescription-list-future"]'
         )
 
         self.current_prescriptions_results_tab_table = page.get_by_test_id(
