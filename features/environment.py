@@ -169,8 +169,8 @@ def before_scenario(context, scenario):
         return
     product = context.config.userdata["product"].upper()
     if product == "CPTS-UI":
-        global _playwright
-        global _page
+        global _playwright  # noqa: F824
+        global _page  # noqa: F824
         context.browser = context.browser.new_context()
         context.browser.tracing.start(screenshots=True, snapshots=True, sources=True)
         context.page = context.browser.new_page()
@@ -194,7 +194,7 @@ def after_scenario(context, scenario):
                     attachment_type="application/zip",
                 )
             if context.page is not None:
-                global _page
+                global _page  # noqa: F824
                 _page.close()
 
 
