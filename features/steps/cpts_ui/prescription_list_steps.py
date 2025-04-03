@@ -31,6 +31,7 @@ def access_list_page_via_prescription_id(context):
 @given("I have accessed the prescription list page using an NHS number search")
 def access_list_page_via_nhs_number(context):
     # Navigate directly to the results page with an NHS number parameter
+    # FIXME: This should not be hardcoded once we can actually search for real data
     context.page.goto(
         context.cpts_ui_base_url + "site/prescription-list-current?nhsNumber=1234567890"
     )
