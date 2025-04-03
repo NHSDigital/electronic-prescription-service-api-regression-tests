@@ -52,6 +52,7 @@ check-licenses:
 
 deep-clean-install:
 	rm -f -d -r .venv/
+	mkdir .venv/
 	asdf uninstall poetry
 	asdf uninstall python
 	asdf plugin remove poetry

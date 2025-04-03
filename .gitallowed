@@ -13,3 +13,4 @@ CidrBlock:\s?"?10\.0\.\d+\.\d+\/\d+"
 .*token_response\[\"access_token\"\].*
 .*password=None.*
 .*secrets.REGRESSION_TESTS_PAT.*
+*.env
