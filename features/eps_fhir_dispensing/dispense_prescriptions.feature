@@ -3,11 +3,18 @@
 Feature: I can dispense prescriptions
 
   @dispense
-  Scenario: I can dispense a prescription
-    Given a prescription has been created and released using proxygen apis
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4941
+  Scenario Outline: I can dispense a prescription
+    Given a <Nomination> <Type> prescription has been created and released using proxygen apis
     When I dispense the prescription
     Then the response indicates a success
     And the response body indicates a successful dispense action
+    Examples:
+      | Nomination    | Type   |
+      | nominated     | acute  |
+      | non-nominated | acute  |
+      | nominated     | repeat |
+      | non-nominated | repeat |
 
   @amend
   Scenario: I can amend a single dispense notification
