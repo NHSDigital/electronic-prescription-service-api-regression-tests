@@ -6,6 +6,7 @@ These tests will automate End-to-End regression testing for:
 * [Prescriptions for Patients (PfP)](https://digital.nhs.uk/developer/api-catalogue/prescriptions-for-patients)
 * [Prescription Status Update (PSU)](https://digital.nhs.uk/developer/api-catalogue/prescription-status-update-fhir/)
 * [Clinical Prescription Tracker UI (CPT-UI)](https://github.com/NHSDigital/eps-prescription-tracker-ui)
+* [Clinical Prescription Tracker API (CPT-API)](https://github.com/NHSDigital/electronic-prescription-service-clinical-prescription-tracker)
 
 ## General usage
 These tests are run automatically during deployment and shouldn't need to be touched unless performing debugging or
@@ -22,11 +23,26 @@ It is necessary to set some Environment variables in order to run any tests in y
 1. `.env` file
 2. OS environment variable
 
-The following environment variables need to be set for the correct environment you wish to test against:
-* CLIENT_ID
-* CLIENT_SECRET
+The following environment variables may need to be set for the correct environment you wish to test against:
+* CPT_FHIR_CLIENT_ID
+* CPT_FHIR_CLIENT_SECRET
+* EPS_FHIR_CLIENT_ID
+* EPS_FHIR_CLIENT_SECRET
+* EPS_FHIR_SHA1_CLIENT_ID
+* EPS_FHIR_SHA1_CLIENT_SECRET
+* EPS_FHIR_PRESCRIBING_CLIENT_ID
+* EPS_FHIR_PRESCRIBING_CLIENT_SECRET
+* EPS_FHIR_PRESCRIBING_SHA1_CLIENT_ID
+* EPS_FHIR_PRESCRIBING_SHA1_CLIENT_SECRET
+* EPS_FHIR_DISPENSING_CLIENT_ID
+* EPS_FHIR_DISPENSING_CLIENT_SECRET
+* PFP_CLIENT_ID
+* PFP_CLIENT_SECRET
+* PSU_CLIENT_ID
+* PSU_CLIENT_SECRET
 * PRIVATE_KEY
 * CERTIFICATE
+
 
 To make this easier, a `template.env` file is located on the root. Fill in the values and rename this to `.env`
 
@@ -42,15 +58,8 @@ You may need to run `poetry shell` to activate the poetry shell, followed by `ma
 If you'd like to use your own machine without containerisation. You will need the following;
 * Ubuntu (WSL)
 * [ASDF](https://asdf-vm.com/guide/getting-started.html)
-#### Once ASDF is installed, add the following plugins:
-* ASDF python plugin `asdf plugin add python`
-* ASDF poetry plugin `asdf plugin add poetry`
-* ASDF shellcheck plugin `asdf plugin add shellcheck`
-* ASDF nodejs plugin `asdf plugin add nodejs`
-#### Once the plugins are added you can install them
-`asdf install` This will install the versions as described in .tool-versions
-
-Now you can run `make install` to install the virtualenv and packages. You may need to run `poetry shell` to activate the poetry shell, followed by `make install-playwright` to install the playwright tools. To check if these are installed properly, run `playwright codegen` and check that you see a browser window pop up.
+You can now run the `make install-asdf` command
+* next, run `make install` to install the virtualenv and packages. You may need to run `poetry shell` to activate the poetry shell, followed by `make install-playwright` to install the playwright tools. To check if these are installed properly, run `playwright codegen` and check that you see a browser window pop up.
 
 ## Developing/Debugging Tests
 
@@ -101,7 +110,7 @@ Change the `env` variable accordingly to either `INT` or `INTERNAL-DEV`.
 If you wish to test a different product i.e. `PFP-APIGEE` then you must change `product=` and `--tags` respectively.
 
 ### Method 5:
-Run the tests by pushing changes to github in a pull request and running the regression tests job.
+Run the tests by pushing changes to GitHub in a pull request and running the regression tests job.
 You can do this by the browser or by running this
 ```
 BRANCH=fix_tests_take_2
