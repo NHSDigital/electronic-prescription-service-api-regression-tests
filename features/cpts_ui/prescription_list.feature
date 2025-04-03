@@ -6,6 +6,7 @@ Feature: Prescription List Page in the Clinical Prescription Tracker Service
   Scenario: User can access the prescription list page
     Given I am logged in as a user with a single access role
     And I am on the search for a prescription page
+    # FIXME: This will need to be updated when the search pages are updated to use real data
     When I search for a prescription using a valid prescription ID "C0C757-A83008-C2D93O"
     Then I am redirected to the prescription list page with prescription ID "C0C757-A83008-C2D93O"
     And I can see the heading "Prescriptions list"
@@ -31,6 +32,7 @@ Feature: Prescription List Page in the Clinical Prescription Tracker Service
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4792
   Scenario: Display current prescriptions results table when clicking the current tab heading
     Given I am logged in as a user with a single access role
+    # FIXME: This will need to be updated when the search pages are updated to use real data
     And I am on the prescription list page for prescription ID "C0C757-A83008-C2D93O"
     When I click on the current prescriptions tab heading
     Then I can see the current prescriptions results table
@@ -38,6 +40,7 @@ Feature: Prescription List Page in the Clinical Prescription Tracker Service
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4792
   Scenario: Display future prescriptions results table when clicking the future tab heading
     Given I am logged in as a user with a single access role
+    # FIXME: This will need to be updated when the search pages are updated to use real data
     And I am on the prescription list page for prescription ID "C0C757-A83008-C2D93O"
     When I click on the future prescriptions tab heading
     Then I can see the future prescriptions results table
@@ -46,6 +49,7 @@ Feature: Prescription List Page in the Clinical Prescription Tracker Service
   @testme
   Scenario: Display past prescriptions results table when clicking the past tab heading
     Given I am logged in as a user with a single access role
+    # FIXME: This will need to be updated when the search pages are updated to use real data
     And I am on the prescription list page for prescription ID "C0C757-A83008-C2D93O"
     When I click on the past prescriptions tab heading
     Then I can see the past prescriptions results table
