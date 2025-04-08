@@ -56,3 +56,12 @@ def clipboard_has_text(context, expected):
     assert (
         copied == expected
     ), f"Expected '{expected}' in mock clipboard, got '{copied}'"
+
+
+@then('The page shows the loading message "{expected_message}"')
+def check_loading_message(context, expected_message):
+    heading = context.page.locator("#prescription-details-page h2")
+    actual = heading.first.inner_text()
+    assert (
+        actual == expected_message
+    ), f"Expected heading '{expected_message}', but got '{actual}'"
