@@ -107,6 +107,18 @@ jobs:
         if: steps.cache-venv.outputs.cache-hit != 'true'
         run: make install
 
+      - name: App product to APP for PR
+        if: ${{ startsWith(github.event.inputs.pull_request_id, 'pr-') }}
+        env:
+          APIGEE_USER: ${{ secrets.APIGEE_USER }}
+          APIGEE_PASSWORD: ${{ secrets.APIGEE_PASSWORD }}
+          APIGEE_MFA-SECRET: ${{ secrets.APIGEE_MFA_SECRET }}
+          PR_ID: ${{ inputs.pull_request_id }}
+        run: |
+          echo This is a pull request run
+          echo We will now add the product for  to the app
+          poetry run python scripts/add_pr_product_to_app.py --user="$APIGEE_USER" --password="$APIGEE_PASSWORD" --secret="$APIGEE_MFA_SECRET" --pr="$PR_ID"
+
       - name: Regression Tests
         id: tests
         continue-on-error: true
