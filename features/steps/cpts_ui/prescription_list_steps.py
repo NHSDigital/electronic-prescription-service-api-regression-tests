@@ -1,5 +1,6 @@
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
+import re
 
 from pages.prescription_list_page import PrescriptionListPage
 from pages.search_for_a_prescription import SearchForAPrescription
@@ -19,7 +20,7 @@ def access_list_page_via_prescription_id(context):
     # Navigate directly to the results page with a prescription ID parameter
     context.page.goto(
         context.cpts_ui_base_url
-        + "site/prescription-list?prescriptionId=C0C757-A83008-C2D93O"
+        + "site/prescription-list-current?prescriptionId=C0C757-A83008-C2D93O"
     )
 
     # Verify we're on the prescription list page using data-testid
@@ -30,8 +31,9 @@ def access_list_page_via_prescription_id(context):
 @given("I have accessed the prescription list page using an NHS number search")
 def access_list_page_via_nhs_number(context):
     # Navigate directly to the results page with an NHS number parameter
+    # FIXME: This should not be hardcoded once we can actually search for real data
     context.page.goto(
-        context.cpts_ui_base_url + "site/prescription-list?nhsNumber=123456"
+        context.cpts_ui_base_url + "site/prescription-list-current?nhsNumber=1234567890"
     )
 
     # Verify we're on the prescription list page using data-testid
@@ -43,16 +45,11 @@ def access_list_page_via_nhs_number(context):
     'I am redirected to the prescription list page with prescription ID "{prescription_id}"'
 )
 def verify_prescription_list_page(context, prescription_id):
-    # Wait until the URL includes prescription-list
-    context.page.wait_for_url(lambda url: "site/prescription-list" in url)
-
-    current_url = context.page.url
-    assert (
-        "site/prescription-list" in current_url
-    ), f"Expected URL to contain 'site/prescription-list', got: {current_url}"
-    assert (
-        "prescriptionId=" in current_url
-    ), f"Expected URL to contain 'prescriptionId=', got: {current_url}"
+    expected_url = re.compile(
+        r"/site/prescription-list-(?:current|past|future)\?prescriptionId="
+        + prescription_id
+    )
+    context.page.wait_for_url(expected_url)
 
     # Verify we're on the prescription list page using POM
     prescription_list_page = PrescriptionListPage(context.page)
@@ -79,6 +76,93 @@ def verify_results_count(context):
     assert (
         "results" in count_text.lower()
     ), f"Expected 'results' in results count text: {count_text}"
+
+
+@given("I am on the prescription list page for prescription ID {prescription_id}")
+def i_am_on_the_prescription_list_page(context, prescription_id: str):
+    context.execute_steps(
+        f"""
+        Given I am on the search for a prescription page
+        When I search for a prescription using a valid prescription ID {prescription_id}
+        Then I am redirected to the prescription list page with prescription ID {prescription_id}
+        And I can see the heading "Prescriptions list"
+    """
+    )
+
+
+@then("I can see the appropriate prescription results tab headings")
+def i_see_results_headings(context):
+    prescription_list_page = PrescriptionListPage(context.page)
+    expect(
+        prescription_list_page.current_prescriptions_results_tab_heading
+    ).to_be_visible()
+    expect(
+        prescription_list_page.future_prescriptions_results_tab_heading
+    ).to_be_visible()
+    expect(
+        prescription_list_page.past_prescriptions_results_tab_heading
+    ).to_be_visible()
+
+
+@then("I can see the current prescriptions results table")
+def i_see_current_prescriptions_results_tab(context):
+    prescription_list_page = PrescriptionListPage(context.page)
+    expect(
+        prescription_list_page.current_prescriptions_results_tab_table
+    ).to_be_visible()
+
+    expect(
+        prescription_list_page.future_prescriptions_results_tab_table
+    ).not_to_be_visible()
+    expect(
+        prescription_list_page.past_prescriptions_results_tab_table
+    ).not_to_be_visible()
+
+
+@then("I can see the future prescriptions results table")
+def i_see_future_prescriptions_results_tab(context):
+    prescription_list_page = PrescriptionListPage(context.page)
+    expect(
+        prescription_list_page.future_prescriptions_results_tab_table
+    ).to_be_visible()
+
+    expect(
+        prescription_list_page.current_prescriptions_results_tab_table
+    ).not_to_be_visible()
+    expect(
+        prescription_list_page.past_prescriptions_results_tab_table
+    ).not_to_be_visible()
+
+
+@then("I can see the past prescriptions results table")
+def i_see_past_prescriptions_results_tab(context):
+    prescription_list_page = PrescriptionListPage(context.page)
+    expect(prescription_list_page.past_prescriptions_results_tab_table).to_be_visible()
+
+    expect(
+        prescription_list_page.current_prescriptions_results_tab_table
+    ).not_to_be_visible()
+    expect(
+        prescription_list_page.future_prescriptions_results_tab_table
+    ).not_to_be_visible()
+
+
+@when("I click on the current prescriptions tab heading")
+def i_click_current_prescription_tab_heading(context):
+    prescription_list_page = PrescriptionListPage(context.page)
+    prescription_list_page.current_prescriptions_results_tab_heading.click()
+
+
+@when("I click on the past prescriptions tab heading")
+def i_click_past_prescription_tab_heading(context):
+    prescription_list_page = PrescriptionListPage(context.page)
+    prescription_list_page.past_prescriptions_results_tab_heading.click()
+
+
+@when("I click on the future prescriptions tab heading")
+def i_click_future_prescription_tab_heading(context):
+    prescription_list_page = PrescriptionListPage(context.page)
+    prescription_list_page.future_prescriptions_results_tab_heading.click()
 
 
 @when('I click on the "Go back" link')
