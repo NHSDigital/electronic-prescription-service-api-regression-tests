@@ -20,15 +20,14 @@ Feature: The site displays the prescription information banner
       | Type            | Acute                |
 
   # This test uses static mock data. Update once real prescription API integration is in place.
-  Scenario: The banner shows eRD repeat and days supply info
+  Scenario: The banner shows eRD type with repeat info and days supply
     When I go to the prescription details page with prescription ID "EC5ACF-A83008-733FD3"
     Then The prescription information banner shows
       | Prescription ID | EC5ACF-A83008-733FD3 |
       | Issue Date      | 22-Jan-2025          |
       | Status          | All items dispensed  |
-      | Type            | eRD                  |
-      | Repeat          | 2 of 6               |
-      | Days Supply     | 28                   |
+      | Type            | eRD 2 of 6           |
+      | Days Supply     | 28 days              |
 
   # This test uses static mock data. Update once real prescription API integration is in place.
   Scenario: The copy to clipboard button copies the ID
