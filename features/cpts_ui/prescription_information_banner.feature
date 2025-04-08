@@ -10,6 +10,7 @@ Feature: The site displays the prescription information banner
     When I go to the prescription details page without a prescription ID
     Then The prescription information banner is not visible
 
+  # This test uses static mock data. Update once real prescription API integration is in place.
   Scenario: The banner appears with correct data for an Acute prescription
     When I go to the prescription details page with prescription ID "C0C757-A83008-C2D93O"
     Then The prescription information banner shows
@@ -18,6 +19,7 @@ Feature: The site displays the prescription information banner
       | Status          | All items dispensed  |
       | Type            | Acute                |
 
+  # This test uses static mock data. Update once real prescription API integration is in place.
   Scenario: The banner shows eRD repeat and days supply info
     When I go to the prescription details page with prescription ID "EC5ACF-A83008-733FD3"
     Then The prescription information banner shows
@@ -28,6 +30,7 @@ Feature: The site displays the prescription information banner
       | Repeat          | 2 of 6               |
       | Days Supply     | 28                   |
 
+  # This test uses static mock data. Update once real prescription API integration is in place.
   Scenario: The copy to clipboard button copies the ID
     When I go to the prescription details page with prescription ID "C0C757-A83008-C2D93O"
     And I click the copy prescription ID button
