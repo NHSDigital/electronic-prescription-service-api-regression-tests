@@ -14,14 +14,15 @@ Feature: The site has a patient detail banner
     Scenario: When I search for a prescription, and go back, the patient details banner is not visible
         When I go to the search for a prescription page
         And I click on tab Prescription ID search
+        # FIXME: This will need to be updated when the search pages are updated to use real data
         And I search for a prescription using a valid prescription ID "C0C757-A83008-A1234O"
         And I click the Go Back link on the prescription not found page
         Then The patient details banner is not visible
 
-    # FIXME: This will need to be updated when the search pages are updated
     Scenario: When I search for a prescription, the patient details appear
         When I go to the search for a prescription page
         And I click on tab Prescription ID search
+        # FIXME: This will need to be updated when the search pages are updated to use real data
         And I search for a prescription using a valid prescription ID "C0C757-A83008-C2D93O"
         Then The patient details banner reports complete data
 

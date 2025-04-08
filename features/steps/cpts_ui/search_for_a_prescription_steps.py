@@ -1,6 +1,7 @@
 # pylint: disable=no-name-in-module
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
+import re
 
 from pages.search_for_a_prescription import SearchForAPrescription
 
@@ -83,8 +84,11 @@ def click_search_button(context):
 
 @then('I am redirected to the prescription results page for "{prescription_id}"')
 def redirected_to_results(context, prescription_id):
-    expected_url = f"/site/prescription-list?prescriptionId={prescription_id}"
-    context.page.wait_for_url(lambda url: expected_url in url)
+    expected_url = re.compile(
+        r"/site/prescription-list-(?:current|past|future)\?prescriptionId="
+        + prescription_id
+    )
+    context.page.wait_for_url(expected_url)
 
 
 @then('I see a validation message saying "{message}"')
