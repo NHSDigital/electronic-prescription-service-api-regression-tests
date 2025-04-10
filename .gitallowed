@@ -14,3 +14,8 @@ CidrBlock:\s?"?10\.0\.\d+\.\d+\/\d+"
 .*password=None.*
 .*secrets.REGRESSION_TESTS_PAT.*
 *.env
+arguments.password
+body = f"username={username}&password={password}&grant_type=password"
+--secret="\$APIGEE_MFA_SECRET"
+password = arguments\.password
+--user="$APIGEE_USER" --*** --secret="$APIGEE_MFA_SECRET"
