@@ -172,6 +172,15 @@ def before_scenario(context, scenario):
         global _playwright  # noqa: F824
         global _page  # noqa: F824
         context.browser = context.browser.new_context()
+        context.browser.add_init_script(
+            """
+            window.__copiedText = "";
+            navigator.clipboard.writeText = (text) => {
+                window.__copiedText = text;
+                return Promise.resolve();
+            };
+        """
+        )
         context.browser.tracing.start(screenshots=True, snapshots=True, sources=True)
         context.page = context.browser.new_page()
         _page = context.page
