@@ -7,6 +7,9 @@ class PrescriptionListPage:
         self.page = page
         self.url = "/prescription-list"
 
+        # FIXME: DELETEME
+        self.dev_link = page.get_by_test_id("prescription-details-link-container")
+
         # Locators for elements on the page with updated data-testid attributes
         self.heading = page.get_by_test_id("prescription-list-heading")
         self.results_count = page.get_by_test_id("results-count")
