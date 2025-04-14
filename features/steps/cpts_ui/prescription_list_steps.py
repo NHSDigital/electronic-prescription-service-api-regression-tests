@@ -18,6 +18,7 @@ def search_using_prescription_id(context, prescription_id):
 @given("I have accessed the prescription list page using a prescription ID search")
 def access_list_page_via_prescription_id(context):
     # Navigate directly to the results page with a prescription ID parameter
+    # FIXME: This should not be hardcoded once we can actually search for real data
     context.page.goto(
         context.cpts_ui_base_url
         + "site/prescription-list-current?prescriptionId=C0C757-A83008-C2D93O"
