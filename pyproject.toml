@@ -28,7 +28,7 @@ python-dotenv = "^1.1.0"
 pytest-nhsd-apim = "^4.0.1"
 requests-oauthlib = "^2.0.0"
 nhs-number-generator = {git = "https://github.com/Iain-S/nhs_number_generator.git"}
-pyright = "^1.1.398"
+pyright = "^1.1.399"
 playwright = "^1.51.0"
 jycm = "^1.5.0"
 pyotp = "^2.9.0"
