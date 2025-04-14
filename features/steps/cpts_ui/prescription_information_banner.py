@@ -60,8 +60,5 @@ def clipboard_has_text(context, expected):
 
 @then('The page shows the loading message "{expected_message}"')
 def check_loading_message(context, expected_message):
-    heading = context.page.locator("#prescription-details-page h2")
-    actual = heading.first.inner_text()
-    assert (
-        actual == expected_message
-    ), f"Expected heading '{expected_message}', but got '{actual}'"
+    heading = context.page.get_by_test_id("loading-message")
+    expect(heading).to_have_text(expected_message)
