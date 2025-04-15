@@ -144,6 +144,13 @@ if __name__ == "__main__":
     password = os.getenv("APIGEE_PASSWORD")
     secret = os.getenv("APIGEE_MFA_SECRET")
     product = arguments.product
+    if product not in [
+        "EPS-FHIR",
+        "EPS-FHIR-PRESCRIBING",
+        "EPS-FHIR-DISPENSING",
+    ]:
+        print(f"{product} Not supported. Exiting.")
+        exit(1)
     pr_id = arguments.pr.lower()
     if "pr-" not in pr_id:
         print("Not a Pull Request. Exiting.")

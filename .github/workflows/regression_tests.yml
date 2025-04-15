@@ -108,13 +108,10 @@ jobs:
         run: make install
 
       - name: App product to APP for PR
-        if: ${{ startsWith(github.event.inputs.pull_request_id, 'pr-') }}
         env:
           PRODUCT: ${{ inputs.product }}
           PR_ID: ${{ inputs.pull_request_id }}
         run: |
-          echo This is a pull request run
-          echo We will now add the product to the app
           poetry run python scripts/add_pr_product_to_app.py --product="$PRODUCT" --pr="$PR_ID"
 
       - name: Regression Tests
