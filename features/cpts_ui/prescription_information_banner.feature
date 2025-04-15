@@ -21,9 +21,9 @@ Feature: The site displays the prescription information banner
 
   # This test uses static mock data. Update once real prescription API integration is in place.
   Scenario: The banner shows eRD type with repeat info and days supply
-    When I go to the prescription details page with prescription ID "EC5ACF-A83008-733FD3"
+    When I go to the prescription details page with prescription ID "209E3D-A83008-327F9F"
     Then The prescription information banner shows
-      | Prescription ID | EC5ACF-A83008-733FD3 |
+      | Prescription ID | 209E3D-A83008-327F9F |
       | Issue Date      | 22-Jan-2025          |
       | Status          | All items dispensed  |
       | Type            | eRD 2 of 6           |
@@ -37,5 +37,5 @@ Feature: The site displays the prescription information banner
 
   # This test uses static mock data. Update once real prescription API integration is in place.
   Scenario: The loading message is displayed when prescription data is being fetched
-    When I go to the prescription details page with prescription ID "EC5ACF-A83008-733FD3"
+    When I go to the prescription details page with prescription ID "209E3D-A83008-327F9F"
     Then The page shows the loading message "Loading full prescription"

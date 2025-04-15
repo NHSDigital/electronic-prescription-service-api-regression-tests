@@ -46,7 +46,6 @@ Feature: Prescription List Page in the Clinical Prescription Tracker Service
     Then I can see the future prescriptions results table
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4792
-  @testme
   Scenario: Display past prescriptions results table when clicking the past tab heading
     Given I am logged in as a user with a single access role
     # FIXME: This will need to be updated when the search pages are updated to use real data
