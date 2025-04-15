@@ -181,7 +181,6 @@ set_repository_secret REGRESSION_TESTS_PEM "${REGRESSION_TESTS_PEM}"
 set_repository_secret SONAR_TOKEN "${SONAR_TOKEN}"
 
 # APIGEE
-set_repository_secret SSO_LOGIN_URL "${SSO_LOGIN_URL}"
 set_repository_secret APIGEE_USER "${APIGEE_USER}"
 set_repository_secret APIGEE_PASSWORD "${APIGEE_PASSWORD}"
 set_repository_secret APIGEE_MFA_SECRET "${APIGEE_MFA_SECRET}"
