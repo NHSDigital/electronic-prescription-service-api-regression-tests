@@ -9,10 +9,24 @@ from dotenv import load_dotenv
 
 APIGEE_BASE_URL = "https://api.enterprise.apigee.com/v1/organizations/nhsd-nonprod/"
 SSO_LOGIN_URL = "https://login.apigee.com/oauth/token"
+
 EPS_FHIR_DISPENSING_APP_ID = "1427007d-7dd3-4153-901a-df027fa6e6d6"
 EPS_FHIR_PRESCRIBING_APP_ID = "b6013742-6e0b-42df-b185-f05e7c753fe8"
 EPS_FHIR_PRESCRIBING_SHA1_APP_ID = "1122eb42-c783-4748-84b7-47e20446306d"
+
+global DISPENSING_CONSUMER_KEY
+global PRESCRIBING_CONSUMER_KEY
+global PRESCRIBING_SHA1_CONSUMER_KEY
 load_dotenv(override=True)
+
+
+def get_headers():
+    return {
+        "Content-Type": "application/json",
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Authorization": f"Bearer {access_token}",
+    }
 
 
 def get_token():
@@ -37,18 +51,16 @@ def get_token():
 
 
 def add_products_to_apps():
-    headers = {
-        "Content-Type": "application/json",
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Authorization": f"Bearer {access_token}",
-    }
     base_apps_url = (
         f"{APIGEE_BASE_URL}companies/c4bd161b-0bc5-4a29-866e-85c81b704bd0/apps/"
     )
-    dispensing_url = f"{base_apps_url}REGRESSION_INTERNAL_DEV_EPS_FHIR_DISPENSING/keys/cRG1mUYr6RVwx3ZDKg4pJg3PA9GbVJqH"
-    prescribing_url = f"{base_apps_url}REGRESSION_INTERNAL_DEV_EPS_FHIR_PRESCRIBING/keys/XybKJFjIUAwSqi0DApCC8GzGqsTUKjMi"
-    prescribing_sha1_url = f"{base_apps_url}REGRESSION_INTERNAL_DEV_EPS_FHIR_PRESCRIBING_SHA1/keys/4KVK1jIGYPESfv4FEW6klwjrbYMCJkqu"
+    dispensing_url = f"{base_apps_url}REGRESSION_INTERNAL_DEV_EPS_FHIR_DISPENSING/keys/{DISPENSING_CONSUMER_KEY}"
+    prescribing_url = f"{base_apps_url}REGRESSION_INTERNAL_DEV_EPS_FHIR_PRESCRIBING/keys/{PRESCRIBING_CONSUMER_KEY}"
+    prescribing_sha1_url = (
+        f"{base_apps_url}"
+        f"REGRESSION_INTERNAL_DEV_EPS_FHIR_PRESCRIBING_SHA1/keys/{PRESCRIBING_SHA1_CONSUMER_KEY}"
+    )
+    headers = get_headers()
 
     def add_product_to_prescribing_app():
         print(f"adding product {pr_id} to prescribing")
@@ -60,7 +72,7 @@ def add_products_to_apps():
             }
         )
 
-        response = requests.post(
+        response = requests.put(
             url=prescribing_sha1_url,
             headers=headers,
             data=body,
@@ -98,6 +110,30 @@ def add_products_to_apps():
     add_product_to_prescribing_app()
 
 
+def get_consumer_keys():
+    headers = get_headers()
+    base_apps_url = f"{APIGEE_BASE_URL}apps/"
+    dispensing_url = base_apps_url + EPS_FHIR_DISPENSING_APP_ID
+    prescribing_url = base_apps_url + EPS_FHIR_PRESCRIBING_APP_ID
+    prescribing_sha1_url = base_apps_url + EPS_FHIR_PRESCRIBING_SHA1_APP_ID
+
+    def get_consumer_key(url):
+        response = requests.get(url=url, headers=headers)
+        assert (
+            response.status_code == 200
+        ), f"expected 200, but got {response.status_code}\n{response.text}"
+        return response.json()["credentials"][0]["consumerKey"]
+
+    global DISPENSING_CONSUMER_KEY
+    DISPENSING_CONSUMER_KEY = get_consumer_key(dispensing_url)
+
+    global PRESCRIBING_CONSUMER_KEY
+    PRESCRIBING_CONSUMER_KEY = get_consumer_key(prescribing_url)
+
+    global PRESCRIBING_SHA1_CONSUMER_KEY
+    PRESCRIBING_SHA1_CONSUMER_KEY = get_consumer_key(prescribing_sha1_url)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
@@ -109,9 +145,11 @@ if __name__ == "__main__":
     secret = os.getenv("APIGEE_MFA_SECRET")
     product = arguments.product
     pr_id = arguments.pr.lower()
-    if "pr-" in pr_id:
-        pass
+    if "pr-" not in pr_id:
+        print("Not a Pull Request. Exiting.")
+        exit(1)
 
     access_token, refresh_token = get_token()
+    get_consumer_keys()
     add_products_to_apps()
     print("Finished!")
