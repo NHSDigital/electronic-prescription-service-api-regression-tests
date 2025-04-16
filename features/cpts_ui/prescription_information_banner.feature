@@ -26,7 +26,7 @@ Feature: The site displays the prescription information banner
       | Prescription ID | 209E3D-A83008-327F9F |
       | Issue Date      | 22-Jan-2025          |
       | Status          | All items dispensed  |
-      | Type            | eRD 2 of 6           |
+      | Type            | eRD 1 of 6           |
       | Days Supply     | 28 days              |
 
   # This test uses static mock data. Update once real prescription API integration is in place.
