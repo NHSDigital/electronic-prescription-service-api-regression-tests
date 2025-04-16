@@ -108,6 +108,7 @@ jobs:
         run: make install
 
       - name: App product to APP for PR
+        continue-on-error: true
         env:
           PRODUCT: ${{ inputs.product }}
           PR_ID: ${{ inputs.pull_request_id }}
