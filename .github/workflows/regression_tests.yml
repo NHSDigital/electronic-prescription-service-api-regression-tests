@@ -112,6 +112,9 @@ jobs:
           PRODUCT: ${{ inputs.product }}
           PR_ID: ${{ inputs.pull_request_id }}
         run: |
+          export ${{ secrets.APIGEE_MFA_SECRET }}
+          export ${{ secrets.APIGEE_PASSWORD }}
+          export ${{ secrets.APIGEE_USER }}
           poetry run python scripts/add_pr_product_to_app.py --product="$PRODUCT" --pr="$PR_ID"
 
       - name: Regression Tests
