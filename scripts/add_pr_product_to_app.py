@@ -145,7 +145,6 @@ if __name__ == "__main__":
     secret = os.getenv("APIGEE_MFA_SECRET")
     product = arguments.product
     if product not in [
-        "EPS-FHIR",
         "EPS-FHIR-PRESCRIBING",
         "EPS-FHIR-DISPENSING",
     ]:
