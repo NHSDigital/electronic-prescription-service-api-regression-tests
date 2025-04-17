@@ -121,6 +121,7 @@ PULL_REQUEST_ID = os.getenv("PULL_REQUEST_ID")
 JWT_PRIVATE_KEY = os.getenv("JWT_PRIVATE_KEY")
 JWT_KID = os.getenv("JWT_KID")
 HEADLESS = os.getenv("HEADLESS", "True").lower() in ("true", "1", "yes")
+SLOWMO = float(os.getenv("SLOWMO", "0.0"))
 
 CPTS_UI_PREFIX = "cpt-ui"
 CPTS_FHIR_SUFFIX = "clinical-prescription-tracker"
@@ -168,9 +169,18 @@ def before_scenario(context, scenario):
         return
     product = context.config.userdata["product"].upper()
     if product == "CPTS-UI":
-        global _playwright
-        global _page
+        global _playwright  # noqa: F824
+        global _page  # noqa: F824
         context.browser = context.browser.new_context()
+        context.browser.add_init_script(
+            """
+            window.__copiedText = "";
+            navigator.clipboard.writeText = (text) => {
+                window.__copiedText = text;
+                return Promise.resolve();
+            };
+        """
+        )
         context.browser.tracing.start(screenshots=True, snapshots=True, sources=True)
         context.page = context.browser.new_page()
         _page = context.page
@@ -193,7 +203,7 @@ def after_scenario(context, scenario):
                     attachment_type="application/zip",
                 )
             if context.page is not None:
-                global _page
+                global _page  # noqa: F824
                 _page.close()
 
 
@@ -239,7 +249,7 @@ def before_all(context):
         global _playwright
         _playwright = sync_playwright().start()
         context.browser = _playwright.chromium.launch(
-            headless=HEADLESS, channel="chrome"
+            headless=HEADLESS, channel="chrome", slow_mo=SLOWMO
         )
 
     eps_api_methods.calculate_eps_fhir_base_url(context)

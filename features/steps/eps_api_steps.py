@@ -23,6 +23,20 @@ from messages.eps_fhir.prescription import Prescription
 from jycm.jycm import YouchamaJsonDiffer
 
 
+def setup_new_prescription(context, nomination, prescription_type):
+    context.nhs_number = generate_single()
+    if nomination == "non-nominated":
+        context.nomination_code = "0004"
+    if nomination == "nominated":
+        context.nomination_code = "P1"
+    if prescription_type == "acute":
+        context.type_code = "acute"
+        context.intent = "order"
+    if prescription_type == "repeat":
+        context.type_code = "continuous"
+        context.intent = "instance-order"
+
+
 @given("I successfully prepare and sign a prescription")
 def i_prepare_and_sign_a_prescription(context):
     if (
@@ -30,18 +44,24 @@ def i_prepare_and_sign_a_prescription(context):
         and context.config.userdata["product"].upper() != "EPS-FHIR"
     ):
         return
-    i_prepare_a_new_prescription(context, "nominated")
+    i_prepare_a_new_prescription(context, "nominated", "acute")
     i_sign_a_new_prescription(context=context)
 
 
-@given("I successfully prepare and sign a {prescription_type} prescription")
-def i_prepare_and_sign_a_type_prescription(context, prescription_type):
-    i_prepare_a_new_prescription(context, prescription_type)
+@given(
+    "I successfully prepare and sign a {nomination} {prescription_type} prescription"
+)
+def i_prepare_and_sign_a_type_prescription(context, nomination, prescription_type):
+    i_prepare_a_new_prescription(context, nomination, prescription_type)
     i_sign_a_new_prescription(context=context)
 
 
-@given("a prescription has been created and released using {deployment_method} apis")
-def a_prescription_has_been_created_and_released(context, deployment_method):
+@given(
+    "a {nomination} {prescription_type} prescription has been created and released using {deployment_method} apis"
+)
+def a_prescription_has_been_created_and_released(
+    context, nomination, prescription_type, deployment_method
+):
     if "sandbox" in context.config.userdata["env"].lower():
         return
     if deployment_method == "apim":
@@ -53,7 +73,7 @@ def a_prescription_has_been_created_and_released(context, deployment_method):
     else:
         raise ValueError(f"Unknown deployment_method {deployment_method}")
     i_am_an_authorised_user(context, "prescriber", prescribe_product)
-    i_prepare_and_sign_a_prescription(context)
+    i_prepare_and_sign_a_type_prescription(context, nomination, prescription_type)
     i_am_an_authorised_user(context, "dispenser", dispense_product)
     i_release_the_prescription(context)
     indicate_successful_response(context)
@@ -63,7 +83,9 @@ def a_prescription_has_been_created_and_released(context, deployment_method):
 def a_new_prescription_has_been_dispensed(context, deployment_method):
     if "sandbox" in context.config.userdata["env"].lower():
         return
-    a_prescription_has_been_created_and_released(context, deployment_method)
+    a_prescription_has_been_created_and_released(
+        context, "nominated", "acute", deployment_method
+    )
     i_dispense_the_prescription(context)
     indicate_successful_response(context)
 
@@ -84,23 +106,15 @@ def i_am_an_authorised_user(context, user, app):
         context.auth_method = "oauth2"
 
 
-@given("I successfully prepare a {prescription_type} prescription")
-def i_prepare_a_new_prescription(context, prescription_type):
-    context.nhs_number = generate_single()
-    if prescription_type == "non-nominated":
-        context.nomination_code = "0004"
-    if prescription_type == "nominated":
-        context.nomination_code = "P1"
+@given("I successfully prepare a {nomination} {prescription_type} prescription")
+def i_prepare_a_new_prescription(context, nomination, prescription_type):
+    setup_new_prescription(context, nomination, prescription_type)
     prepare_prescription(context)
 
 
-@when("I try to prepare a {prescription_type} prescription")
-def i_try_to_prepare_a_new_prescription(context, prescription_type):
-    context.nhs_number = generate_single()
-    if prescription_type == "non-nominated":
-        context.nomination_code = "0004"
-    if prescription_type == "nominated":
-        context.nomination_code = "P1"
+@when("I try to prepare a {nomination} {prescription_type} prescription")
+def i_try_to_prepare_a_new_prescription(context, nomination, prescription_type):
+    setup_new_prescription(context, nomination, prescription_type)
     try_prepare_prescription(context)
 
 
@@ -216,6 +230,8 @@ def i_make_a_request_to_the_validator_endpoint(
     if validity == "valid":
         context.nhs_number = generate_single()
         context.nomination_code = "0004"
+        context.intent = "order"
+        context.type_code = "acute"
         validate_body = Prescription(context).body
     else:
         validate_body = "foo"
@@ -268,5 +284,5 @@ def validator_response_matches_file(context, filename):
 
 
 @then("the signing algorithm is {algorithm}")
-def the_signing_algoritm_is(context, algorithm):
+def the_signing_algorithm_is(context, algorithm):
     assert_that(algorithm).is_equal_to(context.algorithm)
