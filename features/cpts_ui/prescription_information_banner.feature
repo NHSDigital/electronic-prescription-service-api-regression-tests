@@ -21,10 +21,10 @@ Feature: The site displays the prescription information banner
 
   # This test uses static mock data. Update once real prescription API integration is in place.
   Scenario: The banner shows eRD type with repeat info and days supply
-    When I go to the prescription details page with prescription ID "209E3D-A83008-327F9F"
+    When I go to the prescription details page with prescription ID "7F1A4B-A83008-91DC2E"
     Then The prescription information banner shows
-      | Prescription ID | 209E3D-A83008-327F9F |
-      | Issue Date      | 18-Jan-2024          |
+      | Prescription ID | 7F1A4B-A83008-91DC2E |
+      | Issue Date      | 22-Mar-2024          |
       | Status          | Some items dispensed |
       | Type            | eRD 1 of 6           |
       | Days Supply     | 28 days              |
