@@ -112,6 +112,15 @@ def withdraw_dispense_notification(context):
     )
 
 
+def claim_prescription(context):
+    url = f"{DISPENSING_BASE_URL}/FHIR/R4/$process-message#dispense-notification"
+    additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
+    headers = get_headers(context, context.auth_method, additional_headers)
+
+    dispense_notification = DispenseNotification(context, False).body
+    post(data=dispense_notification, url=url, context=context, headers=headers)
+
+
 def return_prescription(context):
     url = f"{DISPENSING_BASE_URL}/FHIR/R4/Task"
     additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
