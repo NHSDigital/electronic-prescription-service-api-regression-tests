@@ -23,11 +23,11 @@ Feature: The site displays the prescription information banner
   Scenario: The banner shows eRD type with repeat info and days supply
     When I go to the prescription details page with prescription ID "7F1A4B-A83008-91DC2E"
     Then The prescription information banner shows
-      | Prescription ID | 7F1A4B-A83008-91DC2E |
-      | Issue Date      | 22-Mar-2024          |
-      | Status          | Some items dispensed |
-      | Type            | eRD 1 of 6           |
-      | Days Supply     | 28 days              |
+      | Prescription ID | 7F1A4B-A83008-91DC2E       |
+      | Issue Date      | 22-Mar-2024                |
+      | Status          | Downloaded by a dispenser  |
+      | Type            | eRD 1 of 6                 |
+      | Days Supply     | 28 days                    |
 
   # This test uses static mock data. Update once real prescription API integration is in place.
   Scenario: The copy to clipboard button copies the ID
