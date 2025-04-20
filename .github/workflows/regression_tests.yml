@@ -107,6 +107,20 @@ jobs:
         if: steps.cache-venv.outputs.cache-hit != 'true'
         run: make install
 
+      - name: App product to APP for PR
+        continue-on-error: true
+        env:
+          PRODUCT: ${{ inputs.product }}
+          PR_ID: ${{ inputs.pull_request_id }}
+          APIGEE_MFA_SECRET: ${{ secrets.APIGEE_MFA_SECRET }}
+          APIGEE_PASSWORD: ${{ secrets.APIGEE_PASSWORD }}
+          APIGEE_USER: ${{ secrets.APIGEE_USER }}
+        run: |
+          export APIGEE_MFA_SECRET="$APIGEE_MFA_SECRET"
+          export APIGEE_PASSWORD="$APIGEE_PASSWORD"
+          export APIGEE_USER="$APIGEE_USER"
+          poetry run python scripts/add_pr_product_to_app.py --product="$PRODUCT" --pr="$PR_ID"
+
       - name: Regression Tests
         id: tests
         continue-on-error: true

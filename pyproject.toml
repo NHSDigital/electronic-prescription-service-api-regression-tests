@@ -31,6 +31,7 @@ nhs-number-generator = {git = "https://github.com/Iain-S/nhs_number_generator.gi
 pyright = "^1.1.399"
 playwright = "^1.51.0"
 jycm = "^1.5.0"
+pyotp = "^2.9.0"
 
 
 [tool.poetry.group.dev.dependencies]
