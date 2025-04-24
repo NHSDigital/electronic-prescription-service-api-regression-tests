@@ -15,3 +15,26 @@ class PrescriptionDetailsPage:
         )
         self.prescriber_card = page.get_by_test_id("site-card-prescriber")
         self.prescribed_from_field = page.get_by_test_id("site-card-prescribed-from")
+
+        # Prescribed and dispensed items cards
+        self.prescribed_items_heading = page.get_by_role(
+            "heading", name="Prescribed items"
+        )
+        self.dispensed_items_heading = page.get_by_role(
+            "heading", name="Dispensed items"
+        )
+
+        # Cancellation warning
+        self.cancellation_warning = page.get_by_test_id("cancellation-warning")
+
+        # Summary details
+        self.prescription_summary = page.get_by_test_id("prescription-summary-list")
+        self.initial_prescription_details = page.get_by_test_id(
+            "initial-prescription-details"
+        )
+        self.initial_prescription_summary = page.get_by_test_id(
+            "initial-prescription-summary-list"
+        )
+
+        # EPS status tag
+        self.eps_status_tag = page.get_by_test_id("eps-status-tag")
