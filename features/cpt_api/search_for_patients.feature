@@ -5,6 +5,6 @@ Feature: Users are able to get patients from CPTS-FHIR
     @search_for_patients
     Scenario Outline: I can search for a list of patients
         Given I am an authorised prescriber with CPTS-FHIR app
-        When I request the list of patients using the <Identifier>
+        When I request the list of patients
         Then the response indicates a success
         And I can see the list of patients

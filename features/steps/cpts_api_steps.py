@@ -39,6 +39,8 @@ def verify_both_identifier_error(context):
 
 @when("I request the list of patients")
 def request_patient_list(context):
+    # Example data sourced from
+    # https://digital.nhs.uk/developer/api-catalogue/personal-demographics-service-fhir/pds-fhir-api-test-data
     context.family_name = "CHISLETT"
     context.date_of_birth = "2008-09-20"
     context.postcode = "KT19 0ST"
