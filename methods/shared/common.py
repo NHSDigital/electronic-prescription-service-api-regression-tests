@@ -125,11 +125,11 @@ def get_token(authenticator):
     return token
 
 
-def assert_that(actual):
+def assert_that(actual, description=""):
     allure.attach(
         body=str(actual), name="Actual", attachment_type=allure.attachment_type.TEXT
     )
-    return assertpy_assert(val=actual)
+    return assertpy_assert(val=actual, description=description)
 
 
 def attach_api_information(context):

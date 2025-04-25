@@ -51,3 +51,65 @@ def assert_both_identifier_error(context):
     assert_that(json_response["issue"][0]["diagnostics"]).is_equal_to(
         "Invalid query string parameters; only prescriptionId or nhsNumber must be provided, not both."
     )
+
+
+def get_patient_list(context):
+    url = (
+        f"{context.cpts_fhir_base_url}/Patient"
+        f"?familyName={context.family_name}"
+        f"&dateOfBirth={context.date_of_birth}"
+        f"&postcode={context.postcode}"
+    )
+
+    print(url)
+    additional_headers = {
+        "Content-Type": "application/json",
+        "nhsd-organization-uuid": "A83008",
+        "nhsd-session-jobrole": "S0030:G0100:R0570",
+    }
+
+    headers = get_headers(context, context.auth_method, additional_headers)
+
+    context.response = get(url=url, context=context, headers=headers)
+
+
+def assert_patient_list(context):
+    json_response = json.loads(context.response.content)
+    print(json_response)
+
+    expected_family_name = context.family_name
+    expected_date_of_birth = context.date_of_birth
+    expected_postcode = context.postcode
+    expected_given_name = context.expected_given_name
+    expected_gender = context.expected_gender
+    expected_address = context.expected_address
+    expected_nhs_number = context.expected_nhs_number
+
+    assert_that(
+        json_response["body"][0]["familyName"],
+        f"Expected family name to be {expected_family_name}",
+    ).is_equal_to(expected_family_name)
+    assert_that(
+        json_response["body"][0]["dateOfBirth"],
+        f"Expected date of birth to be {expected_date_of_birth}",
+    ).is_equal_to(expected_date_of_birth)
+    assert_that(
+        json_response["body"][0]["postcode"],
+        f"Expected postcode to be {expected_postcode}",
+    ).is_equal_to(expected_postcode)
+    assert_that(
+        json_response["body"][0]["givenName"],
+        f"Expected given name to be {expected_given_name}",
+    ).is_equal_to(expected_given_name)
+    assert_that(
+        json_response["body"][0]["gender"],
+        f"Expected gender to be {expected_gender}",
+    ).is_equal_to(expected_gender)
+    assert_that(
+        json_response["body"][0]["address"],
+        f"Expected address to be {expected_address}",
+    ).is_equal_to(expected_address)
+    assert_that(
+        json_response["body"][0]["nhsNumber"],
+        f"Expected NHS number to be {expected_nhs_number}",
+    ).is_equal_to(expected_nhs_number)

@@ -45,7 +45,8 @@
             "ms-python.pylint",
             "ms-python.black-formatter",
             "jimasp.behave-vsc",
-            "Gruntfuggly.todo-tree"
+            "Gruntfuggly.todo-tree",
+            "alexkrechik.cucumberautocomplete"
         ],
         "settings": {
           "python.defaultInterpreterPath": "/workspaces/electronic-prescription-service-api-regression-tests/venv/bin/python",
