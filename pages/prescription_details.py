@@ -38,3 +38,16 @@ class PrescriptionDetailsPage:
 
         # EPS status tag
         self.eps_status_tag = page.get_by_test_id("eps-status-tag")
+
+        # Message history card
+        self.message_history_timeline = page.get_by_test_id("message-history-timeline")
+        self.dispense_notification_dropdown = page.get_by_test_id(
+            "message-history-dropdown"
+        )
+        self.pending_cancellation_message = page.get_by_text(
+            "This prescription has a pending cancellation, "
+            "but the prescription or items on it have not been cancelled "
+            "as it has been downloaded by a dispenser"
+        )
+        self.cancelled_status_message = "Cancelled"
+        self.site_name_fallback_message = "Site name not available. Try again later."
