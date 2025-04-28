@@ -50,4 +50,6 @@ class PrescriptionDetailsPage:
             "as it has been downloaded by a dispenser"
         )
         self.cancelled_status_message = "Cancelled"
-        self.site_name_fallback_message = "Site name not available. Try again later."
+        self.site_name_fallback_message = (
+            "Organisation name not available. Try again later."
+        )
