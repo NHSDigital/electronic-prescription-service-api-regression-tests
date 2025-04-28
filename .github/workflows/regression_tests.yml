@@ -119,7 +119,7 @@ jobs:
           export APIGEE_MFA_SECRET="$APIGEE_MFA_SECRET"
           export APIGEE_PASSWORD="$APIGEE_PASSWORD"
           export APIGEE_USER="$APIGEE_USER"
-          poetry run python scripts/add_pr_product_to_app.py --product="$PRODUCT" --pr="$PR_ID"
+          poetry run python ./scripts/add_pr_product_to_app.py --product="$PRODUCT" --pr="$PR_ID"
 
       - name: Regression Tests
         id: tests
