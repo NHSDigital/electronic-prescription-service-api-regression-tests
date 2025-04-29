@@ -94,6 +94,7 @@ Feature: Prescription Detail Page in the Clinical Prescription Tracker Service
     And A cancelled status message is shown
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4801
+  @prescription_details_1
   Scenario: User sees fallback text for missing site names in message history
     # FIXME: Remove references to static data
     When I go to the prescription details for prescription ID "88AAF5-A83008-3D404Q"
