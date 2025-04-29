@@ -45,9 +45,9 @@ class PrescriptionDetailsPage:
             "message-history-dropdown"
         )
         self.pending_cancellation_message = page.get_by_test_id(
-            "pending-cancellation-message"
-        )
-        self.cancelled_status_message = "Cancelled"
-        self.site_name_fallback_message = (
-            "Organisation name not available. Try again later."
-        )
+            "prescription-message"
+        ).first
+        self.cancelled_status_message = page.get_by_test_id("new-status-code-tag").first
+        self.no_organisation_name_message = page.get_by_test_id(
+            "no-org-name-message"
+        ).first

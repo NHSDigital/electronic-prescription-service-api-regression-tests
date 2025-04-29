@@ -1,6 +1,5 @@
 from behave import when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
-import re
 
 from pages.prescription_details import PrescriptionDetailsPage
 
@@ -125,18 +124,10 @@ def pending_cancellation_message(context):
 @then("A cancelled status message is shown")
 def cancelled_status_message(context):
     page = PrescriptionDetailsPage(context.page)
-    expect(
-        page.message_history_timeline.get_by_text(
-            page.cancelled_status_message, exact=True
-        )
-    ).to_be_visible()
+    expect(page.cancelled_status_message).to_be_visible()
 
 
 @then("The timeline shows fallback text for missing site names")
 def fallback_site_name_in_timeline(context):
     page = PrescriptionDetailsPage(context.page)
-    expect(
-        page.message_history_timeline.get_by_text(
-            re.compile(page.site_name_fallback_message)
-        ).first
-    ).to_be_visible()
+    expect(page.no_organisation_name_message).to_be_visible()
