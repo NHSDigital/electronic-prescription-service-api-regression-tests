@@ -27,7 +27,6 @@ Feature: The site has a patient detail banner
         Then The patient details banner reports complete data
 
     # TODO: Can we set a prescription with incomplete patient data?
-    @patient_detail_banner_1
     Scenario: When I search for a prescription with incomplete data, the patient detail banner is formatted correctly
         When I go to the search for a prescription page
         And I click on tab Prescription ID search
