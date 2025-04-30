@@ -92,3 +92,24 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
       | H0C757-X83008-C2G93O    | I see a validation message saying "The prescription ID number is not recognised"                   |
       # FIXME: This will need to be updated when the search pages are updated to use real data
       | c0c757a83008c2d93o      | I am redirected to the prescription results page for "C0C757-A83008-C2D93O"                        |
+
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
+  @find_patient
+  Scenario: User is redirected correctly when they search for non-existent patient using NHS number
+    Given I am logged in as a user with a single access role
+    When I am on the search for a prescription page
+    And I click on tab NHS Number Search
+    And I enter NHS number "0987654321" into the input
+    And I click the Find a patient button
+    Then I am on the prescription not found page with redirect to NhsNumberSearch
+
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
+  @find_patient
+  Scenario: User is redirected correctly when they search for an existing patient using NHS number
+    Given I am logged in as a user with a single access role
+    When I am on the search for a prescription page
+    And I click on tab NHS Number Search
+    # FIXME: This will need to be updated when the search pages are updated to use real data
+    And I enter NHS number "1234567890" into the input
+    And I click the Find a patient button
+    Then I am on the prescription list current page with NHS number "1234567890"
