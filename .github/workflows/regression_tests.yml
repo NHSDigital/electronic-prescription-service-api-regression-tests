@@ -38,6 +38,10 @@ on:
         description: 'The github tag to run the test pack from'
         required: false
         default: "main"
+      generate_report:
+        type: boolean
+        description: 'Generate a report for successful test runs'
+        default: false
 
 jobs:
   regression_tests:
@@ -197,3 +201,10 @@ jobs:
           echo The regression tests step failed, this likely means there are test failures.
           echo A test report will be generated shortly and can be viewed at: https://nhsdigital.github.io/eps-test-reports
           exit 1
+
+      - name: Generate Report
+        if: github.event.inputs.generate_report == 'true'
+        run: |
+          poetry run python scripts/send_test_results.py --token=${{ steps.generate-token.outputs.token }} --run_id ${{GITHUB.RUN_ID}}
+          echo You selected to generate a report for successful test runs.
+          echo A test report will be generated shortly and can be viewed at: https://nhsdigital.github.io/eps-test-reports
