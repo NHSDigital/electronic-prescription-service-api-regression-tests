@@ -36,7 +36,7 @@ Feature: Prescription List Page in the Clinical Prescription Tracker Service
     And I am on the prescription list page for prescription ID "C0C757-A83008-C2D93O"
     When I click on the current prescriptions tab heading
     Then I can see the current prescriptions results table
-    And I see the table summary text Showing 4 of 4
+    And I see the table summary text Showing 7 of 7
 
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4792

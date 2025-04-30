@@ -16,7 +16,8 @@ Feature: Prescription Detail Page in the Clinical Prescription Tracker Service
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4802
   Scenario: User sees only the prescriber organisation card when they should
     # FIXME: Remove references to static data
-    When I go to the prescription details for prescription ID "209E3D-A83008-327F9F"
+    # When I go to the prescription details for prescription ID "C0C757-A83008-C2D93O"
+    When I go to the prescription details for prescription ID "3DA34A-A83008-A0B2EV"
     Then The prescriber site card is visible
     And The dispenser site card is not visible
     And The nominated dispenser site card is not visible
