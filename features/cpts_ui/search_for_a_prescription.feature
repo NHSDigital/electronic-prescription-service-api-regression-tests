@@ -113,3 +113,28 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     And I enter NHS number "1234567890" into the input
     And I click the Find a patient button
     Then I am on the prescription list current page with NHS number "1234567890"
+
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
+  @find_patient
+  Scenario: User sees a validation message when NHS number field is left empty
+    Given I am logged in as a user with a single access role
+    And I am on the search for a prescription page
+    When I click on tab NHS Number Search
+    And I click the Find a patient button
+    Then I see a validation error is displayed
+
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
+  @find_patient
+  Scenario Outline: User sees a validation message for invalid NHS number
+    Given I am logged in as a user with a single access role
+    And I am on the search for a prescription page
+    When I click on tab NHS Number Search
+    And I enter NHS number "<Invalid NHS number>" into the input
+    And I click the Find a patient button
+    Then I see a validation error is displayed
+
+  Examples:
+    | Invalid NHS number |
+    | abc                |
+    | 123                |
+    | 123456789000       |

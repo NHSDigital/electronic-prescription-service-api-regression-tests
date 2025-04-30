@@ -88,6 +88,8 @@ def step_with_dynamic_outcome(context, outcome):
 
 @when('I enter NHS number "{nhs_number}" into the input')
 def enter_nhs_number(context, nhs_number):
+    if nhs_number == "":
+        nhs_number = ""
     page = SearchForAPrescription(context.page)
     page.nhs_number_input.fill(nhs_number)
 
@@ -110,3 +112,11 @@ def redirected_to_nhs_current(context, nhs_number):
         rf"/site/prescription-list-current\?nhsNumber={nhs_number}"
     )
     context.page.wait_for_url(expected_url, wait_until="load", timeout=60000)
+
+
+@then("I see a validation error is displayed")
+def i_see_validation_error_displayed(context):
+    page = SearchForAPrescription(context.page)
+    expect(page.error_summary).to_be_visible()
+    # Check that at least one list item exists in the summary
+    assert page.error_summary.locator("li").count() > 0
