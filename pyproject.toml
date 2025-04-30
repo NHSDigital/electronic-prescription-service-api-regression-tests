@@ -14,7 +14,7 @@ assertpy = "^1.1"
 behave = "^1.2.6"
 behave-cucumber-formatter = "^1.0.1"
 lxml = "^4.9.1"
-allure-behave = "^2.14.0"
+allure-behave = "^2.14.1"
 black = "^25.1.0"
 semver = "^3.0.4"
 gitpython = "^3.1.44"
@@ -28,9 +28,10 @@ python-dotenv = "^1.1.0"
 pytest-nhsd-apim = "^4.0.1"
 requests-oauthlib = "^2.0.0"
 nhs-number-generator = {git = "https://github.com/Iain-S/nhs_number_generator.git"}
-pyright = "^1.1.399"
+pyright = "^1.1.400"
 playwright = "^1.51.0"
 jycm = "^1.5.0"
+pyotp = "^2.9.0"
 
 
 [tool.poetry.group.dev.dependencies]

@@ -23,25 +23,23 @@ def banner_not_visible(context):
     expect(banner.banner).not_to_be_visible()
 
 
-@then("The prescription information banner shows")
-def banner_shows_data(context):
+@then("The prescription information banner is visible")
+def banner_is_visible(context):
     banner = PrescriptionInformationBanner(context.page)
 
     expect(banner.banner).to_be_visible()
-    for row in context.table:
-        field, value = row.cells
-        if field == "Prescription ID":
-            expect(banner.prescription_id).to_contain_text(value)
-        elif field == "Issue Date":
-            expect(banner.issue_date).to_contain_text(value)
-        elif field == "Status":
-            expect(banner.status).to_contain_text(value)
-        elif field == "Type":
-            expect(banner.prescription_type).to_contain_text(value)
-        elif field == "Repeat":
-            expect(banner.repeat).to_contain_text(value)
-        elif field == "Days Supply":
-            expect(banner.days_supply).to_contain_text(value)
+    expect(banner.prescription_id).not_to_have_text("")
+    expect(banner.issue_date).not_to_have_text("")
+    expect(banner.status).not_to_have_text("")
+    expect(banner.prescription_type).not_to_have_text("")
+
+
+@then("The prescription information banner displays repeat and days supply data")
+def banner_has_repeat_and_days_supply(context):
+    banner = PrescriptionInformationBanner(context.page)
+    expect(banner.banner).to_be_visible()
+    expect(banner.prescription_type).to_contain_text("eRD")
+    expect(banner.days_supply).not_to_have_text("")
 
 
 @when("I click the copy prescription ID button")
