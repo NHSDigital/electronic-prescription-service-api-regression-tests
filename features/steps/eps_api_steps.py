@@ -34,6 +34,9 @@ def setup_new_prescription(context, nomination, prescription_type):
     if prescription_type == "repeat":
         context.type_code = "continuous"
         context.intent = "instance-order"
+    if prescription_type == "eRD":
+        context.type_code = "continuous-repeat-dispensing"
+        context.intent = "original-order"
 
 
 @given("I successfully prepare and sign a prescription")

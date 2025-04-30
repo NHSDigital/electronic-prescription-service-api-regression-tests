@@ -14,9 +14,13 @@ Feature: I can cancel prescriptions
       | App           | Nomination    | Type   |
       | EPS-FHIR      | nominated     | acute  |
       | EPS-FHIR      | non-nominated | acute  |
+      | EPS-FHIR      | nominated     | eRD    |
+      | EPS-FHIR      | non-nominated | eRD    |
       | EPS-FHIR      | nominated     | repeat |
       | EPS-FHIR      | non-nominated | repeat |
       | EPS-FHIR-SHA1 | nominated     | acute  |
       | EPS-FHIR-SHA1 | non-nominated | acute  |
+      | EPS-FHIR-SHA1 | nominated     | eRD    |
+      | EPS-FHIR-SHA1 | non-nominated | eRD    |
       | EPS-FHIR-SHA1 | nominated     | repeat |
       | EPS-FHIR-SHA1 | non-nominated | repeat |
