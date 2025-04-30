@@ -118,5 +118,4 @@ def redirected_to_nhs_current(context, nhs_number):
 def i_see_validation_error_displayed(context):
     page = SearchForAPrescription(context.page)
     expect(page.error_summary).to_be_visible()
-    # Check that at least one list item exists in the summary
     assert page.error_summary.locator("li").count() > 0
