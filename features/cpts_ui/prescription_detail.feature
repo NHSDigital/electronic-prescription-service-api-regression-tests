@@ -71,3 +71,31 @@ Feature: Prescription Detail Page in the Clinical Prescription Tracker Service
   Scenario: Dispensed item cards do not show pharmacy status when it is missing
     When I go to the prescription details for prescription ID "4D6F2C-A83008-A3E7D1"
     Then No pharmacy status label is shown in the dispensed item card
+
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4801
+  Scenario: User sees message history with dispense notification dropdown
+    # FIXME: Remove references to static data
+    When I go to the prescription details for prescription ID "4D6F2C-A83008-A3E7D1"
+    Then The message history timeline is visible
+    And A dispense notification information dropdown is shown
+
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4801
+  Scenario: User sees message history with pending cancellation
+    # FIXME: Remove references to static data
+    When I go to the prescription details for prescription ID "7F1A4B-A83008-91DC2E"
+    Then The message history timeline is visible
+    And A pending cancellation message is shown
+
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4801
+  Scenario: User sees message history for a cancelled prescription
+    # FIXME: Remove references to static data
+    When I go to the prescription details for prescription ID "3DA34A-A83008-A0B2EV"
+    Then The message history timeline is visible
+    And A cancelled status message is shown
+
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4801
+  Scenario: User sees fallback text for missing site names in message history
+    # FIXME: Remove references to static data
+    When I go to the prescription details for prescription ID "88AAF5-A83008-3D404Q"
+    Then The message history timeline is visible
+    And The timeline shows fallback text for missing site names
