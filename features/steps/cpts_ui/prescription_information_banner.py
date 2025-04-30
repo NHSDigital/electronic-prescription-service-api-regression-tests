@@ -26,6 +26,7 @@ def banner_not_visible(context):
 @then("The prescription information banner shows")
 def banner_shows_data(context):
     banner = PrescriptionInformationBanner(context.page)
+
     expect(banner.banner).to_be_visible()
     for row in context.table:
         field, value = row.cells

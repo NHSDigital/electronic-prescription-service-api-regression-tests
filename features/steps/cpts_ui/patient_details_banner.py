@@ -27,6 +27,9 @@ def i_can_not_see_the_rbac_banner(context):
 
 @then("The patient details banner reports incomplete data")
 def the_patient_details_banner_reports_incomplete_data(context):
+    context.page.wait_for_selector(
+        '[data-testid="eps-loading-spinner"]', state="hidden", timeout=3000
+    )
     banner = PatientDetailsBanner(context.page)
 
     expect(banner.patient_details_banner).to_be_visible()
