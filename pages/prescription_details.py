@@ -38,3 +38,16 @@ class PrescriptionDetailsPage:
 
         # EPS status tag
         self.eps_status_tag = page.get_by_test_id("eps-status-tag")
+
+        # Message history card
+        self.message_history_timeline = page.get_by_test_id("message-history-timeline")
+        self.dispense_notification_dropdown = page.get_by_test_id(
+            "message-history-dropdown"
+        )
+        self.pending_cancellation_message = page.get_by_test_id(
+            "prescription-message"
+        ).first
+        self.cancelled_status_message = page.get_by_test_id("new-status-code-tag").first
+        self.no_organisation_name_message = page.get_by_test_id(
+            "no-org-name-message"
+        ).first

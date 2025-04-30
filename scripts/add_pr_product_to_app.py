@@ -63,11 +63,11 @@ def add_products_to_apps():
     headers = get_headers()
 
     def add_product_to_prescribing_app():
-        print(f"adding product {pr_id} to prescribing")
+        print(f"adding {pr_id} to product prescribing")
         body = json.dumps(
             {
                 "apiProducts": [
-                    f"electronic-prescription-service-api-{pr_id}-prescribing"
+                    f"fhir-prescribing--internal-dev--fhir-prescribing-{pr_id}--nhs-cis2-aal3"
                 ]
             }
         )
@@ -81,7 +81,7 @@ def add_products_to_apps():
             response.status_code == 200
         ), f"expected 200, but got {response.status_code}\n{response.text}"
 
-        print(f"adding product {pr_id} to prescribing SHA1")
+        print(f"adding {pr_id} to product prescribing SHA1")
         response = requests.put(
             url=prescribing_url,
             headers=headers,
@@ -92,9 +92,13 @@ def add_products_to_apps():
         ), f"expected 200, but got {response.status_code}\n{response.text}"
 
     def add_product_to_dispensing_app():
-        print(f"adding product {pr_id} to dispensing")
+        print(f"adding {pr_id} to product dispensing")
         body = json.dumps(
-            {"apiProducts": [f"electronic-prescription-service-api-{pr_id}-dispensing"]}
+            {
+                "apiProducts": [
+                    f"fhir-dispensing--internal-dev--fhir-dispensing-{pr_id}--nhs-cis2-aal3"
+                ]
+            }
         )
 
         response = requests.put(
