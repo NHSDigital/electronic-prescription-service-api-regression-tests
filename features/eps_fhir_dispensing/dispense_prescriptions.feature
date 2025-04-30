@@ -3,7 +3,7 @@
 Feature: I can dispense prescriptions
 
   @dispense
-  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4941
+    @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4941
   Scenario Outline: I can dispense a prescription
     Given a <Nomination> <Type> prescription has been created and released using proxygen apis
     When I dispense the prescription
@@ -15,6 +15,8 @@ Feature: I can dispense prescriptions
       | non-nominated | acute  |
       | nominated     | repeat |
       | non-nominated | repeat |
+      | nominated     | eRD    |
+      | non-nominated | eRD    |
 
   @amend
   Scenario: I can amend a single dispense notification
