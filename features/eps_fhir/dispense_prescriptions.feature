@@ -14,6 +14,8 @@ Feature: I can dispense prescriptions
       | non-nominated | acute  |
       | nominated     | repeat |
       | non-nominated | repeat |
+      | nominated     | eRD    |
+      | non-nominated | eRD    |
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-3868
   Scenario: I can amend a single dispense notification
