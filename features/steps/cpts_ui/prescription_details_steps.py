@@ -3,12 +3,10 @@ from playwright.sync_api import expect
 
 from pages.prescription_details import PrescriptionDetailsPage
 
-# FIXME: Remove references to the dev link when we can navigate properly to the prescription details
-from pages.prescription_list_page import PrescriptionListPage
-
 
 @when('I go to the prescription details for prescription ID "{prescription_id}"')
 def i_go_to_prescription_details_for_prescription_id(context, prescription_id):
+    context.prescription_id = prescription_id
     context.execute_steps(
         f"""
     When I search for a prescription using a valid prescription ID "{prescription_id}"
@@ -17,18 +15,24 @@ def i_go_to_prescription_details_for_prescription_id(context, prescription_id):
     )
 
 
-# FIXME: THIS IS FOR DEVELOPMENT ONLY - DELETE IT WHEN WE HAVE A PROPER USER FLOW!!!
 @when("I click through to the prescription details page")
 def i_click_to_prescription_details_page(context):
-    page = PrescriptionListPage(context.page)
-    page.dev_link.click()
+    context.page.wait_for_selector(
+        '[data-testid="eps-loading-spinner"]', state="hidden", timeout=3000
+    )
+    prescription_id = context.prescription_id
+    full_test_id = f"view-prescription-link-{prescription_id}"
 
-    context.page.wait_for_load_state()
+    context.page.wait_for_selector(f'[data-testid="{full_test_id}"]')
+    context.page.get_by_test_id(full_test_id).click()
 
 
 @then("The {org} site card is {visibility}")
 def site_card_visibility_check(context, org, visibility):
     page = PrescriptionDetailsPage(context.page)
+    context.page.wait_for_selector(
+        '[data-testid="patient-details-banner"]', timeout=3000
+    )
 
     expect_prescribed_from_field = False
     match org:
