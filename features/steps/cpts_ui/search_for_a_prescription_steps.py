@@ -88,8 +88,6 @@ def step_with_dynamic_outcome(context, outcome):
 
 @when('I enter NHS number "{nhs_number}" into the input')
 def enter_nhs_number(context, nhs_number):
-    if nhs_number == "":
-        nhs_number = ""
     page = SearchForAPrescription(context.page)
     page.nhs_number_input.fill(nhs_number)
 
