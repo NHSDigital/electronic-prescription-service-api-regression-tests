@@ -30,5 +30,6 @@ Feature: The site has a patient detail banner
     Scenario: When I search for a prescription with incomplete data, the patient detail banner is formatted correctly
         When I go to the search for a prescription page
         And I click on tab Prescription ID search
-        When I go to the prescription details for prescription ID "209E3D-A83008-327F9F"
+        # FIXME: This will need to be updated when the search pages are updated to use real data
+        And I go to the prescription details for prescription ID "209E3D-A83008-327F9F"
         Then The patient details banner reports incomplete data
