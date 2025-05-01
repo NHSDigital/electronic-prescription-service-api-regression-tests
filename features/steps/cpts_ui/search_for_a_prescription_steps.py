@@ -100,7 +100,7 @@ def click_find_patient_button(context):
 
 @then("I am on the prescription not found page with redirect to NhsNumSearch")
 def redirected_to_nhs_not_found(context):
-    expected_url = re.compile(r"/site/prescription-not-found")
+    expected_url = "/site/prescription-not-found"
     context.page.wait_for_url(expected_url, wait_until="load", timeout=60000)
 
 
