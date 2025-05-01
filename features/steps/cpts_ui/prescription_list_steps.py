@@ -128,8 +128,6 @@ def i_see_current_prescriptions_results_tab(context):
             '[data-testid="future-prescriptions-results-table"]'
         )
     ).not_to_be_visible()
-    # expect(prescription_list_page.future_prescriptions_results_tab_table).not_to_be_visible()
-    # expect(prescription_list_page.past_prescriptions_results_tab_table).not_to_be_visible()
 
 
 @then("I see the table summary text Showing {count} of {count}")
