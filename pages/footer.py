@@ -7,9 +7,7 @@ class Footer:
         self.page = page
         self.footer = page.get_by_test_id("eps_footer")
         self.copyright = page.get_by_test_id("eps_footer-copyright")
-        self.privacy_notice_link = page.get_by_test_id(
-            "eps_footer-link-privacy-notice-opens-in-new-tab"
-        )
+        self.privacy_notice_link = page.get_by_test_id("eps_footer-link-privacy-notice")
         self.terms_link = page.get_by_test_id("eps_footer-link-terms-and-conditions")
         self.cookie_link = page.get_by_test_id("eps_footer-link-cookie-policy")
 
