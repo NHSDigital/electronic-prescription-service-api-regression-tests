@@ -22,8 +22,8 @@ Feature: Footer
     When I click the "<LinkName>" link in the footer
     Then the current page URL contains <ExpectedURL>
 
-  Examples:
-    | LinkName             | ExpectedURL          |
-    | privacy notice       | digital.nhs.uk       |
-    | terms and conditions | terms-and-conditions |
-    | cookie policy        | cookies              |
+    Examples:
+      | LinkName               | ExpectedURL        |
+      | privacy notice         | privacy-notice     |
+      | terms and conditions   | digital.nhs.uk     |
+      | cookie policy          | cookies            |
