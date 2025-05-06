@@ -21,14 +21,12 @@ class Footer:
     def click_link(self, name: str):
         name = name.lower().strip()
         if name == "privacy notice":
+            self.privacy_notice_link.click()
+        elif name == "terms and conditions":
             # External links normally open in a new tab (target="_blank"),
             # which Playwright can't follow for assertions like checking the new URL.
             # Removing the `target` ensures we stay in the same context for testing.
-            self.privacy_notice_link.evaluate(
-                "element => element.removeAttribute('target')"
-            )
-            self.privacy_notice_link.click()
-        elif name == "terms and conditions":
+            self.terms_link.evaluate("element => element.removeAttribute('target')")
             self.terms_link.click()
         elif name == "cookie policy":
             self.cookie_link.click()
