@@ -153,11 +153,11 @@ if __name__ == "__main__":
         "EPS-FHIR-DISPENSING",
     ]:
         print(f"{product} Not supported. Exiting.")
-        exit(1)
+        exit(0)
     pr_id = arguments.pr.lower()
     if "pr-" not in pr_id:
         print("Not a Pull Request. Exiting.")
-        exit(1)
+        exit(0)
 
     access_token, refresh_token = get_token()
     get_consumer_keys()
