@@ -1,6 +1,6 @@
-python 3.12.6
-poetry 1.8.3
+python 3.12.9
+poetry 2.1.1
 shellcheck 0.10.0
-nodejs 22.9.0
-actionlint 1.7.1
-allure 2.31.0
+nodejs 22.14.0
+actionlint 1.7.7
+allure 2.33.0

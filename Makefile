@@ -18,6 +18,14 @@ update-node:
 update-poetry:
 	poetry update
 
+install-asdf:
+	asdf plugin add python
+	asdf plugin add poetry
+	asdf plugin add shellcheck
+	asdf plugin add nodejs
+	asdf plugin add actionlint
+	asdf install
+
 install-python:
 	poetry install
 
@@ -52,6 +60,7 @@ check-licenses:
 
 deep-clean-install:
 	rm -f -d -r .venv/
+	mkdir .venv/
 	asdf uninstall poetry
 	asdf uninstall python
 	asdf plugin remove poetry

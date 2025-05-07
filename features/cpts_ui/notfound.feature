@@ -8,6 +8,7 @@ Feature: The site has a 404 not found page
         
     Scenario: The user sees a "Page not found" error page when they navigate to an unknown page while logged in
         Given I am logged in as a user with multiple access roles
+        And I have selected a role
         When I navigate to a non-existent page
         Then I am on the logged in Page Not Found page
 

@@ -18,9 +18,9 @@ def i_am_on_the_confirm_your_role_page(context):
 
 @given("I have confirmed a role")
 def i_have_confirmed_a_role(context):
+    context.execute_steps("given I have selected a role")
     context.execute_steps(
-        """given I have selected a role
-                          when I click the confirm and continue button on the your selected role page"""
+        "when I click the confirm and continue button on the your selected role page"
     )
 
 
@@ -45,6 +45,7 @@ def i_click_the_change_link_next_to_the_org_text(context):
 def i_click_the_confirm_and_continue_button_on_the_your_selected_role_page(context):
     your_selected_role_page = YourSelectedRole(context.page)
     your_selected_role_page.confirm_button.click()
+    context.page.wait_for_load_state()
 
 
 ############################################################################

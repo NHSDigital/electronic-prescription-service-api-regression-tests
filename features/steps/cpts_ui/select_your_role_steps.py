@@ -9,9 +9,6 @@ from pages.select_your_role import SelectYourRole
 def i_have_selected_role(context):
     context.execute_steps("when I select a role")
 
-    select_your_role_page = SelectYourRole(context.page)
-    select_your_role_page.first_role_card.click()
-
 
 @when("I select a role")
 def i_select_a_role(context):

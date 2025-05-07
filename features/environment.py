@@ -7,6 +7,7 @@ from behave.model import Scenario
 from dotenv import load_dotenv
 from playwright.sync_api import sync_playwright
 from methods.api import eps_api_methods
+import allure
 
 load_dotenv(override=True)
 global _page
@@ -50,6 +51,10 @@ AWS_ENVS = {
 }
 
 APIGEE_APPS = {
+    "CPTS-FHIR": {
+        "client_id": os.getenv("CPT_FHIR_CLIENT_ID"),
+        "client_secret": os.getenv("CPT_FHIR_CLIENT_SECRET"),
+    },
     "EPS-FHIR": {
         "client_id": os.getenv("EPS_FHIR_CLIENT_ID"),
         "client_secret": os.getenv("EPS_FHIR_CLIENT_SECRET"),
@@ -86,22 +91,28 @@ CIS2_USERS = {
 LOGIN_USERS = {"user_id": "9449304130"}
 # Roles with Access: multiple | Roles without Access: multiple | Selected Role: No
 MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES_ZERO_NO_ACCESS = "555043308599"
+
 # Roles with Access: multiple | Roles without Access: 0 | Selected Role: No
 MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES = "555043308597"
+
 # Roles with Access: multiple | Roles without Access: multiple | Selected Role: Yes
 MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES_WITH_SELECTED_ROLE = "555043304334"
+
 # Roles with Access: 1 | Roles without Access: 0 | Selected Role: No
 MOCK_CIS2_LOGIN_ID_SINGLE_ACCESS_ROLE = "555043300081"
+
 # Roles with Access: 1 | Roles without Access: multiple | Selected Role: No
 MOCK_CIS2_LOGIN_ID_SINGLE_ROLE_WITH_ACCESS_MULTIPLE_WITHOUT = "555043303526"
+
 # Roles with Access: 0 | Roles without Access: multiple | Selected Role: No
 MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE = "555083343101"
+
 # Roles with Access: 0 | Roles without Access: 0 | Selected Role: No
 MOCK_CIS2_LOGIN_ID_NO_ROLES = "555073103101"
 
 REPOS = {
     "CPTS-UI": "https://github.com/NHSDigital/eps-prescription-tracker-ui",
-    "CPTS-API": "https://github.com/NHSDigital/electronic-prescription-service-clinical-prescription-tracker",
+    "CPTS-FHIR": "https://github.com/NHSDigital/electronic-prescription-service-clinical-prescription-tracker",
     "EPS-FHIR": "https://github.com/NHSDigital/electronic-prescription-service-api",
     "EPS-FHIR-PRESCRIBING": "https://github.com/NHSDigital/electronic-prescription-service-api",
     "EPS-FHIR-DISPENSING": "https://github.com/NHSDigital/electronic-prescription-service-api",
@@ -116,14 +127,15 @@ PULL_REQUEST_ID = os.getenv("PULL_REQUEST_ID")
 JWT_PRIVATE_KEY = os.getenv("JWT_PRIVATE_KEY")
 JWT_KID = os.getenv("JWT_KID")
 HEADLESS = os.getenv("HEADLESS", "True").lower() in ("true", "1", "yes")
+SLOWMO = float(os.getenv("SLOWMO", "0.0"))
 
 CPTS_UI_PREFIX = "cpt-ui"
+CPTS_FHIR_SUFFIX = "clinical-prescription-tracker"
 EPS_FHIR_SUFFIX = "electronic-prescriptions"
 EPS_FHIR_PRESCRIBING_SUFFIX = "fhir-prescribing"
 EPS_FHIR_DISPENSING_SUFFIX = "fhir-dispensing"
 PFP_SUFFIX = "prescriptions-for-patients"
 PSU_SUFFIX = "prescription-status-update"
-CPTS_API_SUFIX = "clinical-prescription-tracker"
 
 
 def count_of_scenarios_to_run(context):
@@ -163,9 +175,19 @@ def before_scenario(context, scenario):
         return
     product = context.config.userdata["product"].upper()
     if product == "CPTS-UI":
-        global _playwright
-        global _page
+        global _playwright  # noqa: F824
+        global _page  # noqa: F824
         context.browser = context.browser.new_context()
+        context.browser.add_init_script(
+            """
+            window.__copiedText = "";
+            navigator.clipboard.writeText = (text) => {
+                window.__copiedText = text;
+                return Promise.resolve();
+            };
+        """
+        )
+        context.browser.tracing.start(screenshots=True, snapshots=True, sources=True)
         context.page = context.browser.new_page()
         _page = context.page
         set_page(context, _page)
@@ -174,9 +196,20 @@ def before_scenario(context, scenario):
 def after_scenario(context, scenario):
     product = context.config.userdata["product"].upper()
     if product == "CPTS-UI":
+        context.browser.tracing.stop(path="/tmp/trace.zip")
         if hasattr(context, "page"):
+            if scenario.status == "failed":
+                allure.attach(
+                    context.page.screenshot(),
+                    attachment_type=allure.attachment_type.PNG,
+                )
+                allure.attach.file(
+                    "/tmp/trace.zip",
+                    name="playwright_failure_trace.zip",
+                    attachment_type="application/zip",
+                )
             if context.page is not None:
-                global _page
+                global _page  # noqa: F824
                 _page.close()
 
 
@@ -206,8 +239,8 @@ def before_all(context):
         )
         context.pfp_base_url = os.path.join(select_apigee_base_url(env), PFP_SUFFIX)
         context.psu_base_url = os.path.join(select_apigee_base_url(env), PSU_SUFFIX)
-        context.cpts_api_base_url = os.path.join(
-            select_apigee_base_url(env), CPTS_API_SUFIX
+        context.cpts_fhir_base_url = os.path.join(
+            select_apigee_base_url(env), CPTS_FHIR_SUFFIX
         )
 
         if PULL_REQUEST_ID and env != "LOCALHOST":
@@ -222,12 +255,12 @@ def before_all(context):
         global _playwright
         _playwright = sync_playwright().start()
         context.browser = _playwright.chromium.launch(
-            headless=HEADLESS, channel="chrome"
+            headless=HEADLESS, channel="chrome", slow_mo=SLOWMO
         )
 
     eps_api_methods.calculate_eps_fhir_base_url(context)
     print("CPTS-UI: ", context.cpts_ui_base_url)
-    print("CPTS-API: ", context.cpts_api_base_url)
+    print("CPTS-FHIR: ", context.cpts_fhir_base_url)
     print("EPS: ", context.eps_fhir_base_url)
     print("EPS-PRESCRIBING: ", context.eps_fhir_prescribing_base_url)
     print("EPS-DISPENSING: ", context.eps_fhir_dispensing_base_url)
@@ -237,64 +270,67 @@ def before_all(context):
 
 def get_url_with_pr(context, env, product):
     assert PULL_REQUEST_ID is not None
+    pull_request_id = PULL_REQUEST_ID.lower()
     if product == "EPS-FHIR":
         context.eps_fhir_base_url = os.path.join(
-            INTERNAL_DEV_BASE_URL, f"{EPS_FHIR_SUFFIX}-{PULL_REQUEST_ID}"
+            INTERNAL_DEV_BASE_URL, f"{EPS_FHIR_SUFFIX}-{pull_request_id}"
         )
     if product in ["EPS-FHIR-PRESCRIBING", "EPS-FHIR-DISPENSING"]:
         context.eps_fhir_prescribing_base_url = os.path.join(
             INTERNAL_DEV_BASE_URL,
-            f"{EPS_FHIR_PRESCRIBING_SUFFIX}-{PULL_REQUEST_ID}",
+            f"{EPS_FHIR_PRESCRIBING_SUFFIX}-{pull_request_id}",
         )
         context.eps_fhir_dispensing_base_url = os.path.join(
             INTERNAL_DEV_BASE_URL,
-            f"{EPS_FHIR_DISPENSING_SUFFIX}-{PULL_REQUEST_ID}",
+            f"{EPS_FHIR_DISPENSING_SUFFIX}-{pull_request_id}",
         )
     if product == "PFP-APIGEE":
         context.pfp_base_url = os.path.join(
-            INTERNAL_DEV_BASE_URL, f"{PFP_SUFFIX}-{PULL_REQUEST_ID}"
+            INTERNAL_DEV_BASE_URL, f"{PFP_SUFFIX}-{pull_request_id}"
         )
     if product == "PSU":
         context.psu_base_url = os.path.join(
-            INTERNAL_DEV_BASE_URL, f"{PSU_SUFFIX}-{PULL_REQUEST_ID}"
+            INTERNAL_DEV_BASE_URL, f"{PSU_SUFFIX}-{pull_request_id}"
         )
     if product == "PFP-AWS":
         handle_pfp_aws_pr_url(context, env)
     if product == "CPTS-UI":
         handle_cpt_ui_pr_url(context, env)
-    if product == "CPTS-API":
-        context.cpts_api_base_url = os.path.join(
-            INTERNAL_DEV_BASE_URL, f"{CPTS_API_SUFIX}-{PULL_REQUEST_ID}"
+    if product == "CPTS-FHIR":
+        context.cpts_fhir_base_url = os.path.join(
+            INTERNAL_DEV_BASE_URL, f"{CPTS_FHIR_SUFFIX}-{pull_request_id}"
         )
 
 
 def handle_cpt_ui_pr_url(context, env):
     assert PULL_REQUEST_ID is not None
+    pull_request_id = PULL_REQUEST_ID.lower()
     context.cpts_ui_base_url = (
-        f"https://{CPTS_UI_PREFIX}-{PULL_REQUEST_ID}{select_apigee_base_url(env)}"
+        f"https://{CPTS_UI_PREFIX}-{pull_request_id}{select_apigee_base_url(env)}"
     )
     if env == "INTERNAL-DEV":
         context.cpts_ui_base_url = CPTS_UI_PR_URL.replace(
-            "{{aws_pull_request_id}}", PULL_REQUEST_ID
+            "{{aws_pull_request_id}}", pull_request_id
         )
     if env == "INTERNAL-DEV-SANDBOX":
         context.cpts_ui_base_url = CPTS_UI_SANDBOX_PR_URL.replace(
-            "{{aws_pull_request_id}}", PULL_REQUEST_ID
+            "{{aws_pull_request_id}}", pull_request_id
         )
 
 
 def handle_pfp_aws_pr_url(context, env):
     assert PULL_REQUEST_ID is not None
+    pull_request_id = PULL_REQUEST_ID.lower()
     context.pfp_base_url = os.path.join(
-        INTERNAL_DEV_BASE_URL, f"{PFP_SUFFIX}-{PULL_REQUEST_ID}"
+        INTERNAL_DEV_BASE_URL, f"{PFP_SUFFIX}-{pull_request_id}"
     )
     if env == "INTERNAL-DEV":
         context.pfp_base_url = PFP_AWS_PR_URL.replace(
-            "{{aws_pull_request_id}}", PULL_REQUEST_ID
+            "{{aws_pull_request_id}}", pull_request_id
         )
     if env == "INTERNAL-DEV-SANDBOX":
         context.pfp_base_url = PFP_AWS_SANDBOX_PR_URL.replace(
-            "{{aws_pull_request_id}}", PULL_REQUEST_ID
+            "{{aws_pull_request_id}}", pull_request_id
         )
 
 

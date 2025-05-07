@@ -3,6 +3,7 @@ from playwright.sync_api import Page
 
 class PageNotFound:
     def __init__(self, page: Page):
+        page.wait_for_load_state()
         self.page = page
 
         self.header_text = page.get_by_test_id("eps-404-header")

@@ -6,14 +6,24 @@ from pages.header import Header
 from pages.footer import Footer
 
 
-@when("I go to the homepage")
-def goto_page(context):
-    context.page.goto(context.cpts_ui_base_url + "site/")
+@when("I go to the {page} page")
+def goto_page(context, page):
+    target = ""
+
+    if page == "home":
+        target = ""
+    elif page == "search for a prescription":
+        target = "search-by-prescription-id"
+    elif page == "select your role":
+        target = "select-your-role"
+
+    url = f"{context.cpts_ui_base_url}site/{target}"
+    context.page.goto(url)
 
 
 @given("I am on the homepage")
 def i_am_on_the_home_page(context):
-    goto_page(context)
+    goto_page(context, "home")
     header = Header(context.page)
     header.page.is_visible(header.header)
 
@@ -27,7 +37,7 @@ def verify_on_home_page(context):
 @then("I can see the footer")
 def i_can_see_the_footer(context):
     footer = Footer(context.page)
-    footer.page.is_visible(footer.footer)
+    expect(footer.footer).to_be_visible()
 
 
 @then("I can see the header")
