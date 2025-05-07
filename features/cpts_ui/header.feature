@@ -90,9 +90,9 @@ Feature: Header
   ############################################################################
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4814  
   Scenario: Feedback link is always visible in the header
-      Given I am logged in as a user with a pre selected role
-      When I go to the home page
-      Then I see the "Give feedback" link
+    Given I am logged in as a user with a pre selected role
+    When I go to the home page
+    Then I see the "Give feedback" link
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4814
   Scenario: Feedback link opens in a new tab
