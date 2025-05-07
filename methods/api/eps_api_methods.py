@@ -1,6 +1,7 @@
 from features.environment import CIS2_USERS
 from messages.eps_fhir.cancel import Cancel
 from messages.eps_fhir.dispense_notification import DispenseNotification
+from messages.eps_fhir.dispense_notification_erd import DispenseNotificationERD
 from messages.eps_fhir.prescription import Prescription
 from messages.eps_fhir.prescription_return import Return
 from messages.eps_fhir.release import Release
@@ -86,6 +87,15 @@ def dispense_prescription(context):
 
     dispense_notification = DispenseNotification(context, False).body
     post(data=dispense_notification, url=url, context=context, headers=headers)
+
+
+def dispense_erd_prescription(context):
+    url = f"{DISPENSING_BASE_URL}/FHIR/R4/$process-message#dispense-notification"
+    additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
+    headers = get_headers(context, context.auth_method, additional_headers)
+
+    dispense_notification_erd = DispenseNotificationERD(context, False).body
+    post(data=dispense_notification_erd, url=url, context=context, headers=headers)
 
 
 def amend_dispense_notification(context):
