@@ -57,3 +57,16 @@ def i_see_change_role_link(context):
 def dont_see_change_role_link(context):
     header = Header(context.page)
     expect(header.change_role_link).not_to_be_visible()
+
+
+@then('I see the "Give feedback" link')
+def i_see_feedback_link(context):
+    header = Header(context.page)
+    expect(header.feedback_link).to_be_visible()
+    expect(header.feedback_link).to_have_text("Give feedback (opens in new tab)")
+
+
+@then('the "Give feedback" link opens the feedback form in a new tab')
+def feedback_link_opens_in_new_tab(context):
+    header = Header(context.page)
+    header.assert_feedback_link_is_external_and_opens_in_new_tab()
