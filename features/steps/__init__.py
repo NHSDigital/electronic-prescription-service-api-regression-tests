@@ -1,5 +1,6 @@
 from cpts_ui.change_role_steps import *  # noqa: F403,F401
 from cpts_ui.header_steps import *  # noqa: F403,F401
+from cpts_ui.footer_steps import *  # noqa: F403,F401
 from cpts_ui.home_steps import *  # noqa: F403,F401
 from cpts_ui.login_steps import *  # noqa: F403,F401
 from cpts_ui.logout_steps import *  # noqa: F403,F401
