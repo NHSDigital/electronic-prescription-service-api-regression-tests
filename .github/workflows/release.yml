@@ -2,7 +2,7 @@ name: release workflow
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
 
 env:
   BRANCH_NAME: ${{ github.event.ref.BRANCH_NAME }}
@@ -100,17 +100,35 @@ jobs:
 
       - name: Generate Behave steps catalog as HTML
         run: |
+          set +H  # Disable history expansion to prevent !DOCTYPE error
           mkdir -p docs
           {
-            echo "<!DOCTYPE html>"
-            echo "<html><head><meta charset='UTF-8'><title>Behave Steps Catalog</title></head><body><pre>"
-            poetry run behave --steps-catalog
-            echo "</pre></body></html>"
+          echo "<!DOCTYPE html>"
+          echo "<html lang='en'>"
+          echo "<head>"
+          echo "  <meta charset='UTF-8'>"
+          echo "  <meta name='viewport' content='width=device-width, initial-scale=1.0'>"
+          echo "  <title>Behave Steps Catalog</title>"
+          echo "  <style>"
+          echo "    body { font-family: 'Courier New', monospace; background-color: #f4f4f4; padding: 2rem; }"
+          echo "    pre { background:
+          white; border: 1px solid #ccc; padding: 1rem; overflow-x: auto; }"
+          echo "    h1 { font-family: sans-serif; }"
+          echo "  </style>"
+          echo "</head>"
+          echo "<body>"
+          echo "  <h1>Behave Steps Catalog</h1>"
+          echo "  <pre>"
+          # Escape HTML special characters to ensure valid output
+          poetry run behave --steps-catalog | python -c "import sys, html; print(html.escape(sys.stdin.read()))"
+          echo "  </pre>"
+          echo "</body>"
+          echo "</html>"
           } > docs/index.html
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${ { secrets.GITHUB_TOKEN } }
           publish_dir: ./docs
           publish_branch: gh-pages  # Change if using another branch
