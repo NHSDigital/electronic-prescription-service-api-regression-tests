@@ -104,7 +104,7 @@ jobs:
           {
             echo "<!DOCTYPE html>"
             echo "<html><head><meta charset='UTF-8'><title>Behave Steps Catalog</title></head><body><pre>"
-            behave --steps-catalog
+            poetry run behave --steps-catalog
             echo "</pre></body></html>"
           } > docs/index.html
 
