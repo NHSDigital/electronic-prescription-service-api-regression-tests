@@ -84,3 +84,18 @@ Feature: Header
     And I have selected a role
     When I go to change my role
     Then I do not see the "Change Role" link
+
+  ############################################################################
+  # FEEDBACK LINK
+  ############################################################################
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4814  
+  Scenario: Feedback link is always visible in the header
+    Given I am logged in as a user with a pre selected role
+    When I go to the home page
+    Then I see the "Give feedback" link
+
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4814
+  Scenario: Feedback link opens in a new tab
+    Given I am logged in as a user with a pre selected role
+    When I go to the home page
+    Then the "Give feedback" link opens the feedback form in a new tab
