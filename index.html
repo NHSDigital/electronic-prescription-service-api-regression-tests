@@ -160,6 +160,8 @@ When I click on the future prescriptions tab heading
 
 When I click on the &quot;Go back&quot; link
 
+When I sort the table by &quot;{column_name}&quot;
+
 When I go to the prescription details for prescription ID &quot;{prescription_id}&quot;
 
 When I click through to the prescription details page
@@ -360,6 +362,10 @@ Then I can see the appropriate prescription results tab headings
 
 Then I can see the current prescriptions results table
 
+Then I see the table summary text Showing {count} of {count}
+
+Then the table displays {count} prescription rows
+
 Then I can see the future prescriptions results table
 
 Then I can see the past prescriptions results table
@@ -367,6 +373,12 @@ Then I can see the past prescriptions results table
 Then I am redirected to the prescription ID search tab
 
 Then I am redirected to the NHS number search tab
+
+Then the table is sorted by &quot;{column_name}&quot; in &quot;{direction}&quot; order
+
+Then I click on the view prescription link
+
+Then I am taken to the correct prescription page
 
 Then The {org} site card is {visibility}
 
