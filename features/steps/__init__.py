@@ -14,4 +14,3 @@ from cpts_ui.prescription_information_banner import *  # noqa: F403,F401
 from cpts_ui.prescription_list_steps import *  # noqa: F403,F401
 from cpts_ui.prescription_details_steps import *  # noqa: F403,F401
 from cpts_ui.prescription_not_found_page_steps import *  # noqa: F403,F401
-from cpts_ui.basic_details_search_results_steps import *  # noqa: F403,F401
