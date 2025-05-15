@@ -26,6 +26,7 @@ def banner_not_visible(context):
 @then("The prescription information banner is visible")
 def banner_is_visible(context):
     banner = PrescriptionInformationBanner(context.page)
+
     expect(banner.banner).to_be_visible()
     expect(banner.prescription_id).not_to_have_text("")
     expect(banner.issue_date).not_to_have_text("")
