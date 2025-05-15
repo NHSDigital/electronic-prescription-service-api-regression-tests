@@ -106,19 +106,8 @@ def verify_search_form_cleared(context):
     # This would need to be implemented based on how the form state is managed
     # for now, we'll just verify we're on the correct page
     expect(context.page.page).to_have_url(
-        context.cpts_ui_base_url + "site/search-by-basic-details"
+        f"{context.cpts_ui_base_url}site/search-by-basic-details"
     )
-
-
-@then("each patient row should have the correct aria-label")
-def verify_patient_row_aria_labels(context):
-    rows = context.page.get_patient_rows()
-    for row in rows:
-        name = row.text_content().split()[0]
-        aria_label = context.page.get_patient_row_aria_label(name)
-        assert (
-            "View prescriptions for" in aria_label and "NHS Number:" in aria_label
-        ), f"Invalid aria-label: {aria_label}"
 
 
 @then("the table should be responsive")
@@ -141,3 +130,47 @@ def verify_results_header_id(context, id):
 @then('the results count text should have the id "{id}"')
 def verify_results_count_id(context, id):
     expect(context.page.results_count).to_have_id(id)
+
+
+@then("table cells should have the correct headers attribute")
+def verify_table_cell_headers(context):
+    # Check name cell
+    name_cell_headers = context.page.get_table_cell_headers("Issac Wolderton-Rodriguez")
+    assert (
+        name_cell_headers == "header-name"
+    ), f"Expected header-name, got {name_cell_headers}"
+
+    # Check gender cell
+    gender_cell_headers = context.page.get_table_cell_headers("Male")
+    assert (
+        gender_cell_headers == "header-gender"
+    ), f"Expected header-gender, got {gender_cell_headers}"
+
+    # Check date of birth cell
+    dob_cell_headers = context.page.get_table_cell_headers("6-May-2013")
+    assert (
+        dob_cell_headers == "header-dob"
+    ), f"Expected header-dob, got {dob_cell_headers}"
+
+    # Check address cell
+    address_cell_headers = context.page.get_table_cell_headers(
+        "123 Brundel Close, Headingley, Leeds, West Yorkshire"
+    )
+    assert (
+        address_cell_headers == "header-address"
+    ), f"Expected header-address, got {address_cell_headers}"
+
+    # Check NHS number cell - look for the cell containing the NHS number
+    nhs_cell_headers = context.page.get_table_cell_headers("972 691 9207")
+    assert (
+        nhs_cell_headers == "header-nhs"
+    ), f"Expected header-nhs, got {nhs_cell_headers}"
+
+
+@then('the NHS number "{nhs_number}" should have visually hidden text')
+def verify_visually_hidden_nhs_number(context, nhs_number):
+    formatted_nhs = nhs_number.replace(" ", "")
+    hidden_text = context.page.get_visually_hidden_text(formatted_nhs)
+    assert (
+        hidden_text == f"NHS number {nhs_number}"
+    ), f"Expected 'NHS number {nhs_number}', got {hidden_text}"

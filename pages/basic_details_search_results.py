@@ -14,8 +14,8 @@ class BasicDetailsSearchResultsPage:
         self.back_link = page.locator("a.nhsuk-back-link__link")
 
         # Table elements
-        self.table_headers = page.locator("#table-header")
-        self.patient_rows = page.locator("#patient-row")
+        self.table_headers = page.locator("th[id^='header-']")
+        self.patient_rows = page.locator("tr[id^='patient-row-']")
 
     def wait_for_page_load(self):
         """Wait for the page to load"""
@@ -32,7 +32,7 @@ class BasicDetailsSearchResultsPage:
 
     def get_patient_row_by_name(self, name):
         """Get a specific patient row by name"""
-        return self.page.locator(f"#patient-row:has-text('{name}')").first
+        return self.page.locator(f"tr[id^='patient-row-']:has-text('{name}')").first
 
     def click_patient_row(self, name):
         """Click on a patient row by name"""
@@ -79,9 +79,11 @@ class BasicDetailsSearchResultsPage:
         """Get the role attribute of the main content"""
         return self.main_content.get_attribute("role")
 
-    def screenshot(self, path=None):
-        """Take a screenshot of the page"""
-        if path:
-            self.page.screenshot(path=path)
-        else:
-            self.page.screenshot()
+    def get_table_cell_headers(self, cell_text):
+        """Get the headers attribute of a table cell"""
+        cell = self.page.locator(f"td:has-text('{cell_text}')").last
+        return cell.get_attribute("headers")
+
+    def get_visually_hidden_text(self, nhs_number):
+        """Get the visually hidden text for a patient's NHS number"""
+        return self.page.locator(f"#patient-details-{nhs_number}").text_content()

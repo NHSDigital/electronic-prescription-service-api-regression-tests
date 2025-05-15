@@ -10,13 +10,10 @@ Feature: Basic Details Search Results Page
     Given I am logged in as a user with multiple access roles
     And I have confirmed a role
     And I am on the basic details search results page
-    # the restricted user scenario is more so of a mock - we won't be surfacing restricted results to the frontend
-    # in the real scenarios to my understanding, but the frontend still handles filtering them out incase.
     And I have searched for patients with the following details:
-      | given | family              | gender | dateOfBirth | nhsNumber  | address                                              | restricted |
-      | Issac | Wolderton-Rodriguez | Male   | 6-May-2013  | 9726919207 | 123 Brundel Close, Headingley, Leeds, West Yorkshire | false      |
-      | Steve | Wolderton-Rodriguez | Male   | 6-May-2013  | 9725919207 | 123 Brundel Close, Headingley, Leeds, West Yorkshire | false      |
-      | John  | Smith              | Male   | 1-Jan-2000  | 1234567890 | 456 Test Street, London                             | true       |
+      | given | family              | gender | dateOfBirth | nhsNumber  | address                                              |
+      | Issac | Wolderton-Rodriguez | Male   | 6-May-2013  | 9726919207 | 123 Brundel Close, Headingley, Leeds, West Yorkshire |
+      | Steve | Wolderton-Rodriguez | Male   | 6-May-2013  | 9725919207 | 123 Brundel Close, Headingley, Leeds, West Yorkshire |
 
   Scenario: View search results table
     Then I should see a table with the following columns:
@@ -30,19 +27,15 @@ Feature: Basic Details Search Results Page
     Then I should be navigated to the prescription list page
     And the NHS number "972 691 9207" should be included in the URL
 
-  Scenario: Navigate to prescription list when pressing enter on a patient row
-    When I press enter on the patient row for "Steve Wolderton-Rodriguez"
-    Then I should be navigated to the prescription list page
-    And the NHS number "972 591 9207" should be included in the URL
-
   Scenario: Navigate back to search page
     When I click the "Go back" link
     Then I should be navigated to the basic details search page
     And the search form should be cleared
 
   Scenario: Verify accessibility features
-    Then each patient row should have the correct aria-label
-    And the table should be responsive
+    Then the table should be responsive
     And the main content should have the role "main"
     And the results header should have the id "results-header"
     And the results count text should have the id "results-count" 
+    And table cells should have the correct headers attribute
+    And the NHS number "972 691 9207" should have visually hidden text
