@@ -117,3 +117,50 @@ def i_see_validation_error_displayed(context):
     page = SearchForAPrescription(context.page)
     expect(page.error_summary).to_be_visible()
     assert page.error_summary.locator("li").count() > 0
+
+
+@when('I enter first name "{first_name}"')
+def enter_first_name(context, first_name):
+    page = SearchForAPrescription(context.page)
+    page.basic_details_first_name.fill(first_name)
+
+
+@when('I enter last name "{last_name}"')
+def enter_last_name(context, last_name):
+    page = SearchForAPrescription(context.page)
+    page.basic_details_last_name.fill(last_name)
+
+
+@when('I enter date of birth "{day}" "{month}" "{year}"')
+def enter_dob(context, day, month, year):
+    page = SearchForAPrescription(context.page)
+    page.basic_details_dob_day.fill(day)
+    page.basic_details_dob_month.fill(month)
+    page.basic_details_dob_year.fill(year)
+
+
+@when('I enter postcode "{postcode}"')
+def enter_postcode(context, postcode):
+    page = SearchForAPrescription(context.page)
+    page.basic_details_postcode.fill(postcode)
+
+
+@then("I am on the patient search results page")
+def i_am_on_patient_results_page(context):
+    expect(context.page.get_by_test_id("query-summary")).to_be_visible()
+
+
+@then("I am on the too many results page")
+def i_am_on_too_many_results_page(context):
+    expect(context.page.get_by_test_id("too-many-results-page")).to_be_visible()
+
+
+@when("I click the first error summary link")
+def click_first_error_link(context):
+    context.page.locator('[data-testid="error-summary"] a').first.click()
+
+
+@then('the focus should be on the "{field_id}" input')
+def assert_focus_on_input(context, field_id):
+    active = context.page.evaluate("document.activeElement.id")
+    assert active == field_id, f"Expected focus on '{field_id}', but got '{active}'"

@@ -138,3 +138,82 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     | abc                |
     | 123                |
     | 123456789000       |
+
+
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
+  @basic_details_search
+  Scenario: User sees validation errors when submitting empty Basic Details Search form
+    Given I am logged in as a user with a single access role
+    When I am on the search for a prescription page
+    And I click on tab Basic Details Search
+    And I click the Find a patient button
+    Then I see a validation error is displayed
+
+
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
+  @basic_details_search
+  Scenario Outline: User sees validation errors and correct field receives focus for invalid Basic Details Search input
+    Given I am logged in as a user with a single access role
+    When I am on the search for a prescription page
+    And I click on tab Basic Details Search
+    And I enter first name "<First Name>"
+    And I enter last name "<Last Name>"
+    And I enter date of birth "<Day>" "<Month>" "<Year>"
+    And I enter postcode "<Postcode>"
+    And I click the Find a patient button
+    Then I see a validation error is displayed
+    When I click the first error summary link
+    Then the focus should be on the "<FocusField>" input
+
+    Examples:
+      | First Name | Last Name    | Day | Month | Year | Postcode | FocusField    |
+      | James      | Sm!th@123    | 15  | 07    | 2024 | LS1 1AB  | last-name     |
+      | James      | Smith        | 45  | 89    | 2014 | LS1 1AB  | dob-day       |
+      | James      | Smith        |  5  | 10    | 3211 | LS1 1AB  | dob-year      |
+      | James      | Smith        | 12  | 8     | 2020 | LS!      | postcode-only |
+      | J@m!s      | Smith        | 15  | 10    | 2013 | LS1 1AB  | first-name    |
+
+
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
+  @basic_details_search
+  Scenario: User is redirected to the current prescriptions page for a single match
+    Given I am logged in as a user with a single access role
+    When I am on the search for a prescription page
+    And I click on tab Basic Details Search
+    # FIXME: This will need to be updated when the search pages are updated to use real data
+    And I enter first name "James"
+    And I enter last name "Smith"
+    And I enter date of birth "02" "04" "2006"
+    And I enter postcode "LS1 1AB"
+    And I click the Find a patient button
+    Then I am on the prescription list current page with NHS number "1234567890"
+
+
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
+  @basic_details_search
+  Scenario: User is redirected to the too many results page for ambiguous patient match
+    Given I am logged in as a user with a single access role
+    When I am on the search for a prescription page
+    And I click on tab Basic Details Search
+    # FIXME: This will need to be updated when the search pages are updated to use real data
+    And I enter first name "Katherine"
+    And I enter last name "McFarland"
+    And I enter date of birth "22" "09" "1974"
+    And I enter postcode "LS6 1JL"
+    And I click the Find a patient button
+    Then I am on the too many results page
+
+
+  #  Commented out until the search results page is implemented
+  # @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-47850
+  # @basic_details_search @regression @ui
+  # Scenario: User is redirected to the patient search results page for multiple matches
+  #   Given I am logged in as a user with a single access role
+  #   When I am on the search for a prescription page
+  #   And I click on tab Basic Details Search
+  #   And I enter first name "Steve"
+  #   And I enter last name "Wolderton-Rodriguez"
+  #   And I enter date of birth "06" "05" "2013"
+  #   And I enter postcode "LS6 1JL"
+  #   And I click the Find a patient button
+  #   Then I am on the patient search results page
