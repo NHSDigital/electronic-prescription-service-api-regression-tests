@@ -58,6 +58,10 @@ Given I have accessed the prescription list page using an NHS number search
 
 Given I am on the prescription list page for prescription ID {prescription_id}
 
+Given I am on the basic details search results page
+
+Given I have searched for patients with the following details
+
 Given I successfully prepare and sign a prescription
 
 Given I successfully prepare and sign a {nomination} {prescription_type} prescription
@@ -167,6 +171,12 @@ When I go to the prescription details for prescription ID &quot;{prescription_id
 When I click through to the prescription details page
 
 When I click the Go Back link on the prescription not found page
+
+When I click on the patient row for &quot;{name}&quot;
+
+When I press enter on the patient row for &quot;{name}&quot;
+
+When I click the &quot;{link_text}&quot; link
 
 When I make a request to the &quot;{product}&quot; ping endpoint
 
@@ -403,6 +413,34 @@ Then A cancelled status message is shown
 Then The timeline shows fallback text for missing site names
 
 Then I am on the prescription not found page with redirect to {}
+
+Then I should see a table with the following columns
+
+Then the table should be sorted by first name
+
+Then I should see &quot;{expected_text}&quot; in the results count text
+
+Then I should not see any restricted patients in the results
+
+Then I should be navigated to the prescription list page
+
+Then the NHS number &quot;{nhs_number}&quot; should be included in the URL
+
+Then I should be navigated to the basic details search page
+
+Then the search form should be cleared
+
+Then the table should be responsive
+
+Then the main content should have the role &quot;{role}&quot;
+
+Then the results header should have the id &quot;{id}&quot;
+
+Then the results count text should have the id &quot;{id}&quot;
+
+Then table cells should have the correct headers attribute
+
+Then the NHS number &quot;{nhs_number}&quot; should have visually hidden text
 
 Then the response indicates a success
 
