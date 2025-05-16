@@ -52,14 +52,14 @@ Any file that begins with `.env` is automatically ignored by Git
 This test pack utilises the power of Docker to quickly and easily spin up a dev environment for you to work in
 the Dockerfile is located in `{project_root}/.devcontainer/Dockerfile`
 
-You may need to run `poetry shell` to activate the poetry shell, followed by `make install-playwright` to install the playwright tools. To check if these are installed properly, run `playwright codegen` and check that you see a browser window pop up.
-
 ### Setup without docker development environment
 If you'd like to use your own machine without containerisation. You will need the following;
 * Ubuntu (WSL)
 * [ASDF](https://asdf-vm.com/guide/getting-started.html)
-You can now run the `make install-asdf` command
-* next, run `make install` to install the virtualenv and packages. You may need to run `poetry shell` to activate the poetry shell, followed by `make install-playwright` to install the playwright tools. To check if these are installed properly, run `playwright codegen` and check that you see a browser window pop up.
+* You can now run the `make install-full` command
+
+Once this is completed, everything you need to get going should now be installed. </br>
+You can now activate your virtual environment `source .venv/bin/activate`
 
 ## Developing/Debugging Tests
 
@@ -154,6 +154,11 @@ GITHUB_RUN_ID=11523235428 make download-allure-report
 
 # UI testing
 This pack has recently been updated to include UI-based testing using Playwright for CPTS-UI. It will run headless using the Chrome browser
+
+## Setup
+If you did not set up your environment using the `make install-full` command, then you may need to install playwright:
+* Activate your virtual environment `source .venv/bin/activate` followed by `make install-playwright` to install the playwright tools.
+* Check if these are installed properly, run `playwright codegen` a browser window will appear.
 
 ## Recording new tests:
 Playwright contains a handy (but not perfect) feature which will record actions you make and give you the code for them
