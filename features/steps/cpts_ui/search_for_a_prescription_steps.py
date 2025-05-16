@@ -150,6 +150,7 @@ def i_am_on_patient_results_page(context):
     expect(context.page.get_by_test_id("query-summary")).to_be_visible()
 
 
+@when("I am on the too many results page")
 @then("I am on the too many results page")
 def i_am_on_too_many_results_page(context):
     expect(context.page.get_by_test_id("too-many-results-page")).to_be_visible()
