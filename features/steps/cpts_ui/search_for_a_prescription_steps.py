@@ -100,8 +100,10 @@ def click_find_patient_button(context):
 
 @then("I am on the prescription not found page with redirect to NhsNumSearch")
 def redirected_to_nhs_not_found(context):
-    expected_url = "/site/prescription-not-found"
-    context.page.wait_for_url(expected_url, wait_until="load", timeout=60000)
+    url = context.page.url
+    assert (
+        "site/prescription-not-found?searchType=NhsNumberSearch" in url
+    ), f"Unexpected URL: {url}"
 
 
 @then('I am on the prescription list current page with NHS number "{nhs_number}"')
@@ -117,3 +119,53 @@ def i_see_validation_error_displayed(context):
     page = SearchForAPrescription(context.page)
     expect(page.error_summary).to_be_visible()
     assert page.error_summary.locator("li").count() > 0
+
+
+@then("I am on the patient search results page")
+def i_am_on_patient_results_page(context):
+    expect(context.page.get_by_test_id("query-summary")).to_be_visible()
+
+
+@then("I am on the too many results page")
+def i_am_on_too_many_results_page(context):
+    expect(context.page.get_by_test_id("too-many-results-page")).to_be_visible()
+
+
+@then("I click the first error summary link")
+def click_first_error_link(context):
+    context.page.locator('[data-testid="error-summary"] a').first.click()
+
+
+@then('the focus should be on the "{field_id}" input')
+def assert_focus_on_input(context, field_id):
+    active = context.page.evaluate("document.activeElement.id")
+    assert active == field_id, f"Expected focus on '{field_id}', but got '{active}'"
+
+
+@when(
+    'I search using basic details: "{first}" "{last}" "{day}" "{month}" "{year}" "{postcode}"'
+)
+def search_by_basic_details(context, first, last, day, month, year, postcode):
+    page = SearchForAPrescription(context.page)
+    page.basic_details_search_tab.click()
+    if first:
+        page.basic_details_first_name.fill(first)
+    if last:
+        page.basic_details_last_name.fill(last)
+    if day:
+        page.basic_details_dob_day.fill(day)
+    if month:
+        page.basic_details_dob_month.fill(month)
+    if year:
+        page.basic_details_dob_year.fill(year)
+    if postcode:
+        page.basic_details_postcode.fill(postcode)
+    page.find_patient_button.click()
+
+
+@when('I search for a patient using a valid NHS number "{nhs_number}"')
+def search_patient_by_nhs_number(context, nhs_number):
+    page = SearchForAPrescription(context.page)
+    page.nhs_number_search_tab.click()
+    page.nhs_number_input.fill(nhs_number)
+    page.find_patient_button.click()
