@@ -41,16 +41,15 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     # Search for a prescription ID that DOES NOT return anything
     And I search for a prescription using a valid prescription ID "209E3D-A83008-328F9F"
     Then I am on the prescription not found page with redirect to PrescriptionIdSearch
-    
-  # TODO: Update this test when the NHS number search is implemented
-  # @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
-  # Scenario: User is redirected correctly when they search for non-existent patient
-  #   Given I am logged in as a user with a single access role
-  #   When I am on the search for a prescription page
-  #   And I click on tab NHS Number search
-  #   # Search for a prescription ID that DOES NOT return anything
-  #   And I search for a patient using a valid NHS number "1234567890"
-  #   Then I am on the prescription not found page with redirect to NhsNumSearch
+
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
+  Scenario: User is redirected correctly when they search for non-existent patient
+    Given I am logged in as a user with a single access role
+    When I am on the search for a prescription page
+    And I click on tab NHS Number search
+    # Search for a prescription ID that DOES NOT return anything
+    And I search for a patient using a valid NHS number "1234567899"
+    Then I am on the prescription not found page with redirect to NhsNumSearch
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
   Scenario: User is redirected correctly when they hit the "Go Back" button after searching for non-existent prescription ID
@@ -133,11 +132,11 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     And I click the Find a patient button
     Then I see a validation error is displayed
 
-  Examples:
-    | Invalid NHS number |
-    | abc                |
-    | 123                |
-    | 123456789000       |
+    Examples:
+      | Invalid NHS number |
+      | abc                |
+      | 123                |
+      | 123456789000       |
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
   @basic_details_search

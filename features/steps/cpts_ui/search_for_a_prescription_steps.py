@@ -100,8 +100,10 @@ def click_find_patient_button(context):
 
 @then("I am on the prescription not found page with redirect to NhsNumSearch")
 def redirected_to_nhs_not_found(context):
-    expected_url = "/site/prescription-not-found"
-    context.page.wait_for_url(expected_url, wait_until="load", timeout=60000)
+    url = context.page.url
+    assert (
+        "site/prescription-not-found?searchType=NhsNumberSearch" in url
+    ), f"Unexpected URL: {url}"
 
 
 @then('I am on the prescription list current page with NHS number "{nhs_number}"')
@@ -140,9 +142,6 @@ def assert_focus_on_input(context, field_id):
     assert active == field_id, f"Expected focus on '{field_id}', but got '{active}'"
 
 
-@given(
-    'I search using basic details: "{first}" "{last}" "{day}" "{month}" "{year}" "{postcode}"'
-)
 @when(
     'I search using basic details: "{first}" "{last}" "{day}" "{month}" "{year}" "{postcode}"'
 )
@@ -161,4 +160,12 @@ def search_by_basic_details(context, first, last, day, month, year, postcode):
         page.basic_details_dob_year.fill(year)
     if postcode:
         page.basic_details_postcode.fill(postcode)
+    page.find_patient_button.click()
+
+
+@when('I search for a patient using a valid NHS number "{nhs_number}"')
+def search_patient_by_nhs_number(context, nhs_number):
+    page = SearchForAPrescription(context.page)
+    page.nhs_number_search_tab.click()
+    page.nhs_number_input.fill(nhs_number)
     page.find_patient_button.click()
