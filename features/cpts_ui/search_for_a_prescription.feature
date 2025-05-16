@@ -204,9 +204,9 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     Then I am on the too many results page
 
 
-  #  Commented out until the search results page is implemented
+  #  TODO: Uncomment this scenario after the patient search results page is implemented
   # @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-47850
-  # @basic_details_search @regression @ui
+  # @basic_details_search
   # Scenario: User is redirected to the patient search results page for multiple matches
   #   Given I am logged in as a user with a single access role
   #   When I am on the search for a prescription page
