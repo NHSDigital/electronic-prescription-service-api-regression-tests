@@ -139,7 +139,6 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     | 123                |
     | 123456789000       |
 
-
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
   @basic_details_search
   Scenario: User sees validation errors when submitting empty Basic Details Search form
@@ -148,7 +147,6 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     And I click on tab Basic Details Search
     And I click the Find a patient button
     Then I see a validation error is displayed
-
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
   @basic_details_search
@@ -173,7 +171,6 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
       | James      | Smith        | 12  | 8     | 2020 | LS!      | postcode-only |
       | J@m!s      | Smith        | 15  | 10    | 2013 | LS1 1AB  | first-name    |
 
-
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
   @basic_details_search
   Scenario: User is redirected to the current prescriptions page for a single match
@@ -188,7 +185,6 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     And I click the Find a patient button
     Then I am on the prescription list current page with NHS number "1234567890"
 
-
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
   @basic_details_search
   Scenario: User is redirected to the too many results page for ambiguous patient match
@@ -202,7 +198,6 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     And I enter postcode "LS6 1JL"
     And I click the Find a patient button
     Then I am on the too many results page
-
 
   #  TODO: Uncomment this scenario after the patient search results page is implemented
   # @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-47850
