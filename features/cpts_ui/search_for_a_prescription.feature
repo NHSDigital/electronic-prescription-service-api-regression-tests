@@ -157,11 +157,13 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
 
     Examples:
       | First  | Last        | Day | Month | Year | Postcode | FocusField    |
+      | J@m!s  | Smith       | 15  | 10    | 2013 | LS1 1AB  | first-name    |
       | James  | Sm!th@123   | 15  | 07    | 2024 | LS1 1AB  | last-name     |
       | James  | Smith       | 45  | 89    | 2014 | LS1 1AB  | dob-day       |
+      | James  | Smith       | 00  | 00    | 0000 | LS1 1AB  | dob-day       |
+      | James  | Smith       | 28  | ab    | 2025 | LS1 1AB  | dob-month     |
       | James  | Smith       |  5  | 10    | 3211 | LS1 1AB  | dob-year      |
       | James  | Smith       | 12  | 08    | 2020 | LS!      | postcode-only |
-      | J@m!s  | Smith       | 15  | 10    | 2013 | LS1 1AB  | first-name    |
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
   @basic_details_search
