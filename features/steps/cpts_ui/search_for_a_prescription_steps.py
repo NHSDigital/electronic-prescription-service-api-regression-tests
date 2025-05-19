@@ -148,17 +148,17 @@ def assert_focus_on_input(context, field_id):
 def search_by_basic_details(context, first, last, day, month, year, postcode):
     page = SearchForAPrescription(context.page)
     page.basic_details_search_tab.click()
-    if first:
+    if first != "<empty>":
         page.basic_details_first_name.fill(first)
-    if last:
+    if last != "<empty>":
         page.basic_details_last_name.fill(last)
-    if day:
+    if day != "<empty>":
         page.basic_details_dob_day.fill(day)
-    if month:
+    if month != "<empty>":
         page.basic_details_dob_month.fill(month)
-    if year:
+    if year != "<empty>":
         page.basic_details_dob_year.fill(year)
-    if postcode:
+    if postcode != "<empty>":
         page.basic_details_postcode.fill(postcode)
     page.find_patient_button.click()
 
