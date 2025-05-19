@@ -66,6 +66,7 @@ Feature: Header
   Scenario: Change Role link is not shown if the user has no selected role
     Given I am logged in as a user with multiple access roles
     And I have selected a role
+    Then I see the 'your selected role' page
     When I go to the home page
     Then I see the "Change Role" link
 
