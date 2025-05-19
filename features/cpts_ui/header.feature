@@ -67,7 +67,7 @@ Feature: Header
     Given I am logged in as a user with multiple access roles
     And I have selected a role
     When I go to the home page
-    Then I do not see the "Change Role" link
+    Then I see the "Change Role" link
 
   # FIXME: Address this when the SPA is fixed!
   # Since the SPA is broken, there's actually no reliable way to navigate to the SYR page
