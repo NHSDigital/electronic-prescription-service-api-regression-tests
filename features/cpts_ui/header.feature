@@ -56,7 +56,7 @@ Feature: Header
   ############################################################################
   # CHANGE ROLE
   ############################################################################
-  Scenario: Change Role link is shown if the user has selected and confirmed role
+  Scenario: Change Role link is shown if the user has selected and confirmed the role
     Given I am logged in as a user with multiple access roles
     And I have selected a role
     And I have confirmed a role
