@@ -38,6 +38,7 @@ if __name__ == "__main__":
         f" -o reports/cucumber_json.json"
         f" -f allure_behave.formatter:AllureFormatter"
         f" -o allure-results"
+        f" -j 2"
         f" -f pretty features"
         f" --no-logcapture --no-skipped --expand --logging-level=DEBUG{tags}"
     )
