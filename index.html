@@ -134,6 +134,10 @@ When I enter NHS number &quot;{nhs_number}&quot; into the input
 
 When I click the Find a patient button
 
+When I search using basic details: &quot;{first}&quot; &quot;{last}&quot; &quot;{day}&quot; &quot;{month}&quot; &quot;{year}&quot; &quot;{postcode}&quot;
+
+When I search for a patient using a valid NHS number &quot;{nhs_number}&quot;
+
 When I select a role
 
 When I click on the summary expander
@@ -308,6 +312,14 @@ Then I am on the prescription list current page with NHS number &quot;{nhs_numbe
 
 Then I see a validation error is displayed
 
+Then I am on the patient search results page
+
+Then I am on the too many results page
+
+Then I click the first error summary link
+
+Then the focus should be on the &quot;{field_id}&quot; input
+
 Then I can see the summary container
 
 Then I cannot see the summary table body
@@ -441,6 +453,8 @@ Then the results count text should have the id &quot;{id}&quot;
 Then table cells should have the correct headers attribute
 
 Then the NHS number &quot;{nhs_number}&quot; should have visually hidden text
+
+Then the details section shows
 
 Then the response indicates a success
 
