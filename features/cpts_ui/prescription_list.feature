@@ -75,14 +75,11 @@ Examples:
   | Pending cancellation | ascending   |
   | Prescription ID      | ascending   |
 
-##this one
+
 @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4793
-Scenario Outline: View Prescription link navigates correctly 
+Scenario: View Prescription link navigates correctly 
   Given I am logged in as a user with a single access role
   And I am on the prescription list page for prescription ID "C0C757-A83008-C2D93O"
   When I click on the current prescriptions tab heading
   Then I click on the view prescription link
   And I am taken to the correct prescription page
-Examples:
-  |  |
-  |  |
