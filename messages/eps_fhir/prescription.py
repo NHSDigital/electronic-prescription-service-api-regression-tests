@@ -221,6 +221,18 @@ class Prescription:
             },
         }
 
+        if self.values.type_code == "continuous-repeat-dispensing":
+            medication_request["resource"]["dispenseRequest"].update(
+                {"numberOfRepeatsAllowed": 6}
+            )
+            medication_request["resource"]["courseOfTherapyType"]["coding"][0].update(
+                {
+                    "system": "https://fhir.nhs.uk/CodeSystem/medicationrequest-course-of-therapy",
+                    "code": "continuous-repeat-dispensing",
+                    "display": "Continuous long term (repeat dispensing)",
+                }
+            )
+
         if self.values.nomination_code == "P1":
             medication_request["resource"]["dispenseRequest"].update(
                 {

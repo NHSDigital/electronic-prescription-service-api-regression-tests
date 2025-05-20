@@ -7,6 +7,7 @@ from methods.api.eps_api_methods import (
     cancel_all_line_items,
     create_signed_prescription,
     dispense_prescription,
+    dispense_erd_prescription,
     amend_dispense_notification,
     prepare_prescription,
     try_prepare_prescription,
@@ -34,6 +35,9 @@ def setup_new_prescription(context, nomination, prescription_type):
     if prescription_type == "repeat":
         context.type_code = "continuous"
         context.intent = "instance-order"
+    if prescription_type == "eRD":
+        context.type_code = "continuous-repeat-dispensing"
+        context.intent = "original-order"
 
 
 @given("I successfully prepare and sign a prescription")
@@ -143,7 +147,10 @@ def i_cancel_all_line_items(context):
 def i_dispense_the_prescription(context):
     if "sandbox" in context.config.userdata["env"].lower():
         return
-    dispense_prescription(context)
+    if context.type_code == "continuous-repeat-dispensing":
+        dispense_erd_prescription(context)
+    else:
+        dispense_prescription(context)
 
 
 @when("I amend the dispense notification")

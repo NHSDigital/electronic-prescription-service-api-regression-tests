@@ -37,7 +37,7 @@ def verify_on_home_page(context):
 @then("I can see the footer")
 def i_can_see_the_footer(context):
     footer = Footer(context.page)
-    footer.page.is_visible(footer.footer)
+    expect(footer.footer).to_be_visible()
 
 
 @then("I can see the header")
