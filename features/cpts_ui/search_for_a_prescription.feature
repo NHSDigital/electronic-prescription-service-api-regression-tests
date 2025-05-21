@@ -181,7 +181,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     When I search using basic details: "Katherine" "McFarland" "22" "09" "1974" "LS6 1JL"
     Then I am on the too many results page
 
-  # @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
   @basic_details_search
   Scenario: User is redirected to the patient search results page for multiple matches
     Given I am logged in as a user with a single access role
