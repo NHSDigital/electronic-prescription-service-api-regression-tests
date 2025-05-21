@@ -136,7 +136,7 @@ def the_login_is_finished(context):
         ]
         return url in valid_urls
 
-    context.page.wait_for_url(logged_in_urls)
+    context.page.wait_for_url(logged_in_urls, timeout=7000)
     context.execute_steps("then I am logged in")
 
 
