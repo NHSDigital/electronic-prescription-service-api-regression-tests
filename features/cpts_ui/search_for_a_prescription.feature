@@ -188,3 +188,21 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     # FIXME: This will need to be updated when the search pages are updated to use real data
     When I search using basic details: "<empty>" "Wolderton-Rodriguez" "06" "05" "2013" "<empty>"
     Then I am on the basic details search results page
+
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
+  @basic_details_search_1
+  Scenario: User sees all DOB fields highlighted and day focused for an invalid calendar date
+    Given I am logged in as a user with a single access role
+    When I search using basic details: "<empty>" "Smith" "31" "11" "2015" "<empty>"
+    And I see a validation error is displayed
+    And I click the first error summary link
+    Then the focus should be on the "dob-day" input
+
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
+  @basic_details_search_1
+  Scenario: User sees DOB field error styling persist after correcting values until resubmission
+    Given I am logged in as a user with a single access role
+    When I search using basic details: "<empty>" "Smith" "!" "!" "!" "<empty>"
+    And I see a validation error is displayed
+    And I update the basic details DOB fields to "25" "12" "2010"
+    Then the DOB inputs should have error styling

@@ -117,6 +117,7 @@ def redirected_to_nhs_current(context, nhs_number):
     context.page.wait_for_url(expected_url, wait_until="load", timeout=60000)
 
 
+@when("I see a validation error is displayed")
 @then("I see a validation error is displayed")
 def i_see_validation_error_displayed(context):
     page = SearchForAPrescription(context.page)
@@ -130,6 +131,7 @@ def i_am_on_too_many_results_page(context):
     expect(page.results_page).to_be_visible()
 
 
+@when("I click the first error summary link")
 @then("I click the first error summary link")
 def click_first_error_link(context):
     context.page.locator('[data-testid="error-summary"] a').first.click()
@@ -170,3 +172,28 @@ def search_patient_by_nhs_number(context, nhs_number):
     page.nhs_number_search_tab.click()
     page.nhs_number_input.fill(nhs_number)
     page.find_patient_button.click()
+
+
+@when('I update the basic details DOB fields to "{day}" "{month}" "{year}"')
+def update_dob_fields(context, day, month, year):
+    page = SearchForAPrescription(context.page)
+    page.basic_details_dob_day.fill("")
+    page.basic_details_dob_day.fill(day)
+    page.basic_details_dob_month.fill("")
+    page.basic_details_dob_month.fill(month)
+    page.basic_details_dob_year.fill("")
+    page.basic_details_dob_year.fill(year)
+
+
+@then("the DOB inputs should have error styling")
+def dob_fields_should_have_error_class(context):
+    page = SearchForAPrescription(context.page)
+    for field in [
+        page.basic_details_dob_day,
+        page.basic_details_dob_month,
+        page.basic_details_dob_year,
+    ]:
+        classes = field.get_attribute("class") or ""
+        assert (
+            "nhsuk-input--error" in classes
+        ), f"Expected error class on DOB field, got: {classes}"
