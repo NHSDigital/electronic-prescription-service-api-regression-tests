@@ -6,4 +6,5 @@ class SearchResultsTooManyPage:
         self.page = page
         self.page.wait_for_load_state()
 
-        self.details_list = page.get_by_test_id("too-many-results-details-list")
+        self.results_page = page.get_by_test_id("too-many-results-page")
+        self.results_details_list = page.get_by_test_id("too-many-results-details-list")

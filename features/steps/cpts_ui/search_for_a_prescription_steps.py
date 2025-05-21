@@ -4,6 +4,7 @@ from playwright.sync_api import expect
 import re
 
 from pages.search_for_a_prescription import SearchForAPrescription
+from pages.search_results_too_many import SearchResultsTooManyPage
 
 
 @given("I am on the search for a prescription page")
@@ -128,7 +129,8 @@ def i_am_on_patient_results_page(context):
 
 @then("I am on the too many results page")
 def i_am_on_too_many_results_page(context):
-    expect(context.page.get_by_test_id("too-many-results-page")).to_be_visible()
+    page = SearchResultsTooManyPage(context.page)
+    expect(page.results_page).to_be_visible()
 
 
 @then("I click the first error summary link")
@@ -148,17 +150,17 @@ def assert_focus_on_input(context, field_id):
 def search_by_basic_details(context, first, last, day, month, year, postcode):
     page = SearchForAPrescription(context.page)
     page.basic_details_search_tab.click()
-    if first != "<empty>":
+    if first:
         page.basic_details_first_name.fill(first)
-    if last != "<empty>":
+    if last:
         page.basic_details_last_name.fill(last)
-    if day != "<empty>":
+    if day:
         page.basic_details_dob_day.fill(day)
-    if month != "<empty>":
+    if month:
         page.basic_details_dob_month.fill(month)
-    if year != "<empty>":
+    if year:
         page.basic_details_dob_year.fill(year)
-    if postcode != "<empty>":
+    if postcode:
         page.basic_details_postcode.fill(postcode)
     page.find_patient_button.click()
 
