@@ -177,7 +177,7 @@ def before_scenario(context, scenario):
     if product == "CPTS-UI":
         global _playwright  # noqa: F824
         global _page  # noqa:
-        expect.set_options(timeout=15_000)
+        expect.set_options(timeout=10_000)
         context.browser = context.browser.new_context()
         context.browser.add_init_script(
             """
