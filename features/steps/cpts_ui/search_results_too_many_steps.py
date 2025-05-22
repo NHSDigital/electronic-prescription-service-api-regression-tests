@@ -17,4 +17,6 @@ def verify_patient_details(context):
         label = row["Heading"]
         expected_value = row["Value"]
         assert label in details, f"Unknown detail heading: {label}"
-        expect(page.details_list).to_contain_text(f"{details[label]}{expected_value}")
+        expect(page.results_details_list).to_contain_text(
+            f"{details[label]}{expected_value}"
+        )
