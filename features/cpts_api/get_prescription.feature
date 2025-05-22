@@ -15,7 +15,7 @@ Feature: Users are able to get prescriptions from CPTS-FHIR
    @get_prescription
    Scenario: I can see the prescription details of the correct issue when searching by prescription id and issue number
    Given I am an authorised prescriber with EPS-FHIR app
-   And I successfully prepare and sign a nominated eRD  prescription
+   And I successfully prepare and sign a nominated eRD prescription
    And I am an authorised prescriber with CPTS-FHIR app
    When I request the prescription details with an issue number
    Then the response indicates a success
