@@ -134,9 +134,15 @@ When I enter NHS number &quot;{nhs_number}&quot; into the input
 
 When I click the Find a patient button
 
+When I see a validation error is displayed
+
+When I click the first error summary link
+
 When I search using basic details: &quot;{first}&quot; &quot;{last}&quot; &quot;{day}&quot; &quot;{month}&quot; &quot;{year}&quot; &quot;{postcode}&quot;
 
 When I search for a patient using a valid NHS number &quot;{nhs_number}&quot;
+
+When I update the basic details DOB fields to &quot;{day}&quot; &quot;{month}&quot; &quot;{year}&quot;
 
 When I select a role
 
@@ -312,13 +318,13 @@ Then I am on the prescription list current page with NHS number &quot;{nhs_numbe
 
 Then I see a validation error is displayed
 
-Then I am on the patient search results page
-
 Then I am on the too many results page
 
 Then I click the first error summary link
 
 Then the focus should be on the &quot;{field_id}&quot; input
+
+Then the DOB inputs should have error styling
 
 Then I can see the summary container
 
@@ -425,6 +431,8 @@ Then A cancelled status message is shown
 Then The timeline shows fallback text for missing site names
 
 Then I am on the prescription not found page with redirect to {}
+
+Then I am on the basic details search results page
 
 Then I should see a table with the following columns
 
