@@ -38,6 +38,10 @@ on:
         description: 'The github tag to run the test pack from'
         required: false
         default: "main"
+      generate_report:
+        type: boolean
+        description: 'Generate a report for successful test runs'
+        default: false
 
 jobs:
   regression_tests:
@@ -78,7 +82,7 @@ jobs:
 
       # using git commit sha for version of action to ensure we have stable version
       - name: Install asdf
-        uses: asdf-vm/actions/setup@1117842ea70e2711a0072e3a71265cbfe2c830be
+        uses: asdf-vm/actions/setup@9cd779f40fe38688dd19505ccbc4eaaf018b44e7
         with:
           asdf_version: 0.16.4
 
@@ -90,7 +94,7 @@ jobs:
           key: ${{ runner.os }}-asdf-${{ hashFiles('**/.tool-versions') }}
 
       - name: Install asdf dependencies in .tool-versions
-        uses: asdf-vm/actions/install@1117842ea70e2711a0072e3a71265cbfe2c830be
+        uses: asdf-vm/actions/install@9cd779f40fe38688dd19505ccbc4eaaf018b44e7
         with:
           asdf_version: 0.16.4
         env:
@@ -106,6 +110,20 @@ jobs:
       - name: Install Dependencies
         if: steps.cache-venv.outputs.cache-hit != 'true'
         run: make install
+
+      - name: App product to APP for PR
+        continue-on-error: true
+        env:
+          PRODUCT: ${{ inputs.product }}
+          PR_ID: ${{ inputs.pull_request_id }}
+          APIGEE_MFA_SECRET: ${{ secrets.APIGEE_MFA_SECRET }}
+          APIGEE_PASSWORD: ${{ secrets.APIGEE_PASSWORD }}
+          APIGEE_USER: ${{ secrets.APIGEE_USER }}
+        run: |
+          export APIGEE_MFA_SECRET="$APIGEE_MFA_SECRET"
+          export APIGEE_PASSWORD="$APIGEE_PASSWORD"
+          export APIGEE_USER="$APIGEE_USER"
+          poetry run python ./scripts/add_pr_product_to_app.py --product="$PRODUCT" --pr="$PR_ID"
 
       - name: Regression Tests
         id: tests
@@ -183,3 +201,10 @@ jobs:
           echo The regression tests step failed, this likely means there are test failures.
           echo A test report will be generated shortly and can be viewed at: https://nhsdigital.github.io/eps-test-reports
           exit 1
+
+      - name: Generate Report
+        if: github.event.inputs.generate_report == 'true'
+        run: |
+          poetry run python scripts/send_test_results.py --token=${{ steps.generate-token.outputs.token }} --run_id ${{GITHUB.RUN_ID}}
+          echo You selected to generate a report for successful test runs.
+          echo A test report will be generated shortly and can be viewed at: https://nhsdigital.github.io/eps-test-reports

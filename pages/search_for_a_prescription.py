@@ -4,6 +4,7 @@ from playwright.sync_api import Page
 class SearchForAPrescription:
 
     def __init__(self, page: Page):
+        page.wait_for_load_state()
         self.page = page
         self.temp_text = (
             page.locator("div").filter(has_text="Search for a prescription").nth(2)
@@ -23,3 +24,15 @@ class SearchForAPrescription:
         self.basic_details_search_header = page.get_by_test_id(
             "basic-details-search-heading"
         )
+        self.nhs_number_input = page.get_by_test_id("nhs-number-input")
+        self.find_patient_button = page.get_by_test_id("find-patient-button")
+        self.prescription_id_input = page.get_by_test_id("prescription-id-input")
+        self.find_prescription_button = page.get_by_test_id("find-prescription-button")
+        self.error_summary = page.get_by_test_id("error-summary")
+
+        self.basic_details_first_name = page.get_by_test_id("first-name-input")
+        self.basic_details_last_name = page.get_by_test_id("last-name-input")
+        self.basic_details_dob_day = page.get_by_test_id("dob-day-input")
+        self.basic_details_dob_month = page.get_by_test_id("dob-month-input")
+        self.basic_details_dob_year = page.get_by_test_id("dob-year-input")
+        self.basic_details_postcode = page.get_by_test_id("postcode-input")

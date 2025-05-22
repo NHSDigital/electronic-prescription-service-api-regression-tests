@@ -56,18 +56,19 @@ Feature: Header
   ############################################################################
   # CHANGE ROLE
   ############################################################################
-  Scenario: Change Role link is shown if the user has a selected role
+  Scenario: Change Role link is shown if the user has selected and confirmed the role
     Given I am logged in as a user with multiple access roles
     And I have selected a role
     And I have confirmed a role
     When I go to the home page
     Then I see the "Change Role" link
 
-  Scenario: Change Role link is not shown if the user has no selected role
+  Scenario: Change Role link is shown if the user has selected but not confirmed the role
     Given I am logged in as a user with multiple access roles
     And I have selected a role
+    Then I see the 'your selected role' page
     When I go to the home page
-    Then I do not see the "Change Role" link
+    Then I see the "Change Role" link
 
   # FIXME: Address this when the SPA is fixed!
   # Since the SPA is broken, there's actually no reliable way to navigate to the SYR page
@@ -84,3 +85,18 @@ Feature: Header
     And I have selected a role
     When I go to change my role
     Then I do not see the "Change Role" link
+
+  ############################################################################
+  # FEEDBACK LINK
+  ############################################################################
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4814  
+  Scenario: Feedback link is always visible in the header
+    Given I am logged in as a user with a pre selected role
+    When I go to the home page
+    Then I see the "Give feedback" link
+
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4814
+  Scenario: Feedback link opens in a new tab
+    Given I am logged in as a user with a pre selected role
+    When I go to the home page
+    Then the "Give feedback" link opens the feedback form in a new tab

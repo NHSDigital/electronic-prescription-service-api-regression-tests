@@ -6,6 +6,7 @@ class ChangeRole:
         """
         Initialise the ChangeRole page object with locators and text constants.
         """
+        page.wait_for_load_state()
         self.page = page
 
         # Title and summary locators

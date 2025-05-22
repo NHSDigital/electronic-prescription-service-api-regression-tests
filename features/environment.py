@@ -5,7 +5,7 @@ import sys
 
 from behave.model import Scenario
 from dotenv import load_dotenv
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, expect
 from methods.api import eps_api_methods
 import allure
 
@@ -91,16 +91,22 @@ CIS2_USERS = {
 LOGIN_USERS = {"user_id": "9449304130"}
 # Roles with Access: multiple | Roles without Access: multiple | Selected Role: No
 MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES_ZERO_NO_ACCESS = "555043308599"
+
 # Roles with Access: multiple | Roles without Access: 0 | Selected Role: No
 MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES = "555043308597"
+
 # Roles with Access: multiple | Roles without Access: multiple | Selected Role: Yes
 MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES_WITH_SELECTED_ROLE = "555043304334"
+
 # Roles with Access: 1 | Roles without Access: 0 | Selected Role: No
 MOCK_CIS2_LOGIN_ID_SINGLE_ACCESS_ROLE = "555043300081"
+
 # Roles with Access: 1 | Roles without Access: multiple | Selected Role: No
 MOCK_CIS2_LOGIN_ID_SINGLE_ROLE_WITH_ACCESS_MULTIPLE_WITHOUT = "555043303526"
+
 # Roles with Access: 0 | Roles without Access: multiple | Selected Role: No
 MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE = "555083343101"
+
 # Roles with Access: 0 | Roles without Access: 0 | Selected Role: No
 MOCK_CIS2_LOGIN_ID_NO_ROLES = "555073103101"
 
@@ -121,6 +127,7 @@ PULL_REQUEST_ID = os.getenv("PULL_REQUEST_ID")
 JWT_PRIVATE_KEY = os.getenv("JWT_PRIVATE_KEY")
 JWT_KID = os.getenv("JWT_KID")
 HEADLESS = os.getenv("HEADLESS", "True").lower() in ("true", "1", "yes")
+SLOWMO = float(os.getenv("SLOWMO", "0.0"))
 
 CPTS_UI_PREFIX = "cpt-ui"
 CPTS_FHIR_SUFFIX = "clinical-prescription-tracker"
@@ -168,9 +175,20 @@ def before_scenario(context, scenario):
         return
     product = context.config.userdata["product"].upper()
     if product == "CPTS-UI":
-        global _playwright
-        global _page
+        global _playwright  # noqa: F824
+        global _page  # noqa:
+        expect.set_options(timeout=10_000)
         context.browser = context.browser.new_context()
+        context.browser.add_init_script(
+            """
+            window.__copiedText = "";
+            navigator.clipboard.writeText = (text) => {
+                window.__copiedText = text;
+                return Promise.resolve();
+            };
+        """
+        )
+        context.browser.tracing.start(screenshots=True, snapshots=True, sources=True)
         context.page = context.browser.new_page()
         _page = context.page
         set_page(context, _page)
@@ -179,14 +197,20 @@ def before_scenario(context, scenario):
 def after_scenario(context, scenario):
     product = context.config.userdata["product"].upper()
     if product == "CPTS-UI":
+        context.browser.tracing.stop(path="/tmp/trace.zip")
         if hasattr(context, "page"):
             if scenario.status == "failed":
                 allure.attach(
                     context.page.screenshot(),
                     attachment_type=allure.attachment_type.PNG,
                 )
+                allure.attach.file(
+                    "/tmp/trace.zip",
+                    name="playwright_failure_trace.zip",
+                    attachment_type="application/zip",
+                )
             if context.page is not None:
-                global _page
+                global _page  # noqa: F824
                 _page.close()
 
 
@@ -232,7 +256,7 @@ def before_all(context):
         global _playwright
         _playwright = sync_playwright().start()
         context.browser = _playwright.chromium.launch(
-            headless=HEADLESS, channel="chrome"
+            headless=HEADLESS, channel="chrome", slow_mo=SLOWMO
         )
 
     eps_api_methods.calculate_eps_fhir_base_url(context)

@@ -22,6 +22,8 @@ class PrescriptionValues:
         context.prescription_item_id = self.prescription_item_id
 
         self.nomination_code = context.nomination_code
+        self.intent = context.intent
+        self.type_code = context.type_code
         self.nhs_number = context.nhs_number
 
         self.user_id = CIS2_USERS["prescriber"]["user_id"]
@@ -133,7 +135,7 @@ class Prescription:
                     }
                 ],
                 "status": "active",
-                "intent": "order",
+                "intent": self.values.intent,
                 "category": [
                     {
                         "coding": [
@@ -176,7 +178,7 @@ class Prescription:
                         {
                             # http only
                             "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-course-of-therapy",
-                            "code": "acute",
+                            "code": self.values.type_code,
                         }
                     ]
                 },
@@ -218,6 +220,18 @@ class Prescription:
                 "substitution": {"allowedBoolean": False},
             },
         }
+
+        if self.values.type_code == "continuous-repeat-dispensing":
+            medication_request["resource"]["dispenseRequest"].update(
+                {"numberOfRepeatsAllowed": 6}
+            )
+            medication_request["resource"]["courseOfTherapyType"]["coding"][0].update(
+                {
+                    "system": "https://fhir.nhs.uk/CodeSystem/medicationrequest-course-of-therapy",
+                    "code": "continuous-repeat-dispensing",
+                    "display": "Continuous long term (repeat dispensing)",
+                }
+            )
 
         if self.values.nomination_code == "P1":
             medication_request["resource"]["dispenseRequest"].update(
