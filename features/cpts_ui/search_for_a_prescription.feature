@@ -190,7 +190,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     Then I am on the basic details search results page
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
-  @basic_details_search_1
+  @basic_details_search
   Scenario: User sees all DOB fields highlighted and day focused for an invalid calendar date
     Given I am logged in as a user with a single access role
     When I search using basic details: "<empty>" "Smith" "31" "11" "2015" "<empty>"
@@ -199,7 +199,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     Then the focus should be on the "dob-day" input
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
-  @basic_details_search_1
+  @basic_details_search
   Scenario: User sees DOB field error styling persist after correcting values until resubmission
     Given I am logged in as a user with a single access role
     When I search using basic details: "<empty>" "Smith" "!" "!" "!" "<empty>"
