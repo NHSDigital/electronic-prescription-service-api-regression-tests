@@ -43,7 +43,12 @@ def verify_both_identifier_error(context):
 
 @when("I request the prescription details")
 def request_prescription_details(context):
-    get_prescription_details(context)
+    get_prescription_details(context, None)
+
+
+@when("I request the prescription details with an issue number")
+def request_prescription_details_with_issue_number(context):
+    get_prescription_details(context, 2)
 
 
 @when("I request the prescription details with a non-existent prescription id")
@@ -58,7 +63,12 @@ def request_prescription_details_without_path_parameter(context):
 
 @then("I can see the prescription details")
 def verify_prescription_details(context):
-    assert_prescription_details(context)
+    assert_prescription_details(context, None)
+
+
+@then("I can see the prescription details with the correct issue details")
+def verify_prescription_issue_details(context):
+    assert_prescription_details(context, 2)
 
 
 @then("I can see the prescription not found message")

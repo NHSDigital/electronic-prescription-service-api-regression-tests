@@ -56,8 +56,9 @@ def assert_both_identifier_error(context):
     )
 
 
-def get_prescription_details(context):
-    url = f"{context.cpts_fhir_base_url}/RequestGroup/{context.prescription_id}"
+def get_prescription_details(context, issue_number):
+    query_params = f"?issueNumber={issue_number}" if issue_number else ""
+    url = f"{context.cpts_fhir_base_url}/RequestGroup/{context.prescription_id}{query_params}"
     print(url)
     additional_headers = {
         "Content-Type": "application/json",
@@ -70,7 +71,7 @@ def get_prescription_details(context):
     context.response = get(url=url, context=context, headers=headers)
 
 
-def assert_prescription_details(context):
+def assert_prescription_details(context, issue_number):
     json_response = json.loads(context.response.content)
     expected_nhs_number = context.nhs_number
     expected_prescription_id = context.prescription_id
@@ -80,6 +81,19 @@ def assert_prescription_details(context):
     assert_that(json_response["identifier"][0]["value"]).is_equal_to(
         expected_prescription_id
     )
+    if issue_number:
+        repeat_information = next(
+            extension
+            for extension in json_response["extension"]
+            if extension["url"]
+            == "https://fhir.nhs.uk/StructureDefinition/Extension-EPS-RepeatInformation"
+        )
+        number_of_repeats_issued = next(
+            extension
+            for extension in repeat_information["extension"]
+            if extension["url"] == "numberOfRepeatsIssued"
+        )
+        assert_that(number_of_repeats_issued["valueInteger"]).is_equal_to(issue_number)
 
 
 def get_prescription_not_found(context):
