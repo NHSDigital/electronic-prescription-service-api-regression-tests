@@ -1,6 +1,5 @@
 # pylint: disable=no-name-in-module
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
-import time
 
 from features.environment import (
     MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES,
@@ -137,17 +136,7 @@ def the_login_is_finished(context):
         ]
         return url in valid_urls
 
-    try:
-        context.page.wait_for_url(logged_in_urls, timeout=5000)
-    except TimeoutError:
-        time.sleep(5)
-        try:
-            context.page.wait_for_url(logged_in_urls, timeout=15000)
-        except Exception as retry_exception:
-            raise AssertionError(
-                f"Login did not complete successfully after retry: {retry_exception}"
-            ) from retry_exception
-
+    context.page.wait_for_url(logged_in_urls)
     context.execute_steps("then I am logged in")
 
 
