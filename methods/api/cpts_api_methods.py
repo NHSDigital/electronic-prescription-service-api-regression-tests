@@ -75,10 +75,21 @@ def assert_prescription_details(context, issue_number):
     json_response = json.loads(context.response.content)
     expected_nhs_number = context.nhs_number
     expected_prescription_id = context.prescription_id
-    assert_that(json_response["contained"][0]["identifier"][0]["value"]).is_equal_to(
+    patient_resource = next(
+        bundle_entry
+        for bundle_entry in json_response["entry"]
+        if bundle_entry["resource"]["resourceType"] == "Patient"
+    )
+    request_group = next(
+        bundle_entry
+        for bundle_entry in json_response["entry"]
+        if bundle_entry["resource"]["resourceType"] == "RequestGroup"
+    )
+
+    assert_that(patient_resource["resource"]["identifier"][0]["value"]).is_equal_to(
         expected_nhs_number
     )
-    assert_that(json_response["identifier"][0]["value"]).is_equal_to(
+    assert_that(request_group["resource"]["identifier"][0]["value"]).is_equal_to(
         expected_prescription_id
     )
     if issue_number:
