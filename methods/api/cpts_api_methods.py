@@ -95,7 +95,7 @@ def assert_prescription_details(context, issue_number):
     if issue_number:
         repeat_information = next(
             extension
-            for extension in json_response["extension"]
+            for extension in request_group["resource"]["extension"]
             if extension["url"]
             == "https://fhir.nhs.uk/StructureDefinition/Extension-EPS-RepeatInformation"
         )
