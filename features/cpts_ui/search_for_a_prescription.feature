@@ -39,7 +39,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     When I am on the search for a prescription page
     And I click on tab Prescription ID search
     # Search for a prescription ID that DOES NOT return anything
-    And I search for a prescription using a valid prescription ID "209E3D-A83008-328F9F"
+    And I search for a prescription using a valid prescription ID "5B1112-A83008-EBCB2O"
     Then I am on the prescription not found page with redirect to PrescriptionIdSearch
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
@@ -57,7 +57,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     When I am on the search for a prescription page
     And I click on tab Prescription ID search
     # Search for a prescription ID that DOES NOT return anything
-    And I search for a prescription using a valid prescription ID "209E3D-A83008-328F9F"
+    And I search for a prescription using a valid prescription ID "5B1112-A83008-EBCB2O"
     And I click the Go Back link on the prescription not found page
     Then I am on tab Prescription ID search
 
