@@ -17,7 +17,7 @@ Feature: The site displays the prescription information banner
 
   # This test uses static mock data. Update once real prescription API integration is in place.
   Scenario: When I view an eRD prescription, the banner shows repeat and days supply
-    When I go to the prescription details page with prescription ID "7F1A4B-A83008-91DC2E"
+    When I go to the prescription details page with prescription ID "3F885D-A83008-900ACJ"
     Then The prescription information banner displays repeat and days supply data
 
   # This test uses static mock data. Update once real prescription API integration is in place.
