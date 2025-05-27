@@ -14,7 +14,8 @@ EMPTY_FIELD = "<empty>"
 @then("I am on the search for a prescription page")
 def i_am_on_the_search_prescription_page(context):
     page = SearchForAPrescription(context.page)
-    expect(page.temp_text).to_be_visible()
+    expect(page.prescription_id_search_tab).to_be_visible()
+    expect(page.prescription_id_input).to_be_visible()
 
 
 @when("I click on tab {}")

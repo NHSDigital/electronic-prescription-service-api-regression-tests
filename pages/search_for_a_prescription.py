@@ -6,9 +6,6 @@ class SearchForAPrescription:
     def __init__(self, page: Page):
         page.wait_for_load_state()
         self.page = page
-        self.temp_text = (
-            page.locator("div").filter(has_text="Search for a prescription").nth(2)
-        )
         self.hero_banner = page.get_by_test_id("hero-heading")
         self.prescription_id_search_tab = page.get_by_role(
             "tab", name="Prescription ID search"
