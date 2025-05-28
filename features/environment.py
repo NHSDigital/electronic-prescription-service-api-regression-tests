@@ -26,6 +26,10 @@ PFP_AWS_PR_URL = "https://pfp-{{aws_pull_request_id}}.dev.eps.national.nhs.uk/"
 PFP_AWS_SANDBOX_PR_URL = (
     "https://pfp-{{aws_pull_request_id}}-sandbox.dev.eps.national.nhs.uk/"
 )
+PFP_APIGEE_PR_URL = (
+    "https://{{apigee_pull_request_id}}.dev.prescriptionsforpatients.national.nhs.uk"
+)
+PFP_APIGEE_SANDBOX_PR_URL = "https://{{apigee_pull_request_id}}-sandbox.dev.prescriptionsforpatients.national.nhs.uk"
 CPTS_UI_PR_URL = "https://cpt-ui-{{aws_pull_request_id}}.dev.eps.national.nhs.uk/"
 CPTS_UI_SANDBOX_PR_URL = (
     "https://cpt-ui-{{aws_pull_request_id}}sandbox.dev.eps.national.nhs.uk/"
@@ -75,7 +79,7 @@ APIGEE_APPS = {
         "client_id": os.getenv("EPS_FHIR_DISPENSING_CLIENT_ID"),
         "client_secret": os.getenv("EPS_FHIR_DISPENSING_CLIENT_SECRET"),
     },
-    "PFP-APIGEE": {
+    "PFP": {
         "client_id": os.getenv("PFP_CLIENT_ID"),
         "client_secret": os.getenv("PFP_CLIENT_SECRET"),
     },
@@ -285,8 +289,16 @@ def get_url_with_pr(context, env, product):
             INTERNAL_DEV_BASE_URL,
             f"{EPS_FHIR_DISPENSING_SUFFIX}-{pull_request_id}",
         )
+    if product == "PFP":
+        context.pfp_apigee_base_url = os.path.join(
+            INTERNAL_DEV_BASE_URL, f"{PFP_SUFFIX}-{pull_request_id}"
+        )
     if product == "PFP-APIGEE":
-        context.pfp_base_url = os.path.join(
+        context.pfp_apigee_base_url = os.path.join(
+            INTERNAL_DEV_BASE_URL, f"{PFP_SUFFIX}-{pull_request_id}"
+        )
+    if product == "PFP-AWS":
+        context.pfp_aws_base_url = os.path.join(
             INTERNAL_DEV_BASE_URL, f"{PFP_SUFFIX}-{pull_request_id}"
         )
     if product == "PSU":
