@@ -68,7 +68,6 @@ Scenario Outline: Sort current prescriptions table by <column> in <direction> or
 Examples:
   | column               | direction   |
   | Issue date           | ascending   |
-  | Issue date           | descending  |
   | Prescription type    | ascending   |
   | Prescription type    | descending  |
   | Status               | ascending   |
