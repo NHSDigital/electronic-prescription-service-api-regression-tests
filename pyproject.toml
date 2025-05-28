@@ -8,7 +8,7 @@ package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.12"
-jsonschema = "^4.22.0"
+jsonschema = "^4.24.0"
 requests = "^2.32.1"
 assertpy = "^1.1"
 behave = "^1.2.6"
@@ -28,7 +28,7 @@ python-dotenv = "^1.1.0"
 pytest-nhsd-apim = "^4.0.1"
 requests-oauthlib = "^2.0.0"
 nhs-number-generator = {git = "https://github.com/Iain-S/nhs_number_generator.git"}
-pyright = "^1.1.400"
+pyright = "^1.1.401"
 playwright = "^1.52.0"
 jycm = "^1.5.0"
 pyotp = "^2.9.0"
