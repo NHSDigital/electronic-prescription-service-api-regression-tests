@@ -302,7 +302,6 @@ def check_table_sort_order(context, column_name, direction):
     context.page.wait_for_selector(
         '[data-testid="eps-loading-spinner"]', state="hidden", timeout=3000
     )
-
     column_mapping = {
         "Issue date": "issueDate",
         "Prescription type": "prescriptionTreatmentType",
@@ -324,20 +323,48 @@ def check_table_sort_order(context, column_name, direction):
         actual_aria_sort == expected_aria_sort
     ), f"Expected aria-sort to be '{expected_aria_sort}', but was '{actual_aria_sort}'"
 
-    assert "active-header" in header_locator.get_attribute(
-        "class"
-    ), "Header is not marked as active"
-
     if direction.lower() == "ascending":
         up_arrow = header_locator.locator(".up-arrow")
-        assert "selected-arrow" in up_arrow.get_attribute(
-            "class"
-        ), "Up arrow is not selected"
+        up_arrow_class = up_arrow.get_attribute("class") or ""
+        assert (
+            "selected-arrow" in up_arrow_class
+        ), f"Up arrow is not selected for ascending sort. Arrow classes: {up_arrow_class}"
+
+        down_arrow = header_locator.locator(".down-arrow")
+        down_arrow_class = down_arrow.get_attribute("class") or ""
+        assert (
+            "selected-arrow" not in down_arrow_class
+        ), f"Down arrow should not be selected for ascending sort. Arrow classes: {down_arrow_class}"
+
     else:
         down_arrow = header_locator.locator(".down-arrow")
-        assert "selected-arrow" in down_arrow.get_attribute(
-            "class"
-        ), "Down arrow is not selected"
+        down_arrow_class = down_arrow.get_attribute("class") or ""
+        assert (
+            "selected-arrow" in down_arrow_class
+        ), f"Down arrow is not selected for descending sort. Arrow classes: {down_arrow_class}"
+
+        up_arrow = header_locator.locator(".up-arrow")
+        up_arrow_class = up_arrow.get_attribute("class") or ""
+        assert (
+            "selected-arrow" not in up_arrow_class
+        ), f"Up arrow should not be selected for descending sort. Arrow classes: {up_arrow_class}"
+
+    all_headers = context.page.locator(
+        '[data-testid^="eps-prescription-table-header-"]'
+    )
+    header_count = all_headers.count()
+
+    for i in range(header_count):
+        header = all_headers.nth(i)
+        header_testid = header.get_attribute("data-testid")
+
+        if header_testid == f"eps-prescription-table-header-{column_key}":
+            continue
+
+        other_aria_sort = header.get_attribute("aria-sort")
+        assert (
+            other_aria_sort == "none"
+        ), f"Header {header_testid} should have aria-sort='none', but has '{other_aria_sort}'"
 
 
 @then("I click on the view prescription link")
