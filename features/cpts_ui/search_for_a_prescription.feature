@@ -189,6 +189,13 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     When I search using basic details: "<empty>" "Wolderton-Rodriguez" "06" "05" "2013" "<empty>"
     Then I am on the basic details search results page
 
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5360
+  @basic_details_search
+  Scenario: User is redirected to the patient not found page for no matches
+    Given I am logged in as a user with a single access role
+    When I search using basic details: "<empty>" "SpecialNotFound" "01" "01" "1990" "<empty>"
+    Then I am on the patient not found page
+
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
   @basic_details_search
   Scenario: User sees all DOB fields highlighted and day focused for an invalid calendar date
@@ -209,7 +216,30 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5360
   @basic_details_search
-  Scenario: User is redirected to the patient not found page for no matches
+  Scenario: User sees their search data preserved when going back from patient not found page
     Given I am logged in as a user with a single access role
     When I search using basic details: "<empty>" "SpecialNotFound" "01" "01" "1990" "<empty>"
-    Then I am on the patient not found page
+    And I am on the patient not found page
+    And I click on the "Go back" link
+    Then the search form should be pre-filled with:
+      | Field      | Value          |
+      | Last name  | SpecialNotFound|
+      | Day        | 01             |
+      | Month      | 01             |
+      | Year       | 1990           |
+
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5360
+  @basic_details_search
+  Scenario: User sees their search data preserved when going back from too many results page
+    Given I am logged in as a user with a single access role
+    # FIXME: This will need to be updated when the search pages are updated to use real data
+    When I search using basic details: "<empty>" "Jones" "16" "07" "1985" "<empty>"
+    And I am on the too many results page
+    And I click on the "Go back" link
+    Then the search form should be pre-filled with:
+      | Field      | Value   |
+      | Last name  | Jones   |
+      | Day        | 16      |
+      | Month      | 07      |
+      | Year       | 1985    |
+  
