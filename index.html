@@ -196,6 +196,14 @@ When I request the list of prescriptions using the {identifier}
 
 When I request the list of prescriptions that don&#x27;t exist using the {identifier}
 
+When I request the prescription details
+
+When I request the prescription details with an issue number
+
+When I request the prescription details with a non-existent prescription id
+
+When I request the prescription details without a path parameter
+
 When I am an authorised {user} with {app} app
 
 When I try to prepare a {nomination} {prescription_type} prescription
@@ -472,6 +480,8 @@ Then the response indicates a record was created
 
 Then the response indicates a bad request
 
+Then the response indicates not found resource
+
 Then I can see the version information in the response
 
 Then I can see the revision information in the response
@@ -487,6 +497,14 @@ Then I can see the list of prescriptions
 Then I see an empty list in the response
 
 Then I am informed not to include both identifiers
+
+Then I can see the prescription details
+
+Then I can see the prescription details with the correct issue details
+
+Then I can see the prescription not found message
+
+Then I can see the missing required path parameter message
 
 Then the response body indicates a successful {action_type} action
 
