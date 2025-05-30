@@ -24,7 +24,7 @@ Feature: Prescription Detail Page in the Clinical Prescription Tracker Service
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4802
   Scenario: User sees only the prescriber and dispenser organisation cards when they should
     # FIXME: Remove references to static data
-    When I go to the prescription details for prescription ID "7F1A4B-A83008-91DC2E"
+    When I go to the prescription details for prescription ID "3F885D-A83008-900ACJ"
     Then The prescriber site card is visible
     And The dispenser site card is visible
     And The nominated dispenser site card is not visible
@@ -32,7 +32,7 @@ Feature: Prescription Detail Page in the Clinical Prescription Tracker Service
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4802
   Scenario: User sees the all the organisation cards when one of them is missing site data
     # FIXME: Remove references to static data
-    When I go to the prescription details for prescription ID "4D6F2C-A83008-A3E7D1"
+    When I go to the prescription details for prescription ID "15023D-A83008-298451"
     Then The prescriber site card is visible
     And The dispenser site card is visible
     And The nominated dispenser site card is visible
@@ -53,7 +53,7 @@ Feature: Prescription Detail Page in the Clinical Prescription Tracker Service
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4799
   Scenario: User sees only prescribed items with cancellation warning
     # FIXME: Remove references to static data
-    When I go to the prescription details for prescription ID "7F1A4B-A83008-91DC2E"
+    When I go to the prescription details for prescription ID "3F885D-A83008-900ACJ"
     Then The prescribed items card is visible
     And The dispensed items card is not visible
     And A prescribed item card shows a cancellation warning
@@ -61,7 +61,7 @@ Feature: Prescription Detail Page in the Clinical Prescription Tracker Service
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4799
   Scenario: User sees only dispensed item cards, with expandable and status tag
     # FIXME: Remove references to static data
-    When I go to the prescription details for prescription ID "B8C9E2-A83008-5F7B3A"
+    When I go to the prescription details for prescription ID "04E5F7-A83008-D71BCQ"
     Then The prescribed items card is not visible
     And The dispensed items card is visible
     And A dispensed item card has expandable initial prescription
@@ -69,20 +69,20 @@ Feature: Prescription Detail Page in the Clinical Prescription Tracker Service
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4799
     # FIXME: Remove references to static data
   Scenario: Dispensed item cards do not show pharmacy status when it is missing
-    When I go to the prescription details for prescription ID "4D6F2C-A83008-A3E7D1"
+    When I go to the prescription details for prescription ID "15023D-A83008-298451"
     Then No pharmacy status label is shown in the dispensed item card
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4801
   Scenario: User sees message history with dispense notification dropdown
     # FIXME: Remove references to static data
-    When I go to the prescription details for prescription ID "4D6F2C-A83008-A3E7D1"
+    When I go to the prescription details for prescription ID "15023D-A83008-298451"
     Then The message history timeline is visible
     And A dispense notification information dropdown is shown
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4801
   Scenario: User sees message history with pending cancellation
     # FIXME: Remove references to static data
-    When I go to the prescription details for prescription ID "7F1A4B-A83008-91DC2E"
+    When I go to the prescription details for prescription ID "3F885D-A83008-900ACJ"
     Then The message history timeline is visible
     And A pending cancellation message is shown
 

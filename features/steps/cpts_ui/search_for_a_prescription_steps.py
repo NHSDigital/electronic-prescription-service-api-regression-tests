@@ -14,7 +14,8 @@ EMPTY_FIELD = "<empty>"
 @then("I am on the search for a prescription page")
 def i_am_on_the_search_prescription_page(context):
     page = SearchForAPrescription(context.page)
-    expect(page.temp_text).to_be_visible()
+    expect(page.prescription_id_search_tab).to_be_visible()
+    expect(page.prescription_id_input).to_be_visible()
 
 
 @when("I click on tab {}")
@@ -60,7 +61,8 @@ def i_can_see_the_search_for_a_prescription_header(context):
 @when('I enter prescription ID "{prescription_id}" into the input')
 def enter_prescription_id(context, prescription_id):
     page = SearchForAPrescription(context.page)
-    page.prescription_id_input.fill(prescription_id)
+    if prescription_id != EMPTY_FIELD:
+        page.prescription_id_input.fill(prescription_id)
 
 
 @when("I click the Find a prescription button")
@@ -78,10 +80,11 @@ def redirected_to_results(context, prescription_id):
     context.page.wait_for_url(expected_url)
 
 
-@then('I see a validation message saying "{message}"')
-def i_see_validation_message(context, message):
+@then("I see a prescription ID validation error is displayed")
+def i_see_prescription_id_validation_error(context):
     page = SearchForAPrescription(context.page)
-    expect(page.error_summary).to_contain_text(message)
+    expect(page.prescription_id_error).to_be_visible()
+    assert page.prescription_id_error.text_content()
 
 
 @then("the outcome should be: {outcome}")
