@@ -181,10 +181,28 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     When I search using basic details: "Katherine" "McFarland" "22" "09" "1974" "LS6 1JL"
     Then I am on the too many results page
 
-  # TODO: Uncomment this scenario after the patient search results page is implemented
-  # @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
-  # @basic_details_search
-  # Scenario: User is redirected to the patient search results page for multiple matches
-  #   Given I am logged in as a user with a single access role
-  #   When I search using basic details: "Steve" "Wolderton-Rodriguez" "06" "05" "2013" "LS6 1JL"
-  #   Then I am on the patient search results page
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
+  @basic_details_search
+  Scenario: User is redirected to the patient search results page for multiple matches
+    Given I am logged in as a user with a single access role
+    # FIXME: This will need to be updated when the search pages are updated to use real data
+    When I search using basic details: "<empty>" "Wolderton-Rodriguez" "06" "05" "2013" "<empty>"
+    Then I am on the basic details search results page
+
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
+  @basic_details_search
+  Scenario: User sees all DOB fields highlighted and day focused for an invalid calendar date
+    Given I am logged in as a user with a single access role
+    When I search using basic details: "<empty>" "Smith" "31" "11" "2015" "<empty>"
+    And I see a validation error is displayed
+    And I click the first error summary link
+    Then the focus should be on the "dob-day" input
+
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
+  @basic_details_search
+  Scenario: User sees DOB field error styling persist after correcting values until resubmission
+    Given I am logged in as a user with a single access role
+    When I search using basic details: "<empty>" "Smith" "!" "!" "!" "<empty>"
+    And I see a validation error is displayed
+    And I update the basic details DOB fields to "25" "12" "2010"
+    Then the DOB inputs should have error styling
