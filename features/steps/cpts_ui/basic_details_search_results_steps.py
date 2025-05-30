@@ -6,6 +6,7 @@ from pages.basic_details_search_results import BasicDetailsSearchResultsPage
 
 
 @given("I am on the basic details search results page")
+@then("I am on the basic details search results page")
 def navigate_to_search_results(context):
     context.page = BasicDetailsSearchResultsPage(context.page)
     context.page.page.goto(context.cpts_ui_base_url + context.page.url.lstrip("/"))
