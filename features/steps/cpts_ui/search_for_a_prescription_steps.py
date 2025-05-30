@@ -4,7 +4,6 @@ from playwright.sync_api import expect
 import re
 
 from pages.search_for_a_prescription import SearchForAPrescription
-from pages.search_results_too_many import SearchResultsTooManyPage
 
 EMPTY_FIELD = "<empty>"
 
@@ -123,12 +122,6 @@ def i_see_validation_error_displayed(context):
     page = SearchForAPrescription(context.page)
     expect(page.error_summary).to_be_visible()
     assert page.error_summary.locator("li").count() > 0
-
-
-@then("I am on the too many results page")
-def i_am_on_too_many_results_page(context):
-    page = SearchResultsTooManyPage(context.page)
-    expect(page.results_page).to_be_visible()
 
 
 @when("I click the first error summary link")

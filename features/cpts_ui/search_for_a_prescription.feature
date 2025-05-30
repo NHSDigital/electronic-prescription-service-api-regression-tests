@@ -178,7 +178,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
   Scenario: User is redirected to the too many results page for ambiguous patient match
     Given I am logged in as a user with a single access role
     # FIXME: This will need to be updated when the search pages are updated to use real data
-    When I search using basic details: "Katherine" "McFarland" "22" "09" "1974" "LS6 1JL"
+    When I search using basic details: "<empty>" "Jones" "16" "07" "1985" "<empty>"
     Then I am on the too many results page
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
@@ -206,3 +206,10 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     And I see a validation error is displayed
     And I update the basic details DOB fields to "25" "12" "2010"
     Then the DOB inputs should have error styling
+
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5360
+  @basic_details_search
+  Scenario: User is redirected to the patient not found page for no matches
+    Given I am logged in as a user with a single access role
+    When I search using basic details: "<empty>" "SpecialNotFound" "01" "01" "1990" "<empty>"
+    Then I am on the patient not found page
