@@ -5,6 +5,7 @@ import os
 import json
 import pyotp
 import requests
+import urllib.parse
 from dotenv import load_dotenv
 
 APIGEE_BASE_URL = "https://api.enterprise.apigee.com/v1/organizations/nhsd-nonprod/"
