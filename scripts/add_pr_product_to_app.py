@@ -38,7 +38,7 @@ def get_token():
         "Accept": "application/json;charset=utf-8",
         "Authorization": "Basic ZWRnZWNsaTplZGdlY2xpc2VjcmV0",
     }
-    body = f"username={username}&password={password}&grant_type=password"
+    body = f"username={urllib.parse.quote(username)}&password={urllib.parse.quote(password)}&grant_type=password"
     response = requests.post(
         url=f"{SSO_LOGIN_URL}?mfa_token={mfa_code}",
         headers=headers,
