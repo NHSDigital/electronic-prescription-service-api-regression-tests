@@ -20,3 +20,4 @@ body = f"username={username}&password={password}&grant_type=password"
 password = arguments\.password
 poetry run python scripts/add_pr_product_to_app.py --user="$APIGEE_USER" --*** --secret="$APIGEE_MFA_SECRET" --pr="$PR_ID"
 --user="$APIGEE_USER" --*** --secret="$APIGEE_MFA_SECRET"
+body = f"username={urllib.parse.quote(username)}&password={urllib.parse.quote(password)}&grant_type=password"
