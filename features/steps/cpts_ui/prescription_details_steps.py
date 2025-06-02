@@ -4,6 +4,14 @@ from playwright.sync_api import expect
 from pages.prescription_details import PrescriptionDetailsPage
 
 
+@when("I go to the prescription details")
+def i_go_to_prescription_details(context):
+    prescription_id = context.prescription_id
+    context.execute_steps(
+        f'I go to the prescription details for prescription ID "{prescription_id}"'
+    )
+
+
 @when('I go to the prescription details for prescription ID "{prescription_id}"')
 def i_go_to_prescription_details_for_prescription_id(context, prescription_id):
     context.prescription_id = prescription_id
