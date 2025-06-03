@@ -59,27 +59,78 @@ def i_prepare_and_sign_a_type_prescription(context, nomination, prescription_typ
     i_sign_a_new_prescription(context=context)
 
 
+@given("a {nomination} {prescription_type} prescription has been created")
+def a_proxygen_prescription_has_been_created(context, nomination, prescription_type):
+    a_prescription_has_been_created(context, nomination, prescription_type, "proxygen")
+
+
 @given(
-    "a {nomination} {prescription_type} prescription has been created and released using {deployment_method} apis"
+    "a {nomination} {prescription_type} prescription has been created using {deployment_method} apis"
 )
-def a_prescription_has_been_created_and_released(
+def a_prescription_has_been_created(
     context, nomination, prescription_type, deployment_method
 ):
     if "sandbox" in context.config.userdata["env"].lower():
         return
     if deployment_method == "apim":
         prescribe_product = "EPS-FHIR"
-        dispense_product = "EPS-FHIR"
     elif deployment_method == "proxygen":
         prescribe_product = "EPS-FHIR-PRESCRIBING"
-        dispense_product = "EPS-FHIR-DISPENSING"
     else:
         raise ValueError(f"Unknown deployment_method {deployment_method}")
     i_am_an_authorised_user(context, "prescriber", prescribe_product)
     i_prepare_and_sign_a_type_prescription(context, nomination, prescription_type)
+
+
+@given("a {nomination} {prescription_type} prescription has been created and released")
+def a_proxygen_prescription_has_been_created_and_released(
+    context, nomination, prescription_type
+):
+    a_prescription_has_been_created_and_released(
+        context, nomination, prescription_type, "proxygen"
+    )
+
+
+@given(
+    "a {nomination} {prescription_type} prescription has been created and released to {receiver_ods_code}"
+)
+def a_proxygen_prescription_has_been_created_and_released_to(
+    context, nomination, prescription_type, receiver_ods_code
+):
+    a_prescription_has_been_created(context, nomination, prescription_type, "proxygen")
+    context.receiver_ods_code = receiver_ods_code
+    the_prescription_has_been_released(context, "proxygen")
+
+
+@given(
+    "a {nomination} {prescription_type} prescription has been created and released using {deployment_method} apis"
+)
+def a_prescription_has_been_created_and_released(
+    context, nomination, prescription_type, deployment_method
+):
+    a_prescription_has_been_created(
+        context, nomination, prescription_type, deployment_method
+    )
+    the_prescription_has_been_released(context, deployment_method)
+
+
+def the_prescription_has_been_released(context, deployment_method):
+    if "sandbox" in context.config.userdata["env"].lower():
+        return
+    if deployment_method == "apim":
+        dispense_product = "EPS-FHIR"
+    elif deployment_method == "proxygen":
+        dispense_product = "EPS-FHIR-DISPENSING"
+    else:
+        raise ValueError(f"Unknown deployment_method {deployment_method}")
     i_am_an_authorised_user(context, "dispenser", dispense_product)
     i_release_the_prescription(context)
     indicate_successful_response(context)
+
+
+@given("a new prescription has been dispensed")
+def a_proxygen_prescription_has_been_dispensed(context):
+    a_new_prescription_has_been_dispensed(context, "proxygen")
 
 
 @given("a new prescription has been dispensed using {deployment_method} apis")
@@ -91,6 +142,12 @@ def a_new_prescription_has_been_dispensed(context, deployment_method):
     )
     i_dispense_the_prescription(context)
     indicate_successful_response(context)
+
+
+@given("the prescription has been cancelled")
+def the_proxygen_prescription_has_been_cancelled(context):
+    i_am_an_authorised_user(context, "prescriber", "EPS-FHIR-PRESCRIBING")
+    i_cancel_all_line_items(context)
 
 
 @given("I am an authorised {user} with {app} app")
