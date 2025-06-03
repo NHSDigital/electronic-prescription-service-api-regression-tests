@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import urllib.parse
 import json
 import pyotp
 import requests
@@ -31,6 +32,8 @@ def get_headers():
 
 def get_token():
     assert secret is not None
+    assert username is not None
+    assert password is not None
     totp = pyotp.TOTP(secret)
     mfa_code = totp.now()
     headers = {
@@ -38,7 +41,11 @@ def get_token():
         "Accept": "application/json;charset=utf-8",
         "Authorization": "Basic ZWRnZWNsaTplZGdlY2xpc2VjcmV0",
     }
-    body = f"username={username}&password={password}&grant_type=password"
+    encoded_username = urllib.parse.quote_plus(username)
+    encoded_password = urllib.parse.quote_plus(password)
+    body = (
+        f"username={encoded_username}&password={encoded_password}&grant_type=password"
+    )
     response = requests.post(
         url=f"{SSO_LOGIN_URL}?mfa_token={mfa_code}",
         headers=headers,
