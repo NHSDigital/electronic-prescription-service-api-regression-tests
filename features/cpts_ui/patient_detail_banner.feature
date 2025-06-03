@@ -11,6 +11,7 @@ Feature: The site has a patient detail banner
         Then I am on the search for a prescription page
         And the patient details banner is not visible
 
+    @skip # FIXME: temporary until use of real data in tracker is fixed
     Scenario: When I search for a prescription, and go back, the patient details banner is not visible
         When I go to the search for a prescription page
         And I click on tab Prescription ID search
@@ -19,6 +20,7 @@ Feature: The site has a patient detail banner
         And I click the Go Back link on the prescription not found page
         Then The patient details banner is not visible
 
+    @skip # FIXME: temporary until use of real data in tracker is fixed
     Scenario: When I search for a prescription, the patient details appear
         When I go to the search for a prescription page
         And I click on tab Prescription ID search
