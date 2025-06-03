@@ -16,7 +16,7 @@ Feature: The site has a patient detail banner
         When I go to the search for a prescription page
         And I click on tab Prescription ID search
         # FIXME: This will need to be updated when the search pages are updated to use real data
-        And I search for a prescription using a valid prescription ID "C0C757-A83008-A1234O"
+        And I search for a prescription using a valid prescription ID "F3B7CD-A83008-5AF044"
         And I click the Go Back link on the prescription not found page
         Then The patient details banner is not visible
 

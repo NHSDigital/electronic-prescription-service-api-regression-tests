@@ -17,7 +17,7 @@ Feature: The site displays the prescription information banner
 
   @skip # FIXME: temporary until use of real data in tracker is fixed
   Scenario: When I view an eRD prescription, the banner shows repeat and days supply
-    When I go to the prescription details page with prescription ID "7F1A4B-A83008-91DC2E"
+    When I go to the prescription details page with prescription ID "3F885D-A83008-900ACJ"
     Then The prescription information banner displays repeat and days supply data
 
   @skip # FIXME: temporary until use of real data in tracker is fixed
