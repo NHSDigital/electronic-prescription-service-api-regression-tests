@@ -4,7 +4,6 @@ from playwright.sync_api import expect
 import re
 
 from pages.search_for_a_prescription import SearchForAPrescription
-from pages.search_results_too_many import SearchResultsTooManyPage
 
 EMPTY_FIELD = "<empty>"
 
@@ -128,12 +127,6 @@ def i_see_validation_error_displayed(context):
     assert page.error_summary.locator("li").count() > 0
 
 
-@then("I am on the too many results page")
-def i_am_on_too_many_results_page(context):
-    page = SearchResultsTooManyPage(context.page)
-    expect(page.results_page).to_be_visible()
-
-
 @when("I click the first error summary link")
 @then("I click the first error summary link")
 def click_first_error_link(context):
@@ -200,3 +193,23 @@ def dob_fields_should_have_error_class(context):
         assert (
             "nhsuk-input--error" in classes
         ), f"Expected error class on DOB field, got: {classes}"
+
+
+@then("the search form should be pre-filled with")
+def verify_search_form_prefilled(context):
+    page = SearchForAPrescription(context.page)
+    context.execute_steps("Then I am on the search for a prescription page")
+    mapping = {
+        "First name": page.basic_details_first_name,
+        "Last name": page.basic_details_last_name,
+        "Day": page.basic_details_dob_day,
+        "Month": page.basic_details_dob_month,
+        "Year": page.basic_details_dob_year,
+        "Postcode": page.basic_details_postcode,
+    }
+    for row in context.table:
+        field = row["Field"]
+        value = row["Value"]
+        locator = mapping[field]
+        actual = locator.input_value()
+        assert actual == value, f"For {field}: expected '{value}' got '{actual}'"
