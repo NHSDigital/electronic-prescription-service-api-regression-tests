@@ -37,14 +37,12 @@ def i_see_smaller_cookie_banner(context):
 
 @when("I click the small banner cookie policy link")
 def i_click_the_small_banner_policy_link(context):
-    print("PAGE CONTENT:", context.page.content())
-    page_link = context.page.get_by_test_id("cookieInfoLink")
+    page_link = context.page.get_by_test_id("smallCookieBannerLink")
     page_link.click()
 
 
 @when("I expand the {table_type} cookies details section")
 def i_expand_the_cookies_info_table(context, table_type):
-    print("PAGE CONTENT:", context.page.content())
     cookies_dropdown_text = f"see-{table_type.lower()}-cookies"
     table_dropdown = context.page.get_by_test_id(cookies_dropdown_text)
     table_dropdown.click()
@@ -72,9 +70,7 @@ def i_can_see_cookie_banner(context):
     banner = context.page.get_by_test_id("cookieBanner")
     expect(banner).to_be_visible
     title = context.page.get_by_test_id("cookieTitle")
-    expect(title).to_contain_text(
-        "Cookies on the Clinical prescription tracking service"
-    )
+    expect(title).to_contain_text("Cookies on the Prescription Tracker")
 
 
 @then("I go to the cookies policy page")
@@ -95,6 +91,8 @@ def i_see_the_relevant_table(context, table_type):
 
 @then("I go to the cookies selected page")
 def i_go_to_cookies_selected_page(context):
-    print("Current URL:", context.page.url)
-    expected_url = "/site/cookies-selected"
-    context.page.wait_for_url(expected_url)
+    expected_path = "/site/cookies-selected"
+    current_url = context.page.url
+    assert (
+        expected_path in current_url
+    ), f"Expected '{expected_path}' to be in '{current_url}'"
