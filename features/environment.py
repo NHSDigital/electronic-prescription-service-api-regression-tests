@@ -197,7 +197,8 @@ def before_scenario(context, scenario):
 def after_scenario(context, scenario):
     product = context.config.userdata["product"].upper()
     if product == "CPTS-UI":
-        context.browser.tracing.stop(path="/tmp/trace.zip")
+        if hasattr(context.browser, "tracing"):
+            context.browser.tracing.stop(path="/tmp/trace.zip")
         if hasattr(context, "page"):
             if scenario.status == "failed":
                 allure.attach(
