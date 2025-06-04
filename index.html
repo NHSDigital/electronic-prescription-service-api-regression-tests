@@ -216,10 +216,6 @@ When I press enter on the patient row for &quot;{name}&quot;
 
 When I click the &quot;{link_text}&quot; link
 
-When I am on the patient not found page
-
-When I am on the too many results page
-
 When I make a request to the &quot;{product}&quot; ping endpoint
 
 When I make a request to the &quot;{product}&quot; metadata endpoint
@@ -358,13 +354,13 @@ Then I am on the prescription list current page with NHS number &quot;{nhs_numbe
 
 Then I see a validation error is displayed
 
+Then I am on the too many results page
+
 Then I click the first error summary link
 
 Then the focus should be on the &quot;{field_id}&quot; input
 
 Then the DOB inputs should have error styling
-
-Then the search form should be pre-filled with
 
 Then I can see the summary container
 
@@ -512,11 +508,7 @@ Then table cells should have the correct headers attribute
 
 Then the NHS number &quot;{nhs_number}&quot; should have visually hidden text
 
-Then I am on the patient not found page
-
-Then I am on the too many results page
-
-Then the too many results page should display all required messages
+Then the details section shows
 
 Then the response indicates a success
 
