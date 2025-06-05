@@ -34,8 +34,8 @@ Feature: Users interact with the cookie banner
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5182
     Scenario Outline: User can expand and view the <Table Type> cookies table on the cookies page
         Given I am on the cookies page
-        When I expand the "<Table Type>" cookies details section
-        Then I see the table for "<Table Type>" cookies
+        When I expand the <Table Type> cookies details section
+        Then I see the table for <Table Type> cookies
 
         Examples:
           | Table Type |
