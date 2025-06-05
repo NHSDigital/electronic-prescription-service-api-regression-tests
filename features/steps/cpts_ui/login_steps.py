@@ -73,6 +73,7 @@ def login_with_retries(context, user_id, max_retries=5):
         try:
             login(context, user_id)
             print(f"Login successful on attempt {attempt}")
+            break
         except Exception as e:
             print(f"Attempt {attempt} failed: {e}")
             if attempt == max_retries:
