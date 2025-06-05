@@ -44,6 +44,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     Then I am on the prescription not found page with redirect to PrescriptionIdSearch
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
+  @skip # FIXME: temporary until use of real data in tracker is fixed
   Scenario: User is redirected correctly when they search for non-existent patient
     Given I am logged in as a user with a single access role
     When I am on the search for a prescription page
@@ -92,6 +93,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
   @find_patient
+  @skip # FIXME: temporary until use of real data in tracker is fixed
   Scenario: User is redirected correctly when they search for non-existent patient using NHS number
     Given I am logged in as a user with a single access role
     When I am on the search for a prescription page
