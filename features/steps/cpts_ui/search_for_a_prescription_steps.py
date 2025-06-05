@@ -198,7 +198,6 @@ def dob_fields_should_have_error_class(context):
 @then("the search form should be pre-filled with")
 def verify_search_form_prefilled(context):
     page = SearchForAPrescription(context.page)
-    context.execute_steps("Then I am on the search for a prescription page")
     mapping = {
         "First name": page.basic_details_first_name,
         "Last name": page.basic_details_last_name,
