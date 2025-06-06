@@ -39,7 +39,7 @@ if __name__ == "__main__":
         f" -f allure_behave.formatter:AllureFormatter"
         f" -o allure-results"
         f" -f pretty features"
-        f" --no-capture --no-logcapture --no-skipped --expand --logging-level=DEBUG{tags}"
+        f" --no-logcapture --no-skipped --expand --logging-level=DEBUG{tags}"
     )
     print(f"Running subprocess with command: '{command}'")
     subprocess.run(command, shell=True, check=True)
