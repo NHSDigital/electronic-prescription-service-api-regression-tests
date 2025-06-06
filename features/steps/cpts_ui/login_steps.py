@@ -91,32 +91,36 @@ def login_with_retries(context, user_id, max_retries=5):
 
 @when("I log in as a user with multiple access roles")
 def login_with_multiple_access_roles(context):
-    login(context, MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES)
+    login_with_retries(context, MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES)
 
 
 @when("I log in as a user with no roles")
 def login_with_no_roles(context):
-    login(context, MOCK_CIS2_LOGIN_ID_NO_ROLES)
+    login_with_retries(context, MOCK_CIS2_LOGIN_ID_NO_ROLES)
 
 
 @when("I log in as a user with only roles that do not have access")
 def login_with_without_access(context):
-    login(context, MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE)
+    login_with_retries(context, MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE)
 
 
 @when("I log in with a single access role and multiple without access")
 def login_with_single_role_with_access_multiple_without(context):
-    login(context, MOCK_CIS2_LOGIN_ID_SINGLE_ROLE_WITH_ACCESS_MULTIPLE_WITHOUT)
+    login_with_retries(
+        context, MOCK_CIS2_LOGIN_ID_SINGLE_ROLE_WITH_ACCESS_MULTIPLE_WITHOUT
+    )
 
 
 @when("I log in as a user with a pre selected role")
 def login_with_pre_role_selected(context):
-    login(context, MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES_WITH_SELECTED_ROLE)
+    login_with_retries(
+        context, MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES_WITH_SELECTED_ROLE
+    )
 
 
 @when("I log in as a user with a single access role")
 def login_with_single_role(context):
-    login(context, MOCK_CIS2_LOGIN_ID_SINGLE_ACCESS_ROLE)
+    login_with_retries(context, MOCK_CIS2_LOGIN_ID_SINGLE_ACCESS_ROLE)
 
 
 @when("The login has finished")
