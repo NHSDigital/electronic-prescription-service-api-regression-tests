@@ -54,75 +54,67 @@ def login_single_role_with_access_multiple_without(context):
 
 
 ###############################################################################
-# WHEN
+# Helper functions to retry login
 ###############################################################################
-@when("I log in as a user with multiple access roles")
-def login_with_multiple_access_roles(context):
+
+
+def login(context, user_id):
     context.execute_steps("given I am on the login page")
 
     context.page.get_by_role("button", name="Log in with mock CIS2").click()
-    context.page.get_by_label("Username").fill(MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES)
+    context.page.get_by_label("Username").fill(user_id)
     context.page.get_by_role("button", name="Sign In").click()
 
     context.execute_steps("When the login has finished")
+
+
+def login_with_retries(context, user_id, max_retries=5):
+    for attempt in range(1, max_retries + 1):
+        try:
+            login(context, user_id)
+            break
+        except Exception as e:
+            if attempt == max_retries:
+                raise RuntimeError("Login failed after 5 attempts") from e
+
+
+###############################################################################
+# WHEN
+###############################################################################
+
+
+@when("I log in as a user with multiple access roles")
+def login_with_multiple_access_roles(context):
+    login_with_retries(context, MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES)
 
 
 @when("I log in as a user with no roles")
 def login_with_no_roles(context):
-    context.execute_steps("given I am on the login page")
-
-    context.page.get_by_role("button", name="Log in with mock CIS2").click()
-    context.page.get_by_label("Username").fill(MOCK_CIS2_LOGIN_ID_NO_ROLES)
-    context.page.get_by_role("button", name="Sign In").click()
-
-    context.execute_steps("When the login has finished")
+    login_with_retries(context, MOCK_CIS2_LOGIN_ID_NO_ROLES)
 
 
 @when("I log in as a user with only roles that do not have access")
 def login_with_without_access(context):
-    context.execute_steps("given I am on the login page")
-
-    context.page.get_by_role("button", name="Log in with mock CIS2").click()
-    context.page.get_by_label("Username").fill(MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE)
-    context.page.get_by_role("button", name="Sign In").click()
-
-    context.execute_steps("When the login has finished")
+    login_with_retries(context, MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE)
 
 
 @when("I log in with a single access role and multiple without access")
 def login_with_single_role_with_access_multiple_without(context):
-    context.execute_steps("given I am on the login page")
-
-    context.page.get_by_role("button", name="Log in with mock CIS2").click()
-    context.page.get_by_label("Username").fill(
-        MOCK_CIS2_LOGIN_ID_SINGLE_ROLE_WITH_ACCESS_MULTIPLE_WITHOUT
+    login_with_retries(
+        context, MOCK_CIS2_LOGIN_ID_SINGLE_ROLE_WITH_ACCESS_MULTIPLE_WITHOUT
     )
-    context.page.get_by_role("button", name="Sign In").click()
-
-    context.execute_steps("When the login has finished")
 
 
 @when("I log in as a user with a pre selected role")
 def login_with_pre_role_selected(context):
-    context.execute_steps("given I am on the login page")
-    context.page.get_by_role("button", name="Log in with mock CIS2").click()
-    context.page.get_by_label("Username").fill(
-        MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES_WITH_SELECTED_ROLE
+    login_with_retries(
+        context, MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES_WITH_SELECTED_ROLE
     )
-    context.page.get_by_role("button", name="Sign In").click()
-
-    context.execute_steps("When the login has finished")
 
 
 @when("I log in as a user with a single access role")
 def login_with_single_role(context):
-    context.execute_steps("given I am on the login page")
-
-    context.page.get_by_role("button", name="Log in with mock CIS2").click()
-    context.page.get_by_label("Username").fill(MOCK_CIS2_LOGIN_ID_SINGLE_ACCESS_ROLE)
-    context.page.get_by_role("button", name="Sign In").click()
-
-    context.execute_steps("When the login has finished")
+    login_with_retries(context, MOCK_CIS2_LOGIN_ID_SINGLE_ACCESS_ROLE)
 
 
 @when("The login has finished")

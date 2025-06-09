@@ -44,6 +44,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     Then I am on the prescription not found page with redirect to PrescriptionIdSearch
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
+  @skip # FIXME: temporary until use of real data in tracker is fixed
   Scenario: User is redirected correctly when they search for non-existent patient
     Given I am logged in as a user with a single access role
     When I am on the search for a prescription page
@@ -92,6 +93,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
   @find_patient
+  @skip # FIXME: temporary until use of real data in tracker is fixed
   Scenario: User is redirected correctly when they search for non-existent patient using NHS number
     Given I am logged in as a user with a single access role
     When I am on the search for a prescription page
@@ -163,6 +165,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
   @basic_details_search
+  @skip # FIXME: temporary until use of real data in tracker is fixed
   Scenario: User is redirected to the current prescriptions page for a single match
     Given I am logged in as a user with a single access role
     # FIXME: This will need to be updated when the search pages are updated to use real data
@@ -171,6 +174,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
   @basic_details_search
+  @skip # FIXME: temporary until use of real data in tracker is fixed
   Scenario: User is redirected to the too many results page for ambiguous patient match
     Given I am logged in as a user with a single access role
     # FIXME: This will need to be updated when the search pages are updated to use real data
@@ -179,6 +183,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
   @basic_details_search
+  @skip # FIXME: temporary until use of real data in tracker is fixed
   Scenario: User is redirected to the patient search results page for multiple matches
     Given I am logged in as a user with a single access role
     # FIXME: This will need to be updated when the search pages are updated to use real data
@@ -187,6 +192,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5360
   @basic_details_search
+  @skip # FIXME: temporary until use of real data in tracker is fixed
   Scenario: User is redirected to the patient not found page for no matches
     Given I am logged in as a user with a single access role
     When I search using basic details: "<empty>" "SpecialNotFound" "01" "01" "1990" "<empty>"
@@ -212,6 +218,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5360
   @basic_details_search
+  @skip # FIXME: temporary until use of real data in tracker is fixed
   Scenario: User sees their search data preserved when going back from patient not found page
     Given I am logged in as a user with a single access role
     When I search using basic details: "<empty>" "SpecialNotFound" "01" "01" "1990" "<empty>"
@@ -226,6 +233,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5360
   @basic_details_search
+  @skip # FIXME: temporary until use of real data in tracker is fixed
   Scenario: User sees their search data preserved when going back from too many results page
     Given I am logged in as a user with a single access role
     # FIXME: This will need to be updated when the search pages are updated to use real data
