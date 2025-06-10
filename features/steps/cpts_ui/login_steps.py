@@ -1,5 +1,4 @@
 # pylint: disable=no-name-in-module
-import json
 import time
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 
@@ -72,14 +71,13 @@ def login(context, user_id):
 
 
 def login_with_retries(context, user_id, max_retries=5):
-    login(context, user_id)
-    # for attempt in range(1, max_retries + 1):
-    #     try:
-    #         login(context, user_id)
-    #         break
-    #     except Exception as e:
-    #         if attempt == max_retries:
-    #             raise RuntimeError("Login failed after 5 attempts") from e
+    for attempt in range(1, max_retries + 1):
+        try:
+            login(context, user_id)
+            break
+        except Exception as e:
+            if attempt == max_retries:
+                raise RuntimeError("Login failed after 5 attempts") from e
 
 
 ###############################################################################
@@ -141,41 +139,35 @@ def the_login_is_finished(context):
 ###############################################################################
 @then("I am logged in")
 def i_am_logged_in(context):
-    # There should be cookies with names starting with "CognitoIdentityServiceProvider"
-    # cookies = context.page.context.cookies()
-    # cognito_cookies = [
-    #     cookie
-    #     for cookie in cookies
-    #     if cookie["name"].startswith("CognitoIdentityServiceProvider")
-    # ]
-    # assert len(cognito_cookies) > 0
     timeout = 60  # 60 second timeout
     period = 5  # 5 second polling delay
     mustend = time.time() + timeout
     while time.time() < mustend:
         storage_state = context.browser.storage_state()
-        json_formatted_str = json.dumps(storage_state, indent=2)
-        print(json_formatted_str)
         for origin in storage_state.get("origins", []):
             for item in origin.get("localStorage", []):
                 if item.get("name") == "isSignedIn":
                     is_signed_in_value = item.get("value")
                     break
-        print(is_signed_in_value)  # type: ignore
         if is_signed_in_value == '{"isSignedIn":true}':  # type: ignore
             return
-        print("sleeping for a bit")
         time.sleep(period)
     raise TypeError("Not signed in")
 
 
 @then("I am logged out")
 def i_am_logged_out(context):
-    # No cookies with names starting with "CognitoIdentityServiceProvider" should be present
-    cookies = context.page.context.cookies()
-    cognito_cookies = [
-        cookie
-        for cookie in cookies
-        if cookie["name"].startswith("CognitoIdentityServiceProvider")
-    ]
-    assert len(cognito_cookies) == 0
+    timeout = 60  # 60 second timeout
+    period = 5  # 5 second polling delay
+    mustend = time.time() + timeout
+    while time.time() < mustend:
+        storage_state = context.browser.storage_state()
+        for origin in storage_state.get("origins", []):
+            for item in origin.get("localStorage", []):
+                if item.get("name") == "isSignedIn":
+                    is_signed_in_value = item.get("value")
+                    break
+        if is_signed_in_value == '{"isSignedIn":false}':  # type: ignore
+            return
+        time.sleep(period)
+    raise TypeError("Not signed in")
