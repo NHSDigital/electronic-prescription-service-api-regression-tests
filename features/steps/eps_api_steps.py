@@ -2,7 +2,6 @@ import json
 
 # pylint: disable=no-name-in-module
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
-from features.steps.common_steps import indicate_successful_response
 from methods.api.eps_api_methods import (
     cancel_all_line_items,
     create_signed_prescription,
@@ -47,16 +46,24 @@ def i_prepare_and_sign_a_prescription(context):
         and context.config.userdata["product"].upper() != "EPS-FHIR"
     ):
         return
-    i_prepare_a_new_prescription(context, "nominated", "acute")
-    i_sign_a_new_prescription(context=context)
+    context.execute_steps(
+        """
+        Given I successfully prepare a nominated acute prescription
+        When I sign the prescription
+        """
+    )
 
 
 @given(
     "I successfully prepare and sign a {nomination} {prescription_type} prescription"
 )
 def i_prepare_and_sign_a_type_prescription(context, nomination, prescription_type):
-    i_prepare_a_new_prescription(context, nomination, prescription_type)
-    i_sign_a_new_prescription(context=context)
+    context.execute_steps(
+        f"""
+        Given I successfully prepare a {nomination} {prescription_type} prescription
+        When I sign the prescription
+        """
+    )
 
 
 @given("a {nomination} {prescription_type} prescription has been created")
@@ -78,8 +85,12 @@ def a_prescription_has_been_created(
         prescribe_product = "EPS-FHIR-PRESCRIBING"
     else:
         raise ValueError(f"Unknown deployment_method {deployment_method}")
-    i_am_an_authorised_user(context, "prescriber", prescribe_product)
-    i_prepare_and_sign_a_type_prescription(context, nomination, prescription_type)
+    context.execute_steps(
+        f"""
+        Given I am an authorised prescriber with {prescribe_product} app
+        And I successfully prepare a {nomination} {prescription_type} prescription
+        """
+    )
 
 
 @given("a {nomination} {prescription_type} prescription has been created and released")
@@ -97,9 +108,13 @@ def a_proxygen_prescription_has_been_created_and_released(
 def a_proxygen_prescription_has_been_created_and_released_to(
     context, nomination, prescription_type, receiver_ods_code
 ):
-    a_prescription_has_been_created(context, nomination, prescription_type, "proxygen")
+    context.execute_steps(
+        f"Given a {nomination} {prescription_type} prescription has been created using proxygen apis"
+    )
     context.receiver_ods_code = receiver_ods_code
-    the_prescription_has_been_released(context, "proxygen")
+    context.execute_steps(
+        "Given the prescription has been released using proxygen apis"
+    )
 
 
 @given(
@@ -108,12 +123,15 @@ def a_proxygen_prescription_has_been_created_and_released_to(
 def a_prescription_has_been_created_and_released(
     context, nomination, prescription_type, deployment_method
 ):
-    a_prescription_has_been_created(
-        context, nomination, prescription_type, deployment_method
+    context.execute_steps(
+        f"""
+        Given a {nomination} {prescription_type} prescription has been created using {deployment_method} apis
+        And the prescription has been released using {deployment_method} apis
+        """
     )
-    the_prescription_has_been_released(context, deployment_method)
 
 
+@given("the prescription has been released using {deployment_method} apis")
 def the_prescription_has_been_released(context, deployment_method):
     if "sandbox" in context.config.userdata["env"].lower():
         return
@@ -123,9 +141,12 @@ def the_prescription_has_been_released(context, deployment_method):
         dispense_product = "EPS-FHIR-DISPENSING"
     else:
         raise ValueError(f"Unknown deployment_method {deployment_method}")
-    i_am_an_authorised_user(context, "dispenser", dispense_product)
-    i_release_the_prescription(context)
-    indicate_successful_response(context)
+    context.execute_steps(
+        f"""
+        Given I am an authorised dispenser with {dispense_product} app
+        And I release the prescription
+        """
+    )
 
 
 @given("a new prescription has been dispensed")
@@ -137,17 +158,22 @@ def a_proxygen_prescription_has_been_dispensed(context):
 def a_new_prescription_has_been_dispensed(context, deployment_method):
     if "sandbox" in context.config.userdata["env"].lower():
         return
-    a_prescription_has_been_created_and_released(
-        context, "nominated", "acute", deployment_method
+    context.execute_steps(
+        f"""
+        Given a nominated acute prescription has been created and released using {deployment_method} apis
+        When I dispense the prescription
+        """
     )
-    i_dispense_the_prescription(context)
-    indicate_successful_response(context)
 
 
 @given("the prescription has been cancelled")
 def the_proxygen_prescription_has_been_cancelled(context):
-    i_am_an_authorised_user(context, "prescriber", "EPS-FHIR-PRESCRIBING")
-    i_cancel_all_line_items(context)
+    context.execute_steps(
+        """
+        Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app
+        When I cancel all line items on the prescription
+        """
+    )
 
 
 @given("I am an authorised {user} with {app} app")
@@ -178,6 +204,7 @@ def i_try_to_prepare_a_new_prescription(context, nomination, prescription_type):
     try_prepare_prescription(context)
 
 
+@when("I sign the prescription")
 def i_sign_a_new_prescription(context):
     create_signed_prescription(context)
 
