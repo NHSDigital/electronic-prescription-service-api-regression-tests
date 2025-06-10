@@ -1,4 +1,5 @@
 # pylint: disable=no-name-in-module
+import json
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 
 from features.environment import (
@@ -148,6 +149,8 @@ def i_am_logged_in(context):
     # ]
     # assert len(cognito_cookies) > 0
     storage_state = context.browser.storage_state()
+    json_formatted_str = json.dumps(storage_state, indent=2)
+    print(json_formatted_str)
     assert storage_state == "foo", f"storage state is {storage_state}"
 
 
