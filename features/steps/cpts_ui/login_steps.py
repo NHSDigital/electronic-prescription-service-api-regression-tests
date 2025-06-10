@@ -148,7 +148,7 @@ def i_am_logged_in(context):
     # ]
     # assert len(cognito_cookies) > 0
     storage_state = context.browser.storage_state()
-    assert (storage_state) == "foo"
+    assert storage_state == "foo", f"storage state is {storage_state}"
 
 
 @then("I am logged out")
