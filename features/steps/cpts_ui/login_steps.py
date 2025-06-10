@@ -59,7 +59,7 @@ def login_single_role_with_access_multiple_without(context):
 
 
 def login(context, user_id):
-    # context.page.context.page.evaluate("localStorage.clear()")
+    context.page.evaluate("localStorage.clear()")
     context.execute_steps("given I am on the login page")
 
     context.page.get_by_role("button", name="Log in with mock CIS2").click()
@@ -140,13 +140,15 @@ def the_login_is_finished(context):
 @then("I am logged in")
 def i_am_logged_in(context):
     # There should be cookies with names starting with "CognitoIdentityServiceProvider"
-    cookies = context.page.context.cookies()
-    cognito_cookies = [
-        cookie
-        for cookie in cookies
-        if cookie["name"].startswith("CognitoIdentityServiceProvider")
-    ]
-    assert len(cognito_cookies) > 0
+    # cookies = context.page.context.cookies()
+    # cognito_cookies = [
+    #     cookie
+    #     for cookie in cookies
+    #     if cookie["name"].startswith("CognitoIdentityServiceProvider")
+    # ]
+    # assert len(cognito_cookies) > 0
+    storage_state = context.browser.storage_state()
+    assert (storage_state) == "foo"
 
 
 @then("I am logged out")
