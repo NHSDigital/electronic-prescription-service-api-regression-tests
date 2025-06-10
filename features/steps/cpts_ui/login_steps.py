@@ -69,13 +69,14 @@ def login(context, user_id):
 
 
 def login_with_retries(context, user_id, max_retries=5):
-    for attempt in range(1, max_retries + 1):
-        try:
-            login(context, user_id)
-            break
-        except Exception as e:
-            if attempt == max_retries:
-                raise RuntimeError("Login failed after 5 attempts") from e
+    login(context, user_id)
+    # for attempt in range(1, max_retries + 1):
+    #     try:
+    #         login(context, user_id)
+    #         break
+    #     except Exception as e:
+    #         if attempt == max_retries:
+    #             raise RuntimeError("Login failed after 5 attempts") from e
 
 
 ###############################################################################
