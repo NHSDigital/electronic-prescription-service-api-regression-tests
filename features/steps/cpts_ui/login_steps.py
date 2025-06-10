@@ -59,7 +59,7 @@ def login_single_role_with_access_multiple_without(context):
 
 
 def login(context, user_id):
-    context.page.context.page.evaluate("localStorage.clear()")
+    # context.page.context.page.evaluate("localStorage.clear()")
     context.execute_steps("given I am on the login page")
 
     context.page.get_by_role("button", name="Log in with mock CIS2").click()
