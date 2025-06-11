@@ -89,6 +89,7 @@ def a_prescription_has_been_created(
         f"""
         Given I am an authorised prescriber with {prescribe_product} app
         And I successfully prepare a {nomination} {prescription_type} prescription
+        When I sign the prescription
         """
     )
 
@@ -144,7 +145,7 @@ def the_prescription_has_been_released(context, deployment_method):
     context.execute_steps(
         f"""
         Given I am an authorised dispenser with {dispense_product} app
-        And I release the prescription
+        When I release the prescription
         """
     )
 

@@ -8,31 +8,17 @@ from pages.prescription_details import PrescriptionDetailsPage
 def i_go_to_prescription_details(context):
     prescription_id = context.prescription_id
     context.execute_steps(
-        f'I go to the prescription details for prescription ID "{prescription_id}"'
+        f'When I go to the prescription details for prescription ID "{prescription_id}"'
     )
 
 
 @when('I go to the prescription details for prescription ID "{prescription_id}"')
 def i_go_to_prescription_details_for_prescription_id(context, prescription_id):
     context.prescription_id = prescription_id
-    context.execute_steps(
-        f"""
-    When I search for a prescription using a valid prescription ID "{prescription_id}"
-    And I click through to the prescription details page
-    """
+    context.page.goto(
+        context.cpts_ui_base_url
+        + f"site/prescription-details?prescriptionId={prescription_id}"
     )
-
-
-@when("I click through to the prescription details page")
-def i_click_to_prescription_details_page(context):
-    context.page.wait_for_selector(
-        '[data-testid="eps-loading-spinner"]', state="hidden", timeout=3000
-    )
-    prescription_id = context.prescription_id
-    full_test_id = f"view-prescription-link-{prescription_id}"
-
-    context.page.wait_for_selector(f'[data-testid="{full_test_id}"]')
-    context.page.get_by_test_id(full_test_id).click()
 
 
 @then("The {org} site card is {visibility}")
