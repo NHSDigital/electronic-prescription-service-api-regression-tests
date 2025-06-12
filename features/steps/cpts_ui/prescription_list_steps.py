@@ -6,6 +6,16 @@ from pages.prescription_list_page import PrescriptionListPage
 from pages.search_for_a_prescription import SearchForAPrescription
 
 
+@when("I search for the prescription by prescription ID")
+def search_context_prescription_id(context):
+    prescription_id = context.prescription_id
+    context.execute_steps(
+        f"""
+        When I search for a prescription using a valid prescription ID "{prescription_id}"
+        """
+    )
+
+
 @when('I search for a prescription using a valid prescription ID "{prescription_id}"')
 def search_using_prescription_id(context, prescription_id):
     # Fill the input before clicking
@@ -367,12 +377,13 @@ def check_table_sort_order(context, column_name, direction):
         ), f"Header {header_testid} should have aria-sort='none', but has '{other_aria_sort}'"
 
 
-@then("I click on the view prescription link")
+@when("I click on the view prescription link")
 def click_view_prescriptions_link(context):
     context.page.wait_for_selector(
         '[data-testid="eps-loading-spinner"]', state="hidden", timeout=4000
     )
-    context.page.get_by_test_id("view-prescription-link-C0C757-A83008-C2D93O").click()
+    prescription_id = context.prescription_id
+    context.page.get_by_test_id(f"view-prescription-link-{prescription_id}").click()
 
 
 @then("I am taken to the correct prescription page")

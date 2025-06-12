@@ -82,10 +82,10 @@ Examples:
 
 
 @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4793
-@skip # FIXME: temporary until use of real data in tracker is fixed
-Scenario: View Prescription link navigates correctly 
-  Given I am logged in as a user with a single access role
-  And I am on the prescription list page for prescription ID "C0C757-A83008-C2D93O"
-  When I click on the current prescriptions tab heading
-  Then I click on the view prescription link
-  And I am taken to the correct prescription page
+Scenario: View Prescription link navigates correctly
+  Given a nominated acute prescription has been created
+  And I am logged in as a user with a single access role
+  And I am on the search for a prescription page
+  When I search for the prescription by prescription ID
+  And I click on the view prescription link
+  Then I am taken to the correct prescription page
