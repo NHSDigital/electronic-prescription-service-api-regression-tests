@@ -24,9 +24,7 @@ def i_go_to_prescription_details_for_prescription_id(context, prescription_id):
 @then("The {org} site card is {visibility}")
 def site_card_visibility_check(context, org, visibility):
     page = PrescriptionDetailsPage(context.page)
-    context.page.wait_for_selector(
-        '[data-testid="patient-details-banner"]', timeout=3000
-    )
+    context.page.wait_for_selector('[data-testid="patient-details-banner"]')
 
     expect_prescribed_from_field = False
     match org:
