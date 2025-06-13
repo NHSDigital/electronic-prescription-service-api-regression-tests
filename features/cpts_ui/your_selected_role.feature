@@ -7,7 +7,6 @@ Feature: When the user selects a role, they see a confirmation page
     And I have selected a role
 
   Scenario: user is able to select a role, and see a confirmation page
-    When I click a change role role card
     Then I see the 'your selected role' page
     And I can see the RBAC banner
 

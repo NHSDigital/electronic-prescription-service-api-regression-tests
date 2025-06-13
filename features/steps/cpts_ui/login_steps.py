@@ -1,4 +1,5 @@
 # pylint: disable=no-name-in-module
+import time
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 
 from features.environment import (
@@ -128,7 +129,7 @@ def the_login_is_finished(context):
         ]
         return url in valid_urls
 
-    context.page.wait_for_url(logged_in_urls)
+    context.page.wait_for_url(logged_in_urls, wait_until="load", timeout=2000)
     context.execute_steps("then I am logged in")
 
 
@@ -137,23 +138,35 @@ def the_login_is_finished(context):
 ###############################################################################
 @then("I am logged in")
 def i_am_logged_in(context):
-    # There should be cookies with names starting with "CognitoIdentityServiceProvider"
-    cookies = context.page.context.cookies()
-    cognito_cookies = [
-        cookie
-        for cookie in cookies
-        if cookie["name"].startswith("CognitoIdentityServiceProvider")
-    ]
-    assert len(cognito_cookies) > 0
+    timeout = 60  # 60 second timeout
+    period = 5  # 5 second polling delay
+    mustend = time.time() + timeout
+    while time.time() < mustend:
+        storage_state = context.browser.storage_state()
+        for origin in storage_state.get("origins", []):
+            for item in origin.get("localStorage", []):
+                if item.get("name") == "isSignedIn":
+                    is_signed_in_value = item.get("value")
+                    break
+        if is_signed_in_value == '{"isSignedIn":true}':  # type: ignore
+            return
+        time.sleep(period)
+    raise TypeError("Not signed in")
 
 
 @then("I am logged out")
 def i_am_logged_out(context):
-    # No cookies with names starting with "CognitoIdentityServiceProvider" should be present
-    cookies = context.page.context.cookies()
-    cognito_cookies = [
-        cookie
-        for cookie in cookies
-        if cookie["name"].startswith("CognitoIdentityServiceProvider")
-    ]
-    assert len(cognito_cookies) == 0
+    timeout = 60  # 60 second timeout
+    period = 5  # 5 second polling delay
+    mustend = time.time() + timeout
+    while time.time() < mustend:
+        storage_state = context.browser.storage_state()
+        for origin in storage_state.get("origins", []):
+            for item in origin.get("localStorage", []):
+                if item.get("name") == "isSignedIn":
+                    is_signed_in_value = item.get("value")
+                    break
+        if is_signed_in_value == '{"isSignedIn":false}':  # type: ignore
+            return
+        time.sleep(period)
+    raise TypeError("Not signed in")
