@@ -7,6 +7,6 @@
   },
   "dependencies": {
     "@playwright/test": "^1.53.0",
-    "npm": "^11.4.1"
+    "npm": "^11.4.2"
   }
 }
