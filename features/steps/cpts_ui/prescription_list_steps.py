@@ -25,18 +25,28 @@ def search_using_prescription_id(context, prescription_id):
     context.page.get_by_test_id("find-prescription-button").click()
 
 
-@given("I have accessed the prescription list page using a prescription ID search")
-def access_list_page_via_prescription_id(context):
-    # Navigate directly to the results page with a prescription ID parameter
-    # FIXME: This should not be hardcoded once we can actually search for real data
-    context.page.goto(
-        context.cpts_ui_base_url
-        + "site/prescription-list-current?prescriptionId=C0C757-A83008-C2D93O"
+@when("I click on the NHS number search tab")
+def click_on_nhs_number_search_tab(context):
+    context.page.get_by_test_id("eps-tab-heading /search-by-nhs-number").click()
+
+
+@when("I search for the prescription by NHS number search")
+def search_context_nhs_number(context):
+    nhs_number = context.nhs_number
+    context.execute_steps(
+        f"""
+        When I search for a prescription using a valid NHS number "{nhs_number}"
+        """
     )
 
-    # Verify we're on the prescription list page using data-testid
-    prescription_list_page = PrescriptionListPage(context.page)
-    expect(prescription_list_page.page_container).to_be_visible()
+
+@when('I search for a prescription using a valid NHS number "{nhs_number}"')
+def search_using_nhs_number(context, nhs_number):
+    # Fill the input before clicking
+    search_input = context.page.get_by_test_id("nhs-number-input")
+    search_input.fill(nhs_number)
+
+    context.page.get_by_test_id("find-patient-button").click()
 
 
 @given("I have accessed the prescription list page using an NHS number search")
@@ -162,12 +172,13 @@ def table_displays_prescription_rows(context, count):
 
 
 @then("I can see the future prescriptions results table")
+# STEP HERE TO CHECK IF THERE ARE FUTURE DATED PRESCRIPTIONS AND/OR NEED TO CHECK FOR THE MESSAGE IF THERES NONE
 def i_see_future_prescriptions_results_tab(context):
     context.page.wait_for_selector(
         '[data-testid="eps-loading-spinner"]', state="hidden", timeout=3000
     )
-
     prescription_list_page = PrescriptionListPage(context.page)
+    print("PAGE CONTENT:", context.page.content())
 
     expect(
         prescription_list_page.page.locator(
@@ -253,6 +264,9 @@ def verify_redirect_to_prescription_id_tab(context):
 def verify_redirect_to_nhs_number_tab(context):
     # Use more relaxed URL checking
     current_url = context.page.url
+    print(f"Current URL after save: {current_url}")
+    context.page.screenshot(path="summary_row_failure.png")
+
     assert (
         "site/search-by-nhs-number" in current_url
     ), f"Expected URL to contain 'site/search-by-nhs-number', got: {current_url}"
