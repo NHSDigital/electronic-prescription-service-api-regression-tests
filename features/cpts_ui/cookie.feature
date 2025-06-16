@@ -2,13 +2,20 @@
 Feature: Users interact with the cookie banner
 
     Background:
-        Given I am logged in as a user with a single access role
-        And I am on the search for a prescription page
-
+        Given I am on the homepage
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5182
-    Scenario: User can see the cookie banner
+    Scenario: User can see the cookie banner when not logged in
         Then I can see the cookie banner
+
+    @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5182
+    Scenario: User can see the cookie banner when logged in
+        Given I am logged in as a user with a single access role
+        Then I can see the cookie banner
+
+    @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5182
+    Scenario: User has no RUM cookies by default
+        Then I do not have RUM cookies
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5182
     Scenario: User can accept cookies by pressing the accept button
@@ -23,7 +30,13 @@ Feature: Users interact with the cookie banner
         And I do not have RUM cookies
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5182
-    Scenario: User can click the link to view cookies policy
+    Scenario: User can click the link to view cookies policy when not logged in
+        When I click the cookies policy link
+        Then I go to the cookies policy page
+
+    @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5182
+    Scenario: User can click the link to view cookies policy when logged in
+        Given I am logged in as a user with a single access role
         When I click the cookies policy link
         Then I go to the cookies policy page
 
@@ -32,7 +45,6 @@ Feature: Users interact with the cookie banner
         When I press the accept button
         And I click the small banner cookie policy link
         Then I go to the cookies policy page
-
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5182
     Scenario Outline: User can expand and view the <Table Type> cookies table on the cookies page
