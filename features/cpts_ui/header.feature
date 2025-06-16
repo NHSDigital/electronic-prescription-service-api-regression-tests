@@ -58,7 +58,6 @@ Feature: Header
   ############################################################################
   Scenario: Change Role link is shown if the user has selected and confirmed the role
     Given I am logged in as a user with multiple access roles
-    And I have selected a role
     And I have confirmed a role
     When I go to the home page
     Then I see the "Change Role" link
