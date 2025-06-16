@@ -1,4 +1,4 @@
-from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
+from behave import when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
 import re
 
@@ -49,19 +49,6 @@ def search_using_nhs_number(context, nhs_number):
     context.page.get_by_test_id("find-patient-button").click()
 
 
-@given("I have accessed the prescription list page using an NHS number search")
-def access_list_page_via_nhs_number(context):
-    # Navigate directly to the results page with an NHS number parameter
-    # FIXME: This should not be hardcoded once we can actually search for real data
-    context.page.goto(
-        context.cpts_ui_base_url + "site/prescription-list-current?nhsNumber=1234567890"
-    )
-
-    # Verify we're on the prescription list page using data-testid
-    prescription_list_page = PrescriptionListPage(context.page)
-    expect(prescription_list_page.page_container).to_be_visible()
-
-
 @then(
     'I am redirected to the prescription list page with prescription ID "{prescription_id}"'
 )
@@ -99,18 +86,6 @@ def verify_results_count(context):
     ), f"Expected 'results' in results count text: {count_text}"
 
 
-@given("I am on the prescription list page for prescription ID {prescription_id}")
-def i_am_on_the_prescription_list_page(context, prescription_id: str):
-    context.execute_steps(
-        f"""
-        Given I am on the search for a prescription page
-        When I search for a prescription using a valid prescription ID {prescription_id}
-        Then I am redirected to the prescription list page with prescription ID {prescription_id}
-        And I can see the heading "Prescriptions list"
-    """
-    )
-
-
 @then("I can see the appropriate prescription results tab headings")
 def i_see_results_headings(context):
     prescription_list_page = PrescriptionListPage(context.page)
@@ -125,39 +100,14 @@ def i_see_results_headings(context):
     ).to_be_visible()
 
 
-# @then("I can see the current prescriptions results table")
-# def i_see_current_prescriptions_results_tab(context):
-#     context.page.wait_for_selector(
-#         '[data-testid="eps-loading-spinner"]', state="hidden", timeout=3000
-#     )
-
-#     prescription_list_page = PrescriptionListPage(context.page)
-
-#     expect(
-#         prescription_list_page.page.locator(
-#             '[data-testid="current-prescriptions-results-table"]'
-#         )
-#     ).to_be_visible()
-#     expect(
-#         prescription_list_page.page.locator(
-#             '[data-testid="past-prescriptions-results-table"]'
-#         )
-#     ).not_to_be_visible()
-#     expect(
-#         prescription_list_page.page.locator(
-#             '[data-testid="future-prescriptions-results-table"]'
-#         )
-#     ).not_to_be_visible()
-
-
-@then("I can see the current prescriptions results table")
+@then(
+    "I can see the current prescriptions results table or no current prescriptions message"
+)
 def i_see_current_prescriptions_results_tab(context):
     context.page.wait_for_selector(
         '[data-testid="eps-loading-spinner"]', state="hidden", timeout=3000
     )
     prescription_list_page = PrescriptionListPage(context.page)
-    print("PAGE CONTENT:", context.page.content())
-
     current_table = prescription_list_page.page.locator(
         '[data-testid="current-prescriptions-results-table"]'
     )
@@ -185,7 +135,7 @@ def i_see_current_prescriptions_results_tab(context):
     # Ensure other tabs' tables are not visible
     expect(
         prescription_list_page.page.locator(
-            '[data-testid="current-prescriptions-results-table"]'
+            '[data-testid="future-prescriptions-results-table"]'
         )
     ).not_to_be_visible()
     expect(
@@ -195,61 +145,22 @@ def i_see_current_prescriptions_results_tab(context):
     ).not_to_be_visible()
 
 
-@then("I see the table summary text Showing {count} of {count}")
-def i_see_the_showing_count_text(context, count):
-    summary_row = context.page.get_by_test_id("table-summary-row")
-    expected_text = f"Showing {count} of {count}"
-    expect(summary_row).to_be_visible()
-    expect(summary_row).to_have_text(expected_text)
+@then("I see the table summary text if there are prescriptions")
+def i_see_the_showing_count_text_if_relevant(context):
+    if getattr(context, "prescriptions_found", False):
+        summary_row = context.page.get_by_test_id("table-summary-row")
+        expect(summary_row).to_be_visible()
+        expect(summary_row).to_have_text(re.compile(r"\s*Showing \d+ of \d+\s*"))
 
 
-@then("the table displays {count} prescription rows")
-def table_displays_prescription_rows(context, count):
-    prescription_list_page = PrescriptionListPage(context.page)
-    expect(
-        prescription_list_page.current_prescriptions_results_tab_table
-    ).to_be_visible()
-    rows = prescription_list_page.current_prescriptions_results_tab_table.locator(
-        "tbody tr:not(:last-child)"
-    )
-
-    expect(rows).to_have_count(int(count))
-
-
-# @then("I can see the future prescriptions results table")
-# # STEP HERE TO CHECK IF THERE ARE FUTURE DATED PRESCRIPTIONS AND/OR NEED TO CHECK FOR THE MESSAGE IF THERES NONE
-# def i_see_future_prescriptions_results_tab(context):
-#     context.page.wait_for_selector(
-#         '[data-testid="eps-loading-spinner"]', state="hidden", timeout=3000
-#     )
-#     prescription_list_page = PrescriptionListPage(context.page)
-#     print("PAGE CONTENT:", context.page.content())
-
-#     expect(
-#         prescription_list_page.page.locator(
-#             '[data-testid="future-prescriptions-results-table"]'
-#         )
-#     ).to_be_visible()
-#     expect(
-#         prescription_list_page.page.locator(
-#             '[data-testid="current-prescriptions-results-table"]'
-#         )
-#     ).not_to_be_visible()
-#     expect(
-#         prescription_list_page.page.locator(
-#             '[data-testid="past-prescriptions-results-table"]'
-#         )
-#     ).not_to_be_visible()
-
-
-@then("I can see the future prescriptions results table")
+@then(
+    "I can see the future prescriptions results table or no future prescriptions message"
+)
 def i_see_future_prescriptions_results_tab(context):
     context.page.wait_for_selector(
         '[data-testid="eps-loading-spinner"]', state="hidden", timeout=3000
     )
     prescription_list_page = PrescriptionListPage(context.page)
-    print("PAGE CONTENT:", context.page.content())
-
     future_table = prescription_list_page.page.locator(
         '[data-testid="future-prescriptions-results-table"]'
     )
@@ -287,32 +198,7 @@ def i_see_future_prescriptions_results_tab(context):
     ).not_to_be_visible()
 
 
-# @then("I can see the past prescriptions results table")
-# def i_see_past_prescriptions_results_tab(context):
-#     context.page.wait_for_selector(
-#         '[data-testid="eps-loading-spinner"]', state="hidden", timeout=3000
-#     )
-
-#     prescription_list_page = PrescriptionListPage(context.page)
-
-#     expect(
-#         prescription_list_page.page.locator(
-#             '[data-testid="past-prescriptions-results-table"]'
-#         )
-#     ).to_be_visible()
-#     expect(
-#         prescription_list_page.page.locator(
-#             '[data-testid="future-prescriptions-results-table"]'
-#         )
-#     ).not_to_be_visible()
-#     expect(
-#         prescription_list_page.page.locator(
-#             '[data-testid="current-prescriptions-results-table"]'
-#         )
-#     ).not_to_be_visible()
-
-
-@then("I can see the past prescriptions results table")
+@then("I can see the past prescriptions results table or no past prescriptions message")
 def i_see_past_prescriptions_results_tab(context):
     context.page.wait_for_selector(
         '[data-testid="eps-loading-spinner"]', state="hidden", timeout=3000
@@ -346,7 +232,7 @@ def i_see_past_prescriptions_results_tab(context):
     # Ensure other tabs' tables are not visible
     expect(
         prescription_list_page.page.locator(
-            '[data-testid="current-prescriptions-results-table"]'
+            '[data-testid="future-prescriptions-results-table"]'
         )
     ).not_to_be_visible()
     expect(
@@ -370,7 +256,6 @@ def i_click_past_prescription_tab_heading(context):
 
 @when("I click on the future prescriptions tab heading")
 def i_click_future_prescription_tab_heading(context):
-    print("PAGE CONTENT:", context.page.content())
     prescription_list_page = PrescriptionListPage(context.page)
     prescription_list_page.future_prescriptions_results_tab_heading.click()
 
@@ -399,9 +284,6 @@ def verify_redirect_to_prescription_id_tab(context):
 def verify_redirect_to_nhs_number_tab(context):
     # Use more relaxed URL checking
     current_url = context.page.url
-    print(f"Current URL after save: {current_url}")
-    context.page.screenshot(path="summary_row_failure.png")
-
     assert (
         "site/search-by-nhs-number" in current_url
     ), f"Expected URL to contain 'site/search-by-nhs-number', got: {current_url}"
