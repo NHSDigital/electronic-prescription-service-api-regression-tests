@@ -70,4 +70,4 @@ Feature: Users interact with the cookie banner
         Then I do not have RUM cookies
 
 
-##TODO: create test scenarios for link to privacy policy and cloudwatch rum privacy policy
+##TODO: create test scenarios for link to privacy notice and cloudwatch rum privacy notice
