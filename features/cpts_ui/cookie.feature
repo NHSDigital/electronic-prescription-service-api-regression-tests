@@ -52,5 +52,16 @@ Feature: Users interact with the cookie banner
             | use        |
             | do not use |
 
+    @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5315
+    Scenario: User can use cookies and RUM cookies are stored
+        Given I am on the cookies page
+        When I click "use" cookies and save
+        Then I do have RUM cookies
+
+    @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5315
+    Scenario: User can use cookies and RUM cookies are stored
+        Given I am on the cookies page
+        When I click "do not use" cookies and save
+        Then I do not have RUM cookies
 
 ##TODO: create test scenarios for link to privacy policy and cloudwatch rum privacy policy
