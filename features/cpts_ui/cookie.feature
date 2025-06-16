@@ -55,7 +55,7 @@ Feature: Users interact with the cookie banner
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5315
     Scenario: User selects use cookies and RUM cookies are stored
         Given I am on the cookies page
-        When I click "use" cookies and save
+        When I click use cookies and save
         Then I do have RUM cookies
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5315
