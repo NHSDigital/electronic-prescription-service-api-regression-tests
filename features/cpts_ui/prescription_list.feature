@@ -122,14 +122,14 @@ Feature: Prescription List Page in the Clinical Prescription Tracker Service
 #   And  I click on the "Go back" link
 #   Then  I am redirected to the NHS number search tab
 
-  # @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4792
-  # Scenario: Display current prescriptions results table when clicking the current tab heading
-  #   Given a nominated acute prescription has been created
-  #   And I am logged in as a user with a single access role
-  #   And I am on the search for a prescription page
-  #   When I search for the prescription by prescription ID
-  #   When I click on the current prescriptions tab heading
-  #   Then I can see the current prescriptions results table  
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4792
+  Scenario: Display current prescriptions results table when clicking the current tab heading
+    Given a nominated acute prescription has been created
+    And I am logged in as a user with a single access role
+    And I am on the search for a prescription page
+    When I search for the prescription by prescription ID
+    When I click on the current prescriptions tab heading
+    Then I can see the current prescriptions results table  
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4792
   Scenario: Display future prescriptions results table when clicking the future tab heading
@@ -137,5 +137,34 @@ Feature: Prescription List Page in the Clinical Prescription Tracker Service
     And I am logged in as a user with a single access role
     And I am on the search for a prescription page
     When I search for the prescription by prescription ID
-    When I click on the future prescriptions tab heading
+    And I click on the future prescriptions tab heading
     Then I can see the future prescriptions results table
+
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4792
+  Scenario: Display past prescriptions results table when clicking the past tab heading
+    Given a nominated acute prescription has been created
+    And I am logged in as a user with a single access role
+    And I am on the search for a prescription page
+    When I search for the prescription by prescription ID
+    And I click on the past prescriptions tab heading
+    Then I can see the past prescriptions results table
+
+
+# @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4793
+# Scenario Outline: Sort current prescriptions table by <column> in <direction> order
+#   Given a nominated acute prescription has been created
+#   And I am logged in as a user with a single access role
+#   And I am on the search for a prescription page
+#   When I search for the prescription by prescription ID
+#   And I click on the current prescriptions tab heading
+#   And I sort the table by "<column>"
+#   Then the table is sorted by "<column>" in "<direction>" order
+
+# Examples:
+#   | column               | direction   |
+#   | Issue date           | ascending   |
+#   | Prescription type    | ascending   |
+#   | Prescription type    | descending  |
+#   | Status               | ascending   |
+#   | Pending cancellation | ascending   |
+#   | Prescription ID      | ascending   |
