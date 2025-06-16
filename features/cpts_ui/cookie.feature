@@ -11,13 +11,16 @@ Feature: Users interact with the cookie banner
         Then I can see the cookie banner
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5182
-    Scenario Outline: User can accept or reject cookies by pressing the relevant button
-        When I press the <Button Name> button
+    Scenario: User can accept cookies by pressing the accept button
+        When I press the accept button
         Then I see the smaller cookie banner
-        Examples:
-          | Button Name |
-          | accept      |
-          | reject      |
+        And I do have RUM cookies
+
+    @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5182
+    Scenario: User can reject cookies by pressing the reject button
+        When I press the reject button
+        Then I see the smaller cookie banner
+        And I do not have RUM cookies
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5182
     Scenario: User can click the link to view cookies policy
@@ -42,26 +45,17 @@ Feature: Users interact with the cookie banner
           | Essential  |
           | Analytics  |
 
-    @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5182
-    Scenario Outline: User can choose use/do not use my cookies on the policy page
-        Given I am on the cookies page
-        When I click "<option>" cookies and save
-        Then I go to the cookies selected page
-        Examples:
-            | option     |
-            | use        |
-            | do not use |
-
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5315
-    Scenario: User selects use cookies and RUM cookies are stored
+    Scenario: On the cookie page, user selects use cookies and RUM cookies are stored
         Given I am on the cookies page
         When I click use cookies and save
         Then I do have RUM cookies
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5315
-    Scenario: User selects do not use cookies and RUM cookies are not stored
+    Scenario: On the cookie page, user selects do not use cookies and RUM cookies are not stored
         Given I am on the cookies page
         When I click "do not use" cookies and save
         Then I do not have RUM cookies
+
 
 ##TODO: create test scenarios for link to privacy policy and cloudwatch rum privacy policy
