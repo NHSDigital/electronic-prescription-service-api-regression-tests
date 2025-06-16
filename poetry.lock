@@ -2,30 +2,30 @@
 
 [[package]]
 name = "allure-behave"
-version = "2.14.2"
+version = "2.14.3"
 description = "Allure behave integration"
 optional = false
 python-versions = "*"
 groups = ["main"]
 files = [
-    {file = "allure_behave-2.14.2-py3-none-any.whl", hash = "sha256:159a54eee88e6117017160a565af18fd1c2c46fa5d0da993aa75e97a47d3d352"},
-    {file = "allure_behave-2.14.2.tar.gz", hash = "sha256:b145a838150cd2cdf6288b1922a855e4c6fb11ad0c950cd0f17146d1ea83adf4"},
+    {file = "allure_behave-2.14.3-py3-none-any.whl", hash = "sha256:dba231278ef8e05e040eaeb5b38fb3093cf1956d4a3bb88b8d793f56f22ad96b"},
+    {file = "allure_behave-2.14.3.tar.gz", hash = "sha256:71f8e3e215b5e525407ed95478a33bb8a345c71dc40ad42136b887661c073921"},
 ]
 
 [package.dependencies]
-allure-python-commons = "2.14.2"
+allure-python-commons = "2.14.3"
 behave = ">=1.2.5"
 
 [[package]]
 name = "allure-python-commons"
-version = "2.14.2"
+version = "2.14.3"
 description = "Contains the API for end users as well as helper functions and classes to build Allure adapters for Python test frameworks"
 optional = false
 python-versions = ">=3.6"
 groups = ["main"]
 files = [
-    {file = "allure_python_commons-2.14.2-py3-none-any.whl", hash = "sha256:ad50385a4c601ec31c86eed773d8ccfdcc687fecbb6535c9768af3bf03b50a19"},
-    {file = "allure_python_commons-2.14.2.tar.gz", hash = "sha256:7acdc4fe3efbe709604895e2393f082b2659d8e5653e77ff6367682e6e4a41bc"},
+    {file = "allure_python_commons-2.14.3-py3-none-any.whl", hash = "sha256:7bcf6a2eff69e6f0eacd8681e923f0a9dfbdd86cb8e20d8f93288057f9fb7cb1"},
+    {file = "allure_python_commons-2.14.3.tar.gz", hash = "sha256:2dcaa87dd6b0b41902f60fe17e2653d3762788f3998ca4cf721dabfa8342aa07"},
 ]
 
 [package.dependencies]
@@ -1426,14 +1426,14 @@ test = ["coverage", "mypy", "ruff", "wheel"]
 
 [[package]]
 name = "pyright"
-version = "1.1.401"
+version = "1.1.402"
 description = "Command line wrapper for pyright"
 optional = false
 python-versions = ">=3.7"
 groups = ["main"]
 files = [
-    {file = "pyright-1.1.401-py3-none-any.whl", hash = "sha256:6fde30492ba5b0d7667c16ecaf6c699fab8d7a1263f6a18549e0b00bf7724c06"},
-    {file = "pyright-1.1.401.tar.gz", hash = "sha256:788a82b6611fa5e34a326a921d86d898768cddf59edde8e93e56087d277cc6f1"},
+    {file = "pyright-1.1.402-py3-none-any.whl", hash = "sha256:2c721f11869baac1884e846232800fe021c33f1b4acb3929cff321f7ea4e2982"},
+    {file = "pyright-1.1.402.tar.gz", hash = "sha256:85a33c2d40cd4439c66aa946fd4ce71ab2f3f5b8c22ce36a623f59ac22937683"},
 ]
 
 [package.dependencies]
@@ -1605,19 +1605,19 @@ typing-extensions = {version = ">=4.4.0", markers = "python_version < \"3.13\""}
 
 [[package]]
 name = "requests"
-version = "2.32.3"
+version = "2.32.4"
 description = "Python HTTP for Humans."
 optional = false
 python-versions = ">=3.8"
 groups = ["main"]
 files = [
-    {file = "requests-2.32.3-py3-none-any.whl", hash = "sha256:70761cfe03c773ceb22aa2f671b4757976145175cdfca038c02654d061d6dcc6"},
-    {file = "requests-2.32.3.tar.gz", hash = "sha256:55365417734eb18255590a9ff9eb97e9e1da868d4ccd6402399eaf68af20a760"},
+    {file = "requests-2.32.4-py3-none-any.whl", hash = "sha256:27babd3cda2a6d50b30443204ee89830707d396671944c998b5975b031ac2b2c"},
+    {file = "requests-2.32.4.tar.gz", hash = "sha256:27d0316682c8a29834d3264820024b62a36942083d52caf2f14c0591336d3422"},
 ]
 
 [package.dependencies]
 certifi = ">=2017.4.17"
-charset-normalizer = ">=2,<4"
+charset_normalizer = ">=2,<4"
 idna = ">=2.5,<4"
 urllib3 = ">=1.21.1,<3"
 
@@ -1954,4 +1954,4 @@ test = ["pytest (>=3.0.0)"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "3d9c171e5c16e17e47929eb55b57d90017e62220a3ddc6df33afa53563e50553"
+content-hash = "9f16f31b09901da364570e5ceeb1670cf39b6898e1a57cd714fd81822e753975"

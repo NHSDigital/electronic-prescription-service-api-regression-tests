@@ -8,6 +8,7 @@ from pages.select_your_role import SelectYourRole
 @given("I have selected a role")
 def i_have_selected_role(context):
     context.execute_steps("when I select a role")
+    context.execute_steps("then I see the 'your selected role' page")
 
 
 @when("I select a role")
