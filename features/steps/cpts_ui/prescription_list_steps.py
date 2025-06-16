@@ -5,6 +5,8 @@ import re
 from pages.prescription_list_page import PrescriptionListPage
 from pages.search_for_a_prescription import SearchForAPrescription
 
+NO_PRESCRIPTIONS_MESSAGE = '[data-testid="no-prescriptions-message"]'
+
 
 @when("I search for the prescription by prescription ID")
 def search_context_prescription_id(context):
@@ -112,7 +114,7 @@ def i_see_current_prescriptions_results_tab(context):
         '[data-testid="current-prescriptions-results-table"]'
     )
     no_prescriptions_message = prescription_list_page.page.locator(
-        '[data-testid="no-prescriptions-message"]'
+        NO_PRESCRIPTIONS_MESSAGE
     )
 
     # Wait until either the table or the message appears
@@ -165,7 +167,7 @@ def i_see_future_prescriptions_results_tab(context):
         '[data-testid="future-prescriptions-results-table"]'
     )
     no_prescriptions_message = prescription_list_page.page.locator(
-        '[data-testid="no-prescriptions-message"]'
+        NO_PRESCRIPTIONS_MESSAGE
     )
 
     # Wait until either the table or the message appears
@@ -209,7 +211,7 @@ def i_see_past_prescriptions_results_tab(context):
         '[data-testid="past-prescriptions-results-table"]'
     )
     no_prescriptions_message = prescription_list_page.page.locator(
-        '[data-testid="no-prescriptions-message"]'
+        NO_PRESCRIPTIONS_MESSAGE
     )
 
     # Wait until either the table or the message appears
