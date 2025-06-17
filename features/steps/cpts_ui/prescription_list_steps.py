@@ -11,16 +11,6 @@ NO_PRESCRIPTIONS_MESSAGE = '[data-testid="no-prescriptions-message"]'
 @when("I search for the prescription by prescription ID")
 def search_context_prescription_id(context):
     prescription_id = context.prescription_id
-    context.execute_steps(
-        f"""
-        When I search for a prescription using a valid prescription ID "{prescription_id}"
-        """
-    )
-
-
-@when('I search for a prescription using a valid prescription ID "{prescription_id}"')
-def search_using_prescription_id(context, prescription_id):
-    # Fill the input before clicking
     search_input = context.page.get_by_test_id("prescription-id-input")
     search_input.fill(prescription_id)
 
@@ -35,19 +25,8 @@ def click_on_nhs_number_search_tab(context):
 @when("I search for the prescription by NHS number search")
 def search_context_nhs_number(context):
     nhs_number = context.nhs_number
-    context.execute_steps(
-        f"""
-        When I search for a prescription using a valid NHS number "{nhs_number}"
-        """
-    )
-
-
-@when('I search for a prescription using a valid NHS number "{nhs_number}"')
-def search_using_nhs_number(context, nhs_number):
-    # Fill the input before clicking
     search_input = context.page.get_by_test_id("nhs-number-input")
     search_input.fill(nhs_number)
-
     context.page.get_by_test_id("find-patient-button").click()
 
 
@@ -102,164 +81,50 @@ def i_see_results_headings(context):
     ).to_be_visible()
 
 
-@then(
-    "I can see the current prescriptions results table or no current prescriptions message"
-)
-def i_see_current_prescriptions_results_tab(context):
-    context.page.wait_for_selector(
-        '[data-testid="eps-loading-spinner"]', state="hidden", timeout=3000
-    )
+@then("I can see the appropriate no prescriptions found message")
+def i_see_no_prescriptions_message(context):
     prescription_list_page = PrescriptionListPage(context.page)
-    current_table = prescription_list_page.page.locator(
-        '[data-testid="current-prescriptions-results-table"]'
-    )
     no_prescriptions_message = prescription_list_page.page.locator(
         NO_PRESCRIPTIONS_MESSAGE
     )
-
-    # Wait until either the table or the message appears
-    context.page.wait_for_selector(
-        '[data-testid="current-prescriptions-results-table"], [data-testid="no-prescriptions-message"]',
-        timeout=3000,
-    )
-
-    if current_table.is_visible():
-        expect(current_table).to_be_visible()
-    elif no_prescriptions_message.is_visible():
-        expect(no_prescriptions_message).to_contain_text(
-            "There are no current prescriptions."
-        )
-    else:
-        raise AssertionError(
-            "Neither current prescriptions table nor no-prescriptions message was found."
-        )
-
-    # Ensure other tabs' tables are not visible
-    expect(
-        prescription_list_page.page.locator(
-            '[data-testid="future-prescriptions-results-table"]'
-        )
-    ).not_to_be_visible()
-    expect(
-        prescription_list_page.page.locator(
-            '[data-testid="past-prescriptions-results-table"]'
-        )
-    ).not_to_be_visible()
+    expect(no_prescriptions_message).to_be_visible()
 
 
-@then("I see the table summary text if there are prescriptions")
+@then("I see the table summary text displaying number of prescriptions")
 def i_see_the_showing_count_text_if_relevant(context):
-    if getattr(context, "prescriptions_found", False):
-        summary_row = context.page.get_by_test_id("table-summary-row")
-        expect(summary_row).to_be_visible()
-        expect(summary_row).to_have_text(re.compile(r"\s*Showing \d+ of \d+\s*"))
+    summary_row = context.page.get_by_test_id("table-summary-row")
+    expect(summary_row).to_be_visible()
+    expect(summary_row).to_have_text(re.compile(r"\s*Showing \d+ of \d+\s*"))
 
 
-@then(
-    "I can see the future prescriptions results table or no future prescriptions message"
-)
-def i_see_future_prescriptions_results_tab(context):
+@then('I can see the "{tab_name}" prescriptions results table')
+def i_see_prescriptions_results_table(context, tab_name):
     context.page.wait_for_selector(
         '[data-testid="eps-loading-spinner"]', state="hidden", timeout=3000
     )
-    prescription_list_page = PrescriptionListPage(context.page)
-    future_table = prescription_list_page.page.locator(
-        '[data-testid="future-prescriptions-results-table"]'
-    )
-    no_prescriptions_message = prescription_list_page.page.locator(
-        NO_PRESCRIPTIONS_MESSAGE
-    )
 
-    # Wait until either the table or the message appears
+    tab_selector = f'[data-testid="{tab_name}-prescriptions-results-table"]'
+
     context.page.wait_for_selector(
-        '[data-testid="future-prescriptions-results-table"], [data-testid="no-prescriptions-message"]',
-        timeout=3000,
+        f'{tab_selector}, [data-testid="no-prescriptions-message"]', timeout=3000
     )
 
-    if future_table.is_visible():
-        expect(future_table).to_be_visible()
-    elif no_prescriptions_message.is_visible():
-        expect(no_prescriptions_message).to_contain_text(
-            "No future-dated prescriptions found."
-        )
-    else:
-        raise AssertionError(
-            "Neither future prescriptions table nor no-prescriptions message was found."
-        )
+    expect(context.page.locator(tab_selector)).to_be_visible()
 
-    # Ensure other tabs' tables are not visible
-    expect(
-        prescription_list_page.page.locator(
-            '[data-testid="current-prescriptions-results-table"]'
-        )
-    ).not_to_be_visible()
-    expect(
-        prescription_list_page.page.locator(
-            '[data-testid="past-prescriptions-results-table"]'
-        )
-    ).not_to_be_visible()
+    other_tabs = {"current", "past", "future"} - {tab_name}
+    for other in other_tabs:
+        expect(
+            context.page.locator(f'[data-testid="{other}-prescriptions-results-table"]')
+        ).not_to_be_visible()
 
 
-@then("I can see the past prescriptions results table or no past prescriptions message")
-def i_see_past_prescriptions_results_tab(context):
-    context.page.wait_for_selector(
-        '[data-testid="eps-loading-spinner"]', state="hidden", timeout=3000
-    )
+@when('I click on the "{tab_name}" prescriptions tab heading')
+def i_click_on_tab_heading(context, tab_name):
     prescription_list_page = PrescriptionListPage(context.page)
-
-    past_table = prescription_list_page.page.locator(
-        '[data-testid="past-prescriptions-results-table"]'
+    tab_element = getattr(
+        prescription_list_page, f"{tab_name}_prescriptions_results_tab_heading"
     )
-    no_prescriptions_message = prescription_list_page.page.locator(
-        NO_PRESCRIPTIONS_MESSAGE
-    )
-
-    # Wait until either the table or the message appears
-    context.page.wait_for_selector(
-        '[data-testid="past-prescriptions-results-table"], [data-testid="no-prescriptions-message"]',
-        timeout=3000,
-    )
-
-    if past_table.is_visible():
-        expect(past_table).to_be_visible()
-    elif no_prescriptions_message.is_visible():
-        expect(no_prescriptions_message).to_contain_text(
-            "No claimed or expired prescriptions found."
-        )
-    else:
-        raise AssertionError(
-            "Neither future prescriptions table nor no-prescriptions message was found."
-        )
-
-    # Ensure other tabs' tables are not visible
-    expect(
-        prescription_list_page.page.locator(
-            '[data-testid="future-prescriptions-results-table"]'
-        )
-    ).not_to_be_visible()
-    expect(
-        prescription_list_page.page.locator(
-            '[data-testid="past-prescriptions-results-table"]'
-        )
-    ).not_to_be_visible()
-
-
-@when("I click on the current prescriptions tab heading")
-def i_click_current_prescription_tab_heading(context):
-    prescription_list_page = PrescriptionListPage(context.page)
-    prescription_list_page.current_prescriptions_results_tab_heading.click()
-
-
-@when("I click on the past prescriptions tab heading")
-def i_click_past_prescription_tab_heading(context):
-    prescription_list_page = PrescriptionListPage(context.page)
-    prescription_list_page.past_prescriptions_results_tab_heading.click()
-
-
-@when("I click on the future prescriptions tab heading")
-def i_click_future_prescription_tab_heading(context):
-    prescription_list_page = PrescriptionListPage(context.page)
-    prescription_list_page.future_prescriptions_results_tab_heading.click()
+    tab_element.click()
 
 
 @when('I click on the "Go back" link')
