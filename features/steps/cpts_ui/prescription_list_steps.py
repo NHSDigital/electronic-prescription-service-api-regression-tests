@@ -5,8 +5,6 @@ import re
 from pages.prescription_list_page import PrescriptionListPage
 from pages.search_for_a_prescription import SearchForAPrescription
 
-NO_PRESCRIPTIONS_MESSAGE = '[data-testid="no-prescriptions-message"]'
-
 
 @when("I search for the prescription by prescription ID")
 def search_context_prescription_id(context):
@@ -28,21 +26,6 @@ def search_context_nhs_number(context):
     search_input = context.page.get_by_test_id("nhs-number-input")
     search_input.fill(nhs_number)
     context.page.get_by_test_id("find-patient-button").click()
-
-
-@then(
-    'I am redirected to the prescription list page with prescription ID "{prescription_id}"'
-)
-def verify_prescription_list_page(context, prescription_id):
-    expected_url = re.compile(
-        r"/site/prescription-list-(?:current|past|future)\?prescriptionId="
-        + prescription_id
-    )
-    context.page.wait_for_url(expected_url)
-
-    # Verify we're on the prescription list page using POM
-    prescription_list_page = PrescriptionListPage(context.page)
-    expect(prescription_list_page.page_container).to_be_visible()
 
 
 @then('I can see the heading "{heading_text}"')
@@ -85,7 +68,7 @@ def i_see_results_headings(context):
 def i_see_no_prescriptions_message(context):
     prescription_list_page = PrescriptionListPage(context.page)
     no_prescriptions_message = prescription_list_page.page.locator(
-        NO_PRESCRIPTIONS_MESSAGE
+        '[data-testid="no-prescriptions-message"]'
     )
     expect(no_prescriptions_message).to_be_visible()
 
