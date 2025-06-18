@@ -52,12 +52,6 @@ Given I am on the your selected role page
 
 Given I have confirmed a role
 
-Given I have accessed the prescription list page using a prescription ID search
-
-Given I have accessed the prescription list page using an NHS number search
-
-Given I am on the prescription list page for prescription ID {prescription_id}
-
 Given I am on the cookies page
 
 Given I see the smaller cookie banner
@@ -182,17 +176,19 @@ When I go to the prescription details page without a prescription ID
 
 When I click the copy prescription ID button
 
-When I search for a prescription using a valid prescription ID &quot;{prescription_id}&quot;
+When I search for the prescription by prescription ID
 
-When I click on the current prescriptions tab heading
+When I click on the NHS number search tab
 
-When I click on the past prescriptions tab heading
+When I search for the prescription by NHS number search
 
-When I click on the future prescriptions tab heading
+When I click on the &quot;{tab_name}&quot; prescriptions tab heading
 
 When I click on the &quot;Go back&quot; link
 
 When I sort the table by &quot;{column_name}&quot;
+
+When I click on the view prescription link
 
 When I go to the prescription details
 
@@ -422,31 +418,23 @@ Then The clipboard contains &quot;{expected}&quot;
 
 Then The page shows the loading message &quot;{expected_message}&quot;
 
-Then I am redirected to the prescription list page with prescription ID &quot;{prescription_id}&quot;
-
 Then I can see the heading &quot;{heading_text}&quot;
 
 Then I can see the results count message
 
 Then I can see the appropriate prescription results tab headings
 
-Then I can see the current prescriptions results table
+Then I can see the appropriate no prescriptions found message
 
-Then I see the table summary text Showing {count} of {count}
+Then I see the table summary text displaying number of prescriptions
 
-Then the table displays {count} prescription rows
-
-Then I can see the future prescriptions results table
-
-Then I can see the past prescriptions results table
+Then I can see the &quot;{tab_name}&quot; prescriptions results table
 
 Then I am redirected to the prescription ID search tab
 
 Then I am redirected to the NHS number search tab
 
 Then the table is sorted by &quot;{column_name}&quot; in &quot;{direction}&quot; order
-
-Then I click on the view prescription link
 
 Then I am taken to the correct prescription page
 
