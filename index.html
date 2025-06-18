@@ -80,6 +80,8 @@ Given a {nomination} {prescription_type} prescription has been created and relea
 
 Given a {nomination} {prescription_type} prescription has been created and released using {deployment_method} apis
 
+Given the prescription has been released using {deployment_method} apis
+
 Given a new prescription has been dispensed
 
 Given a new prescription has been dispensed using {deployment_method} apis
@@ -196,8 +198,6 @@ When I go to the prescription details
 
 When I go to the prescription details for prescription ID &quot;{prescription_id}&quot;
 
-When I click through to the prescription details page
-
 When I click the Go Back link on the prescription not found page
 
 When I press the {button_name} button
@@ -239,6 +239,8 @@ When I request the prescription details without a path parameter
 When I am an authorised {user} with {app} app
 
 When I try to prepare a {nomination} {prescription_type} prescription
+
+When I sign the prescription
 
 When I release the prescription
 
