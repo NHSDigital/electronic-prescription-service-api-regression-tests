@@ -1,7 +1,6 @@
 # pylint: disable=no-name-in-module
 import time
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
-from home_steps import goto_page
 
 from features.environment import (
     MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES,
@@ -11,6 +10,8 @@ from features.environment import (
     MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE,
     MOCK_CIS2_LOGIN_ID_NO_ROLES,
 )
+
+from .home_steps import goto_page
 
 
 ###############################################################################
