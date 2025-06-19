@@ -11,13 +11,15 @@ from features.environment import (
     MOCK_CIS2_LOGIN_ID_NO_ROLES,
 )
 
+from .home_steps import goto_page
+
 
 ###############################################################################
 # GIVEN
 ###############################################################################
 @given("I am on the login page")
 def i_am_on_login_page(context):
-    context.execute_steps("given I am on the homepage")
+    goto_page(context, "login")
 
 
 @given("I am logged in as a user with no roles")
