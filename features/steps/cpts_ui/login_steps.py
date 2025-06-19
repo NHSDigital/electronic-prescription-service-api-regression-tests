@@ -1,6 +1,7 @@
 # pylint: disable=no-name-in-module
 import time
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
+from home_steps import goto_page
 
 from features.environment import (
     MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES,
@@ -17,7 +18,7 @@ from features.environment import (
 ###############################################################################
 @given("I am on the login page")
 def i_am_on_login_page(context):
-    context.execute_steps("given I am on the homepage")
+    goto_page(context, "login")
 
 
 @given("I am logged in as a user with no roles")
