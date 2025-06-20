@@ -96,3 +96,24 @@ def i_go_to_cookies_selected_page(context):
     assert (
         expected_path in current_url
     ), f"Expected '{expected_path}' to be in '{current_url}'"
+
+
+def get_rum_cookies(cookies):
+    rum_cookies = [
+        cookie for cookie in cookies if cookie.get("name") in ("cwr_s", "cwr_u")
+    ]
+    return rum_cookies
+
+
+@then("I do not have RUM cookies")
+def i_do_not_have_rum_cookies(context):
+    cookies = context.page.context.cookies()
+    rum_cookies = get_rum_cookies(cookies)
+    assert len(rum_cookies) == 0
+
+
+@then("I do have RUM cookies")
+def i_do_have_rum_cookies(context):
+    cookies = context.page.context.cookies()
+    rum_cookies = get_rum_cookies(cookies)
+    assert len(rum_cookies) == 2
