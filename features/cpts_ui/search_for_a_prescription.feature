@@ -25,6 +25,13 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
       | NHS Number Search      |
       | Basic Details Search   |
 
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5480
+  Scenario: user pressing arrow keys when filling out a form cycles between the text rather than between tab headings
+    Given I am logged in as a user with a single access role
+    When I am on the search for a prescription page
+    And I enter text in an input box
+    Then I am not redirected to another tab
+
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4535
   @rbac_banner
   Scenario: User can see their RBAC banner when a role is selected
