@@ -273,3 +273,22 @@ def check_url_redirect_for_prescriptions(context):
         r"/site/prescription-details\?prescriptionId=[\w-]+"
     )
     context.page.wait_for_url(expected_url_pattern)
+
+
+@then("I should be able to see the prescription details not available text")
+def see_prescription_details_unavailable_text(context):
+    prescription_id = context.prescription_id
+    text_locator = context.page.locator(
+        f'[data-testid="unavailable-text-{prescription_id}"]'
+    )
+    expect(text_locator).to_be_visible()
+    expect(text_locator).to_have_text("Full prescription details not available")
+
+
+@then("the view prescription link should not be visible")
+def view_prescription_link_should_not_be_visible(context):
+    prescription_id = context.prescription_id
+    link_locator = context.page.locator(
+        f'[data-testid="view-prescription-link-{prescription_id}"]'
+    )
+    expect(link_locator).to_have_count(0)

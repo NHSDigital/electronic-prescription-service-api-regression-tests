@@ -11,6 +11,17 @@ Feature: Prescription List Page in the Prescription Tracker
     And I click on the view prescription link
     Then I am taken to the correct prescription page
 
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4793
+  Scenario: View prescription link not there and unavailable text present instead on cancelled prescription
+    Given a nominated acute prescription has been created
+    And the prescription has been cancelled
+    And I am logged in as a user with a single access role
+    And I am on the search for a prescription page
+    When I search for the prescription by prescription ID
+    And I click on the "past" prescriptions tab heading
+    Then I should be able to see the prescription details not available text
+    And the view prescription link should not be visible
+
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4778
   Scenario: User can access the prescription list page
     Given a nominated acute prescription has been created
