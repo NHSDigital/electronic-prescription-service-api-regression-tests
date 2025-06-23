@@ -53,7 +53,7 @@ def i_am_on_tab(context, tab_name):
 
 @when("I enter text in an input box")
 def i_enter_text_in_input_box(context):
-    search_box = context.page.get_by_test_id("search-by-prescriptionid-box")
+    search_box = context.page.get_by_test_id("prescription-id-input")
     search_box.click()
     search_box.fill("1234567890")
     search_box.press("ArrowLeft")
