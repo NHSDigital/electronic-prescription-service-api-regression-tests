@@ -51,6 +51,23 @@ def i_am_on_tab(context, tab_name):
             raise AssertionError(f"Unknown tab {tab_name}")
 
 
+@when("I enter text in an input box")
+def i_enter_text_in_input_box(context):
+    search_box = context.page.get_by_test_id("prescription-id-input")
+    search_box.click()
+    search_box.fill("1234567890")
+    search_box.press("ArrowLeft")
+    search_box.press("ArrowRight")
+
+
+@then("I am not redirected to another tab")
+def i_am_not_redirected(context):
+    page = SearchForAPrescription(context.page)
+    expect(page.prescription_id_search_header).to_be_visible()
+    expect(page.nhs_number_search_header).to_be_visible(visible=False)
+    expect(page.basic_details_search_header).to_be_visible(visible=False)
+
+
 @then("I can see the search for a prescription header")
 def i_can_see_the_search_for_a_prescription_header(context):
     page = SearchForAPrescription(context.page)
