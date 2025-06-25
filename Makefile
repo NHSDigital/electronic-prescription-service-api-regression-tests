@@ -40,7 +40,7 @@ install-hooks: install-python
 install-playwright:
 	playwright install
 	playwright install-deps
-	playwright install --force chrome
+	playwright install --force chromium
 
 install-node:
 	npm ci
