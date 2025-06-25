@@ -5,13 +5,6 @@ from playwright.sync_api import expect
 from pages.prescription_information_banner import PrescriptionInformationBanner
 
 
-@when('I go to the prescription details page with prescription ID "{prescription_id}"')
-def go_to_details_page(context, prescription_id):
-    context.page.goto(
-        f"{context.cpts_ui_base_url}site/prescription-details?prescriptionId={prescription_id}"
-    )
-
-
 @when("I go to the prescription details page without a prescription ID")
 def go_to_details_page_no_id(context):
     context.page.goto(f"{context.cpts_ui_base_url}site/prescription-details")

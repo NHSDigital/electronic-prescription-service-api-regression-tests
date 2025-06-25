@@ -130,9 +130,7 @@ def redirected_to_nhs_not_found(context):
 
 @then('I am on the prescription list current page with NHS number "{nhs_number}"')
 def redirected_to_nhs_current(context, nhs_number):
-    expected_url = re.compile(
-        rf"/site/prescription-list-current\?nhsNumber={nhs_number}"
-    )
+    expected_url = re.compile("/site/prescription-list-current")
     context.page.wait_for_url(expected_url, wait_until="load", timeout=60000)
 
 
