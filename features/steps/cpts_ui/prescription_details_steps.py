@@ -12,11 +12,28 @@ def i_go_to_prescription_details(context):
     )
 
 
+@when("I go to the past prescription details")
+def i_go_to_past_prescription_details(context):
+    prescription_id = context.prescription_id
+    context.execute_steps(
+        f'When I go to the past prescription details for prescription ID "{prescription_id}"'
+    )
+
+
 @when('I go to the prescription details for prescription ID "{prescription_id}"')
 def i_go_to_prescription_details_for_prescription_id(context, prescription_id):
     context.prescription_id = prescription_id
     context.execute_steps("Given I am on the search for a prescription page")
     context.execute_steps("When I search for the prescription by prescription ID")
+    context.execute_steps("When I click on the view prescription link")
+
+
+@when('I go to the past prescription details for prescription ID "{prescription_id}"')
+def i_go_to_past_prescription_details_for_prescription_id(context, prescription_id):
+    context.prescription_id = prescription_id
+    context.execute_steps("Given I am on the search for a prescription page")
+    context.execute_steps("When I search for the prescription by prescription ID")
+    context.execute_steps('When I click on the "past" prescriptions tab heading')
     context.execute_steps("When I click on the view prescription link")
 
 
