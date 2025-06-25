@@ -199,6 +199,9 @@ def i_prepare_a_new_prescription(context, nomination, prescription_type):
     prepare_prescription(context)
 
 
+# TODO: create deleted prescription step
+
+
 @when("I try to prepare a {nomination} {prescription_type} prescription")
 def i_try_to_prepare_a_new_prescription(context, nomination, prescription_type):
     setup_new_prescription(context, nomination, prescription_type)
