@@ -270,6 +270,6 @@ def click_view_prescriptions_link(context):
 @then("I am taken to the correct prescription page")
 def check_url_redirect_for_prescriptions(context):
     expected_url_pattern = re.compile(
-        r"/site/prescription-details\?nhsNumber=\d{10}&prescriptionId=[\w-]+"
+        r"/site/prescription-details\?prescriptionId=[\w-]+"
     )
     context.page.wait_for_url(expected_url_pattern)
