@@ -10,7 +10,7 @@ def i_navigate_to_a_nonexistent_page(context):
     context.page.goto(context.cpts_ui_base_url + "site/spamandeggs")
 
 
-@when("I navigate outside the react app route with a two-segment path")
+@when("When I navigate outside the react app route with an incorrect two-segment path")
 def i_navigate_to_a_two_segment_non_app_page(context):
     context.page.goto(context.cpts_ui_base_url + "foo/spamandeggs")
 
@@ -46,7 +46,6 @@ def i_navigate_to_an_app_page_outside_of_site_path(context, page):
         target = "select-your-role"
 
     context.page.goto(context.cpts_ui_base_url + target)
-    context.page.wait_for_page_load()
 
 
 @then("I am redirected to the site, with the URI of {page} correctly forwarded")
