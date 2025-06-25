@@ -9,8 +9,8 @@ from pages.prescription_not_found import PrescriptionNotFound
 def i_am_on_prescription_not_found_page(context, tab_name):
     page = PrescriptionNotFound(context.page)
 
-    expect(page.header).to_be_visible()
-    expect(page.body1).to_be_visible()
+    expect(page.heading).to_be_visible()
+    expect(page.query_summary).to_be_visible()
     expect(page.back_link).to_be_visible()
 
     # Map tab_name to the corresponding URL
@@ -31,3 +31,11 @@ def i_click_go_back_presc_not_found(context):
     page = PrescriptionNotFound(context.page)
 
     page.back_link.click()
+
+
+@then("I should see the prescription not found message")
+def i_see_prescription_not_found_message(context):
+    page = PrescriptionNotFound(context.page)
+    expect(page.heading).to_be_visible()
+    expect(page.query_summary).to_be_visible()
+    expect(page.back_link).to_be_visible()

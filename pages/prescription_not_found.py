@@ -6,6 +6,6 @@ class PrescriptionNotFound:
         page.wait_for_load_state()
         self.page = page
 
-        self.header = page.get_by_test_id("presc-not-found-header")
-        self.body1 = page.get_by_test_id("presc-not-found-body1")
+        self.heading = page.get_by_test_id("presc-not-found-heading")
+        self.query_summary = page.get_by_test_id("query-summary")
         self.back_link = page.get_by_test_id("go-back-link")

@@ -4,6 +4,7 @@ from methods.shared import common
 from methods.api.common_api_methods import request_ping
 from methods.api.common_api_methods import request_metadata
 from methods.shared.common import assert_that
+from playwright.sync_api import Route
 
 
 @when('I make a request to the "{product}" ping endpoint')
@@ -108,3 +109,22 @@ def i_see_commit_id_in_response(context):
 @then("I can see the ping information in the response")
 def i_can_see_the_ping_information(context):
     i_see_version_in_response(context)
+
+
+@then("the {code:d} error occurs")
+def simulate_http_error(context, code):
+    def handler(route: Route):
+        route.fulfill(status=code, body=f"{code} error")
+
+    context.page.route("**/*", handler)
+
+
+@then('I see a go back link to "{target_path}"')
+def see_go_back_link_to(context, target_path):
+    back_link = context.page.get_by_test_id("go-back-link")
+    assert back_link is not None, "No go-back-link found on the page"
+
+    href = back_link.get_attribute("href")
+    assert (
+        href and target_path in href
+    ), f"Expected go-back link to contain '{target_path}', but got '{href}'"
