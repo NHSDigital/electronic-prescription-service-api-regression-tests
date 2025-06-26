@@ -15,7 +15,7 @@ Feature: The site has a 404 not found page
     @deployed_only
     Scenario: The user sees a "Page not found" error page when they navigate to a url that is not under /site or /
         When I navigate outside the react app route with an incorrect two-segment path
-        Then I am on the logged out Page Not Found page
+        Then I am not redirected anywhere but I see the Page Not Found page
 
     @deployed_only
     Scenario: The user sees a "Page not found" error page when they navigate to a url that is not under /site or / while logged in
