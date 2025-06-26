@@ -20,23 +20,21 @@ Feature: The site has a 404 not found page
     @deployed_only
     Scenario: The user sees a "Page not found" error page when they navigate to a url that is not under /site or / while logged in
         Given I am logged in as a user with multiple access roles
+        And I have selected a role
         When I navigate outside the react app route with an incorrect two-segment path
         Then I am on the logged in Page Not Found page
 
     @deployed_only
     Scenario: The user sees a genuine page when they navigate to a url that matches but is missing site path while logged in
         Given I am logged in as a user with multiple access roles
-        When I navigate to the <page> app page outside of the site path
-        Then I am redirected to the site, with URI of <page> correctly forwarded
-        |page|
-        |search for a prescription|
-        |select your role|
+        And I have selected a role
+        When I navigate to the 'search for a prescription' app page outside of the site path
+        Then I am redirected correctly to the site, with URI of 'search for a prescription' correctly forwarded
 
     @deployed_only
     Scenario: The user sees an error page when they navigate to a url that doesn't match and is missing site path while logged in
         Given I am logged in as a user with multiple access roles
-        When I navigate to the <page> app page outside of the site path
-        Then I am redirected to the site, with URI of <page> correctly forwarded
+        And I have selected a role
+        When I navigate to the 'spamandeggs' app page outside of the site path
+        Then I am redirected correctly to the site, with URI of 'spamandeggs' correctly forwarded
         And I am on the logged in Page Not Found page
-        |page|
-        |spamandeggs|

@@ -173,3 +173,9 @@ def attach_api_information(context):
 def the_expected_response_code_is_returned(context, expected_response_code: int):
     actual_response_code = context.response.status_code
     assert_that(actual_response_code).is_equal_to(expected_response_code)
+
+
+def convert_to_uri(page_name):
+    if page_name == "search for a prescription":
+        return "search-by-prescription-id"
+    return page_name

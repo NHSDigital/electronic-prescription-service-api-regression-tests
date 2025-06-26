@@ -3,6 +3,8 @@ from behave import when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
 
 from pages.page_not_found import PageNotFound
+from pages.header import Header
+from methods.shared.common import convert_to_uri
 
 
 @when("I navigate to a non-existent page")
@@ -37,22 +39,24 @@ def i_am_on_page_not_found_b(context):
     expect(page.body3).to_be_visible()
 
 
-@when("I navigate to the {page} app page outside of the site path")
-def i_navigate_to_an_app_page_outside_of_site_path(context, page):
-    target = ""
-    if page == "search for a prescription":
-        target = "search-by-prescription-id"
-    elif page == "select your role":
-        target = "select-your-role"
+@when("I navigate to the '{target}' app page outside of the site path")
+def i_navigate_to_an_app_page_outside_of_site_path(context, target):
+    uri = convert_to_uri(target)
 
-    context.page.goto(context.cpts_ui_base_url + target)
+    context.page.goto(context.cpts_ui_base_url + uri)
+    header = Header(context.page)
+    header.page.is_visible(header.header)
 
 
-@then("I am redirected to the site, with URI of <page> correctly forwarded")
-def i_am_redirected_to_site_with_uri_forwarded(context, page):
-    expected_path = f"/site/{page}"
+@then(
+    "I am redirected correctly to the site, with URI of '{target}' correctly forwarded"
+)
+def i_am_redirected_to_site_with_uri_forwarded(context, target):
+    uri = convert_to_uri(target)
 
+    expected_url = f"{context.cpts_ui_base_url}site/{uri}"
     current_url = context.page.url
+
     assert (
-        expected_path in current_url
-    ), f"Expected '{expected_path}' to be in '{current_url}'"
+        expected_url == current_url
+    ), f"Current URL '{current_url}' should be '{expected_url}'"
