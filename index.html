@@ -192,6 +192,8 @@ When I sort the table by &quot;{column_name}&quot;
 
 When I click on the view prescription link
 
+When I search for the prescription and the API returns a {code:d} error
+
 When I go to the prescription details
 
 When I go to the prescription details for prescription ID &quot;{prescription_id}&quot;
@@ -466,6 +468,8 @@ Then The timeline shows fallback text for missing site names
 
 Then I am on the prescription not found page with redirect to {}
 
+Then I should see the prescription not found message
+
 Then I see the smaller cookie banner
 
 Then I can see the cookie banner
@@ -520,6 +524,8 @@ Then I am on the privacy notice page
 
 Then I can read the full privacy notice
 
+Then I should see the unknown error message
+
 Then the response indicates a success
 
 Then the response indicates unauthorised
@@ -539,6 +545,10 @@ Then I can see the releaseId information in the response
 Then I can see the commitId information in the response
 
 Then I can see the ping information in the response
+
+Then the {code:d} error occurs
+
+Then I see a go back link to &quot;{target_path}&quot;
 
 Then I can see the list of prescriptions
 
