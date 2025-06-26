@@ -34,7 +34,7 @@ def i_click_go_back_presc_not_found(context):
 
 
 @then("I should see the prescription not found message")
-def i_see_prescription_not_found_message(context):
+def i_should_see_prescription_not_found_message(context):
     page = PrescriptionNotFound(context.page)
     expect(page.heading).to_be_visible()
     expect(page.query_summary).to_be_visible()
