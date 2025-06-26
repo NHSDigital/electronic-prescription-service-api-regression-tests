@@ -253,13 +253,16 @@ def before_all(context):
 
     else:
         raise RuntimeError("no tests to run. Check your tags and try again")
+    print(f"arm64: {context.config.userdata["arm64"]}")
     if product == "CPTS-UI":
         global _playwright
         _playwright = sync_playwright().start()
         context.browser = _playwright.chromium.launch(
             headless=HEADLESS,
             slow_mo=SLOWMO,
-            channel=None if context.config.userdata["arm64"] else "chrome",
+            channel=(
+                None if context.config.userdata["arm64"].upper() == "TRUE" else "chrome"
+            ),
         )
 
     eps_api_methods.calculate_eps_fhir_base_url(context)

@@ -23,6 +23,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--arm64",
         required=False,
+        type=str,
         help="Run tests using Chromium to support arm64 architecture",
     )
     argument = parser.parse_args()
@@ -35,7 +36,9 @@ if __name__ == "__main__":
         tags = f" --tags {product_tag}"
     PRODUCT = f" -D product={argument.product}"
     ENV = f" -D env={argument.env}"
-    ARM64 = f" -D arm64={bool(argument.arm64)}"
+    ARM64 = (
+        f" -D arm64={argument.arm64 if argument.arm64.upper() == "TRUE" else "FALSE"}"
+    )
 
     # complete command
     command = (
