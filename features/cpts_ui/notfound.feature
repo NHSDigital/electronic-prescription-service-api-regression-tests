@@ -22,7 +22,7 @@ Feature: The site has a 404 not found page
         Given I am logged in as a user with multiple access roles
         And I have selected a role
         When I navigate outside the react app route with an incorrect two-segment path
-        Then I am on the logged in Page Not Found page
+        Then I am not redirected anywhere but I see the Page Not Found page
 
     @deployed_only
     Scenario: The user sees a genuine page when they navigate to a url that matches but is missing site path while logged in

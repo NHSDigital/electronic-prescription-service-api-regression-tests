@@ -39,6 +39,21 @@ def i_am_on_page_not_found_b(context):
     expect(page.body3).to_be_visible()
 
 
+@then("I am not redirected anywhere but I see the Page Not Found page")
+def i_am_not_redirected_anywhere_but_see_page_not_found(context):
+    expected_url = context.cpts_ui_base_url + "foo/spamandeggs"
+    assert (
+        expected_url == context.page.url
+    ), f"Current URL '{context.page.url}' should be '{expected_url}'"
+
+    page = PageNotFound(context.page)
+
+    expect(page.header_text).to_be_visible()
+    expect(page.body1).to_be_visible()
+    expect(page.body2).to_be_visible()
+    expect(page.body3).not_to_be_visible()
+
+
 @when("I navigate to the '{target}' app page outside of the site path")
 def i_navigate_to_an_app_page_outside_of_site_path(context, target):
     uri = convert_to_uri(target)

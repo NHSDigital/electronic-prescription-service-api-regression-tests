@@ -259,7 +259,7 @@ def before_all(context):
         context.browser = _playwright.chromium.launch(
             headless=HEADLESS,
             slow_mo=SLOWMO,
-            channel=None if os.environ.get("AMD64_SUPPORT") == "true" else "chrome",
+            channel=None if context.config.userdata["arm64"] else "chrome",
         )
 
     eps_api_methods.calculate_eps_fhir_base_url(context)
