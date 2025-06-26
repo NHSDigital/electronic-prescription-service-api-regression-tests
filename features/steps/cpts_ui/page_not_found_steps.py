@@ -42,9 +42,11 @@ def i_am_on_page_not_found_b(context):
 @then("I am not redirected anywhere but I see the Page Not Found page")
 def i_am_not_redirected_anywhere_but_see_page_not_found(context):
     expected_url = context.cpts_ui_base_url + "foo/spamandeggs"
-    assert (
-        expected_url == context.page.url
-    ), f"Current URL '{context.page.url}' should be '{expected_url}'"
+
+    context.page.wait_for_url(
+        expected_url,
+        timeout=5000,
+    )
 
     page = PageNotFound(context.page)
 
@@ -69,9 +71,7 @@ def i_navigate_to_an_app_page_outside_of_site_path(context, target):
 def i_am_redirected_to_site_with_uri_forwarded(context, target):
     uri = convert_to_uri(target)
 
-    expected_url = f"{context.cpts_ui_base_url}site/{uri}"
-    current_url = context.page.url
-
-    assert (
-        expected_url == current_url
-    ), f"Current URL '{current_url}' should be '{expected_url}'"
+    context.page.wait_for_url(
+        f"{context.cpts_ui_base_url}site/{uri}",
+        timeout=5000,
+    )
