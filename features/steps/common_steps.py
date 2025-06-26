@@ -117,7 +117,7 @@ def simulate_http_error(context, code):
         # Simulate an HTTP error only for the prescription-list API endpoint
         route.fulfill(status=code, body=f"{code} error")
 
-    # Limit interception to requests hitting the prescription-list endpoint to avoid unintended side effects
+    # Limit interception to requests hitting the prescription-list endpoint
     context.page.route("**/prescription-list*", handler)
 
 
