@@ -20,3 +20,4 @@ from cpts_ui.patient_not_found_steps import *  # noqa: F403,F401
 from cpts_ui.search_results_too_many_steps import *  # noqa: F403,F401
 from cpts_ui.privacy_notice_steps import *  # noqa: F403,F401
 from cpts_ui.privacy_notice_text import PRIVACY_NOTICE_TEXT  # noqa: F403,F401
+from cpts_ui.unknown_error_message_steps import *  # noqa: F403,F401

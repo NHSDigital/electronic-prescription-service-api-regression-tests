@@ -100,22 +100,21 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
   @find_patient
-  @skip # FIXME: temporary until use of real data in tracker is fixed
   Scenario: User is redirected correctly when they search for non-existent patient using NHS number
     Given I am logged in as a user with a single access role
-    When I am on the search for a prescription page
-    And I click on tab NHS Number Search
-    And I enter NHS number "0987654321" into the input
+    When I click on tab NHS Number Search
+    And I enter NHS number "8169327911" into the input
     And I click the Find a patient button
-    Then I am on the prescription not found page with redirect to NhsNumberSearch
+    Then I should see the prescription not found message
+    And I see a go back link to "search-by-nhs-number"
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
   @find_patient
+  @skip # FIXME: temporary until use of real data in tracker is fixed
   Scenario: User is redirected correctly when they search for an existing patient using NHS number
     Given I am logged in as a user with a single access role
     When I am on the search for a prescription page
     And I click on tab NHS Number Search
-    # FIXME: This will need to be updated when the search pages are updated to use real data
     And I enter NHS number "1234567890" into the input
     And I click the Find a patient button
     Then I am on the prescription list current page with NHS number "1234567890"
@@ -143,6 +142,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
       | abc                |
       | 123                |
       | 123456789000       |
+      | 1234567890         |
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
   @basic_details_search
