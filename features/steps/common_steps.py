@@ -114,9 +114,11 @@ def i_can_see_the_ping_information(context):
 @then("the {code:d} error occurs")
 def simulate_http_error(context, code):
     def handler(route: Route):
+        # Simulate an HTTP error only for the prescription-list API endpoint
         route.fulfill(status=code, body=f"{code} error")
 
-    context.page.route("**/*", handler)
+    # Limit interception to requests hitting the prescription-list endpoint to avoid unintended side effects
+    context.page.route("**/prescription-list*", handler)
 
 
 @then('I see a go back link to "{target_path}"')
