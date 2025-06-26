@@ -36,9 +36,7 @@ if __name__ == "__main__":
         tags = f" --tags {product_tag}"
     PRODUCT = f" -D product={argument.product}"
     ENV = f" -D env={argument.env}"
-    ARM64 = (
-        f" -D arm64={argument.arm64 if argument.arm64.upper() == "TRUE" else "FALSE"}"
-    )
+    ARM64 = f" -D arm64={argument.arm64}"
 
     # complete command
     command = (
