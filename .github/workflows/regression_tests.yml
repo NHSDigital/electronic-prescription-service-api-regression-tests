@@ -131,6 +131,7 @@ jobs:
         env:
           PRODUCT: ${{ inputs.product }}
           ENVIRONMENT: ${{ inputs.environment }}
+          ARM64: False
           PULL_REQUEST_ID: ${{ inputs.pull_request_id }}
           TAGS: ${{ inputs.tags }}
           CPT_FHIR_CLIENT_ID: ${{ secrets.CPT_FHIR_CLIENT_ID }}
