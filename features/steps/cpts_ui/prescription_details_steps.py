@@ -2,23 +2,41 @@ from behave import when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
 
 from pages.prescription_details import PrescriptionDetailsPage
+from .search_for_a_prescription_steps import i_am_on_the_search_prescription_page
+from .prescription_list_steps import (
+    search_context_prescription_id,
+    click_view_prescriptions_link,
+    i_click_on_tab_heading,
+)
 
 
 @when("I go to the prescription details")
 def i_go_to_prescription_details(context):
     prescription_id = context.prescription_id
-    context.execute_steps(
-        f'When I go to the prescription details for prescription ID "{prescription_id}"'
-    )
+    i_go_to_prescription_details_for_prescription_id(context, prescription_id)
+
+
+@when("I go to the past prescription details")
+def i_go_to_past_prescription_details(context):
+    prescription_id = context.prescription_id
+    i_go_to_past_prescription_details_for_prescription_id(context, prescription_id)
 
 
 @when('I go to the prescription details for prescription ID "{prescription_id}"')
 def i_go_to_prescription_details_for_prescription_id(context, prescription_id):
     context.prescription_id = prescription_id
-    context.page.goto(
-        context.cpts_ui_base_url
-        + f"site/prescription-details?prescriptionId={prescription_id}"
-    )
+    i_am_on_the_search_prescription_page(context)
+    search_context_prescription_id(context)
+    click_view_prescriptions_link(context)
+
+
+@when('I go to the past prescription details for prescription ID "{prescription_id}"')
+def i_go_to_past_prescription_details_for_prescription_id(context, prescription_id):
+    context.prescription_id = prescription_id
+    i_am_on_the_search_prescription_page(context)
+    search_context_prescription_id(context)
+    i_click_on_tab_heading(context, "past")
+    click_view_prescriptions_link(context)
 
 
 @then("The {org} site card is {visibility}")
