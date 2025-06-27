@@ -72,13 +72,13 @@ Feature: Prescription Detail Page in the Clinical Prescription Tracker Service
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4799
   Scenario: Dispensed item cards do not show pharmacy status when it is missing
     Given a new prescription has been dispensed
-    When I go to the past prescription details
+    When I I go to the prescription details
     Then No pharmacy status label is shown in the dispensed item card
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4801
   Scenario: User sees message history with dispense notification dropdown
     Given a new prescription has been dispensed
-    When I go to the past prescription details
+    When I I go to the prescription details
     Then The message history timeline is visible
     And A dispense notification information dropdown is shown
 
