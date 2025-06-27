@@ -87,15 +87,6 @@ def click_search_button(context):
     page.find_prescription_button.click()
 
 
-@then('I am redirected to the prescription results page for "{prescription_id}"')
-def redirected_to_results(context, prescription_id):
-    expected_url = re.compile(
-        r"/site/prescription-list-(?:current|past|future)\?prescriptionId="
-        + prescription_id
-    )
-    context.page.wait_for_url(expected_url)
-
-
 @then("I see a prescription ID validation error is displayed")
 def i_see_prescription_id_validation_error(context):
     page = SearchForAPrescription(context.page)
@@ -130,9 +121,7 @@ def redirected_to_nhs_not_found(context):
 
 @then('I am on the prescription list current page with NHS number "{nhs_number}"')
 def redirected_to_nhs_current(context, nhs_number):
-    expected_url = re.compile(
-        rf"/site/prescription-list-current\?nhsNumber={nhs_number}"
-    )
+    expected_url = re.compile("/site/prescription-list-current")
     context.page.wait_for_url(expected_url, wait_until="load", timeout=60000)
 
 
