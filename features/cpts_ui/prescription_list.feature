@@ -117,3 +117,19 @@ Feature: Prescription List Page in the Prescription Tracker
     | Status               | ascending   |
     | Pending cancellation | ascending   |
     | Prescription ID      | ascending   |
+
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4737
+  Scenario: User sees the unknown error message when a 500 error occurs
+    Given a nominated acute prescription has been created
+    And I am logged in as a user with a single access role
+    When I search for the prescription and the API returns a 500 error
+    Then I should see the unknown error message
+    And I see a go back link to "search-by-prescription-id"
+
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4737
+  Scenario: User sees the prescription not found message when a 404 error occurs
+    Given a nominated acute prescription has been created
+    And I am logged in as a user with a single access role
+    When I search for the prescription and the API returns a 404 error
+    Then I should see the prescription not found message
+    And I see a go back link to "search-by-prescription-id"

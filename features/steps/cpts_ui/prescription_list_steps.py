@@ -1,3 +1,4 @@
+# pylint: disable=no-name-in-module
 from behave import when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
 import re
@@ -271,3 +272,12 @@ def click_view_prescriptions_link(context):
 def check_url_redirect_for_prescriptions(context):
     expected_url_pattern = re.compile(r"/site/prescription-details")
     context.page.wait_for_url(expected_url_pattern)
+
+
+@when("I search for the prescription and the API returns a {code:d} error")
+def unsuccessful_prescription_search_with_code(context, code):
+    prescription_id = context.prescription_id
+    search_input = context.page.get_by_test_id("prescription-id-input")
+    search_input.fill(prescription_id)
+    context.execute_steps(f"Then the {code} error occurs")
+    context.page.get_by_test_id("find-prescription-button").click()
