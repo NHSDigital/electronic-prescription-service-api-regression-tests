@@ -176,6 +176,8 @@ def the_expected_response_code_is_returned(context, expected_response_code: int)
 
 
 def convert_to_uri(page_name):
-    if page_name == "search for a prescription":
+    if page_name == "search by prescription":
         return "search-by-prescription-id"
+    if page_name == "search by basic details":
+        return "search-by-basic-details"
     return page_name
