@@ -1,5 +1,6 @@
 # pylint: disable=no-name-in-module
 from behave import given, when, then  # pyright: ignore
+import time
 from playwright.sync_api import expect
 
 
@@ -99,6 +100,9 @@ def i_go_to_cookies_selected_page(context):
 
 
 def get_rum_cookies(cookies):
+    time.sleep(
+        2
+    )  # we cant be too greedy so we wait for a second before checking for cookies
     rum_cookies = [
         cookie for cookie in cookies if cookie.get("name") in ("cwr_s", "cwr_u")
     ]
