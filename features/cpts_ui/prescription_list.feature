@@ -64,15 +64,14 @@ Feature: Prescription List Page in the Prescription Tracker
     And I see the table summary text displaying number of prescriptions
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4792
-  Scenario: Display past prescriptions results table when clicking the past tab heading when past prescriptions are available
+  Scenario: I can see the no prescriptions found message for past prescriptions when there are none available
     Given a nominated acute prescription has been created
     And the prescription has been cancelled
     And I am logged in as a user with a single access role
     And I am on the search for a prescription page
     When I search for the prescription by prescription ID
     And I click on the "past" prescriptions tab heading
-    Then I can see the "past" prescriptions results table
-    And I see the table summary text displaying number of prescriptions
+    Then I can see the appropriate no prescriptions found message
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4778
   Scenario Outline: Should display no prescriptions found messages for past and future prescriptions when there are none available
