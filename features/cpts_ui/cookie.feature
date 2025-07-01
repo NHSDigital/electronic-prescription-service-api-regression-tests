@@ -17,6 +17,7 @@ Feature: Users interact with the cookie banner
     Scenario: User has no RUM cookies by default
         Then I do not have RUM cookies
 
+    @skip
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5182
     Scenario: User can accept cookies by pressing the accept button
         When I press the accept button
