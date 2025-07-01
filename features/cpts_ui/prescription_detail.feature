@@ -94,7 +94,7 @@ Feature: Prescription Detail Page in the Clinical Prescription Tracker Service
   Scenario: User sees message history for a cancelled prescription
     Given a nominated acute prescription has been created
     And the prescription has been cancelled
-    When I go to the past prescription details
+    When I go to the prescription details
     Then The message history timeline is visible
     And A cancelled status message is shown
 
