@@ -6,7 +6,7 @@
     "semantic-release": "^24.2.6"
   },
   "dependencies": {
-    "@playwright/test": "^1.53.1",
+    "@playwright/test": "^1.53.2",
     "npm": "^11.4.2"
   }
 }
