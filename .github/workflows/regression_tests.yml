@@ -205,7 +205,13 @@ jobs:
           name: allure-results
           path: allure-results
           if-no-files-found: error
-  
+
+      - name: force error on failure
+        if: steps.tests.outcome != 'success'
+        run: |
+          exit 1
+
+
   upload_results:
     runs-on: ubuntu-22.04
     environment: ${{ inputs.environment }}
