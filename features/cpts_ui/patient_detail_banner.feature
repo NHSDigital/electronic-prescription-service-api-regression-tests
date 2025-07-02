@@ -6,7 +6,7 @@ Feature: The site has a patient detail banner
     Background:
         Given a nominated acute prescription has been created
         And I am logged in as a user with a pre selected role
-        And I am on the search for a prescription page
+        When I click the confirm and continue button on the your selected role page
 
     Scenario: Before I search for a prescription, the patient details banner is not visible
         Then the patient details banner is not visible
