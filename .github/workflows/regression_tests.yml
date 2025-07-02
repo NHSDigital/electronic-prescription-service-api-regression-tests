@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       tags:
-        description: 'Test scenario tags'
+        description: 'Test scenario tags. If you want to specify multiple tags, you should separate them with a colon :'
         required: true
         type: string
         default: "@regression"

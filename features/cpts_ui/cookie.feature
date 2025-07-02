@@ -5,20 +5,17 @@ Feature: Users interact with the cookie banner
         Given I am on the homepage
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5182
-    @no_role
     Scenario: User can see the cookie banner when not logged in
         Then I can see the cookie banner
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5182
-    @single_role
     Scenario: User can see the cookie banner when logged in
         Given I am logged in as a user with a single access role
         Then I can see the cookie banner
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5182
-    @multi_role
     Scenario: User has no RUM cookies by default
-        Then I do have RUM cookies
+        Then I do not have RUM cookies
 
     @skip
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5182
@@ -34,27 +31,23 @@ Feature: Users interact with the cookie banner
         And I do not have RUM cookies
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5182
-    @no_role
     Scenario: User can click the link to view cookies policy when not logged in
         When I click the cookies policy link
         Then I go to the cookies policy page
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5182
-    @no_role
     Scenario: User can click the link to view cookies policy when logged in
         Given I am logged in as a user with a single access role
         When I click the cookies policy link
         Then I go to the cookies policy page
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5182
-    @no_role
     Scenario: User can click through to cookies policy page from smaller banner
         When I press the accept button
         And I click the small banner cookie policy link
         Then I go to the cookies policy page
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5182
-    @no_role
     Scenario Outline: User can expand and view the <Table Type> cookies table on the cookies page
         Given I am on the cookies page
         When I expand the <Table Type> cookies details section
@@ -66,14 +59,12 @@ Feature: Users interact with the cookie banner
           | Analytics  |
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5315
-    @no_role
     Scenario: On the cookie page, user selects use cookies and RUM cookies are stored
         Given I am on the cookies page
         When I click use cookies and save
         Then I do have RUM cookies
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5315
-    @no_role
     Scenario: On the cookie page, user selects do not use cookies and RUM cookies are not stored
         Given I am on the cookies page
         When I click "do not use" cookies and save
