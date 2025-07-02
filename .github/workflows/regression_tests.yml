@@ -323,11 +323,17 @@ jobs:
           repositories: "electronic-prescription-service-api-regression-tests,eps-test-reports"
 
       - name: Report failure on test failure
-        if: always() && contains(needs.*.result, 'failure')
+        if: contains(needs.*.result, 'failure') 
         run: |
           poetry run python scripts/send_test_results.py --token=${{ steps.generate-token.outputs.token }} --run_id ${{GITHUB.RUN_ID}}
           echo The regression tests step failed, this likely means there are test failures.
           echo A test report will be generated shortly and can be viewed at: https://nhsdigital.github.io/eps-test-reports
+          exit 1
+
+      - name: Report failure on test cancelled or skipped
+        if: contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped') 
+        run: |
+          echo The regression tests step was cancelled or skipped
           exit 1
 
       - name: Generate Report
