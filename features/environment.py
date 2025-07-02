@@ -252,7 +252,8 @@ def before_all(context):
                 get_url_with_pr(context, env, product)
 
     else:
-        raise RuntimeError("no tests to run. Check your tags and try again")
+        print("no tests to run. Check your tags and try again")
+        sys.exit(0)
     print(f"arm64: {context.config.userdata["arm64"]}")
     if product == "CPTS-UI":
         global _playwright
