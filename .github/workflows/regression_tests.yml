@@ -229,7 +229,6 @@ jobs:
         with:
           name: allure-results-${{ matrix.tag }}
           path: allure-results
-          if-no-files-found: error
 
       - name: force error on failure
         if: steps.tests.outcome != 'success'
