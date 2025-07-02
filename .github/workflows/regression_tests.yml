@@ -50,10 +50,23 @@ jobs:
     steps:
       # we need to leave this step in as run_regression test scripts expect the third step in the job to have the name of the input id
       # the first step is auto generated 'set up job' step
-      - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
-        with:
-          ref: ${{ inputs.github_tag }}
+      - name: show_input_parameters_in_summary
+        env:
+          tags: ${{ inputs.tags }}
+          environment: ${{ inputs.environment }}
+          product: ${{ inputs.product }}
+          id: ${{ inputs.id }}
+          pull_request_id: ${{ inputs.pull_request_id }}
+          github_tag: ${{ inputs.github_tag }}
+        run: |
+          # output to summary
+          # shellcheck disable=SC2129
+          echo "tags: ${tags}"  >> "$GITHUB_STEP_SUMMARY"
+          echo "environment: ${environment}"  >> "$GITHUB_STEP_SUMMARY"
+          echo "product: ${product}"  >> "$GITHUB_STEP_SUMMARY"
+          echo "id: ${id}"  >> "$GITHUB_STEP_SUMMARY"
+          echo "pull_request_id: ${pull_request_id}"  >> "$GITHUB_STEP_SUMMARY"
+          echo "github_tag: ${github_tag}"  >> "$GITHUB_STEP_SUMMARY"
 
       - name: ${{github.event.inputs.id}}
         env:
@@ -80,14 +93,6 @@ jobs:
           echo "id: ${id}"
           echo "pull_request_id: ${pull_request_id}"
           echo "github_tag: ${github_tag}"
-          # output to summary
-          # shellcheck disable=SC2129
-          echo "tags: ${tags}"  >> "$GITHUB_STEP_SUMMARY"
-          echo "environment: ${environment}"  >> "$GITHUB_STEP_SUMMARY"
-          echo "product: ${product}"  >> "$GITHUB_STEP_SUMMARY"
-          echo "id: ${id}"  >> "$GITHUB_STEP_SUMMARY"
-          echo "pull_request_id: ${pull_request_id}"  >> "$GITHUB_STEP_SUMMARY"
-          echo "github_tag: ${github_tag}"  >> "$GITHUB_STEP_SUMMARY"
 
   run_regression_tests:
     runs-on: ubuntu-22.04
