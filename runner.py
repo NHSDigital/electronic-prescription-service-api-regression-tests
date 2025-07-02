@@ -20,6 +20,12 @@ if __name__ == "__main__":
         required=False,
         help="Tags to include or exclude. use ~tag_name to exclude tags",
     )
+    parser.add_argument(
+        "--arm64",
+        required=False,
+        type=str,
+        help="Run tests using Chromium to support arm64 architecture",
+    )
     argument = parser.parse_args()
 
     # Convert to behave commandline args
@@ -29,10 +35,11 @@ if __name__ == "__main__":
         tags += " ".join(f"--tags {tag}" for tag in argument.tags.split())
     PRODUCT = f" -D product={argument.product}"
     ENV = f" -D env={argument.env}"
+    ARM64 = f" -D arm64={argument.arm64}"
 
     # complete command
     command = (
-        f"behave{PRODUCT}{ENV}"
+        f"behave{PRODUCT}{ENV}{ARM64}"
         f" -f behave_cucumber_formatter:PrettyCucumberJSONFormatter"
         f" -o reports/cucumber_json.json"
         f" -f allure_behave.formatter:AllureFormatter"
