@@ -32,7 +32,7 @@ if __name__ == "__main__":
     product_tag = argument.product.lower().replace("-", "_")
     tags = f" --tags {product_tag} "
     if argument.tags:
-        tags += " ".join(f"--tags {tag}" for tag in argument.tags.split())
+        tags += " ".join(f"--tags {tag}" for tag in argument.tags.split(":"))
     PRODUCT = f" -D product={argument.product}"
     ENV = f" -D env={argument.env}"
     ARM64 = f" -D arm64={argument.arm64}"

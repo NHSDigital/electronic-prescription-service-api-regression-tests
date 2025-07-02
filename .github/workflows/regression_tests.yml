@@ -94,7 +94,7 @@ jobs:
     needs: [regression_tests]
     strategy:
       matrix:
-        tags: ["@cookie", "@footer"]
+        tag: ["single_role", "multi_role", "no_role", "others"]
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
@@ -155,7 +155,8 @@ jobs:
           ENVIRONMENT: ${{ inputs.environment }}
           ARM64: False
           PULL_REQUEST_ID: ${{ inputs.pull_request_id }}
-          TAGS: ${{ matrix.tags }}
+          MATRIX_TAG: "${{ matrix.tag }}"
+          INPUT_TAG: ${{ inputs.tags }}
           CPT_FHIR_CLIENT_ID: ${{ secrets.CPT_FHIR_CLIENT_ID }}
           CPT_FHIR_CLIENT_SECRET: ${{ secrets.CPT_FHIR_CLIENT_SECRET }}
           EPS_FHIR_CLIENT_ID: ${{ secrets.EPS_FHIR_CLIENT_ID }}
@@ -199,12 +200,33 @@ jobs:
           export JWT_PRIVATE_KEY="$JWT_PRIVATE_KEY"
           export PULL_REQUEST_ID="$PULL_REQUEST_ID"
           echo Pull request ID = "$PULL_REQUEST_ID"
+          case "$MATRIX_TAG" in
+            single_role)
+              TAGS="@single_role:${INPUT_TAG}"
+              ;;
+            multi_role)
+              TAGS="@multi_role:${INPUT_TAG}"
+              ;;
+            no_role)
+              TAGS="@no_role:${INPUT_TAG}"
+              ;;
+            others)
+              TAGS="~@single_role:~@multi_role:~@no_role:${INPUT_TAG}"
+              ;;
+            *)
+              echo "Unknown MATRIX_TAG value: $MATRIX_TAG"
+              exit 1
+              ;;
+          esac
+
+          export TAGS
+          echo "Going to run with TAGS ${TAGS}"
           poetry run python ./runner.py --env="$ENVIRONMENT" --product="$PRODUCT" --tags="$TAGS"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results-${{ matrix.tags }}
+          name: allure-results-${{ matrix.tag }}
           path: allure-results
           if-no-files-found: error
 
