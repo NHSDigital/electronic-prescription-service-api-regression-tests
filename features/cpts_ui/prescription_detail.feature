@@ -1,9 +1,9 @@
 @cpts_ui @prescription_details @regression @ui
-@single_access
+@multiple_access_pre_selected
 Feature: Prescription Detail Page in the Clinical Prescription Tracker Service
 
   Background:
-    Given I am logged in as a user with a single access role
+    Given I am logged in as a user with a pre selected role
     And I am on the search for a prescription page
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4802
