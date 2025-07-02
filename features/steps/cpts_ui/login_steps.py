@@ -91,7 +91,7 @@ def login_with_multiple_access_roles(context):
     current_tags = str(context.config.tags).split()
     assert (
         "multiple_access" in current_tags
-    ), f"{context.tags} : {current_tags}: Trying to use MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES in a test not tagged @multiple_access"  # noqa: E501
+    ), "Trying to use MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES in a test not tagged @multiple_access"  # noqa: E501
     login_with_retries(context, MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES)
 
 
@@ -100,7 +100,7 @@ def login_with_no_roles(context):
     current_tags = str(context.config.tags).split()
     assert (
         "no_roles_no_access" in current_tags
-    ), f"{context.tags} : {current_tags}: Trying to use MOCK_CIS2_LOGIN_ID_NO_ROLES in a test not tagged @no_roles_no_access"  # noqa: E501
+    ), "Trying to use MOCK_CIS2_LOGIN_ID_NO_ROLES in a test not tagged @no_roles_no_access"  # noqa: E501
     login_with_retries(context, MOCK_CIS2_LOGIN_ID_NO_ROLES)
 
 
@@ -109,7 +109,7 @@ def login_with_without_access(context):
     current_tags = str(context.config.tags).split()
     assert (
         "multiple_roles_no_access" in current_tags
-    ), f"{context.tags} : {current_tags}: Trying to use MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE in a test not tagged @multiple_roles_no_access"  # noqa: E501
+    ), "Trying to use MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE in a test not tagged @multiple_roles_no_access"  # noqa: E501
     login_with_retries(context, MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE)
 
 
@@ -118,7 +118,7 @@ def login_with_single_role_with_access_multiple_without(context):
     current_tags = str(context.config.tags).split()
     assert (
         "multiple_roles_single_access" in current_tags
-    ), f"{context.tags} : {current_tags}: Trying to use MOCK_CIS2_LOGIN_ID_SINGLE_ROLE_WITH_ACCESS_MULTIPLE_WITHOUT in a test not tagged @multiple_roles_single_access"  # noqa: E501
+    ), "Trying to use MOCK_CIS2_LOGIN_ID_SINGLE_ROLE_WITH_ACCESS_MULTIPLE_WITHOUT in a test not tagged @multiple_roles_single_access"  # noqa: E501
     login_with_retries(
         context, MOCK_CIS2_LOGIN_ID_SINGLE_ROLE_WITH_ACCESS_MULTIPLE_WITHOUT
     )
@@ -129,7 +129,7 @@ def login_with_pre_role_selected(context):
     current_tags = str(context.config.tags).split()
     assert (
         "multiple_access_pre_selected" in current_tags
-    ), f"{context.tags} : {current_tags}: Trying to use MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES_WITH_SELECTED_ROLE in a test not tagged @multiple_access_pre_selected"  # noqa: E501
+    ), "Trying to use MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES_WITH_SELECTED_ROLE in a test not tagged @multiple_access_pre_selected"  # noqa: E501
     login_with_retries(
         context, MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES_WITH_SELECTED_ROLE
     )
@@ -140,7 +140,7 @@ def login_with_single_role(context):
     current_tags = str(context.config.tags).split()
     assert (
         "single_access" in current_tags
-    ), f"{context.tags} : {current_tags}: Trying to use MOCK_CIS2_LOGIN_ID_SINGLE_ACCESS_ROLE in a test not tagged @single_access"  # noqa: E501
+    ), "Trying to use MOCK_CIS2_LOGIN_ID_SINGLE_ACCESS_ROLE in a test not tagged @single_access"  # noqa: E501
     login_with_retries(context, MOCK_CIS2_LOGIN_ID_SINGLE_ACCESS_ROLE)
 
 

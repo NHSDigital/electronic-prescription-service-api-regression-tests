@@ -6,6 +6,7 @@ Feature: Users are able to change their roles, if they have multiple roles with 
   # Successfully changing role scenarios
   ############################################################################
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4653
+  @multiple_access
   Scenario: User can change their role
     Given I am logged in as a user with multiple access roles
     And I have confirmed a role
