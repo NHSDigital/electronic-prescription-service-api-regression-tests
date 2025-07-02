@@ -4,7 +4,7 @@ Feature: Prescription Detail Page in the Clinical Prescription Tracker Service
 
   Background:
     Given I am logged in as a user with a pre selected role
-    And I am on the search for a prescription page
+    When I click the confirm and continue button on the your selected role page
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4802
   Scenario: User sees all the organisation cards when they should
