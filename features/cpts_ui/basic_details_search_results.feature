@@ -1,12 +1,12 @@
 @cpts_ui @basic_details_results @regression @smoke @ui
 @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4790
+@multiple_access
 Feature: Basic Details Search Results Page
   As a healthcare professional
   I want to see a list of patients matching my search criteria
   So that I can select the correct patient to view their prescriptions
 
 # TODO: will need to be updated with different entries (for now they are hard coded)
-  @multiple_access
   Background:
     Given I am logged in as a user with multiple access roles
     And I have confirmed a role
