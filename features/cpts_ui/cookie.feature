@@ -15,7 +15,7 @@ Feature: Users interact with the cookie banner
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5182
     Scenario: User has no RUM cookies by default
-        Then I do have RUM cookies
+        Then I do not have RUM cookies
 
     @skip
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5182
