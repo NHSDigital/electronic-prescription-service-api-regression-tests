@@ -224,6 +224,9 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: downloaded_artifacts
+      - name: show downloaded_artifacts folder
+        run: |
+          ls -lR downloaded_artifacts
           
       - name: Place matrix artifacts in allure results
         run: rsync -av downloaded_artifacts/*/*/ allure_results/
