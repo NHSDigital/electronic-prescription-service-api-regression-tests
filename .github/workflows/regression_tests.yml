@@ -79,6 +79,21 @@ jobs:
           echo "id: ${id}"
           echo "pull_request_id: ${pull_request_id}"
           echo "github_tag: ${github_tag}"
+          # output to summary
+          # shellcheck disable=SC2129
+          echo "tags: ${tags}"  >> "$GITHUB_STEP_SUMMARY"
+          echo "environment: ${environment}"  >> "$GITHUB_STEP_SUMMARY"
+          echo "product: ${product}"  >> "$GITHUB_STEP_SUMMARY"
+          echo "id: ${id}"  >> "$GITHUB_STEP_SUMMARY"
+          echo "pull_request_id: ${pull_request_id}"  >> "$GITHUB_STEP_SUMMARY"
+          echo "github_tag: ${github_tag}"  >> "$GITHUB_STEP_SUMMARY"
+
+  run_regression_tests:
+    runs-on: ubuntu-22.04
+    environment: ${{ inputs.environment }}
+    needs: [regression_tests]
+    continue-on-error: true
+    steps:
 
       # using git commit sha for version of action to ensure we have stable version
       - name: Install asdf
@@ -184,7 +199,18 @@ jobs:
           name: allure-results
           path: allure-results
           if-no-files-found: error
-
+  
+  upload_results:
+    runs-on: ubuntu-22.04
+    environment: ${{ inputs.environment }}
+    needs: [run_regression_tests]
+    steps:
+      - name: download
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results
+  
       - name: Generate a token
         id: generate-token
         uses: actions/create-github-app-token@v1
@@ -195,7 +221,7 @@ jobs:
           repositories: "electronic-prescription-service-api-regression-tests,eps-test-reports"
 
       - name: Report failure on test failure
-        if: steps.tests.outcome != 'success'
+        if: ${{ always() && contains(needs.*.result, 'failure') }}
         run: |
           poetry run python scripts/send_test_results.py --token=${{ steps.generate-token.outputs.token }} --run_id ${{GITHUB.RUN_ID}}
           echo The regression tests step failed, this likely means there are test failures.
