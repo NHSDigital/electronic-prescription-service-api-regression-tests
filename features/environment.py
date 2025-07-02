@@ -90,24 +90,32 @@ CIS2_USERS = {
 }
 LOGIN_USERS = {"user_id": "9449304130"}
 # Roles with Access: multiple | Roles without Access: multiple | Selected Role: No
+# this is not used
 MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES_ZERO_NO_ACCESS = "555043308599"
 
 # Roles with Access: multiple | Roles without Access: 0 | Selected Role: No
+# any tests that use this should have tag @multiple_access
 MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES = "555043308597"
 
 # Roles with Access: multiple | Roles without Access: multiple | Selected Role: Yes
+# any tests that use this should have tag @multiple_access_pre_selected
 MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES_WITH_SELECTED_ROLE = "555043304334"
 
 # Roles with Access: 1 | Roles without Access: 0 | Selected Role: No
+# any tests that use this should have tag @single_access
 MOCK_CIS2_LOGIN_ID_SINGLE_ACCESS_ROLE = "555043300081"
 
 # Roles with Access: 1 | Roles without Access: multiple | Selected Role: No
+# any tests that use this should have tag @multiple_roles_single_access
 MOCK_CIS2_LOGIN_ID_SINGLE_ROLE_WITH_ACCESS_MULTIPLE_WITHOUT = "555043303526"
 
 # Roles with Access: 0 | Roles without Access: multiple | Selected Role: No
+# any tests that use this should have tag @multiple_roles_no_access
 MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE = "555083343101"
 
 # Roles with Access: 0 | Roles without Access: 0 | Selected Role: No
+# any tests that use this should have tag @no_roles_no_access
+# this is not currently used
 MOCK_CIS2_LOGIN_ID_NO_ROLES = "555073103101"
 
 REPOS = {

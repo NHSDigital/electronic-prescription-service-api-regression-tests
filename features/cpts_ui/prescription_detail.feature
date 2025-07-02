@@ -1,4 +1,5 @@
 @cpts_ui @prescription_details @regression @ui
+@single_access
 Feature: Prescription Detail Page in the Clinical Prescription Tracker Service
 
   Background:

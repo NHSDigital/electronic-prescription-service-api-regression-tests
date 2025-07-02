@@ -1,5 +1,6 @@
 @cpts_ui @patient_detail_banner @regression @blocker @smoke @ui
 @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5061
+@single_access
 Feature: The site has a patient detail banner
     
     Background:

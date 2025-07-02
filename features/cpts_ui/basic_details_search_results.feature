@@ -6,6 +6,7 @@ Feature: Basic Details Search Results Page
   So that I can select the correct patient to view their prescriptions
 
 # TODO: will need to be updated with different entries (for now they are hard coded)
+  @multiple_access
   Background:
     Given I am logged in as a user with multiple access roles
     And I have confirmed a role

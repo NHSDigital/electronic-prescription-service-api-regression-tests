@@ -95,7 +95,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        tag: ["single_role", "multi_role", "no_role", "others"]
+        tag: ["multiple_access", "multiple_access_pre_selected", "single_access", "multiple_roles_single_access", "multiple_roles_no_access", "others"]
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
@@ -202,17 +202,23 @@ jobs:
           export PULL_REQUEST_ID="$PULL_REQUEST_ID"
           echo Pull request ID = "$PULL_REQUEST_ID"
           case "$MATRIX_TAG" in
-            single_role)
-              TAGS="@single_role:${INPUT_TAG}"
+            multiple_access)
+              TAGS="@multiple_access:${INPUT_TAG}"
               ;;
-            multi_role)
-              TAGS="@multi_role:${INPUT_TAG}"
+            multiple_access_pre_selected)
+              TAGS="@multiple_access_pre_selected:${INPUT_TAG}"
               ;;
-            no_role)
-              TAGS="@no_role:${INPUT_TAG}"
+            single_access)
+              TAGS="@single_access:${INPUT_TAG}"
+              ;;
+            multiple_roles_single_access)
+              TAGS="@multiple_roles_single_access:${INPUT_TAG}"
+              ;;
+            multiple_roles_no_access)
+              TAGS="@multiple_roles_no_access:${INPUT_TAG}"
               ;;
             others)
-              TAGS="~@single_role:~@multi_role:~@no_role:${INPUT_TAG}"
+              TAGS="~@multiple_access:~@multiple_access_pre_selected:~@single_access:~@multiple_roles_single_access:~@multiple_roles_no_access:${INPUT_TAG}"
               ;;
             *)
               echo "Unknown MATRIX_TAG value: $MATRIX_TAG"
