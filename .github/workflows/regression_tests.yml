@@ -235,7 +235,7 @@ jobs:
           rsync -av downloaded_artifacts/*/environment.properties allure-results/
       - name: show allure_results folder
         run: |
-          ls -lR allure_results
+          ls -lR allure-results
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
