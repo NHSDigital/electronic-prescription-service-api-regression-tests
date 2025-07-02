@@ -250,7 +250,6 @@ jobs:
           key: ${{ runner.os }}-venv-${{ hashFiles('pyproject.toml') }}
 
       - name: Install Dependencies
-        if: steps.cache-venv.outputs.cache-hit != 'true'
         run: |
           make install
           echo "needs results ${{ needs.run_regression_tests.result }}"
