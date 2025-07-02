@@ -93,6 +93,7 @@ jobs:
     environment: ${{ inputs.environment }}
     needs: [regression_tests]
     strategy:
+      fail-fast: false
       matrix:
         tag: ["single_role", "multi_role", "no_role", "others"]
     steps:
@@ -240,7 +241,7 @@ jobs:
     runs-on: ubuntu-22.04
     environment: ${{ inputs.environment }}
     needs: [run_regression_tests]
-    if: always() && (contains(needs.*.result, 'failure') || contains(needs.*.result, 'success'))
+    if: always()
     steps:
       - name: Download matrix artifacts
         uses: actions/download-artifact@v4
