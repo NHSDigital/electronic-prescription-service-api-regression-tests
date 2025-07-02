@@ -48,10 +48,11 @@ jobs:
     runs-on: ubuntu-22.04
     environment: ${{ inputs.environment }}
     steps:
+      # we need to leave this step in as run_regression test scripts expect the third step in the job to have the name of the input id
+      # the first step is auto generated 'set up job' step
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
         with:
-          fetch-depth: 0  # This causes all history to be fetched, which is required for calculate-version to function
           ref: ${{ inputs.github_tag }}
 
       - name: ${{github.event.inputs.id}}
@@ -100,7 +101,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
         with:
-          fetch-depth: 0  # This causes all history to be fetched, which is required for calculate-version to function
           ref: ${{ inputs.github_tag }}
 
       # using git commit sha for version of action to ensure we have stable version
@@ -269,7 +269,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
         with:
-          fetch-depth: 0  # This causes all history to be fetched, which is required for calculate-version to function
           ref: ${{ inputs.github_tag }}
       # using git commit sha for version of action to ensure we have stable version
       - name: Install asdf
