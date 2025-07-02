@@ -47,6 +47,9 @@ def login_without_access(context):
 @given("I am logged in as a user with a pre selected role")
 def login_pre_role_selected(context):
     context.execute_steps("when I log in as a user with a pre selected role")
+    context.execute_steps(
+        "when I click the confirm and continue button on the your selected role page"
+    )
 
 
 @given("I am logged in with a single access role and multiple without access")
