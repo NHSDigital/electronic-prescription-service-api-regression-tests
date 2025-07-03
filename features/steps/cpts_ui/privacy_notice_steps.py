@@ -14,7 +14,7 @@ def before_all(context):
 
 @given("I am on the privacy notice page")
 def i_am_on_the_privacy_notice_page(context):
-    goto_page(context, "privace-notice")
+    goto_page(context, "privacy-notice")
     header = Header(context.page)
     header.page.is_visible(header.header)
 
