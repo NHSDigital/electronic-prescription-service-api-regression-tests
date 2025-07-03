@@ -4,7 +4,7 @@ Feature: Users are able to get prescriptions from CPTS-FHIR
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4930
   @get_prescription
   Scenario: I can see the prescription details when searching by prescription id
-    Given I am an authorised prescriber with EPS-FHIR app
+    Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app
     And I successfully prepare and sign a prescription
     And I am an authorised prescriber with CPTS-FHIR app
     When I request the prescription details
@@ -14,7 +14,7 @@ Feature: Users are able to get prescriptions from CPTS-FHIR
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4930
    @get_prescription
    Scenario: I can see the prescription details of the correct issue when searching by prescription id and issue number
-   Given I am an authorised prescriber with EPS-FHIR app
+   Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app
    And I successfully prepare and sign a nominated eRD prescription
    And I am an authorised prescriber with CPTS-FHIR app
    When I request the prescription details with an issue number
