@@ -2,7 +2,7 @@
 Feature: Users interact with the cookie banner
 
     Background:
-        Given I am on the homepage
+        Given I am on the privacy notice page
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5182
     Scenario: User can see the cookie banner when not logged in

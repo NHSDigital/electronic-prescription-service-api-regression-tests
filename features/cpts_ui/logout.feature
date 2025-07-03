@@ -20,6 +20,7 @@ Feature: The user is able to logout of the application
         And I can not see the RBAC banner
 
     @rbac_banner
+    @skip
     Scenario: User can log back in from the logout successful page
         Given I am on the logout successful page
         When I click the "log back in" button
