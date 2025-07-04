@@ -63,8 +63,11 @@ def login_single_role_with_access_multiple_without(context):
 
 def login(context, user_id):
     context.execute_steps("given I am on the login page")
-
-    context.page.get_by_role("button", name="Log in with mock CIS2").click()
+    environment = context.config.userdata["env"].lower()
+    # for qa environment we need to click the button to login
+    # for other environments we auto redirect to mock login
+    if environment == "internal-qa":
+        context.page.get_by_role("button", name="Log in with mock CIS2").click()
     context.page.get_by_label("Username").fill(user_id)
     context.page.get_by_role("button", name="Sign In").click()
 
