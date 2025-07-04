@@ -179,20 +179,20 @@ def check_job(auth_header, workflow_id):
     job = get_upload_result_job(auth_header, workflow_id)
     job_status = job["status"]
 
-    while current_attempt < max_attempts:
-        while job_status != "completed":
-            print(
-                f"Current upload results job status : {job_status} after {current_attempt} attempts"
+    while job_status != "completed":
+        if current_attempt > max_attempts:
+            raise TimeoutError(
+                f"Regression test job not completed after {current_attempt} attempts"
             )
-            time.sleep(10)
-            current_attempt = current_attempt + 1
-            job = get_upload_result_job(auth_header, workflow_id)
-            job_status = job["status"]
+        print(
+            f"Current upload results job status : {job_status} after {current_attempt} attempts"
+        )
+        time.sleep(10)
+        current_attempt = current_attempt + 1
+        job = get_upload_result_job(auth_header, workflow_id)
+        job_status = job["status"]
 
-        return job["conclusion"]
-    raise TimeoutError(
-        f"Regression test job not completed after {current_attempt} attempts"
-    )
+    return job["conclusion"]
 
 
 def main():
