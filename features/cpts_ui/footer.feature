@@ -3,7 +3,7 @@
 Feature: Footer
 
   Background: The footer is visible on the homepage
-    Given I am on the homepage
+    Given I am on the privacy notice page
     And I can see the page footer
 
   Scenario Outline: Footer links are visible

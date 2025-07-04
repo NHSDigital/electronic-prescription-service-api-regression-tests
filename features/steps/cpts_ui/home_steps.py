@@ -18,6 +18,8 @@ def goto_page(context, page):
         target = "select-your-role"
     elif page == "login":
         target = "login"
+    elif page == "privacy-notice":
+        target = "privacy-notice"
 
     url = f"{context.cpts_ui_base_url}site/{target}"
     context.page.goto(url)
