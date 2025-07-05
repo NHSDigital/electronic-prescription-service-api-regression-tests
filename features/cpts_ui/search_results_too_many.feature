@@ -3,6 +3,7 @@
 Feature: Too many results warning is displayed when multiple patients are found
 
   @skip # FIXME: temporary until use of real data in tracker is fixed
+  @single_access
   Scenario: User sees too many results messages when multiple patients are found
     Given I am logged in as a user with a single access role
     # FIXME: This will need to be updated when the search pages are updated to use real data

@@ -3,6 +3,7 @@
 Feature: Prescription List Page in the Prescription Tracker
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4793
+  @single_access
   Scenario: View Prescription link navigates correctly
     Given a nominated acute prescription has been created
     And I am logged in as a user with a single access role
@@ -12,6 +13,7 @@ Feature: Prescription List Page in the Prescription Tracker
     Then I am taken to the correct prescription page
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4778
+  @single_access
   Scenario: User can access the prescription list page
     Given a nominated acute prescription has been created
     And I am logged in as a user with a single access role
@@ -23,6 +25,7 @@ Feature: Prescription List Page in the Prescription Tracker
 
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4778
+  @single_access
   Scenario: Back link navigates to appropriate search tab when accessed from prescription ID search
     Given a nominated acute prescription has been created
     And I am logged in as a user with a single access role
@@ -32,6 +35,7 @@ Feature: Prescription List Page in the Prescription Tracker
     Then I am redirected to the prescription ID search tab
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4778
+  @single_access
   Scenario: Back link navigates to appropriate search tab when accessed from NHS number search
     Given a nominated acute prescription has been created
     And I am logged in as a user with a single access role
@@ -43,6 +47,7 @@ Feature: Prescription List Page in the Prescription Tracker
 
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4792
+  @single_access
   Scenario: Display current prescriptions results table when clicking the current tab heading when current prescriptions are available
     Given a nominated acute prescription has been created
     And I am logged in as a user with a single access role
@@ -54,6 +59,7 @@ Feature: Prescription List Page in the Prescription Tracker
 
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4792
+  @single_access
   Scenario: Display future prescriptions results table when clicking the future tab heading when future dated prescriptions are available
     Given a nominated eRD prescription has been created
     And I am logged in as a user with a single access role
@@ -64,6 +70,7 @@ Feature: Prescription List Page in the Prescription Tracker
     And I see the table summary text displaying number of prescriptions
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4792
+  @single_access
   Scenario: I can see the no prescriptions found message for past prescriptions when there are none available
     Given a nominated acute prescription has been created
     And the prescription has been cancelled
@@ -74,6 +81,7 @@ Feature: Prescription List Page in the Prescription Tracker
     Then I can see the appropriate no prescriptions found message
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4778
+  @single_access
   Scenario Outline: Should display no prescriptions found messages for past and future prescriptions when there are none available
     Given a nominated acute prescription has been created
     And I am logged in as a user with a single access role
@@ -89,6 +97,7 @@ Feature: Prescription List Page in the Prescription Tracker
 
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4778
+  @single_access
   Scenario: Display current tab results when clicking current tab with a cancelled prescription
     Given a nominated repeat prescription has been created
     And the prescription has been cancelled
@@ -99,6 +108,7 @@ Feature: Prescription List Page in the Prescription Tracker
     Then I see the table summary text displaying number of prescriptions
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4793
+  @single_access
   Scenario Outline: Sort current prescriptions table by <column> in <direction> order
     Given a nominated acute prescription has been created
     And I am logged in as a user with a single access role
@@ -118,6 +128,7 @@ Feature: Prescription List Page in the Prescription Tracker
     | Prescription ID      | ascending   |
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4737
+  @single_access
   Scenario: User sees the unknown error message when a 500 error occurs
     Given a nominated acute prescription has been created
     And I am logged in as a user with a single access role
@@ -126,6 +137,7 @@ Feature: Prescription List Page in the Prescription Tracker
     And I see a go back link to "search-by-prescription-id"
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4737
+  @single_access
   Scenario: User sees the prescription not found message when a 404 error occurs
     Given a nominated acute prescription has been created
     And I am logged in as a user with a single access role

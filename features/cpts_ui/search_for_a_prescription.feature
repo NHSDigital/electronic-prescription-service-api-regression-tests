@@ -3,17 +3,20 @@
 Feature: I can visit the Clinical Prescription Tracker Service Website
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4656
+  @single_access
   Scenario: User is redirected to the Search For A Prescription Page
     When I log in as a user with a single access role
     Then I am on the search for a prescription page
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4516
+  @single_access
   Scenario: User can view the Search For A Prescription Page
     Given I am logged in as a user with a single access role
     When I am on the search for a prescription page
     Then I can see the search for a prescription header
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4518
+  @single_access
   Scenario Outline: user can switch between different tabs
     Given I am logged in as a user with a single access role
     When I am on the search for a prescription page
@@ -26,6 +29,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
       | Basic Details Search   |
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5480
+  @single_access
   Scenario: user pressing arrow keys when filling out a form cycles between the text rather than between tab headings
     Given I am logged in as a user with a single access role
     When I am on the search for a prescription page
@@ -34,6 +38,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4535
   @rbac_banner
+  @multiple_access
   Scenario: User can see their RBAC banner when a role is selected
     Given I am logged in as a user with multiple access roles
     When I select a role
@@ -41,6 +46,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     Then I can see the RBAC banner
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
+  @single_access
   @skip # FIXME: temporary until use of real data in tracker is fixed
   Scenario: User is redirected correctly when they search for non-existent prescriptions
     Given I am logged in as a user with a single access role
@@ -51,6 +57,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     Then I am on the prescription not found page with redirect to PrescriptionIdSearch
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
+  @single_access
   @skip # FIXME: temporary until use of real data in tracker is fixed
   Scenario: User is redirected correctly when they search for non-existent patient
     Given I am logged in as a user with a single access role
@@ -61,6 +68,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     Then I am on the prescription not found page with redirect to NhsNumSearch
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
+  @single_access
   @skip # FIXME: temporary until use of real data in tracker is fixed
   Scenario: User is redirected correctly when they hit the "Go Back" button after searching for non-existent prescription ID
     Given I am logged in as a user with a single access role
@@ -72,6 +80,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     Then I am on tab Prescription ID search
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4783
+  @single_access
   @find_prescription
   @skip # this will not work as prescription is not in url 
   Scenario: User enters a valid prescription ID and is redirected to results page
@@ -83,6 +92,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     Then I am redirected to the prescription results page for "C0C757-A83008-C2D93O"
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5304
+  @single_access
   @find_prescription
   Scenario Outline: User sees validation error for incorrect prescription ID
     Given I am logged in as a user with a single access role
@@ -100,6 +110,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
       | C0C757-A83008-C2D93X    |
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
+  @single_access
   @find_patient
   Scenario: User is redirected correctly when they search for non-existent patient using NHS number
     Given I am logged in as a user with a single access role
@@ -110,6 +121,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     And I see a go back link to "search-by-nhs-number"
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
+  @single_access
   @find_patient
   @skip # FIXME: temporary until use of real data in tracker is fixed
   Scenario: User is redirected correctly when they search for an existing patient using NHS number
@@ -121,6 +133,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     Then I am on the prescription list current page with NHS number "1234567890"
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
+  @single_access
   @find_patient
   Scenario: User sees a validation message when NHS number field is left empty
     Given I am logged in as a user with a single access role
@@ -130,6 +143,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     Then I see a validation error is displayed
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
+  @single_access
   @find_patient
   Scenario Outline: User sees a validation message for invalid NHS number
     Given I am logged in as a user with a single access role
@@ -146,6 +160,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
       | 1234567890         |
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
+  @single_access
   @basic_details_search
   Scenario: User sees validation errors when submitting empty Basic Details Search form
     Given I am logged in as a user with a single access role
@@ -154,6 +169,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     Then I see a validation error is displayed
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
+  @single_access
   @basic_details_search
   Scenario Outline: User sees validation errors and correct focus for invalid basic details
     Given I am logged in as a user with a single access role
@@ -172,6 +188,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
       | James  | Smith       | 12  | 08    | 2020 | LS!      | postcode-only |
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
+  @single_access
   @basic_details_search
   @skip # FIXME: temporary until use of real data in tracker is fixed
   Scenario: User is redirected to the current prescriptions page for a single match
@@ -181,6 +198,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     Then I am on the prescription list current page with NHS number "1234567890"
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
+  @single_access
   @basic_details_search
   @skip # FIXME: temporary until use of real data in tracker is fixed
   Scenario: User is redirected to the too many results page for ambiguous patient match
@@ -190,6 +208,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     Then I am on the too many results page
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
+  @single_access
   @basic_details_search
   @skip # FIXME: temporary until use of real data in tracker is fixed
   Scenario: User is redirected to the patient search results page for multiple matches
@@ -199,6 +218,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     Then I am on the basic details search results page
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5360
+  @single_access
   @basic_details_search
   @skip # FIXME: temporary until use of real data in tracker is fixed
   Scenario: User is redirected to the patient not found page for no matches
@@ -207,6 +227,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     Then I am on the patient not found page
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
+  @single_access
   @basic_details_search
   Scenario: User sees all DOB fields highlighted and day focused for an invalid calendar date
     Given I am logged in as a user with a single access role
@@ -216,6 +237,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     Then the focus should be on the "dob-day" input
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4785
+  @single_access
   @basic_details_search
   Scenario: User sees DOB field error styling persist after correcting values until resubmission
     Given I am logged in as a user with a single access role
@@ -225,6 +247,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     Then the DOB inputs should have error styling
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5360
+  @single_access
   @basic_details_search
   @skip # FIXME: temporary until use of real data in tracker is fixed
   Scenario: User sees their search data preserved when going back from patient not found page
@@ -240,6 +263,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
       | Year       | 1990           |
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5360
+  @single_access
   @basic_details_search
   @skip # FIXME: temporary until use of real data in tracker is fixed
   Scenario: User sees their search data preserved when going back from too many results page

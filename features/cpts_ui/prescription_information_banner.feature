@@ -1,5 +1,6 @@
 @cpts_ui @prescription_information_banner @regression @ui @smoke
 @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4797
+@multiple_access
 Feature: The site displays the prescription information banner
 
   Background:

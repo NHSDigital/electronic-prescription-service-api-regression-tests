@@ -9,6 +9,7 @@ Feature: Users interact with the cookie banner
         Then I can see the cookie banner
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5182
+    @single_access
     Scenario: User can see the cookie banner when logged in
         Given I am logged in as a user with a single access role
         Then I can see the cookie banner
@@ -36,6 +37,7 @@ Feature: Users interact with the cookie banner
         Then I go to the cookies policy page
 
     @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5182
+    @single_access
     Scenario: User can click the link to view cookies policy when logged in
         Given I am logged in as a user with a single access role
         When I click the cookies policy link
