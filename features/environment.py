@@ -5,7 +5,7 @@ import sys
 
 from behave.model import Scenario
 from dotenv import load_dotenv
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, expect
 from methods.api import eps_api_methods
 import allure
 
@@ -176,7 +176,8 @@ def before_scenario(context, scenario):
     product = context.config.userdata["product"].upper()
     if product == "CPTS-UI":
         global _playwright  # noqa: F824
-        global _page  # noqa: F824
+        global _page  # noqa:
+        expect.set_options(timeout=10_000)
         context.browser = context.browser.new_context()
         context.browser.add_init_script(
             """
@@ -196,7 +197,8 @@ def before_scenario(context, scenario):
 def after_scenario(context, scenario):
     product = context.config.userdata["product"].upper()
     if product == "CPTS-UI":
-        context.browser.tracing.stop(path="/tmp/trace.zip")
+        if hasattr(context.browser, "tracing"):
+            context.browser.tracing.stop(path="/tmp/trace.zip")
         if hasattr(context, "page"):
             if scenario.status == "failed":
                 allure.attach(
@@ -251,11 +253,16 @@ def before_all(context):
 
     else:
         raise RuntimeError("no tests to run. Check your tags and try again")
+    print(f"arm64: {context.config.userdata["arm64"]}")
     if product == "CPTS-UI":
         global _playwright
         _playwright = sync_playwright().start()
         context.browser = _playwright.chromium.launch(
-            headless=HEADLESS, channel="chrome", slow_mo=SLOWMO
+            headless=HEADLESS,
+            slow_mo=SLOWMO,
+            channel=(
+                None if context.config.userdata["arm64"].upper() == "TRUE" else "chrome"
+            ),
         )
 
     eps_api_methods.calculate_eps_fhir_base_url(context)

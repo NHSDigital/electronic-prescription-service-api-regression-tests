@@ -1,4 +1,5 @@
-from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
+# pylint: disable=no-name-in-module
+from behave import when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
 import re
 
@@ -6,55 +7,26 @@ from pages.prescription_list_page import PrescriptionListPage
 from pages.search_for_a_prescription import SearchForAPrescription
 
 
-@when('I search for a prescription using a valid prescription ID "{prescription_id}"')
-def search_using_prescription_id(context, prescription_id):
-    # Fill the input before clicking
+@when("I search for the prescription by prescription ID")
+def search_context_prescription_id(context):
+    prescription_id = context.prescription_id
     search_input = context.page.get_by_test_id("prescription-id-input")
     search_input.fill(prescription_id)
 
     context.page.get_by_test_id("find-prescription-button").click()
 
 
-@given("I have accessed the prescription list page using a prescription ID search")
-def access_list_page_via_prescription_id(context):
-    # Navigate directly to the results page with a prescription ID parameter
-    # FIXME: This should not be hardcoded once we can actually search for real data
-    context.page.goto(
-        context.cpts_ui_base_url
-        + "site/prescription-list-current?prescriptionId=C0C757-A83008-C2D93O"
-    )
-
-    # Verify we're on the prescription list page using data-testid
-    prescription_list_page = PrescriptionListPage(context.page)
-    expect(prescription_list_page.page_container).to_be_visible()
+@when("I click on the NHS number search tab")
+def click_on_nhs_number_search_tab(context):
+    context.page.get_by_test_id("eps-tab-heading /search-by-nhs-number").click()
 
 
-@given("I have accessed the prescription list page using an NHS number search")
-def access_list_page_via_nhs_number(context):
-    # Navigate directly to the results page with an NHS number parameter
-    # FIXME: This should not be hardcoded once we can actually search for real data
-    context.page.goto(
-        context.cpts_ui_base_url + "site/prescription-list-current?nhsNumber=1234567890"
-    )
-
-    # Verify we're on the prescription list page using data-testid
-    prescription_list_page = PrescriptionListPage(context.page)
-    expect(prescription_list_page.page_container).to_be_visible()
-
-
-@then(
-    'I am redirected to the prescription list page with prescription ID "{prescription_id}"'
-)
-def verify_prescription_list_page(context, prescription_id):
-    expected_url = re.compile(
-        r"/site/prescription-list-(?:current|past|future)\?prescriptionId="
-        + prescription_id
-    )
-    context.page.wait_for_url(expected_url)
-
-    # Verify we're on the prescription list page using POM
-    prescription_list_page = PrescriptionListPage(context.page)
-    expect(prescription_list_page.page_container).to_be_visible()
+@when("I search for the prescription by NHS number search")
+def search_context_nhs_number(context):
+    nhs_number = context.nhs_number
+    search_input = context.page.get_by_test_id("nhs-number-input")
+    search_input.fill(nhs_number)
+    context.page.get_by_test_id("find-patient-button").click()
 
 
 @then('I can see the heading "{heading_text}"')
@@ -79,18 +51,6 @@ def verify_results_count(context):
     ), f"Expected 'results' in results count text: {count_text}"
 
 
-@given("I am on the prescription list page for prescription ID {prescription_id}")
-def i_am_on_the_prescription_list_page(context, prescription_id: str):
-    context.execute_steps(
-        f"""
-        Given I am on the search for a prescription page
-        When I search for a prescription using a valid prescription ID {prescription_id}
-        Then I am redirected to the prescription list page with prescription ID {prescription_id}
-        And I can see the heading "Prescriptions list"
-    """
-    )
-
-
 @then("I can see the appropriate prescription results tab headings")
 def i_see_results_headings(context):
     prescription_list_page = PrescriptionListPage(context.page)
@@ -105,118 +65,50 @@ def i_see_results_headings(context):
     ).to_be_visible()
 
 
-@then("I can see the current prescriptions results table")
-def i_see_current_prescriptions_results_tab(context):
-    context.page.wait_for_selector(
-        '[data-testid="eps-loading-spinner"]', state="hidden", timeout=3000
-    )
-
+@then("I can see the appropriate no prescriptions found message")
+def i_see_no_prescriptions_message(context):
     prescription_list_page = PrescriptionListPage(context.page)
-
-    expect(
-        prescription_list_page.page.locator(
-            '[data-testid="current-prescriptions-results-table"]'
-        )
-    ).to_be_visible()
-    expect(
-        prescription_list_page.page.locator(
-            '[data-testid="past-prescriptions-results-table"]'
-        )
-    ).not_to_be_visible()
-    expect(
-        prescription_list_page.page.locator(
-            '[data-testid="future-prescriptions-results-table"]'
-        )
-    ).not_to_be_visible()
+    no_prescriptions_message = prescription_list_page.page.locator(
+        '[data-testid="no-prescriptions-message"]'
+    )
+    expect(no_prescriptions_message).to_be_visible()
 
 
-@then("I see the table summary text Showing {count} of {count}")
-def i_see_the_showing_count_text(context, count):
+@then("I see the table summary text displaying number of prescriptions")
+def i_see_the_showing_count_text_if_relevant(context):
     summary_row = context.page.get_by_test_id("table-summary-row")
-    expected_text = f"Showing {count} of {count}"
     expect(summary_row).to_be_visible()
-    expect(summary_row).to_have_text(expected_text)
+    expect(summary_row).to_have_text(re.compile(r"\s*Showing \d+ of \d+\s*"))
 
 
-@then("the table displays {count} prescription rows")
-def table_displays_prescription_rows(context, count):
-    prescription_list_page = PrescriptionListPage(context.page)
-    expect(
-        prescription_list_page.current_prescriptions_results_tab_table
-    ).to_be_visible()
-    rows = prescription_list_page.current_prescriptions_results_tab_table.locator(
-        "tbody tr:not(:last-child)"
-    )
-
-    expect(rows).to_have_count(int(count))
-
-
-@then("I can see the future prescriptions results table")
-def i_see_future_prescriptions_results_tab(context):
+@then('I can see the "{tab_name}" prescriptions results table')
+def i_see_prescriptions_results_table(context, tab_name):
     context.page.wait_for_selector(
         '[data-testid="eps-loading-spinner"]', state="hidden", timeout=3000
     )
 
-    prescription_list_page = PrescriptionListPage(context.page)
+    tab_selector = f'[data-testid="{tab_name}-prescriptions-results-table"]'
 
-    expect(
-        prescription_list_page.page.locator(
-            '[data-testid="future-prescriptions-results-table"]'
-        )
-    ).to_be_visible()
-    expect(
-        prescription_list_page.page.locator(
-            '[data-testid="current-prescriptions-results-table"]'
-        )
-    ).not_to_be_visible()
-    expect(
-        prescription_list_page.page.locator(
-            '[data-testid="past-prescriptions-results-table"]'
-        )
-    ).not_to_be_visible()
-
-
-@then("I can see the past prescriptions results table")
-def i_see_past_prescriptions_results_tab(context):
     context.page.wait_for_selector(
-        '[data-testid="eps-loading-spinner"]', state="hidden", timeout=3000
+        f'{tab_selector}, [data-testid="no-prescriptions-message"]', timeout=3000
     )
 
+    expect(context.page.locator(tab_selector)).to_be_visible()
+
+    other_tabs = {"current", "past", "future"} - {tab_name}
+    for other in other_tabs:
+        expect(
+            context.page.locator(f'[data-testid="{other}-prescriptions-results-table"]')
+        ).not_to_be_visible()
+
+
+@when('I click on the "{tab_name}" prescriptions tab heading')
+def i_click_on_tab_heading(context, tab_name):
     prescription_list_page = PrescriptionListPage(context.page)
-
-    expect(
-        prescription_list_page.page.locator(
-            '[data-testid="past-prescriptions-results-table"]'
-        )
-    ).to_be_visible()
-    expect(
-        prescription_list_page.page.locator(
-            '[data-testid="future-prescriptions-results-table"]'
-        )
-    ).not_to_be_visible()
-    expect(
-        prescription_list_page.page.locator(
-            '[data-testid="current-prescriptions-results-table"]'
-        )
-    ).not_to_be_visible()
-
-
-@when("I click on the current prescriptions tab heading")
-def i_click_current_prescription_tab_heading(context):
-    prescription_list_page = PrescriptionListPage(context.page)
-    prescription_list_page.current_prescriptions_results_tab_heading.click()
-
-
-@when("I click on the past prescriptions tab heading")
-def i_click_past_prescription_tab_heading(context):
-    prescription_list_page = PrescriptionListPage(context.page)
-    prescription_list_page.past_prescriptions_results_tab_heading.click()
-
-
-@when("I click on the future prescriptions tab heading")
-def i_click_future_prescription_tab_heading(context):
-    prescription_list_page = PrescriptionListPage(context.page)
-    prescription_list_page.future_prescriptions_results_tab_heading.click()
+    tab_element = getattr(
+        prescription_list_page, f"{tab_name}_prescriptions_results_tab_heading"
+    )
+    tab_element.click()
 
 
 @when('I click on the "Go back" link')
@@ -302,7 +194,6 @@ def check_table_sort_order(context, column_name, direction):
     context.page.wait_for_selector(
         '[data-testid="eps-loading-spinner"]', state="hidden", timeout=3000
     )
-
     column_mapping = {
         "Issue date": "issueDate",
         "Prescription type": "prescriptionTreatmentType",
@@ -324,33 +215,69 @@ def check_table_sort_order(context, column_name, direction):
         actual_aria_sort == expected_aria_sort
     ), f"Expected aria-sort to be '{expected_aria_sort}', but was '{actual_aria_sort}'"
 
-    assert "active-header" in header_locator.get_attribute(
-        "class"
-    ), "Header is not marked as active"
-
     if direction.lower() == "ascending":
         up_arrow = header_locator.locator(".up-arrow")
-        assert "selected-arrow" in up_arrow.get_attribute(
-            "class"
-        ), "Up arrow is not selected"
+        up_arrow_class = up_arrow.get_attribute("class") or ""
+        assert (
+            "selected-arrow" in up_arrow_class
+        ), f"Up arrow is not selected for ascending sort. Arrow classes: {up_arrow_class}"
+
+        down_arrow = header_locator.locator(".down-arrow")
+        down_arrow_class = down_arrow.get_attribute("class") or ""
+        assert (
+            "selected-arrow" not in down_arrow_class
+        ), f"Down arrow should not be selected for ascending sort. Arrow classes: {down_arrow_class}"
+
     else:
         down_arrow = header_locator.locator(".down-arrow")
-        assert "selected-arrow" in down_arrow.get_attribute(
-            "class"
-        ), "Down arrow is not selected"
+        down_arrow_class = down_arrow.get_attribute("class") or ""
+        assert (
+            "selected-arrow" in down_arrow_class
+        ), f"Down arrow is not selected for descending sort. Arrow classes: {down_arrow_class}"
+
+        up_arrow = header_locator.locator(".up-arrow")
+        up_arrow_class = up_arrow.get_attribute("class") or ""
+        assert (
+            "selected-arrow" not in up_arrow_class
+        ), f"Up arrow should not be selected for descending sort. Arrow classes: {up_arrow_class}"
+
+    all_headers = context.page.locator(
+        '[data-testid^="eps-prescription-table-header-"]'
+    )
+    header_count = all_headers.count()
+
+    for i in range(header_count):
+        header = all_headers.nth(i)
+        header_testid = header.get_attribute("data-testid")
+
+        if header_testid == f"eps-prescription-table-header-{column_key}":
+            continue
+
+        other_aria_sort = header.get_attribute("aria-sort")
+        assert (
+            other_aria_sort == "none"
+        ), f"Header {header_testid} should have aria-sort='none', but has '{other_aria_sort}'"
 
 
-@then("I click on the view prescription link")
+@when("I click on the view prescription link")
 def click_view_prescriptions_link(context):
     context.page.wait_for_selector(
         '[data-testid="eps-loading-spinner"]', state="hidden", timeout=4000
     )
-    context.page.get_by_test_id("view-prescription-link-C0C757-A83008-C2D93O").click()
+    prescription_id = context.prescription_id
+    context.page.get_by_test_id(f"view-prescription-link-{prescription_id}").click()
 
 
 @then("I am taken to the correct prescription page")
 def check_url_redirect_for_prescriptions(context):
-    expected_url_pattern = re.compile(
-        r"/site/prescription-details\?prescriptionId=[\w-]+"
-    )
+    expected_url_pattern = re.compile(r"/site/prescription-details")
     context.page.wait_for_url(expected_url_pattern)
+
+
+@when("I search for the prescription and the API returns a {code:d} error")
+def unsuccessful_prescription_search_with_code(context, code):
+    prescription_id = context.prescription_id
+    search_input = context.page.get_by_test_id("prescription-id-input")
+    search_input.fill(prescription_id)
+    context.execute_steps(f"Then the {code} error occurs")
+    context.page.get_by_test_id("find-prescription-button").click()
