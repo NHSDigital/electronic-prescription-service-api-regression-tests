@@ -1,5 +1,6 @@
 @cpts_ui @basic_details_results @regression @smoke @ui
 @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4790
+@multiple_access
 Feature: Basic Details Search Results Page
   As a healthcare professional
   I want to see a list of patients matching my search criteria

@@ -1,9 +1,10 @@
 @cpts_ui @prescription_details @regression @ui
+@multiple_access_pre_selected
 Feature: Prescription Detail Page in the Clinical Prescription Tracker Service
 
   Background:
-    Given I am logged in as a user with a single access role
-    And I am on the search for a prescription page
+    Given I am logged in as a user with a pre selected role
+    When I click the confirm and continue button on the your selected role page
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4802
   Scenario: User sees all the organisation cards when they should

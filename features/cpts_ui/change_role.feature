@@ -62,6 +62,7 @@ Feature: Users are able to change their roles, if they have multiple roles with 
     And I do not see the "Change Role" link
     And I do not see the change role page header link
 
+  @multiple_access
   Scenario: user can change their role, and see a confirmation page
     Given I am logged in as a user with multiple access roles
     And I have confirmed a role
@@ -75,6 +76,7 @@ Feature: Users are able to change their roles, if they have multiple roles with 
   ############################################################################
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4974
+  @multiple_access
   Scenario: User can change their role and see the correct message on the change role page
     Given I am logged in as a user with multiple access roles
     And I have confirmed a role
@@ -85,6 +87,7 @@ Feature: Users are able to change their roles, if they have multiple roles with 
     And I can see the role that has been pre selected
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5046
+  @multiple_access
   Scenario: User refreshes the page and retains roles with access
     Given I am logged in as a user with multiple access roles
     And I have confirmed a role
@@ -95,6 +98,7 @@ Feature: Users are able to change their roles, if they have multiple roles with 
     Then I do not see the change role page header link
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4974
+  @multiple_roles_single_access
   Scenario: User can see roles with access cards
     Given I am logged in with a single access role and multiple without access
     Then I see the change role roles with access cards
@@ -104,17 +108,20 @@ Feature: Users are able to change their roles, if they have multiple roles with 
   # Expanding/collapsing the summary
   ############################################################################
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4974
+  @multiple_access
   Scenario: Change role roles without access table body is not visible by default
     When I log in as a user with multiple access roles
     Then the change role roles without access table body is not visible
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4974
+  @multiple_access
   Scenario: User can expand the change role 'Roles without access' to see table contents
     Given I am logged in as a user with multiple access roles
     When I click on the change role summary expander
     Then I see the change role roles without access table
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4974
+  @multiple_access
   Scenario: User can collapse the change role 'Roles without access' to hide table contents
     Given I am logged in as a user with multiple access roles
     And the summary table body is displayed
