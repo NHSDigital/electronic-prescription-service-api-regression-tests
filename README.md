@@ -74,7 +74,7 @@ To ensure the tests can continue to run in Chrome supported environments, an inp
 Pass the `arm64=true` argument when you attempt to run the tests.
 ie.
 ```
-product=cpts-ui env=internal-dev arm64=true PULL_REQUEST_ID=pr-300 tags=login HEADLESS=false SLOWMO=2000 make run-tests
+product=cpts-ui env=internal-dev arm64=true PULL_REQUEST_ID=pr-300 tags=login HEADLESS=true make run-tests
 ```
 
 ### Method 1 (Recommended):

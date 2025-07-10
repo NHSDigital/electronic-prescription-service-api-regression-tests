@@ -22,6 +22,11 @@ def i_navigate_to_a_non_app_page(context):
     context.page.goto(context.cpts_ui_base_url + "spamandeggs")
 
 
+@when("I navigate to the root page")
+def i_navigate_to_the_root_page(context):
+    context.page.goto(context.cpts_ui_base_url + "site/")
+
+
 @then("I am on the logged out Page Not Found page")
 def i_am_on_page_not_found_a(context):
     page = PageNotFound(context.page)
