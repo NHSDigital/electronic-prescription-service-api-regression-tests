@@ -41,6 +41,14 @@ Feature: The site has a 404 not found page
 
     @deployed_only
     @multiple_access
+    Scenario: The user is redirected to search by prescription page, if their path /site, while logged in
+        Given I am logged in as a user with multiple access roles
+        And I have selected a role
+        When I navigate to the root page
+        Then I am redirected correctly to the site, with URI of 'search by prescription' correctly forwarded
+
+    @deployed_only
+    @multiple_access
     Scenario: The user sees an error page when they navigate to a url that doesn't match and is missing site path while logged in
         Given I am logged in as a user with multiple access roles
         And I have selected a role
