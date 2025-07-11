@@ -16,10 +16,14 @@ Feature: I can create prescriptions
       | EPS-FHIR-PRESCRIBING      | non-nominated | acute  |
       | EPS-FHIR-PRESCRIBING      | nominated     | repeat |
       | EPS-FHIR-PRESCRIBING      | non-nominated | repeat |
+      | EPS-FHIR-PRESCRIBING      | nominated     | eRD |
+      | EPS-FHIR-PRESCRIBING      | non-nominated | eRD |
       | EPS-FHIR-PRESCRIBING-SHA1 | nominated     | acute  |
       | EPS-FHIR-PRESCRIBING-SHA1 | non-nominated | acute  |
       | EPS-FHIR-PRESCRIBING-SHA1 | nominated     | repeat |
       | EPS-FHIR-PRESCRIBING-SHA1 | non-nominated | repeat |
+      | EPS-FHIR-PRESCRIBING-SHA1 | nominated     | eRD |
+      | EPS-FHIR-PRESCRIBING-SHA1 | non-nominated | eRD |
 
 
   @skip-sandbox

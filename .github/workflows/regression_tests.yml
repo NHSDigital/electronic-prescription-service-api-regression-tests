@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       tags:
-        description: 'Test scenario tags'
+        description: 'Test scenario tags. If you want to specify multiple tags, you should separate them with a colon :'
         required: true
         type: string
         default: "@regression"
@@ -38,28 +38,18 @@ on:
         description: 'The github tag to run the test pack from'
         required: false
         default: "main"
+      generate_report:
+        type: boolean
+        description: 'Generate a report for successful test runs'
+        default: false
 
 jobs:
   regression_tests:
     runs-on: ubuntu-22.04
     environment: ${{ inputs.environment }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
-        with:
-          fetch-depth: 0  # This causes all history to be fetched, which is required for calculate-version to function
-          ref: ${{ inputs.github_tag }}
-
-      - name: ${{github.event.inputs.id}}
-        env:
-          ID: ${{github.event.inputs.id}}
-          ENV: ${{ inputs.environment }}
-          PRODUCT: ${{ inputs.product }}
-          PULL_REQUEST_ID: ${{ inputs.pull_request_id }}
-        run: |
-          echo run identifier "$ID"-"$PRODUCT"-"$ENV"-"$PULL_REQUEST_ID"
-          echo run identifier "$ID"-"$PRODUCT"-"$ENV"-"$PULL_REQUEST_ID"  >> "$GITHUB_STEP_SUMMARY"
-
+      # we need to leave this step in as run_regression test scripts expect the third step in the job to have the name of the input id
+      # the first step is auto generated 'set up job' step
       - name: show_input_parameters
         env:
           tags: ${{ inputs.tags }}
@@ -75,10 +65,42 @@ jobs:
           echo "id: ${id}"
           echo "pull_request_id: ${pull_request_id}"
           echo "github_tag: ${github_tag}"
+          # output to summary
+          # shellcheck disable=SC2129
+          echo "tags: ${tags}"  >> "$GITHUB_STEP_SUMMARY"
+          echo "environment: ${environment}"  >> "$GITHUB_STEP_SUMMARY"
+          echo "product: ${product}"  >> "$GITHUB_STEP_SUMMARY"
+          echo "id: ${id}"  >> "$GITHUB_STEP_SUMMARY"
+          echo "pull_request_id: ${pull_request_id}"  >> "$GITHUB_STEP_SUMMARY"
+          echo "github_tag: ${github_tag}"  >> "$GITHUB_STEP_SUMMARY"
+
+      - name: ${{github.event.inputs.id}}
+        env:
+          ID: ${{github.event.inputs.id}}
+          ENV: ${{ inputs.environment }}
+          PRODUCT: ${{ inputs.product }}
+          PULL_REQUEST_ID: ${{ inputs.pull_request_id }}
+        run: |
+          echo run identifier "$ID"-"$PRODUCT"-"$ENV"-"$PULL_REQUEST_ID"
+          echo run identifier "$ID"-"$PRODUCT"-"$ENV"-"$PULL_REQUEST_ID"  >> "$GITHUB_STEP_SUMMARY"
+
+  run_regression_tests:
+    runs-on: ubuntu-22.04
+    environment: ${{ inputs.environment }}
+    needs: [regression_tests]
+    strategy:
+      fail-fast: false
+      matrix:
+        tag: ["multiple_access", "multiple_access_pre_selected", "single_access", "multiple_roles_single_access", "multiple_roles_no_access", "others"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        with:
+          ref: ${{ inputs.github_tag }}
 
       # using git commit sha for version of action to ensure we have stable version
       - name: Install asdf
-        uses: asdf-vm/actions/setup@1117842ea70e2711a0072e3a71265cbfe2c830be
+        uses: asdf-vm/actions/setup@1902764435ca0dd2f3388eea723a4f92a4eb8302
         with:
           asdf_version: 0.16.4
 
@@ -90,7 +112,7 @@ jobs:
           key: ${{ runner.os }}-asdf-${{ hashFiles('**/.tool-versions') }}
 
       - name: Install asdf dependencies in .tool-versions
-        uses: asdf-vm/actions/install@1117842ea70e2711a0072e3a71265cbfe2c830be
+        uses: asdf-vm/actions/install@1902764435ca0dd2f3388eea723a4f92a4eb8302
         with:
           asdf_version: 0.16.4
         env:
@@ -107,14 +129,30 @@ jobs:
         if: steps.cache-venv.outputs.cache-hit != 'true'
         run: make install
 
+      - name: App product to APP for PR
+        continue-on-error: true
+        env:
+          PRODUCT: ${{ inputs.product }}
+          PR_ID: ${{ inputs.pull_request_id }}
+          APIGEE_MFA_SECRET: ${{ secrets.APIGEE_MFA_SECRET }}
+          APIGEE_PASSWORD: ${{ secrets.APIGEE_PASSWORD }}
+          APIGEE_USER: ${{ secrets.APIGEE_USER }}
+        run: |
+          export APIGEE_MFA_SECRET="$APIGEE_MFA_SECRET"
+          export APIGEE_PASSWORD="$APIGEE_PASSWORD"
+          export APIGEE_USER="$APIGEE_USER"
+          poetry run python ./scripts/add_pr_product_to_app.py --product="$PRODUCT" --pr="$PR_ID"
+
       - name: Regression Tests
         id: tests
         continue-on-error: true
         env:
           PRODUCT: ${{ inputs.product }}
           ENVIRONMENT: ${{ inputs.environment }}
+          ARM64: False
           PULL_REQUEST_ID: ${{ inputs.pull_request_id }}
-          TAGS: ${{ inputs.tags }}
+          MATRIX_TAG: "${{ matrix.tag }}"
+          INPUT_TAG: ${{ inputs.tags }}
           CPT_FHIR_CLIENT_ID: ${{ secrets.CPT_FHIR_CLIENT_ID }}
           CPT_FHIR_CLIENT_SECRET: ${{ secrets.CPT_FHIR_CLIENT_SECRET }}
           EPS_FHIR_CLIENT_ID: ${{ secrets.EPS_FHIR_CLIENT_ID }}
@@ -158,7 +196,63 @@ jobs:
           export JWT_PRIVATE_KEY="$JWT_PRIVATE_KEY"
           export PULL_REQUEST_ID="$PULL_REQUEST_ID"
           echo Pull request ID = "$PULL_REQUEST_ID"
+          case "$MATRIX_TAG" in
+            multiple_access)
+              TAGS="@multiple_access:${INPUT_TAG}"
+              ;;
+            multiple_access_pre_selected)
+              TAGS="@multiple_access_pre_selected:${INPUT_TAG}"
+              ;;
+            single_access)
+              TAGS="@single_access:${INPUT_TAG}"
+              ;;
+            multiple_roles_single_access)
+              TAGS="@multiple_roles_single_access:${INPUT_TAG}"
+              ;;
+            multiple_roles_no_access)
+              TAGS="@multiple_roles_no_access:${INPUT_TAG}"
+              ;;
+            others)
+              TAGS="~@multiple_access:~@multiple_access_pre_selected:~@single_access:~@multiple_roles_single_access:~@multiple_roles_no_access:${INPUT_TAG}"
+              ;;
+            *)
+              echo "Unknown MATRIX_TAG value: $MATRIX_TAG"
+              exit 1
+              ;;
+          esac
+
+          export TAGS
+          echo "Going to run with TAGS ${TAGS}"
           poetry run python ./runner.py --env="$ENVIRONMENT" --product="$PRODUCT" --tags="$TAGS"
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-${{ matrix.tag }}
+          path: allure-results
+
+      - name: force error on failure
+        if: steps.tests.outcome != 'success'
+        run: |
+          exit 1
+
+
+  upload_results:
+    runs-on: ubuntu-22.04
+    environment: ${{ inputs.environment }}
+    needs: [run_regression_tests]
+    if: always()
+    steps:
+      - name: Download matrix artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: downloaded_artifacts
+
+      - name: Place matrix artifacts in allure results
+        run: |
+          mkdir -p allure-results
+          rsync -av downloaded_artifacts/*/*.json allure-results/
+          rsync -av downloaded_artifacts/*/environment.properties allure-results/
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
@@ -167,6 +261,47 @@ jobs:
           path: allure-results
           if-no-files-found: error
 
+      - name: Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        with:
+          ref: ${{ inputs.github_tag }}
+      # using git commit sha for version of action to ensure we have stable version
+      - name: Install asdf
+        uses: asdf-vm/actions/setup@9cd779f40fe38688dd19505ccbc4eaaf018b44e7
+        with:
+          asdf_version: 0.16.4
+
+      - name: Cache asdf
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.asdf
+          key: ${{ runner.os }}-asdf-${{ hashFiles('**/.tool-versions') }}
+
+      - name: Install asdf dependencies in .tool-versions
+        uses: asdf-vm/actions/install@9cd779f40fe38688dd19505ccbc4eaaf018b44e7
+        with:
+          asdf_version: 0.16.4
+        env:
+          PYTHON_CONFIGURE_OPTS: --enable-shared
+
+      - name: Cache Virtualenv
+        uses: actions/cache@v4
+        id: cache-venv
+        with:
+          path: .venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('pyproject.toml') }}
+
+      - name: Install Dependencies
+        if: steps.cache-venv.outputs.cache-hit != 'true'
+        run: |
+          make install
+      - name: download
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results
+  
       - name: Generate a token
         id: generate-token
         uses: actions/create-github-app-token@v2
@@ -177,9 +312,22 @@ jobs:
           repositories: "electronic-prescription-service-api-regression-tests,eps-test-reports"
 
       - name: Report failure on test failure
-        if: steps.tests.outcome != 'success'
+        if: contains(needs.*.result, 'failure') 
         run: |
           poetry run python scripts/send_test_results.py --token=${{ steps.generate-token.outputs.token }} --run_id ${{GITHUB.RUN_ID}}
           echo The regression tests step failed, this likely means there are test failures.
           echo A test report will be generated shortly and can be viewed at: https://nhsdigital.github.io/eps-test-reports
           exit 1
+
+      - name: Report failure on test cancelled or skipped
+        if: contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped') 
+        run: |
+          echo The regression tests step was cancelled or skipped
+          exit 1
+
+      - name: Generate Report
+        if: github.event.inputs.generate_report == 'true'
+        run: |
+          poetry run python scripts/send_test_results.py --token=${{ steps.generate-token.outputs.token }} --run_id ${{GITHUB.RUN_ID}}
+          echo You selected to generate a report for successful test runs.
+          echo A test report will be generated shortly and can be viewed at: https://nhsdigital.github.io/eps-test-reports

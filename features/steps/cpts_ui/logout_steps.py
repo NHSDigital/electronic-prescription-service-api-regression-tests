@@ -107,4 +107,8 @@ def then_i_see_logout_successful_page(context):
 
 @then("I am on the login page")
 def then_i_am_on_login_page(context):
-    context.page.wait_for_url("**/login")
+    environment = context.config.userdata["env"].lower()
+    if environment == "internal-qa":
+        context.page.wait_for_url("**/login")
+    else:
+        context.page.wait_for_url("**/identity.ptl.api.platform.nhs.uk/**")

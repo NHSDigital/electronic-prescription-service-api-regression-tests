@@ -1,5 +1,6 @@
 @cpts_ui @logout @regression @blocker @smoke @ui
 @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4809
+@multiple_access
 Feature: The user is able to logout of the application
 
     Background:

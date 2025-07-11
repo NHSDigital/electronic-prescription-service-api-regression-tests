@@ -14,3 +14,5 @@ Feature: I can return prescriptions
       | non-nominated | acute  |
       | nominated     | repeat |
       | non-nominated | repeat |
+      | nominated     | eRD    |
+      | non-nominated | eRD    |

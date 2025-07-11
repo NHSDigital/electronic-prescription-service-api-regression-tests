@@ -5,7 +5,7 @@ import sys
 
 from behave.model import Scenario
 from dotenv import load_dotenv
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, expect
 from methods.api import eps_api_methods
 import allure
 
@@ -90,18 +90,32 @@ CIS2_USERS = {
 }
 LOGIN_USERS = {"user_id": "9449304130"}
 # Roles with Access: multiple | Roles without Access: multiple | Selected Role: No
+# this is not used
 MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES_ZERO_NO_ACCESS = "555043308599"
+
 # Roles with Access: multiple | Roles without Access: 0 | Selected Role: No
+# any tests that use this should have tag @multiple_access
 MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES = "555043308597"
+
 # Roles with Access: multiple | Roles without Access: multiple | Selected Role: Yes
+# any tests that use this should have tag @multiple_access_pre_selected
 MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES_WITH_SELECTED_ROLE = "555043304334"
+
 # Roles with Access: 1 | Roles without Access: 0 | Selected Role: No
+# any tests that use this should have tag @single_access
 MOCK_CIS2_LOGIN_ID_SINGLE_ACCESS_ROLE = "555043300081"
+
 # Roles with Access: 1 | Roles without Access: multiple | Selected Role: No
+# any tests that use this should have tag @multiple_roles_single_access
 MOCK_CIS2_LOGIN_ID_SINGLE_ROLE_WITH_ACCESS_MULTIPLE_WITHOUT = "555043303526"
+
 # Roles with Access: 0 | Roles without Access: multiple | Selected Role: No
+# any tests that use this should have tag @multiple_roles_no_access
 MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE = "555083343101"
+
 # Roles with Access: 0 | Roles without Access: 0 | Selected Role: No
+# any tests that use this should have tag @no_roles_no_access
+# this is not currently used
 MOCK_CIS2_LOGIN_ID_NO_ROLES = "555073103101"
 
 REPOS = {
@@ -170,8 +184,18 @@ def before_scenario(context, scenario):
     product = context.config.userdata["product"].upper()
     if product == "CPTS-UI":
         global _playwright  # noqa: F824
-        global _page  # noqa: F824
+        global _page  # noqa:
+        expect.set_options(timeout=10_000)
         context.browser = context.browser.new_context()
+        context.browser.add_init_script(
+            """
+            window.__copiedText = "";
+            navigator.clipboard.writeText = (text) => {
+                window.__copiedText = text;
+                return Promise.resolve();
+            };
+        """
+        )
         context.browser.tracing.start(screenshots=True, snapshots=True, sources=True)
         context.page = context.browser.new_page()
         _page = context.page
@@ -181,7 +205,8 @@ def before_scenario(context, scenario):
 def after_scenario(context, scenario):
     product = context.config.userdata["product"].upper()
     if product == "CPTS-UI":
-        context.browser.tracing.stop(path="/tmp/trace.zip")
+        if hasattr(context.browser, "tracing"):
+            context.browser.tracing.stop(path="/tmp/trace.zip")
         if hasattr(context, "page"):
             if scenario.status == "failed":
                 allure.attach(
@@ -235,12 +260,18 @@ def before_all(context):
                 get_url_with_pr(context, env, product)
 
     else:
-        raise RuntimeError("no tests to run. Check your tags and try again")
+        print("no tests to run. Check your tags and try again")
+        sys.exit(0)
+    print(f"arm64: {context.config.userdata["arm64"]}")
     if product == "CPTS-UI":
         global _playwright
         _playwright = sync_playwright().start()
         context.browser = _playwright.chromium.launch(
-            headless=HEADLESS, channel="chrome", slow_mo=SLOWMO
+            headless=HEADLESS,
+            slow_mo=SLOWMO,
+            channel=(
+                None if context.config.userdata["arm64"].upper() == "TRUE" else "chrome"
+            ),
         )
 
     eps_api_methods.calculate_eps_fhir_base_url(context)

@@ -15,6 +15,8 @@ Feature: I can dispense prescriptions
       | non-nominated | acute  |
       | nominated     | repeat |
       | non-nominated | repeat |
+      | nominated     | eRD    |
+      | non-nominated | eRD    |
 
   @amend
   Scenario: I can amend a single dispense notification
