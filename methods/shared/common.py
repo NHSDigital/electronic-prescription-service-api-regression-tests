@@ -54,7 +54,7 @@ def get_eps_fhir_authenticator(user, env, url, product):
         login_form=login_form,
     )
     authenticator = AuthorizationCodeAuthenticator(
-        config=config  # pyright: ignore [reportArgumentType]
+        config=config, allure=allure  # pyright: ignore [reportArgumentType]
     )
     return authenticator
 
@@ -76,7 +76,7 @@ def get_pfp_apigee_authenticator(env, url):
         login_form=login_form,
     )
     authenticator = AuthorizationCodeAuthenticator(
-        config=config  # pyright: ignore [reportArgumentType]
+        config=config, allure=allure  # pyright: ignore [reportArgumentType]
     )
     return authenticator
 
