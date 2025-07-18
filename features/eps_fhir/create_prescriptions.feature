@@ -27,6 +27,7 @@ Feature: I can create prescriptions
       | EPS-FHIR-SHA1 | non-nominated | repeat |
 
   @skip-sandbox
+  @ant-test
   Scenario: I can create a prescription with sha256
     Given I am an authorised prescriber with EPS-FHIR app
     And I successfully prepare a nominated acute prescription
