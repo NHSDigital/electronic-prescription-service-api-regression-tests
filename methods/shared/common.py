@@ -120,7 +120,8 @@ def get_auth(env, product, user="prescriber"):
 
 def get_token(authenticator):
     # 3. Get your token
-    token_response = authenticator.get_token()
+    with allure.step("calling authenticator.get token"):
+        token_response = authenticator.get_token()
     assert "access_token" in token_response
     token = token_response["access_token"]
     return token
