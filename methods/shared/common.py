@@ -110,7 +110,8 @@ def get_auth(env, product, user="prescriber"):
     if product == "PSU":
         authenticator = get_psu_authenticator(env, url)
     if authenticator is not None:
-        return get_token(authenticator)
+        with allure.step("calling get token"):
+            return get_token(authenticator)
     else:
         raise ValueError(
             "Authentication failed because authenticator was not generated"
