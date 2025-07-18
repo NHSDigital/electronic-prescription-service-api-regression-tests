@@ -8,6 +8,7 @@ from pytest_nhsd_apim.identity_service import (
     ClientCredentialsConfig,
     ClientCredentialsAuthenticator,
 )
+import requests
 
 from features.environment import (
     CIS2_USERS,
@@ -118,10 +119,92 @@ def get_auth(env, product, user="prescriber"):
         )
 
 
+def debug_get_token(authenticator):
+    login_session = requests.session()
+
+    # 1. Hit `authorize` endpoint w/ required query params --> we
+    # are redirected to the simulated_auth page. The requests package
+    # follows those redirects.
+    with allure.step("calling _get_authorize_endpoint_response"):
+        authorize_response = (
+            authenticator._get_authorize_endpoint_response(  # pylint: disable=W0212
+                login_session,
+                f"{authenticator.config.identity_service_base_url}/authorize",
+                authenticator.config.client_id,
+                authenticator.config.callback_url,
+                authenticator.config.scope,
+            )
+        )
+
+    with allure.step("calling _get_authorization_form"):
+        authorize_form = authenticator._get_authorization_form(  # pylint: disable=W0212
+            authorize_response.content.decode()
+        )
+    # 2. Parse the login page.  For keycloak this presents an
+    # HTML form, which must be filled in with valid data.  The tester
+    # can submits their login data with the `login_form` field.
+
+    with allure.step("calling _get_authorize_form_submission_data"):
+        form_submission_data = (
+            authenticator._get_authorize_form_submission_data(  # pylint: disable=W0212
+                authorize_form, authenticator.config.login_form
+            )
+        )
+
+    # form_submission_data["username"] = 656005750104
+    #     # And here we inject a valid mock username for keycloak.
+    #     # For reference some valid cis2 mock usernames are...
+    #     # 656005750104 	surekha.kommareddy@nhs.net
+    #     # 656005750105 	darren.mcdrew@nhs.net
+    #     # 656005750106 	riley.jones@nhs.net
+    #     # 656005750107 	shirley.bryne@nhs.net
+
+    #     # And some valid nhs-login mock usernames are...
+    #     # 9912003071      for High - P9
+    #     # 9912003072      for Medium - P5
+    #     # 9912003073      for Low - P0
+
+    # 3. POST the filled in form. This is equivalent to clicking the
+    # "Login" button if we were a human.
+
+    with allure.step("calling _log_in_identity_service_provider"):
+        response_identity_service_login = (
+            authenticator._log_in_identity_service_provider(  # pylint: disable=W0212
+                login_session, authorize_response, authorize_form, form_submission_data
+            )
+        )
+    # 4. The mock auth redirected us back to the
+    # identity-service, which redirected us to whatever our app's
+    # callback-url was set to.  We don't actually care about the
+    # content our callback-url page, we just need the auth_code that
+    # was provided in the redirect.
+    with allure.step("calling _get_auth_code_from_mock_auth"):
+        auth_code = authenticator._get_auth_code_from_mock_auth(
+            response_identity_service_login
+        )  # pylint: disable=W0212
+
+    # 5. Finally, get an access token.
+    with allure.step("calling post"):
+        resp = login_session.post(
+            f"{authenticator.config.identity_service_base_url}/token",
+            data={
+                "grant_type": "authorization_code",
+                "code": auth_code,
+                "redirect_uri": authenticator.config.callback_url,
+                "client_id": authenticator.config.client_id,
+                "client_secret": authenticator.config.client_secret,
+            },
+        )
+        resp.raise_for_status()
+
+    # 6. Profit.. sweet sweet profit.
+    return resp.json()
+
+
 def get_token(authenticator):
     # 3. Get your token
-    with allure.step("calling authenticator.get token"):
-        token_response = authenticator.get_token()
+    with allure.step("calling debug_get_token"):
+        token_response = debug_get_token(authenticator)
     assert "access_token" in token_response
     token = token_response["access_token"]
     return token
