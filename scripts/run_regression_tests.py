@@ -172,7 +172,7 @@ def get_upload_result_job(auth_header, workflow_id):
 
 
 def check_job(auth_header, workflow_id):
-    max_attempts = 360  # this is about an hour
+    max_attempts = 720  # this is about an hour
     current_attempt = 0
 
     print("Checking job status, please wait...")
