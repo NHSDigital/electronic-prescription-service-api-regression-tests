@@ -47,7 +47,7 @@ def get_eps_fhir_authenticator(user, env, url, product):
     config = AuthorizationCodeConfig(
         environment=env,
         identity_service_base_url=url,  # pyright: ignore [reportArgumentType]
-        callback_url="https://example.org/",  # pyright: ignore [reportArgumentType]
+        callback_url="https://google.com/",  # pyright: ignore [reportArgumentType]
         client_id=client_id,
         client_secret=client_secret,
         scope=scope,
