@@ -177,7 +177,9 @@ def clear_scenario_user_sessions(context, scenario_tags):
     for tag in scenario_tags:
         for key, value in account_scenario_tags.items():
             if tag == key:
-                print(f"Logging out all sessions for Mock_{value}")
+                print(
+                    f"Logging out all sessions for Mock_{value} ahead of running {context.scenario.name}"
+                )
                 payload = json.dumps({"username": "Mock_" + value})
                 # Not catching any exceptions, we want this to raise a stack if it doesn't work
                 response = requests.post(
