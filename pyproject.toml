@@ -31,7 +31,7 @@ playwright = "^1.54.0"
 jycm = "^1.5.0"
 pyotp = "^2.9.0"
 lxml = "5.3.1"
-pytest-nhsd-apim = "^5.0.0"
+pytest-nhsd-apim = "^5.0.2"
 
 
 [tool.poetry.group.dev.dependencies]
