@@ -6,7 +6,7 @@ import logging
 
 
 def get(context, **kwargs):
-    logging.debug(f"Request Body: {kwargs.get("data")}")
+    logging.debug(f"Request Body: {kwargs.get('data')}")
     context.response = api_get_request(**kwargs)
     logging.debug(f"Response Body: {context.response.content}")
     common.attach_api_information(context)
@@ -14,7 +14,7 @@ def get(context, **kwargs):
 
 
 def post(context, **kwargs):
-    logging.debug(f"Request Body: {kwargs.get("data")}")
+    logging.debug(f"Request Body: {kwargs.get('data')}")
     context.response = api_post_request(**kwargs)
     logging.debug(f"Response Body: {context.response.content}")
     common.attach_api_information(context)
