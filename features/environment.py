@@ -89,6 +89,7 @@ CIS2_USERS = {
     "dispenser": {"user_id": "555260695103", "role_id": "555265434108"},
 }
 LOGIN_USERS = {"user_id": "9449304130"}
+
 # Roles with Access: multiple | Roles without Access: multiple | Selected Role: No
 # this is not used
 MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES_ZERO_NO_ACCESS = "555043308599"
@@ -118,6 +119,20 @@ MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE = "555083343101"
 # this is not currently used
 MOCK_CIS2_LOGIN_ID_NO_ROLES = "555073103101"
 
+#################################################################################
+# ADD ANY NEW ACCOUNT SCENARIO TAGS TO THIS DICT
+account_scenario_tags = {
+    "multiple_access": MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES,
+    "multiple_access_pre_selected": MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES_WITH_SELECTED_ROLE,
+    "single_access": MOCK_CIS2_LOGIN_ID_SINGLE_ACCESS_ROLE,
+    "multiple_roles_single_access": MOCK_CIS2_LOGIN_ID_SINGLE_ROLE_WITH_ACCESS_MULTIPLE_WITHOUT,
+    "multiple_roles_no_access": MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE,
+    "no_roles_no_access": MOCK_CIS2_LOGIN_ID_NO_ROLES
+}
+
+# SEE TUPLE IF YOU'VE CREATED NEW ACCOUNT SCENARIO TAGS
+#################################################################################
+
 REPOS = {
     "CPTS-UI": "https://github.com/NHSDigital/eps-prescription-tracker-ui",
     "CPTS-FHIR": "https://github.com/NHSDigital/electronic-prescription-service-clinical-prescription-tracker",
@@ -144,6 +159,25 @@ EPS_FHIR_PRESCRIBING_SUFFIX = "fhir-prescribing"
 EPS_FHIR_DISPENSING_SUFFIX = "fhir-dispensing"
 PFP_SUFFIX = "prescriptions-for-patients"
 PSU_SUFFIX = "prescription-status-update"
+
+
+class ConflictException(Exception):
+    pass
+
+
+def login_using_scenario_tag(context, scenario_tags):
+    conflict_tags = set(account_scenario_tags)
+
+    conflict = scenario_tags & conflict_tags
+    if len(conflict) > 1:
+        raise ConflictException(f"Conflicting account credential scenario tags used: {conflict}")
+
+    for tag in scenario_tags:
+        for key, value in account_scenario_tags.items():
+            if tag == key:
+                pass
+                # Use login_steps.py login() func. This unfortunately runs
+                # Playwright to do the login so no context will be available.
 
 
 def count_of_scenarios_to_run(context):
@@ -200,6 +234,7 @@ def before_scenario(context, scenario):
         context.page = context.browser.new_page()
         _page = context.page
         set_page(context, _page)
+        login_using_scenario_tag(context, scenario.effective_tags)
 
 
 def after_scenario(context, scenario):
