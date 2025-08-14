@@ -48,6 +48,7 @@ AWS_ENVS = {
     "REF": f".ref{AWS_BASE_URL}",
     "INTERNAL-DEV-SANDBOX": f".sandbox{AWS_BASE_URL}",
     "SANDBOX": f".sandbox.dev{AWS_BASE_URL}",
+    "RECOVERY": f".recovery{AWS_BASE_URL}",
 }
 
 APIGEE_APPS = {
