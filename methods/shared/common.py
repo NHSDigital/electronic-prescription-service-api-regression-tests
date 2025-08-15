@@ -47,7 +47,7 @@ def get_eps_fhir_authenticator(user, env, url, product):
         raise ValueError("You must provide BOTH CLIENT_ID and CLIENT_SECRET")
     if env == "recovery":
         env = "internal-dev"
-    callback_url = HttpUrl("https://google.com//")
+    callback_url = HttpUrl("https://google.com/with_a_path/")
     config = AuthorizationCodeConfig(
         environment=env,
         identity_service_base_url=url,  # pyright: ignore [reportArgumentType]
