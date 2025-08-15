@@ -54,7 +54,7 @@ def get_eps_fhir_authenticator(user, env, url, product):
         # changed from example.org so it is responsive
         # if this url is unavailable, then you will see tests fail on a request to keycloak
         # as keycloak returns a 302 eventually to a this callback url.
-        callback_url=HttpUrl("https://google.com/"),
+        callback_url=HttpUrl("https://google.com//"),
         client_id=client_id,
         client_secret=client_secret,
         scope=scope,
