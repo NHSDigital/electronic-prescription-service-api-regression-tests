@@ -55,5 +55,9 @@ if __name__ == "__main__":
     try:
         result = subprocess.run(command, shell=True, check=True, capture_output=True)
     except subprocess.CalledProcessError as e:
-        print(e)
-
+        print(f"command failed: {e}")
+        print(f"returncode: {e.returncode}")
+        print(f"output: {e.output}")
+        print(f"stdout: {e.stdout}")
+        print(f"stderr: {e.stderr}")
+        raise SystemExit("error in running command") from e

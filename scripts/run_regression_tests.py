@@ -24,7 +24,7 @@ ENVIRONMENT_NAMES = {
     "internal-qa": "INTERNAL-QA",
     "int": "INT",
     "ref": "REF",
-    "recovery": "RECOVERY"
+    "recovery": "RECOVERY",
 }
 
 
