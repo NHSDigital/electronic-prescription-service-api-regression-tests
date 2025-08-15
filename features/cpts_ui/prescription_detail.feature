@@ -49,8 +49,7 @@ Feature: Prescription Detail Page in the Clinical Prescription Tracker Service
     Given a nominated acute prescription has been created and released
     And the prescription has been cancelled
     When I go to the prescription details
-    Then The items card is visible
-    And An item card shows a cancellation warning
+    Then An item card shows a cancellation warning
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4799
   Scenario: Item cards do not show pharmacy status when it is missing

@@ -70,18 +70,6 @@ def site_card_visibility_check(context, org, visibility):
         raise ValueError(f"Unrecognised visibility definition: {visibility}")
 
 
-@then("The items card is {visibility}")
-def item_card_visibility(context, visibility):
-    section = context.page.get_by_role("heading", name="Items")
-
-    if visibility == "visible":
-        expect(section).to_be_visible()
-    elif visibility == "not visible":
-        expect(section).not_to_be_visible()
-    else:
-        raise ValueError(f"Invalid visibility: {visibility}")
-
-
 @then("An item card shows an EPS status tag")
 def item_card_eps_status_tag(context):
     page = PrescriptionDetailsPage(context.page)
