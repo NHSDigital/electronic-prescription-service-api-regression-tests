@@ -44,6 +44,8 @@ def get_eps_fhir_authenticator(user, env, url, product):
     client_secret = APIGEE_APPS[product]["client_secret"]
     if client_id is None or client_secret is None:
         raise ValueError("You must provide BOTH CLIENT_ID and CLIENT_SECRET")
+    if env == "recovery":
+        env = "internal-dev"
     config = AuthorizationCodeConfig(
         environment=env,
         identity_service_base_url=url,  # pyright: ignore [reportArgumentType]
