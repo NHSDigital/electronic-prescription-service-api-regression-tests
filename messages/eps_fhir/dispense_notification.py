@@ -195,6 +195,7 @@ class DispenseNotification:
                         {
                             "system": self.HTTP_SNOMED_INFO_SCT,
                             "code": "322237000",
+                            "display": "Paracetamol 500mg soluble tablet (product)",
                         }
                     ]
                 },
