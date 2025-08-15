@@ -61,9 +61,6 @@ def get_eps_fhir_authenticator(user, env, url, product):
         scope=scope,
         login_form=login_form,
     )
-    print("Using this config")
-    print(config)
-    print(f"callback_url: {callback_url}")
     authenticator = AuthorizationCodeAuthenticator(
         config=config  # pyright: ignore [reportArgumentType]
     )
