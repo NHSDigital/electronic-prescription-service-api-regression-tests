@@ -39,14 +39,6 @@ Feature: Prescription Detail Page in the Clinical Prescription Tracker Service
     And The nominated dispenser site card is visible
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4799
-  @skip # can't make multi item prescriptions as it stands
-  Scenario: User sees both prescribed and dispensed item cards
-    Given a new prescription has been dispensed
-    When I go to the prescription details
-    Then The prescribed items card is visible
-    And The dispensed items card is visible
-
-  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4799
   Scenario: User sees EPS status tag on item card
     Given a nominated acute prescription has been created
     When I go to the prescription details
@@ -57,24 +49,14 @@ Feature: Prescription Detail Page in the Clinical Prescription Tracker Service
     Given a nominated acute prescription has been created and released
     And the prescription has been cancelled
     When I go to the prescription details
-    Then The prescribed items card is visible
-    And The dispensed items card is not visible
-    And A prescribed item card shows a cancellation warning
+    Then The items card is visible
+    And An item card shows a cancellation warning
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4799
-  @skip # can't dispense a different item to the original prescription as it stands
-  Scenario: User sees only dispensed item cards, with expandable and status tag
+  Scenario: Item cards do not show pharmacy status when it is missing
     Given a new prescription has been dispensed
     When I go to the prescription details
-    Then The prescribed items card is not visible
-    And The dispensed items card is visible
-    And A dispensed item card has expandable initial prescription
-
-  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4799
-  Scenario: Dispensed item cards do not show pharmacy status when it is missing
-    Given a new prescription has been dispensed
-    When I go to the prescription details
-    Then No pharmacy status label is shown in the dispensed item card
+    Then No pharmacy status label is shown in the item card
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4801
   Scenario: User sees message history with dispense notification dropdown
