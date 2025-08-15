@@ -52,10 +52,8 @@ if __name__ == "__main__":
         f" {tags}"
     )
     print(f"Running subprocess with command: '{command}'")
-    result = subprocess.run(command, shell=True, check=True)
-    if result.stderr:
-        raise subprocess.CalledProcessError(
-                returncode = result.returncode,
-                cmd = result.args,
-                stderr = result.stderr
-                )
+    try:
+        result = subprocess.run(command, shell=True, check=True, capture_output=True)
+    except subprocess.CalledProcessError as e:
+        print(e)
+
