@@ -52,4 +52,12 @@ if __name__ == "__main__":
         f" {tags}"
     )
     print(f"Running subprocess with command: '{command}'")
-    subprocess.run(command, shell=True, check=True)
+    try:
+        result = subprocess.run(command, shell=True, check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"command failed: {e}")
+        print(f"returncode: {e.returncode}")
+        print(f"output: {e.output}")
+        print(f"stdout: {e.stdout}")
+        print(f"stderr: {e.stderr}")
+        raise SystemExit("error in running command") from e

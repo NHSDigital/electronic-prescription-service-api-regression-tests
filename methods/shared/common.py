@@ -2,6 +2,7 @@ import json
 import allure
 
 from assertpy import assert_that as assertpy_assert  # type: ignore
+from pydantic import HttpUrl
 from pytest_nhsd_apim.identity_service import (
     AuthorizationCodeAuthenticator,
     AuthorizationCodeConfig,
@@ -44,6 +45,9 @@ def get_eps_fhir_authenticator(user, env, url, product):
     client_secret = APIGEE_APPS[product]["client_secret"]
     if client_id is None or client_secret is None:
         raise ValueError("You must provide BOTH CLIENT_ID and CLIENT_SECRET")
+    if env == "recovery":
+        env = "internal-dev"
+    callback_url = HttpUrl("https://google.com")
     config = AuthorizationCodeConfig(
         environment=env,
         identity_service_base_url=url,  # pyright: ignore [reportArgumentType]
@@ -51,7 +55,7 @@ def get_eps_fhir_authenticator(user, env, url, product):
         # changed from example.org so it is responsive
         # if this url is unavailable, then you will see tests fail on a request to keycloak
         # as keycloak returns a 302 eventually to a this callback url.
-        callback_url="https://google.com/",  # pyright: ignore [reportArgumentType]
+        callback_url=callback_url,
         client_id=client_id,
         client_secret=client_secret,
         scope=scope,
@@ -70,6 +74,8 @@ def get_pfp_apigee_authenticator(env, url):
     client_secret = APIGEE_APPS["PFP-APIGEE"]["client_secret"]
     if client_id is None or client_secret is None:
         raise ValueError("You must provide BOTH CLIENT_ID and CLIENT_SECRET")
+    if env == "recovery":
+        env = "internal-dev"
     config = AuthorizationCodeConfig(
         environment=env,
         identity_service_base_url=url,  # pyright: ignore [reportArgumentType]
@@ -77,7 +83,7 @@ def get_pfp_apigee_authenticator(env, url):
         # changed from example.org so it is responsive
         # if this url is unavailable, then you will see tests fail on a request to keycloak
         # as keycloak returns a 302 eventually to a this callback url.
-        callback_url="https://google.com/",  # pyright: ignore [reportArgumentType]
+        callback_url=HttpUrl("https://google.com"),
         client_id=client_id,
         client_secret=client_secret,
         scope=scope,
@@ -103,6 +109,8 @@ def get_auth(env, product, user="prescriber"):
     ]:
         raise ValueError(f"Unknown product {product}")
     env = env.lower()
+    if env == "recovery":
+        env = "internal-dev"
     url = f"https://{env}.api.service.nhs.uk/oauth2-mock"
     if product in [
         "CPTS-FHIR",
