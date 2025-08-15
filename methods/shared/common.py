@@ -47,7 +47,7 @@ def get_eps_fhir_authenticator(user, env, url, product):
         raise ValueError("You must provide BOTH CLIENT_ID and CLIENT_SECRET")
     if env == "recovery":
         env = "internal-dev"
-    callback_url = HttpUrl("https://google.com/with_a_path/")
+    callback_url = HttpUrl("https://google.com")
     config = AuthorizationCodeConfig(
         environment=env,
         identity_service_base_url=url,  # pyright: ignore [reportArgumentType]
@@ -86,7 +86,7 @@ def get_pfp_apigee_authenticator(env, url):
         # changed from example.org so it is responsive
         # if this url is unavailable, then you will see tests fail on a request to keycloak
         # as keycloak returns a 302 eventually to a this callback url.
-        callback_url=HttpUrl("https://google.com/"),
+        callback_url=HttpUrl("https://google.com"),
         client_id=client_id,
         client_secret=client_secret,
         scope=scope,
