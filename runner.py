@@ -53,7 +53,7 @@ if __name__ == "__main__":
     )
     print(f"Running subprocess with command: '{command}'")
     try:
-        result = subprocess.run(command, shell=True, check=True, capture_output=True)
+        result = subprocess.run(command, shell=True, check=True)
     except subprocess.CalledProcessError as e:
         print(f"command failed: {e}")
         print(f"returncode: {e.returncode}")
