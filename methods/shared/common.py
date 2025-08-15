@@ -72,6 +72,8 @@ def get_pfp_apigee_authenticator(env, url):
     client_secret = APIGEE_APPS["PFP-APIGEE"]["client_secret"]
     if client_id is None or client_secret is None:
         raise ValueError("You must provide BOTH CLIENT_ID and CLIENT_SECRET")
+    if env == "recovery":
+        env = "internal-dev"
     config = AuthorizationCodeConfig(
         environment=env,
         identity_service_base_url=url,  # pyright: ignore [reportArgumentType]
@@ -105,6 +107,8 @@ def get_auth(env, product, user="prescriber"):
     ]:
         raise ValueError(f"Unknown product {product}")
     env = env.lower()
+    if env == "recovery":
+        env = "internal-dev"
     url = f"https://{env}.api.service.nhs.uk/oauth2-mock"
     if product in [
         "CPTS-FHIR",
