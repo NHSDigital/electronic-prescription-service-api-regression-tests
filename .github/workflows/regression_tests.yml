@@ -94,7 +94,7 @@ jobs:
         tag: ["multiple_access", "multiple_access_pre_selected", "single_access", "multiple_roles_single_access", "multiple_roles_no_access", "others"]
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
         with:
           ref: ${{ inputs.github_tag }}
 
@@ -262,7 +262,7 @@ jobs:
           if-no-files-found: error
 
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
         with:
           ref: ${{ inputs.github_tag }}
       # using git commit sha for version of action to ensure we have stable version
