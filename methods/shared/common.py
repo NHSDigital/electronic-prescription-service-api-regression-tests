@@ -51,7 +51,7 @@ def get_eps_fhir_authenticator(user, env, url, product):
         # changed from example.org so it is responsive
         # if this url is unavailable, then you will see tests fail on a request to keycloak
         # as keycloak returns a 302 eventually to a this callback url.
-        callback_url="https://google.com/",  # pyright: ignore [reportArgumentType]
+        callback_url="https://google.com",  # pyright: ignore [reportArgumentType]
         client_id=client_id,
         client_secret=client_secret,
         scope=scope,
@@ -77,7 +77,7 @@ def get_pfp_apigee_authenticator(env, url):
         # changed from example.org so it is responsive
         # if this url is unavailable, then you will see tests fail on a request to keycloak
         # as keycloak returns a 302 eventually to a this callback url.
-        callback_url="https://google.com/",  # pyright: ignore [reportArgumentType]
+        callback_url="https://google.com",  # pyright: ignore [reportArgumentType]
         client_id=client_id,
         client_secret=client_secret,
         scope=scope,
