@@ -151,6 +151,7 @@ class Prescription:
                         {
                             "system": "http://snomed.info/sct",  # http only
                             "code": "322237000",
+                            "display": "Paracetamol 500mg soluble tablet (product)",
                         }
                     ]
                 },
