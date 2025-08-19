@@ -182,14 +182,15 @@ def clear_scenario_user_sessions(context, scenario_tags):
                     f"Logging out all sessions for Mock_{value} ahead of running {context.scenario.name}.\
                         Request ID: {request_id}"
                 )
-                payload = json.dumps({"username": "Mock_" + value})
+                payload = json.dumps(
+                    {"username": "Mock_" + value, "request_id": request_id}
+                )
                 # Not catching any exceptions, we want this to raise a stack if it doesn't work
                 response = requests.post(
                     f"{context.cpts_ui_base_url}/api/test-support-clear-active-session",
                     data=payload,
                     headers={
                         "Source": f"{context.scenario.name}",
-                        "RequestId": request_id,
                     },
                     timeout=60,
                 )
