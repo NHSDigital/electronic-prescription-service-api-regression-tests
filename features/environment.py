@@ -2,7 +2,7 @@ import logging
 import os
 import shutil
 import sys
-
+import uuid
 from behave.model import Scenario
 from dotenv import load_dotenv
 from playwright.sync_api import sync_playwright, expect
@@ -177,15 +177,20 @@ def clear_scenario_user_sessions(context, scenario_tags):
     for tag in scenario_tags:
         for key, value in account_scenario_tags.items():
             if tag == key:
+                request_id = str(uuid.uuid4())
                 print(
-                    f"Logging out all sessions for Mock_{value} ahead of running {context.scenario.name}"
+                    f"Logging out all sessions for Mock_{value} ahead of running {context.scenario.name}.\
+                        Request ID: {request_id}"
                 )
                 payload = json.dumps({"username": "Mock_" + value})
                 # Not catching any exceptions, we want this to raise a stack if it doesn't work
                 response = requests.post(
                     f"{context.cpts_ui_base_url}/api/test-support-clear-active-session",
                     data=payload,
-                    headers={"Source": "regression_test_run"},
+                    headers={
+                        "Source": f"{context.scenario.name}",
+                        "RequestId": request_id,
+                    },
                     timeout=60,
                 )
                 if response.json()["message"] != "Success":
