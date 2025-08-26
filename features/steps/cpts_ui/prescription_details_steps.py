@@ -70,19 +70,6 @@ def site_card_visibility_check(context, org, visibility):
         raise ValueError(f"Unrecognised visibility definition: {visibility}")
 
 
-@then("The {type} items card is {visibility}")
-def item_card_visibility(context, type, visibility):
-    header_text = "Dispensed items" if type == "dispensed" else "Prescribed items"
-    section = context.page.get_by_role("heading", name=header_text)
-
-    if visibility == "visible":
-        expect(section).to_be_visible()
-    elif visibility == "not visible":
-        expect(section).not_to_be_visible()
-    else:
-        raise ValueError(f"Invalid visibility: {visibility}")
-
-
 @then("An item card shows an EPS status tag")
 def item_card_eps_status_tag(context):
     page = PrescriptionDetailsPage(context.page)
@@ -90,24 +77,13 @@ def item_card_eps_status_tag(context):
     expect(page.eps_status_tag.first).to_be_visible()
 
 
-@then("A prescribed item card shows a cancellation warning")
-def prescribed_item_card_cancellation_warning(context):
+@then("An item card shows a cancellation warning")
+def item_card_cancellation_warning(context):
     warning = context.page.get_by_text("This item is pending cancellation.").first
     expect(warning).to_be_visible()
 
 
-@then("A dispensed item card has expandable initial prescription")
-def dispensed_item_has_expandable_details(context):
-    page = PrescriptionDetailsPage(context.page)
-
-    expander = page.initial_prescription_details
-    expander.click()
-
-    details_summary_list = page.initial_prescription_summary
-    expect(details_summary_list).to_be_visible()
-
-
-@then("No pharmacy status label is shown in the dispensed item card")
+@then("No pharmacy status label is shown in the item card")
 def no_pharmacy_status_labels(context):
     page = PrescriptionDetailsPage(context.page)
 

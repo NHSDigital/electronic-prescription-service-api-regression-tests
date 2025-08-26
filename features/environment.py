@@ -2,12 +2,14 @@ import logging
 import os
 import shutil
 import sys
-
+import uuid
 from behave.model import Scenario
 from dotenv import load_dotenv
 from playwright.sync_api import sync_playwright, expect
 from methods.api import eps_api_methods
 import allure
+import requests
+import json
 
 load_dotenv(override=True)
 global _page
@@ -118,6 +120,15 @@ MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE = "555083343101"
 # this is not currently used
 MOCK_CIS2_LOGIN_ID_NO_ROLES = "555073103101"
 
+account_scenario_tags = {
+    "multiple_access": MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES,
+    "multiple_access_pre_selected": MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES_WITH_SELECTED_ROLE,
+    "single_access": MOCK_CIS2_LOGIN_ID_SINGLE_ACCESS_ROLE,
+    "multiple_roles_single_access": MOCK_CIS2_LOGIN_ID_SINGLE_ROLE_WITH_ACCESS_MULTIPLE_WITHOUT,
+    "multiple_roles_no_access": MOCK_CIS2_LOGIN_ID_NO_ACCESS_ROLE,
+    "no_roles_no_access": MOCK_CIS2_LOGIN_ID_NO_ROLES,
+}
+
 REPOS = {
     "CPTS-UI": "https://github.com/NHSDigital/eps-prescription-tracker-ui",
     "CPTS-FHIR": "https://github.com/NHSDigital/electronic-prescription-service-clinical-prescription-tracker",
@@ -144,6 +155,48 @@ EPS_FHIR_PRESCRIBING_SUFFIX = "fhir-prescribing"
 EPS_FHIR_DISPENSING_SUFFIX = "fhir-dispensing"
 PFP_SUFFIX = "prescriptions-for-patients"
 PSU_SUFFIX = "prescription-status-update"
+
+
+class ConflictException(Exception):
+    pass
+
+
+class TestingSupportFailure(Exception):
+    pass
+
+
+def clear_scenario_user_sessions(context, scenario_tags):
+    conflict_tags = set(account_scenario_tags)
+
+    conflict = conflict_tags.intersection(scenario_tags)
+    if len(conflict) > 1:
+        raise ConflictException(
+            f"You're attempting to use conflicting account credential tags in scenario {context.scenario.name}"
+        )
+
+    for tag in scenario_tags:
+        for key, value in account_scenario_tags.items():
+            if tag == key:
+                request_id = str(uuid.uuid4())
+                print(
+                    f"Logging out all sessions for Mock_{value} ahead of running {context.scenario.name}.\
+                        Request ID: {request_id}"
+                )
+                payload = json.dumps(
+                    {"username": "Mock_" + value, "request_id": request_id}
+                )
+                # Not catching any exceptions, we want this to raise a stack if it doesn't work
+                response = requests.post(
+                    f"{context.cpts_ui_base_url}/api/test-support-clear-active-session",
+                    data=payload,
+                    headers={
+                        "Source": f"{context.scenario.name}",
+                    },
+                    timeout=60,
+                )
+                if response.json()["message"] != "Success":
+                    print(response)
+                    raise TestingSupportFailure("Failed to clear active sessions")
 
 
 def count_of_scenarios_to_run(context):
@@ -183,6 +236,8 @@ def before_scenario(context, scenario):
         return
     product = context.config.userdata["product"].upper()
     if product == "CPTS-UI":
+        clear_scenario_user_sessions(context, scenario.effective_tags)
+
         global _playwright  # noqa: F824
         global _page  # noqa:
         expect.set_options(timeout=10_000)
@@ -262,7 +317,7 @@ def before_all(context):
     else:
         print("no tests to run. Check your tags and try again")
         sys.exit(0)
-    print(f"arm64: {context.config.userdata["arm64"]}")
+    print(f"Run using arm64 version of Chromium: {context.config.userdata['arm64']}")
     if product == "CPTS-UI":
         global _playwright
         _playwright = sync_playwright().start()
