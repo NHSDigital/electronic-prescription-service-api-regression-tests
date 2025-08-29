@@ -1,7 +1,7 @@
 from features.environment import CIS2_USERS
 from messages.eps_fhir.cancel import Cancel
 from messages.eps_fhir.dispense_notification import DispenseNotification
-from messages.eps_fhir.dispense_notification_erd import DispenseNotificationERD
+
 from messages.eps_fhir.prescription import Prescription
 from messages.eps_fhir.prescription_return import Return
 from messages.eps_fhir.release import Release
@@ -9,6 +9,7 @@ from messages.eps_fhir.signed_prescription import SignedPrescription
 from messages.eps_fhir.withdraw_dispense_notification import (
     WithdrawDispenseNotification,
 )
+from messages.eps_fhir.dispense_notification import DNProps
 from methods.api.common_api_methods import get_headers, post
 from methods.shared.common import the_expected_response_code_is_returned
 
@@ -71,40 +72,23 @@ def release_signed_prescription(context):
     post(data=context.release_body, url=url, context=context, headers=headers)
 
 
-def cancel_all_line_items(context):
+def cancel_all_line_items(context, reason):
     url = f"{PRESCRIBING_BASE_URL}/FHIR/R4/$process-message"
     additional_headers = {"NHSD-Session-URID": CIS2_USERS["prescriber"]["role_id"]}
     headers = get_headers(context, context.auth_method, additional_headers)
 
-    context.cancel_body = Cancel(context).body
+    context.cancel_body = Cancel(context, reason).body
     post(data=context.cancel_body, url=url, context=context, headers=headers)
 
 
-def dispense_prescription(context):
+def dispense_prescription(context, dn_props: DNProps):
     url = f"{DISPENSING_BASE_URL}/FHIR/R4/$process-message#dispense-notification"
     additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
     headers = get_headers(context, context.auth_method, additional_headers)
 
-    dispense_notification = DispenseNotification(context, False).body
-    post(data=dispense_notification, url=url, context=context, headers=headers)
-
-
-def dispense_erd_prescription(context):
-    url = f"{DISPENSING_BASE_URL}/FHIR/R4/$process-message#dispense-notification"
-    additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
-    headers = get_headers(context, context.auth_method, additional_headers)
-
-    dispense_notification_erd = DispenseNotificationERD(context, False).body
-    post(data=dispense_notification_erd, url=url, context=context, headers=headers)
-
-
-def amend_dispense_notification(context):
-    url = f"{DISPENSING_BASE_URL}/FHIR/R4/$process-message#dispense-notification"
-    additional_headers = {"NHSD-Session-URID": CIS2_USERS["dispenser"]["role_id"]}
-    headers = get_headers(context, context.auth_method, additional_headers)
-
-    amended_dispense_notification = DispenseNotification(context, True).body
-    post(data=amended_dispense_notification, url=url, context=context, headers=headers)
+    dispense_notification = DispenseNotification(dn_props)
+    context.dispense_notification_id = dispense_notification.dispense_notification_id
+    post(data=dispense_notification.body, url=url, context=context, headers=headers)
 
 
 def withdraw_dispense_notification(context):
