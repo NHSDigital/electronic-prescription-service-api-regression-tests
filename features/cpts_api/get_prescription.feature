@@ -43,19 +43,19 @@ Feature: Users are able to get prescriptions from CPTS-FHIR
     Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app
     And I successfully prepare and sign a prescription
     And I release the prescription
-    And I non-dispense a line item with a 'Clinically unsuitable' reason
+    And I non-dispense a line item with a "Clinically unsuitable" reason
     And I am an authorised prescriber with CPTS-FHIR app
     When I request the prescription details
     Then the response indicates a success
-    And I can see the prescription details with the correct 'Clinically unsuitable' non-dispensing reason
+    And I can see the prescription details with the correct "Clinically unsuitable" non-dispensing reason
 
 @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5616
   @get_prescription
   Scenario: I can see the cancellation reason when searching for a prescription that has a cancelled line item
     Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app
     And I successfully prepare and sign a prescription
-    And I cancel all line items on the prescription with a 'Clinical grounds' reason
+    And I cancel all line items on the prescription with a "Clinical grounds" reason
     And I am an authorised prescriber with CPTS-FHIR app
     When I request the prescription details
     Then the response indicates a success
-    And I can see the prescription details with the correct 'Clinical grounds' cancellation reason
+    And I can see the prescription details with the correct "Clinical grounds" cancellation reason

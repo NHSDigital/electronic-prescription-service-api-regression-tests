@@ -84,7 +84,7 @@ def verify_prescription_issue_details(context):
 
 
 @then(
-    "I can see the prescription details with the correct '{reason}' non-dispensing reason"
+    'I can see the prescription details with the correct "{reason}" non-dispensing reason'
 )
 def verify_prescription_non_dispensing_reason(context, reason):
     assertions: PrescriptionDetailsAssertions = {
@@ -104,7 +104,7 @@ def verify_prescription_non_dispensing_reason(context, reason):
 
 
 @then(
-    "I can see the prescription details with the correct '{reason}' cancellation reason"
+    'I can see the prescription details with the correct "{reason}" cancellation reason'
 )
 def verify_prescription_cancellation_reason(context, reason):
     assertions: PrescriptionDetailsAssertions = {
