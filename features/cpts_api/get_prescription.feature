@@ -58,4 +58,4 @@ Feature: Users are able to get prescriptions from CPTS-FHIR
     And I am an authorised prescriber with CPTS-FHIR app
     When I request the prescription details
     Then the response indicates a success
-    I can see the prescription details with the correct 'Clinical grounds' cancellation reason
+    And I can see the prescription details with the correct 'Clinical grounds' cancellation reason
