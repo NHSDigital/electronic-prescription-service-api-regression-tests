@@ -138,7 +138,7 @@ def assert_prescription_details(
     print("----------------------")
     print(bundle_entries)
     print("----------------------")
-    print(Resources)
+    print(resources)
     print("----------------------")
 
     assert_that(resources["request_group"]["identifier"][0]["value"]).is_equal_to(
@@ -147,12 +147,18 @@ def assert_prescription_details(
     assert_that(resources["patient"]["identifier"][0]["value"]).is_equal_to(
         assertions["nhs_number"]
     )
+    try:
+        history = next(
+            action
+            for action in resources["request_group"]["action"]
+            if action["title"] == "Prescription status transitions"
+        )
+    except StopIteration as exc:
+        raise AssertionError("No prescription history found on RequestGroup.") from exc
 
-    history = next(
-        action
-        for action in resources["request_group"]["action"]
-        if action["title"] == "Prescription status transitions"
-    )
+    print("----------------------")
+    print(history)
+    print("----------------------")
 
     if "issue_number" in assertions:
         assert_issue_number(resources["request_group"], assertions["issue_number"])
@@ -171,49 +177,64 @@ def assert_prescription_details(
 
 
 def assert_issue_number(request_group, issue_number: int):
-    repeat_information = next(
-        extension
-        for extension in request_group["extension"]
-        if extension["url"]
-        == "https://fhir.nhs.uk/StructureDefinition/Extension-EPS-RepeatInformation"
-    )
-    number_of_repeats_issued = next(
-        extension
-        for extension in repeat_information["extension"]
-        if extension["url"] == "numberOfRepeatsIssued"
-    )
+    try:
+        repeat_information = next(
+            extension
+            for extension in request_group["extension"]
+            if extension["url"]
+            == "https://fhir.nhs.uk/StructureDefinition/Extension-EPS-RepeatInformation"
+        )
+    except StopIteration as exc:
+        raise AssertionError(
+            "No RepeatInformation extension found on RequestGroup."
+        ) from exc
+
+    try:
+        number_of_repeats_issued = next(
+            extension
+            for extension in repeat_information["extension"]
+            if extension["url"] == "numberOfRepeatsIssued"
+        )
+    except StopIteration as exc:
+        raise AssertionError(
+            "No numberOfRepeatsIssued extension on RepeatInformation extension."
+        ) from exc
+
     assert_that(number_of_repeats_issued["valueInteger"]).is_equal_to(issue_number)
 
 
 def assert_medication_requests(
     medication_requests: list, assertions: list[MedicationRequestAssertions]
 ):
-    if not medication_requests:
-        raise AssertionError("No MedicationRequests in response to assert on")
-
     for mr_assertions in assertions:
-        medication_request = next(
-            mr
-            for mr in medication_requests
-            if mr["identifier"][0]["value"] == mr_assertions["line_item_id"]
-        )
-        if not medication_request:
-            raise AssertionError(
-                f"MedicationRequest with for line item id {mr_assertions["line_item_id"]} not found in response"
+        try:
+            medication_request = next(
+                mr
+                for mr in medication_requests
+                if mr["identifier"][0]["value"] == mr_assertions["line_item_id"]
             )
-        else:
-            assert_medication_request_details(medication_request, mr_assertions)
+        except StopIteration as exc:
+            raise AssertionError(
+                f"MedicationRequest with for line item id {mr_assertions["line_item_id"]} not found in Bundle."
+            ) from exc
+        assert_medication_request_details(medication_request, mr_assertions)
 
 
 def assert_medication_request_details(
     medication_request, assertions: MedicationRequestAssertions
 ):
-    status = next(
-        extension
-        for extension in medication_request["extension"]
-        if extension["url"]
-        == "https://fhir.nhs.uk/StructureDefinition/Extension-EPS-DispensingInformation"
-    )
+    try:
+        status = next(
+            extension
+            for extension in medication_request["extension"]
+            if extension["url"]
+            == "https://fhir.nhs.uk/StructureDefinition/Extension-EPS-DispensingInformation"
+        )
+    except StopIteration as exc:
+        raise AssertionError(
+            "No DispensingInformation extension found on MedicationRequest."
+        ) from exc
+
     assert_that(status["extension"][0]["valueCoding"]["display"]).is_equal_to(
         assertions["status"]
     )
@@ -233,36 +254,40 @@ def assert_medication_request_details(
 def assert_medication_dispenses(
     medication_dispenses: list, history, assertions: list[MedicationDispenseAssertions]
 ):
-    if not medication_dispenses:
-        raise AssertionError("No MedicationDispense in response to assert on")
-
     md_ids = {}
     for action in history["action"]:
         if action["title"] == "Dispense notification successful":
-            dn_id_code = next(
-                code
-                for code in action["code"]
-                if code["coding"][0]["system"] == "https://tools.ietf.org/html/rfc4122"
-            )
-            dn_id = dn_id_code["coding"][0]["code"]
+            try:
+                dn_id_code = next(
+                    code
+                    for code in action["code"]
+                    if code["coding"][0]["system"]
+                    == "https://tools.ietf.org/html/rfc4122"
+                )
+            except StopIteration as exc:
+                raise AssertionError(
+                    "No dispense notification ID code found on history event."
+                ) from exc
 
+            dn_id = dn_id_code["coding"][0]["code"]
             md_ids[dn_id] = []
             for ref_action in action["action"]:
                 md_ids[dn_id].append(ref_action["resource"]["reference"])
 
     for md_assertions in assertions:
-        medication_dispense = next(
-            md
-            for md in medication_dispenses
-            if md["id"] in md_ids[md_assertions["md_id"]]
-            and md["identifier"][0]["value"] == md_assertions["line_item_id"]
-        )
-        if not medication_dispense:
-            raise AssertionError(
-                f"MedicationDispense for dispense notification id {md_assertions["md_id"]} and line item id {md_assertions["line_item_id"]} not found in response"  # noqa: E501
+        try:
+            medication_dispense = next(
+                md
+                for md in medication_dispenses
+                if md["id"] in md_ids[md_assertions["md_id"]]
+                and md["identifier"][0]["value"] == md_assertions["line_item_id"]
             )
-        else:
-            assert_medication_dispense_details(medication_dispense, md_assertions)
+        except StopIteration as exc:
+            raise AssertionError(
+                f"MedicationDispense for dispense notification id {md_assertions["md_id"]} and line item id {md_assertions["line_item_id"]} not found in Bundle"  # noqa: E501
+            ) from exc
+
+        assert_medication_dispense_details(medication_dispense, md_assertions)
 
 
 def assert_medication_dispense_details(
