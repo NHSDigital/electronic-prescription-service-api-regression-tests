@@ -100,7 +100,7 @@ def verify_prescription_non_dispensing_reason(context, reason):
             }
         ],
     }
-    assert_prescription_details(context, assertions)
+    assert_prescription_details(context.response.content, assertions)
 
 
 @step(
@@ -119,7 +119,7 @@ def verify_prescription_cancellation_reason(context, reason):
             }
         ],
     }
-    assert_prescription_details(context, assertions)
+    assert_prescription_details(context.response.content, assertions)
 
 
 @then("I can see the prescription not found message")
