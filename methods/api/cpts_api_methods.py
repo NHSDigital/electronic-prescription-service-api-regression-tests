@@ -133,6 +133,14 @@ def assert_prescription_details(
             case "MedicationDispense":
                 resources["medication_dispense"].append(bundle_entry["resource"])
 
+    print("----------------------")
+    print(json_response)
+    print("----------------------")
+    print(bundle_entries)
+    print("----------------------")
+    print(Resources)
+    print("----------------------")
+
     assert_that(resources["request_group"]["identifier"][0]["value"]).is_equal_to(
         assertions["prescription_id"]
     )
@@ -178,8 +186,11 @@ def assert_issue_number(request_group, issue_number: int):
 
 
 def assert_medication_requests(
-    medication_requests, assertions: list[MedicationRequestAssertions]
+    medication_requests: list, assertions: list[MedicationRequestAssertions]
 ):
+    if not medication_requests:
+        raise AssertionError("No MedicationRequests in response to assert on")
+
     for mr_assertions in assertions:
         medication_request = next(
             mr
@@ -220,8 +231,11 @@ def assert_medication_request_details(
 
 
 def assert_medication_dispenses(
-    medication_dispenses, history, assertions: list[MedicationDispenseAssertions]
+    medication_dispenses: list, history, assertions: list[MedicationDispenseAssertions]
 ):
+    if not medication_dispenses:
+        raise AssertionError("No MedicationDispense in response to assert on")
+
     md_ids = {}
     for action in history["action"]:
         if action["title"] == "Dispense notification successful":
