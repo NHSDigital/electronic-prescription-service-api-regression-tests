@@ -51,7 +51,7 @@ class DispenseNotification:
 
         organization = self.organization(dn_props["receiver_ods"])
 
-        self.dispense_notification_id = str(uuid4())
+        self.dispense_notification_id = str(uuid4()).upper()
         dispense_notification = self.dispense_notification(
             message_header, medication_dispense, organization
         )
