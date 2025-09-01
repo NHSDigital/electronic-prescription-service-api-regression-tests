@@ -272,7 +272,8 @@ def assert_medication_dispenses(
             dn_id = dn_id_code["coding"][0]["code"]
             md_ids[dn_id] = []
             for ref_action in action["action"]:
-                md_ids[dn_id].append(ref_action["resource"]["reference"])
+                md_ref = ref_action["resource"]["reference"]
+                md_ids[dn_id].append(md_ref[9:])
 
     for md_assertions in assertions:
         try:
