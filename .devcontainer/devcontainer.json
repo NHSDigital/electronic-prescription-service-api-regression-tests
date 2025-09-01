@@ -48,7 +48,7 @@
             "Gruntfuggly.todo-tree"
         ],
         "settings": {
-          "python.defaultInterpreterPath": "/workspaces/electronic-prescription-service-api-regression-tests/venv/bin/python",
+          "python.defaultInterpreterPath": "/workspaces/electronic-prescription-service-api-regression-tests/.venv/bin/python",
           "python.analysis.autoSearchPaths": true,
           "python.analysis.extraPaths": [],
           "python.testing.unittestEnabled": false,

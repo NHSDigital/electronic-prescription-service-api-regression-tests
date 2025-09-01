@@ -1,7 +1,12 @@
 import json
 
 # pylint: disable=no-name-in-module
-from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
+from behave import (
+    given,  # pyright: ignore[reportAttributeAccessIssue]
+    when,  # pyright: ignore[reportAttributeAccessIssue]
+    then,  # pyright: ignore[reportAttributeAccessIssue]
+    step,  # pyright: ignore[reportAttributeAccessIssue]
+)
 from jycm.jycm import YouchamaJsonDiffer
 from methods.api.eps_api_methods import (
     cancel_all_line_items,
@@ -33,7 +38,7 @@ def setup_new_prescription(context, nomination, prescription_type):
     context.intent = INTENT_MAP[prescription_type]
 
 
-@given("I successfully prepare and sign a prescription")
+@step("I successfully prepare and sign a prescription")
 def i_prepare_and_sign_a_prescription(context):
     if (
         "sandbox" in context.config.userdata["env"].lower()
@@ -171,8 +176,7 @@ def the_proxygen_prescription_has_been_cancelled(context):
     )
 
 
-@given("I am an authorised {user} with {app} app")
-@when("I am an authorised {user} with {app} app")
+@step("I am an authorised {user} with {app} app")
 def i_am_an_authorised_user(context, user, app):
     if "sandbox" in context.config.userdata["env"].lower():
         return
@@ -205,7 +209,7 @@ def i_sign_a_new_prescription(context):
 
 
 @when("I try to release the prescription")
-@when("I release the prescription")
+@step("I release the prescription")
 def i_release_the_prescription(context):
     release_signed_prescription(context)
 
@@ -222,7 +226,7 @@ def i_cancel_all_line_items(context):
     cancel_all_line_items(context, "Prescribing Error")
 
 
-@when('I cancel all line items on the prescription with a "{reason}" reason')
+@step('I cancel all line items on the prescription with a "{reason}" reason')
 def i_cancel_all_line_items_with_a_status(context, reason):
     cancel_all_line_items(context, reason)
 
@@ -271,7 +275,7 @@ def i_send_a_dispense_notification(context, line_item_status, status):
     dispense_prescription(context, dn_props)
 
 
-@when('I non-dispense a line item with a "{reason}" reason')
+@step('I non-dispense a line item with a "{reason}" reason')
 def i_non_dispense_a_line_item(context, reason):
     if "sandbox" in context.config.userdata["env"].lower():
         return
