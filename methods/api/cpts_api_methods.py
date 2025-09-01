@@ -247,7 +247,7 @@ def assert_medication_request_details(
             medication_request["statusReason"]["coding"][0]["display"]
         ).is_equal_to(assertions["cancellation_reason"])
         assert_that(
-            medication_request["statusReason"]["coding"][0]["display"]
+            medication_request["statusReason"]["coding"][0]["code"]
         ).is_equal_to(CANCELLATION_REASON_MAP[assertions["cancellation_reason"]])
 
 

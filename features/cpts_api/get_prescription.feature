@@ -42,6 +42,7 @@ Feature: Users are able to get prescriptions from CPTS-FHIR
   Scenario: I can see the non-dispensing reason when searching for a prescription that has a non-dispensed line item
     Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app
     And I successfully prepare and sign a prescription
+    And I am an authorised dispenser with EPS-FHIR-DISPENSING app
     And I release the prescription
     And I non-dispense a line item with a "Clinically unsuitable" reason
     And I am an authorised prescriber with CPTS-FHIR app
