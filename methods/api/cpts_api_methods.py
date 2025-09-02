@@ -133,14 +133,6 @@ def assert_prescription_details(
             case "MedicationDispense":
                 resources["medication_dispense"].append(bundle_entry["resource"])
 
-    print("----------------------")
-    print(json_response)
-    print("----------------------")
-    print(bundle_entries)
-    print("----------------------")
-    print(resources)
-    print("----------------------")
-
     assert_that(resources["request_group"]["identifier"][0]["value"]).is_equal_to(
         assertions["prescription_id"]
     )
@@ -155,10 +147,6 @@ def assert_prescription_details(
         )
     except StopIteration as exc:
         raise AssertionError("No prescription history found on RequestGroup.") from exc
-
-    print("----------------------")
-    print(history)
-    print("----------------------")
 
     if "issue_number" in assertions:
         assert_issue_number(resources["request_group"], assertions["issue_number"])

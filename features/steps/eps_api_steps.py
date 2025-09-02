@@ -243,7 +243,7 @@ def i_fully_dispense_the_prescription(context):
         "prescription_type": context.prescription_type,
         "status": "Dispensed",
         "line_item_id": context.prescription_item_id,
-        "line_item_status": "Item Fully Dispensed",
+        "line_item_status": "Item fully dispensed",
         "quantity": 1,
         "quantity_unit": "pre-filled disposable injection",
         "receiver_ods": context.receiver_ods_code,
