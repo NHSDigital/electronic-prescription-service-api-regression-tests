@@ -308,7 +308,7 @@ def i_amend_a_dispense_notification(context):
         "prescription_type": context.prescription_type,
         "status": "Dispensed",
         "line_item_id": context.prescription_item_id,
-        "line_item_status": "Item Not Dispensed",
+        "line_item_status": "Item not dispensed",
         "quantity": 1,
         "quantity_unit": "pre-filled disposable injection",
         "receiver_ods": context.receiver_ods_code,
