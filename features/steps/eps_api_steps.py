@@ -1,13 +1,17 @@
 import json
 
 # pylint: disable=no-name-in-module
-from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
+from behave import (
+    given,  # pyright: ignore[reportAttributeAccessIssue]
+    when,  # pyright: ignore[reportAttributeAccessIssue]
+    then,  # pyright: ignore[reportAttributeAccessIssue]
+    step,  # pyright: ignore[reportAttributeAccessIssue]
+)
+from jycm.jycm import YouchamaJsonDiffer
 from methods.api.eps_api_methods import (
     cancel_all_line_items,
     create_signed_prescription,
     dispense_prescription,
-    dispense_erd_prescription,
-    amend_dispense_notification,
     prepare_prescription,
     try_prepare_prescription,
     release_signed_prescription,
@@ -15,11 +19,12 @@ from methods.api.eps_api_methods import (
     withdraw_dispense_notification,
     call_validator,
 )
-from features.environment import APIGEE_APPS
 from methods.shared.common import assert_that, get_auth
+from features.environment import APIGEE_APPS
 from utils.random_nhs_number_generator import generate_single
 from messages.eps_fhir.prescription import Prescription
-from jycm.jycm import YouchamaJsonDiffer
+from messages.eps_fhir.common_maps import THERAPY_TYPE_MAP, INTENT_MAP
+from messages.eps_fhir.dispense_notification import DNProps
 
 
 def setup_new_prescription(context, nomination, prescription_type):
@@ -28,18 +33,12 @@ def setup_new_prescription(context, nomination, prescription_type):
         context.nomination_code = "0004"
     if nomination == "nominated":
         context.nomination_code = "P1"
-    if prescription_type == "acute":
-        context.type_code = "acute"
-        context.intent = "order"
-    if prescription_type == "repeat":
-        context.type_code = "continuous"
-        context.intent = "instance-order"
-    if prescription_type == "eRD":
-        context.type_code = "continuous-repeat-dispensing"
-        context.intent = "original-order"
+    context.prescription_type = prescription_type
+    context.type_code = THERAPY_TYPE_MAP[prescription_type]["code"]
+    context.intent = INTENT_MAP[prescription_type]
 
 
-@given("I successfully prepare and sign a prescription")
+@step("I successfully prepare and sign a prescription")
 def i_prepare_and_sign_a_prescription(context):
     if (
         "sandbox" in context.config.userdata["env"].lower()
@@ -177,8 +176,7 @@ def the_proxygen_prescription_has_been_cancelled(context):
     )
 
 
-@given("I am an authorised {user} with {app} app")
-@when("I am an authorised {user} with {app} app")
+@step("I am an authorised {user} with {app} app")
 def i_am_an_authorised_user(context, user, app):
     if "sandbox" in context.config.userdata["env"].lower():
         return
@@ -211,7 +209,7 @@ def i_sign_a_new_prescription(context):
 
 
 @when("I try to release the prescription")
-@when("I release the prescription")
+@step("I release the prescription")
 def i_release_the_prescription(context):
     release_signed_prescription(context)
 
@@ -225,24 +223,99 @@ def i_return_the_prescription(context):
 
 @when("I cancel all line items on the prescription")
 def i_cancel_all_line_items(context):
-    cancel_all_line_items(context)
+    cancel_all_line_items(context, "Prescribing Error")
 
 
-@when("I dispense the prescription")
-def i_dispense_the_prescription(context):
+@step('I cancel all line items on the prescription with a "{reason}" reason')
+def i_cancel_all_line_items_with_a_status(context, reason):
+    cancel_all_line_items(context, reason)
+
+
+@when("I dispense the prescription")  # fully dispense
+def i_fully_dispense_the_prescription(context):
     if "sandbox" in context.config.userdata["env"].lower():
         return
-    if context.type_code == "continuous-repeat-dispensing":
-        dispense_erd_prescription(context)
-    else:
-        dispense_prescription(context)
+
+    dn_props: DNProps = {
+        "nhs_number": context.nhs_number,
+        "prescription_id": context.prescription_id,
+        "long_prescription_id": context.long_prescription_id,
+        "prescription_type": context.prescription_type,
+        "status": "Dispensed",
+        "line_item_id": context.prescription_item_id,
+        "line_item_status": "Item fully dispensed",
+        "quantity": 1,
+        "quantity_unit": "pre-filled disposable injection",
+        "receiver_ods": context.receiver_ods_code,
+        "is_amendment": False,
+    }
+    dispense_prescription(context, dn_props)
+
+
+@when(
+    'I send a Dispense Notification with a line item status of "{line_item_status}" and prescription status of "{status}"'  # noqa: E501
+)
+def i_send_a_dispense_notification(context, line_item_status, status):
+    if "sandbox" in context.config.userdata["env"].lower():
+        return
+
+    dn_props: DNProps = {
+        "nhs_number": context.nhs_number,
+        "prescription_id": context.prescription_id,
+        "long_prescription_id": context.long_prescription_id,
+        "prescription_type": context.prescription_type,
+        "status": status,
+        "line_item_id": context.prescription_item_id,
+        "line_item_status": line_item_status,
+        "quantity": 1,
+        "quantity_unit": "pre-filled disposable injection",
+        "receiver_ods": context.receiver_ods_code,
+        "is_amendment": False,
+    }
+    dispense_prescription(context, dn_props)
+
+
+@step('I non-dispense a line item with a "{reason}" reason')
+def i_non_dispense_a_line_item(context, reason):
+    if "sandbox" in context.config.userdata["env"].lower():
+        return
+
+    dn_props: DNProps = {
+        "nhs_number": context.nhs_number,
+        "prescription_id": context.prescription_id,
+        "long_prescription_id": context.long_prescription_id,
+        "prescription_type": context.prescription_type,
+        "status": "Not Dispensed",
+        "line_item_id": context.prescription_item_id,
+        "line_item_status": "Item not dispensed",
+        "quantity": 0,
+        "quantity_unit": "pre-filled disposable injection",
+        "receiver_ods": context.receiver_ods_code,
+        "is_amendment": False,
+        "non_dispensing_reason": reason,
+    }
+    dispense_prescription(context, dn_props)
 
 
 @when("I amend the dispense notification")
 def i_amend_a_dispense_notification(context):
     if "sandbox" in context.config.userdata["env"].lower():
         return
-    amend_dispense_notification(context)
+    dn_props: DNProps = {
+        "nhs_number": context.nhs_number,
+        "prescription_id": context.prescription_id,
+        "long_prescription_id": context.long_prescription_id,
+        "prescription_type": context.prescription_type,
+        "status": "Dispensed",
+        "line_item_id": context.prescription_item_id,
+        "line_item_status": "Item not dispensed",
+        "quantity": 1,
+        "quantity_unit": "pre-filled disposable injection",
+        "receiver_ods": context.receiver_ods_code,
+        "is_amendment": True,
+        "previous_dn_id": context.dispense_notification_id,
+    }
+    dispense_prescription(context, dn_props)
 
 
 @when("I withdraw the dispense notification")

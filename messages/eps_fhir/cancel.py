@@ -1,11 +1,14 @@
 import json
 from typing import Any
-from uuid import uuid4
+from uuid import uuid4  #
+from messages.eps_fhir.common_maps import CANCELLATION_REASON_MAP
 
 
+# TODO: add support to cancel specific line items
 class Cancel:
-    def __init__(self, context: Any) -> None:
+    def __init__(self, context: Any, reason: str) -> None:
         self.context = context
+        self.reason = reason
         body = self.create_cancel_body()
         self.body = self.replace_ids(body)
 
@@ -15,8 +18,8 @@ class Cancel:
             "coding": [
                 {
                     "system": "https://fhir.nhs.uk/CodeSystem/medicationrequest-status-reason",
-                    "code": "0001",
-                    "display": "Prescribing Error",
+                    "code": CANCELLATION_REASON_MAP[self.reason],
+                    "display": self.reason,
                 }
             ]
         }
