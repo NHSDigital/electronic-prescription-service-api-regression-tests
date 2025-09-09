@@ -35,17 +35,15 @@ Feature: The user is able to logout of the application
     Scenario: Browser back button blocked after logout
         Given I have confirmed a role
         And I am on the search for a prescription page
-        When I click the logout button
-        And I confirm the logout
-        And I navigate back using browser history
+        And I am on the logout successful page
+        When I navigate back using browser history
         Then I should be redirected to the login page
 
     @security_regression
     Scenario: Direct navigation to protected routes blocked after logout
         Given I have confirmed a role
-        When I click the logout button
-        And I confirm the logout
-        And I directly navigate to "/site/search-by-prescription-id"
+        Given I am on the logout successful page
+        When I directly navigate to "/site/search-by-prescription-id"
         Then I should be redirected to the login page
 
     ############################################################################
