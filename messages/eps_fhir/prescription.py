@@ -18,7 +18,7 @@ class PrescriptionValues:
         context.long_prescription_id = self.long_prescription_id
         self.prescription_id = generate_short_form_id(context.sender_ods_code)
         context.prescription_id = self.prescription_id
-        self.prescription_item_id = str(uuid4())
+        self.prescription_item_id = str(uuid4()).upper()
         context.prescription_item_id = self.prescription_item_id
 
         self.nomination_code = context.nomination_code
