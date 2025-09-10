@@ -31,6 +31,7 @@ Feature: The user is able to logout of the application
     ############################################################################
     # Security Regression Tests
     ############################################################################
+    @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5314
     @security_regression
     Scenario: Browser back button blocked after logout
         Given I have confirmed a role
@@ -39,6 +40,7 @@ Feature: The user is able to logout of the application
         When I navigate back using browser history
         Then I should be redirected to the login page
 
+    @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5314
     @security_regression
     Scenario: Direct navigation to protected routes blocked after logout
         Given I have confirmed a role
