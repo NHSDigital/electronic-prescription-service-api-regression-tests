@@ -86,14 +86,6 @@ def navigate_back_browser_history(context):
     context.page.wait_for_load_state("networkidle")
 
 
-@when('I directly navigate to "{route}"')
-def directly_navigate_to_route(context, route):
-    """Navigate directly to a protected route URL"""
-    full_url = f"{context.cpts_ui_base_url}{route.lstrip('/')}"
-    context.page.goto(full_url)
-    context.page.wait_for_load_state("networkidle")
-
-
 ###############################################################################
 # THEN STEPS
 ###############################################################################
