@@ -130,3 +130,14 @@ def see_go_back_link_to(context, target_path):
     assert (
         href and target_path in href
     ), f"Expected go-back link to contain '{target_path}', but got '{href}'"
+
+
+@then('I should be redirected to "{expected_path}"')
+def should_be_redirected_to_path(context, expected_path):
+    """Verify user is redirected to expected path"""
+    context.page.wait_for_load_state("networkidle", timeout=5000)
+    current_url = context.page.url
+
+    assert (
+        expected_path in current_url
+    ), f"Expected to be redirected to {expected_path}, but URL is: {current_url}"
