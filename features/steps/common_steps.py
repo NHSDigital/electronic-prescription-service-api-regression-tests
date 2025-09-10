@@ -45,6 +45,14 @@ def i_make_a_request_to_the_metadata_endpoint(context, product):
         raise ValueError(f"unable to find base url for '{product}'")
 
 
+@when('I directly navigate to "{route}"')
+def directly_navigate_to_route(context, route):
+    """Navigate directly to a protected route URL"""
+    full_url = f"{context.cpts_ui_base_url}{route.lstrip('/')}"
+    context.page.goto(full_url)
+    context.page.wait_for_load_state("networkidle")
+
+
 @then("the response indicates a success")
 def indicate_successful_response(context):
     if "sandbox" in context.config.userdata["env"].lower():
