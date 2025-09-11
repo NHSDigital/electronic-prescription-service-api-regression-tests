@@ -76,6 +76,16 @@ def when_i_close_modal_by_hitting_escape(context):
     logout_page.page.keyboard.press("Escape")
 
 
+@when("I navigate back using browser history")
+def navigate_back_browser_history(context):
+    """Simulate user pressing browser back button"""
+    # go back twice as the amplify redirect mechanism places a second logout page in our history
+    # on successful logout
+    context.page.go_back()
+    context.page.go_back()
+    context.page.wait_for_load_state("networkidle")
+
+
 ###############################################################################
 # THEN STEPS
 ###############################################################################
@@ -112,3 +122,18 @@ def then_i_am_on_login_page(context):
         context.page.wait_for_url("**/login")
     else:
         context.page.wait_for_url("**/identity.ptl.api.platform.nhs.uk/**")
+
+
+@then("I should be redirected to the login page")
+def should_be_redirected_to_login(context):
+    """Verify user is redirected to login page"""
+    context.page.wait_for_load_state("networkidle", timeout=5000)
+
+    current_url = context.page.url
+
+    login_redirect = "/login" in current_url
+    oauth_redirect = "identity.ptl.api.platform.nhs.uk" in current_url
+
+    assert (
+        login_redirect or oauth_redirect
+    ), f"Expected to be redirected to login (local or OAuth), but URL is: {current_url}"
