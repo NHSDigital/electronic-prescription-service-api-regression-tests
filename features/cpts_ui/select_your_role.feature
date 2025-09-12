@@ -56,3 +56,14 @@ Feature: Role selection page renders roles properly when logged in
   Scenario: User with a pre selected role sees their pre selected role
     Given I am logged in as a user with a pre selected role
     Then I can see the role that has been pre selected
+  
+  ############################################################################
+  # Security Regression Tests
+  ############################################################################
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5407
+  @security_regression
+  @multiple_access
+  Scenario: URL navigation bypass blocked when no role selected
+      Given I am logged in as a user with multiple access roles
+      When I directly navigate to "/site/prescription-list-current"
+      Then I should be redirected to "/site/select-your-role"
