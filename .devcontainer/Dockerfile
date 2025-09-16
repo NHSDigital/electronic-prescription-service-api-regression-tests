@@ -9,13 +9,13 @@ RUN apt-get update \
     openjdk-8-jdk jq apt-transport-https ca-certificates gnupg-agent \
     software-properties-common bash-completion python3-pip make libbz2-dev \
     libreadline-dev libsqlite3-dev wget llvm libncurses5-dev libncursesw5-dev \
-    xz-utils tk-dev liblzma-dev netcat
+    xz-utils tk-dev liblzma-dev netcat-traditional
 
 # Install ASDF
 RUN wget -O /tmp/asdf.tar.gz https://github.com/asdf-vm/asdf/releases/download/v0.16.4/asdf-v0.16.4-linux-amd64.tar.gz; \
     tar -xvzf /tmp/asdf.tar.gz; \
     mv asdf /usr/bin
-    
+
 USER vscode
 
 ENV PATH="/home/vscode/.asdf/shims/:$PATH"
