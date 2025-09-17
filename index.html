@@ -132,6 +132,9 @@ When I close the modal by clicking outside the modal
 
 When I close the modal by hitting escape
 
+When I navigate back using browser history
+    Simulate user pressing browser back button
+
 When I am on the search for a prescription page
 
 When I click on tab {}
@@ -229,6 +232,9 @@ When I am on the too many results page
 When I make a request to the &quot;{product}&quot; ping endpoint
 
 When I make a request to the &quot;{product}&quot; metadata endpoint
+
+When I directly navigate to &quot;{route}&quot;
+    Navigate directly to a protected route URL
 
 When I request the list of prescriptions using the {identifier}
 
@@ -341,6 +347,9 @@ Then the logout confirmation modal is not displayed
 Then I see the logout successful page
 
 Then I am on the login page
+
+Then I should be redirected to the login page
+    Verify user is redirected to login page
 
 Then I can see the RBAC banner
 
