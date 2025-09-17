@@ -27,6 +27,27 @@ Feature: The user is able to logout of the application
         Then I am on the login page
         And I can not see the RBAC banner
 
+
+    ############################################################################
+    # Security Regression Tests
+    ############################################################################
+    @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5314
+    @security_regression
+    Scenario: Browser back button blocked after logout
+        Given I have confirmed a role
+        And I am on the search for a prescription page
+        And I am on the logout successful page
+        When I navigate back using browser history
+        Then I should be redirected to the login page
+
+    @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5314
+    @security_regression
+    Scenario: Direct navigation to protected routes blocked after logout
+        Given I have confirmed a role
+        Given I am on the logout successful page
+        When I directly navigate to "/site/search-by-prescription-id"
+        Then I should be redirected to the login page
+
     ############################################################################
     # Closing the logout modal
     ############################################################################
