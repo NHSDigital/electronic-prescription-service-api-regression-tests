@@ -15,6 +15,7 @@ def i_have_selected_role(context):
 def i_select_a_role(context):
     select_your_role_page = SelectYourRole(context.page)
     select_your_role_page.first_role_card.click()
+    context.page.wait_for_url("**/your-selected-role")
 
 
 @then("I can see the summary container")
