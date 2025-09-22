@@ -12,8 +12,6 @@ import requests
 import json
 
 load_dotenv(override=True)
-global _page
-global _playwright
 INTERNAL_QA_BASE_URL = "https://internal-qa.api.service.nhs.uk/"
 INTERNAL_DEV_BASE_URL = "https://internal-dev.api.service.nhs.uk/"
 INT_BASE_URL = "https://int.api.service.nhs.uk/"
@@ -238,11 +236,9 @@ def before_scenario(context, scenario):
     if product == "CPTS-UI":
         clear_scenario_user_sessions(context, scenario.effective_tags)
 
-        global _playwright  # noqa: F824
-        global _page  # noqa:
         expect.set_options(timeout=10_000)
-        context.browser = context.browser.new_context()
-        context.browser.add_init_script(
+        context.browser_context = context.browser.new_context()
+        context.browser_context.add_init_script(
             """
             window.__copiedText = "";
             navigator.clipboard.writeText = (text) => {
@@ -251,31 +247,28 @@ def before_scenario(context, scenario):
             };
         """
         )
-        context.browser.tracing.start(screenshots=True, snapshots=True, sources=True)
-        context.page = context.browser.new_page()
-        _page = context.page
-        set_page(context, _page)
+        context.browser_context.tracing.start(
+            screenshots=True, snapshots=True, sources=True
+        )
+        context.page = context.browser_context.new_page()
 
 
 def after_scenario(context, scenario):
     product = context.config.userdata["product"].upper()
     if product == "CPTS-UI":
-        if hasattr(context.browser, "tracing"):
-            context.browser.tracing.stop(path="/tmp/trace.zip")
-        if hasattr(context, "page"):
-            if scenario.status == "failed":
-                allure.attach(
-                    context.page.screenshot(),
-                    attachment_type=allure.attachment_type.PNG,
-                )
-                allure.attach.file(
-                    "/tmp/trace.zip",
-                    name="playwright_failure_trace.zip",
-                    attachment_type="application/zip",
-                )
-            if context.page is not None:
-                global _page  # noqa: F824
-                _page.close()
+        context.browser_context.tracing.stop(path="/tmp/trace.zip")
+        if scenario.status == "failed":
+            allure.attach(
+                context.page.screenshot(),
+                attachment_type=allure.attachment_type.PNG,
+            )
+            allure.attach.file(
+                "/tmp/trace.zip",
+                name="playwright_failure_trace.zip",
+                attachment_type="application/zip",
+            )
+        context.page.close()
+        context.browser_context.close()
 
 
 def before_all(context):
@@ -319,9 +312,8 @@ def before_all(context):
         sys.exit(0)
     print(f"Run using arm64 version of Chromium: {context.config.userdata['arm64']}")
     if product == "CPTS-UI":
-        global _playwright
-        _playwright = sync_playwright().start()
-        context.browser = _playwright.chromium.launch(
+        playwright = sync_playwright().start()
+        context.browser = playwright.chromium.launch(
             headless=HEADLESS,
             slow_mo=SLOWMO,
             channel=(
@@ -433,8 +425,6 @@ def after_all(context):
         if os.path.exists(directory_path) and os.path.isdir(directory_path):
             print(f"Directory '{directory_path}' exists. Deleting...")
             shutil.rmtree(directory_path)
-        if "_page" in vars() or "_page" in globals():
-            _page.close()
 
 
 def setup_logging(level: int = logging.INFO):
@@ -471,11 +461,3 @@ def write_properties_file(file_path, properties_dict):
     with open(file_path, "w") as file:
         for key, value in properties_dict.items():
             file.write(f"{key}={value}\n")
-
-
-def get_page(self):
-    return self._page
-
-
-def set_page(self, _page):
-    self._page = _page
