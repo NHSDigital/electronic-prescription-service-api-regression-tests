@@ -79,9 +79,7 @@ def when_i_close_modal_by_hitting_escape(context):
 @when("I navigate back using browser history")
 def navigate_back_browser_history(context):
     """Simulate user pressing browser back button"""
-    # go back twice as the amplify redirect mechanism places a second logout page in our history
-    # on successful logout
-    context.page.go_back()
+    # go back on successful logout to ensure we can no longer access protected pages
     context.page.go_back()
     context.page.wait_for_load_state("networkidle")
 
