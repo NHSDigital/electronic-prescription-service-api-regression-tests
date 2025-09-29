@@ -1,10 +1,19 @@
 # pylint: disable=no-name-in-module
-from behave import when, then  # pyright: ignore [reportAttributeAccessIssue]
+from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 from methods.shared import common
 from methods.api.common_api_methods import request_ping
 from methods.api.common_api_methods import request_metadata
 from methods.shared.common import assert_that
 from playwright.sync_api import Route
+
+
+# Switch active browser context to make use of 2 browsers
+@given("I switch browser context to {browser}")
+@when("I switch browser context to {browser}")
+def switch_browser_context(context, browser):
+    print(f"Using browser context: {browser}")
+    context.active_browser = context.browser_context2
+    context.active_page = context.page2
 
 
 @when('I make a request to the "{product}" ping endpoint')
@@ -49,8 +58,8 @@ def i_make_a_request_to_the_metadata_endpoint(context, product):
 def directly_navigate_to_route(context, route):
     """Navigate directly to a protected route URL"""
     full_url = f"{context.cpts_ui_base_url}{route.lstrip('/')}"
-    context.page.goto(full_url)
-    context.page.wait_for_load_state("networkidle")
+    context.active_page.goto(full_url)
+    context.active_page.wait_for_load_state("networkidle")
 
 
 @then("the response indicates a success")
@@ -126,12 +135,12 @@ def simulate_http_error(context, code):
         route.fulfill(status=code, body=f"{code} error")
 
     # Limit interception to requests hitting the prescription-list endpoint
-    context.page.route("**/prescription-list*", handler)
+    context.active_page.route("**/prescription-list*", handler)
 
 
 @then('I see a go back link to "{target_path}"')
 def see_go_back_link_to(context, target_path):
-    back_link = context.page.get_by_test_id("go-back-link")
+    back_link = context.active_page.get_by_test_id("go-back-link")
     assert back_link is not None, "No go-back-link found on the page"
 
     href = back_link.get_attribute("href")
@@ -143,8 +152,8 @@ def see_go_back_link_to(context, target_path):
 @then('I should be redirected to "{expected_path}"')
 def should_be_redirected_to_path(context, expected_path):
     """Verify user is redirected to expected path"""
-    context.page.wait_for_load_state("networkidle", timeout=5000)
-    current_url = context.page.url
+    context.active_page.wait_for_load_state("networkidle", timeout=5000)
+    current_url = context.active_page.url
 
     assert (
         expected_path in current_url

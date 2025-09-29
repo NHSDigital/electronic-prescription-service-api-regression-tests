@@ -12,7 +12,7 @@ from pages.rbac_banner import RBACBannerPage
 
 @then("I can see the RBAC banner")
 def i_can_see_the_rbac_banner(context):
-    rbac_banner = RBACBannerPage(context.page)
+    rbac_banner = RBACBannerPage(context.active_page)
 
     expect(rbac_banner.rbac_banner).to_be_visible()
     expect(rbac_banner.rbac_content).to_be_visible()
@@ -20,7 +20,7 @@ def i_can_see_the_rbac_banner(context):
 
 @then("I can not see the RBAC banner")
 def i_can_not_see_the_rbac_banner(context):
-    rbac_banner = RBACBannerPage(context.page)
+    rbac_banner = RBACBannerPage(context.active_page)
 
     expect(rbac_banner.rbac_banner).not_to_be_visible()
     expect(rbac_banner.rbac_content).not_to_be_visible()

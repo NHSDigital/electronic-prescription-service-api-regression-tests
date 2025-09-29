@@ -67,9 +67,9 @@ def login(context, user_id):
     # for qa environment we need to click the button to login
     # for other environments we auto redirect to mock login
     if environment == "internal-qa":
-        context.page.get_by_role("button", name="Log in with mock CIS2").click()
-    context.page.get_by_label("Username").fill(user_id)
-    context.page.get_by_role("button", name="Sign In").click()
+        context.active_page.get_by_role("button", name="Log in with mock CIS2").click()
+    context.active_page.get_by_label("Username").fill(user_id)
+    context.active_page.get_by_role("button", name="Sign In").click()
 
     context.execute_steps("When the login has finished")
 
@@ -158,7 +158,7 @@ def the_login_is_finished(context):
         ]
         return url in valid_urls
 
-    context.page.wait_for_url(logged_in_urls, wait_until="load", timeout=2000)
+    context.active_page.wait_for_url(logged_in_urls, wait_until="load", timeout=2000)
     context.execute_steps("then I am logged in")
 
 
@@ -171,7 +171,7 @@ def i_am_logged_in(context):
     period = 5  # 5 second polling delay
     mustend = time.time() + timeout
     while time.time() < mustend:
-        storage_state = context.browser.storage_state()
+        storage_state = context.active_browser.storage_state()
         for origin in storage_state.get("origins", []):
             for item in origin.get("localStorage", []):
                 if item.get("name") == "isSignedIn":
@@ -189,7 +189,7 @@ def i_am_logged_out(context):
     period = 5  # 5 second polling delay
     mustend = time.time() + timeout
     while time.time() < mustend:
-        storage_state = context.browser.storage_state()
+        storage_state = context.active_browser.storage_state()
         for origin in storage_state.get("origins", []):
             for item in origin.get("localStorage", []):
                 if item.get("name") == "isSignedIn":

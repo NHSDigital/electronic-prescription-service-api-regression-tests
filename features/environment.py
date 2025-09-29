@@ -251,6 +251,21 @@ def before_scenario(context, scenario):
             screenshots=True, snapshots=True, sources=True
         )
         context.page = context.browser_context.new_page()
+        # CONCURRENT BROWSER CONTEXT SETTING
+        context.browser_context2 = context.browser2.new_context()
+        context.browser_context2.add_init_script(
+            """
+            window.__copiedText = "";
+            navigator.clipboard.writeText = (text) => {
+                window.__copiedText = text;
+                return Promise.resolve();
+            };
+        """
+        )
+        context.browser_context2.tracing.start(
+            screenshots=True, snapshots=True, sources=True
+        )
+        context.page2 = context.browser_context2.new_page()
 
 
 def after_scenario(context, scenario):
@@ -314,6 +329,14 @@ def before_all(context):
     if product == "CPTS-UI":
         playwright = sync_playwright().start()
         context.browser = playwright.chromium.launch(
+            headless=HEADLESS,
+            slow_mo=SLOWMO,
+            channel=(
+                None if context.config.userdata["arm64"].upper() == "TRUE" else "chrome"
+            ),
+        )
+        # For usage in concurrent session scenarios
+        context.browser2 = playwright.chromium.launch(
             headless=HEADLESS,
             slow_mo=SLOWMO,
             channel=(
