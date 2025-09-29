@@ -12,14 +12,20 @@ from playwright.sync_api import Route
 @when('I switch browser context to "{browser}"')
 @then('I switch browser context to "{browser}"')
 def switch_browser_context(context, browser):
-    print(f"Using browser context: {browser}")
     if browser == "primary":
+        if not hasattr(context, "primary_page"):
+            context.primary_page = context.primary_context.new_page()
         context.active_browser_context = context.primary_context
-        context.active_page = context.primary_context.new_page()
+        context.active_page = context.primary_page
 
-    if browser == "concurrent":
+    elif browser == "concurrent":
+        if not hasattr(context, "concurrent_page"):
+            context.concurrent_page = context.concurrent_context.new_page()
         context.active_browser_context = context.concurrent_context
-        context.active_page = context.concurrent_context.new_page()
+        context.active_page = context.concurrent_page
+
+    else:
+        raise ValueError(f"Unknown browser context: {browser}")
 
 
 @when('I make a request to the "{product}" ping endpoint')

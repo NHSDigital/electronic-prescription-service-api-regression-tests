@@ -173,7 +173,7 @@ def i_am_logged_in(context):
     period = 5  # 5 second polling delay
     mustend = time.time() + timeout
     while time.time() < mustend:
-        storage_state = context.active_browser.storage_state()
+        storage_state = context.active_browser_context.storage_state()
         for origin in storage_state.get("origins", []):
             for item in origin.get("localStorage", []):
                 if item.get("name") == "isSignedIn":
@@ -191,7 +191,7 @@ def i_am_logged_out(context):
     period = 5  # 5 second polling delay
     mustend = time.time() + timeout
     while time.time() < mustend:
-        storage_state = context.active_browser.storage_state()
+        storage_state = context.active_browser_context.storage_state()
         for origin in storage_state.get("origins", []):
             for item in origin.get("localStorage", []):
                 if item.get("name") == "isSignedIn":

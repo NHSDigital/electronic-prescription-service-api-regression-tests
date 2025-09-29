@@ -274,9 +274,14 @@ def before_scenario(context, scenario):
             screenshots=True, snapshots=True, sources=True
         )
 
+        context.primary_page = context.primary_context.new_page()
+        context.concurrent_page = context.concurrent_context.new_page()
+
+        # Default active context
+        context.active_browser_context = context.primary_context
         context.active_page = context.primary_context.new_page()
-        _page = context.active_page
-        set_page(context, _page)
+        # _page = context.active_page
+        # set_page(context, _page)
 
 
 def after_scenario(context, scenario):
@@ -284,10 +289,10 @@ def after_scenario(context, scenario):
     if product == "CPTS-UI":
         if hasattr(context.browser, "tracing"):
             context.browser.tracing.stop(path="/tmp/trace.zip")
-        if hasattr(context, "page"):
+        if hasattr(context, "primary_page"):
             if scenario.status == "failed":
                 allure.attach(
-                    context.active_page.screenshot(),
+                    context.primary_page.screenshot(),
                     attachment_type=allure.attachment_type.PNG,
                 )
                 allure.attach.file(
@@ -295,9 +300,17 @@ def after_scenario(context, scenario):
                     name="playwright_failure_trace.zip",
                     attachment_type="application/zip",
                 )
-            if context.active_page is not None:
-                global _page  # noqa: F824
-                _page.close()
+        if hasattr(context, "concurrent_page"):
+            if scenario.status == "failed":
+                allure.attach(
+                    context.concurrent_page.screenshot(),
+                    attachment_type=allure.attachment_type.PNG,
+                )
+                allure.attach.file(
+                    "/tmp/trace_concurrent.zip",
+                    name="playwright_failure_trace_concurrent.zip",
+                    attachment_type="application/zip",
+                )
 
 
 def before_all(context):
@@ -350,10 +363,6 @@ def before_all(context):
                 None if context.config.userdata["arm64"].upper() == "TRUE" else "chrome"
             ),
         )
-        # For usage in concurrent session scenarios
-        # context.primary_context = context.browser.new_context()
-        # context.concurrent_context = context.browser.new_context()
-        # context.active_browser_context = context.primary_context  # Set browser context by default
 
     eps_api_methods.calculate_eps_fhir_base_url(context)
     print("CPTS-UI: ", context.cpts_ui_base_url)
@@ -459,8 +468,8 @@ def after_all(context):
         if os.path.exists(directory_path) and os.path.isdir(directory_path):
             print(f"Directory '{directory_path}' exists. Deleting...")
             shutil.rmtree(directory_path)
-        if "_page" in vars() or "_page" in globals():
-            _page.close()
+        # if "_page" in vars() or "_page" in globals():
+        #     _page.close()
 
 
 def setup_logging(level: int = logging.INFO):
@@ -499,9 +508,9 @@ def write_properties_file(file_path, properties_dict):
             file.write(f"{key}={value}\n")
 
 
-def get_page(self):
-    return self._page
+# def get_page(self):
+#     return self._page
 
 
-def set_page(self, _page):
-    self._page = _page
+# def set_page(self, _page):
+#     self._page = _page
