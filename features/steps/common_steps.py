@@ -8,12 +8,18 @@ from playwright.sync_api import Route
 
 
 # Switch active browser context to make use of 2 browsers
-@given("I switch browser context to {browser}")
-@when("I switch browser context to {browser}")
+@given('I switch browser context to "{browser}"')
+@when('I switch browser context to "{browser}"')
+@then('I switch browser context to "{browser}"')
 def switch_browser_context(context, browser):
     print(f"Using browser context: {browser}")
-    context.active_browser = context.browser_context2
-    context.active_page = context.page2
+    if browser == "primary":
+        context.active_browser_context = context.primary_context
+        context.active_page = context.primary_context.new_page()
+
+    if browser == "concurrent":
+        context.active_browser_context = context.concurrent_context
+        context.active_page = context.concurrent_context.new_page()
 
 
 @when('I make a request to the "{product}" ping endpoint')

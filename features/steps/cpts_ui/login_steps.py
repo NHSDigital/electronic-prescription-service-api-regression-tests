@@ -28,6 +28,8 @@ def login_no_role(context):
 
 
 @given("I am logged in as a user with a single access role")
+@when("I am logged in as a user with a single access role")
+@then("I am logged in as a user with a single access role")
 def login_single_role(context):
     context.execute_steps("when I log in as a user with a single access role")
 
