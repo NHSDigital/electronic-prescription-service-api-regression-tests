@@ -271,7 +271,7 @@ def before_scenario(context, scenario):
         """
         )
         context.concurrent_context.tracing.start(
-            screenshots=True, snapshots=True, sources=True
+            screenshots=True, snapshots=True, sources=True, title="concurrent"
         )
 
         context.primary_page = context.primary_context.new_page()
@@ -287,9 +287,8 @@ def before_scenario(context, scenario):
 def after_scenario(context, scenario):
     product = context.config.userdata["product"].upper()
     if product == "CPTS-UI":
-        if hasattr(context.browser, "tracing"):
-            context.browser.tracing.stop(path="/tmp/trace.zip")
-        if hasattr(context, "primary_page"):
+        if hasattr(context, "primary_context"):
+            context.primary_context.tracing.stop(path="/tmp/trace.zip")
             if scenario.status == "failed":
                 allure.attach(
                     context.primary_page.screenshot(),
@@ -300,7 +299,8 @@ def after_scenario(context, scenario):
                     name="playwright_failure_trace.zip",
                     attachment_type="application/zip",
                 )
-        if hasattr(context, "concurrent_page"):
+        if hasattr(context, "concurrent_context"):
+            context.concurrent_context.tracing.stop(path="/tmp/trace_concurrent.zip")
             if scenario.status == "failed":
                 allure.attach(
                     context.concurrent_page.screenshot(),

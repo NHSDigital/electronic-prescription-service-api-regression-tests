@@ -6,11 +6,40 @@ from methods.api.common_api_methods import request_metadata
 from methods.shared.common import assert_that
 from playwright.sync_api import Route
 
+TAG_TO_LOGIN_MAP = {
+    "single_access": "when I log in as a user with a single access role",
+    "multiple_access": "when I log in as a user with multiple access roles",
+    "multiple_access_pre_selected": "when I log in as a user with a pre selected role",
+    "multiple_roles_no_access": "when I log in as a user with only roles that do not have access",
+    "multiple_roles_single_access": "when I log in with a single access role and multiple without access",
+    "no_roles_no_access": "when I log in as a user with no roles",
+}
 
-# Switch active browser context to make use of 2 browsers
-@given('I switch browser context to "{browser}"')
-@when('I switch browser context to "{browser}"')
-@then('I switch browser context to "{browser}"')
+
+def login_by_access_tag(context):
+    """
+    Master function to login based on scenario tags containing '_access' or 'no_roles'.
+    Automatically detects the appropriate login method from scenario tags.
+    """
+    current_tags = set(str(context.config.tags).split())
+
+    # Find matching tag using set intersection - O(1) average case
+    matching_tags = current_tags & TAG_TO_LOGIN_MAP.keys()
+
+    if matching_tags:
+        # Use first matching tag
+        tag = next(iter(matching_tags))
+        context.execute_steps(TAG_TO_LOGIN_MAP[tag])
+        return
+
+    # If no matching tag found, raise an error
+    available_tags = ", ".join(f"@{tag}" for tag in TAG_TO_LOGIN_MAP.keys())
+    raise AssertionError(
+        f"No valid access tag found in scenario tags: {current_tags}. "
+        f"Available tags: {available_tags}"
+    )
+
+
 def switch_browser_context(context, browser):
     if browser == "primary":
         if not hasattr(context, "primary_page"):
@@ -26,6 +55,20 @@ def switch_browser_context(context, browser):
 
     else:
         raise ValueError(f"Unknown browser context: {browser}")
+
+
+@when('I switch browser context to "{browser}" and login again')
+def switch_browser_context_and_login(context, browser):
+    switch_browser_context(context, browser)
+    login_by_access_tag(context)
+
+
+# Switch active browser context to make use of 2 browsers
+@given('I switch browser context to "{browser}"')
+@when('I switch browser context to "{browser}"')
+@then('I switch browser context to "{browser}"')
+def switch_browser_context_step(context, browser):
+    switch_browser_context(context, browser)
 
 
 @when('I make a request to the "{product}" ping endpoint')
