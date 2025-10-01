@@ -95,23 +95,38 @@ def verify_nhs_service_desk_email(context):
 
 
 # Session State Verification Steps
-@then(
-    'the "{context_name}" context should be logged out because of "{state}" protections'
-)
-def verify_context_logged_out(context, context_name, state):
+# @then(
+#     'the "{context_name}" context should be logged out because of "{state}" protections'
+# )
+@then('I should be logged out because of "{state}" protections')
+def verify_context_logged_out(context, state):
     """Verify that a specific context is logged out"""
-    original_page_context = context.active_page
+    # original_page_context = context.active_page
     try:
         # Switch to the specified context
-        context.execute_steps(f'Given I switch browser context to "{context_name}"')
-        logged_out_page = SessionLoggedOutPage(context.active_page)
+        # context.execute_steps(f'Given I switch browser context to "{context_name}"')
+        print(context.active_page.content())
         if state == "concurrency":
-            assert logged_out_page.is_concurrent_session_displayed()
+            logged_out_page = SessionLoggedOutPage(context.active_page)
+            # print(context.active_page.content())
+
+            context.active_page.clock.fast_forward(
+                "06:00"
+            )  # Jump 6 mins to trigger auto-check
+
+            context.active_page.wait_for_load_state(
+                "networkidle", timeout=5000
+            )  # Wait for reload
+            logged_out_page = SessionLoggedOutPage(context.active_page)
+            expect(logged_out_page.concurrent_session_container).to_be_visible()
         if state == "timeout":
-            assert logged_out_page.is_timeout_session_displayed()
+            logged_out_page = SessionLoggedOutPage(context.active_page)
+            context.active_page.wait_for_load_state("networkidle", timeout=5000)
+            expect(logged_out_page.timeout_session_container).to_be_visible()
     finally:
         # Switch back to original context
-        context.active_page = original_page_context
+        # context.active_page = original_page_context
+        pass
 
 
 @then('the "{context_name}" context should remain logged in')

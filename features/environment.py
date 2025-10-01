@@ -279,9 +279,12 @@ def before_scenario(context, scenario):
 
         # Default active context
         context.active_browser_context = context.primary_context
-        context.active_page = context.primary_context.new_page()
-        # _page = context.active_page
-        # set_page(context, _page)
+        context.active_page = context.primary_page
+
+        if "fake_time" in scenario.effective_tags:
+            # Install playwright mock clock for use in tests later
+            context.primary_page.clock.install()
+            context.concurrent_page.clock.install()
 
 
 def after_scenario(context, scenario):

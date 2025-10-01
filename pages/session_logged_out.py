@@ -6,7 +6,6 @@ class SessionLoggedOutPage:
     def __init__(self, page: Page):
         page.wait_for_load_state()
         self.page = page
-        self.url = "/session-logged-out"
 
         # Main containers for different scenarios
         self.concurrent_session_container = page.get_by_test_id(
@@ -28,11 +27,3 @@ class SessionLoggedOutPage:
         self.timeout_description = page.get_by_test_id("timeout-description")
         self.timeout_description2 = page.get_by_test_id("timeout-description2")
         self.timeout_login_link = page.get_by_test_id("login-link")
-
-    def is_concurrent_session_displayed(self) -> bool:
-        """Check if the concurrent session variant is displayed"""
-        return self.concurrent_session_container.is_visible()
-
-    def is_timeout_session_displayed(self) -> bool:
-        """Check if the timeout session variant is displayed"""
-        return self.timeout_session_container.is_visible()

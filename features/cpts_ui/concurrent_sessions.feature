@@ -13,7 +13,7 @@ Feature: Concurrent session protections prohibit a second session
   #   And I am not able to navigate away from session selection page
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5519
-  @single_access
+  @single_access @fake_time
   Scenario: Primary session is logged out when concurrent session starts new session
     Given I am logged in as a user with a single access role
     And I am on the search for a prescription page
@@ -23,7 +23,8 @@ Feature: Concurrent session protections prohibit a second session
     And I click the "Start a new session" button
     And I am on the search for a prescription page
 
-    And the "primary" context should be logged out because of "concurrency" protections
+    And I switch browser context to "primary"
+    And I should be logged out because of "concurrency" protections
     And I should see the concurrent session title "You have been logged out"
 
   # @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5519
