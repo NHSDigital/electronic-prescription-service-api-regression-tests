@@ -40,6 +40,7 @@ def click_start_new_session(context):
     """Click the start new session button"""
     session_page = SessionSelectionPage(context.active_page)
     session_page.new_session_button.click()
+    context.active_page.wait_for_load_state("networkidle", timeout=5000)
 
 
 @then("I should see the session selection page")
@@ -99,7 +100,7 @@ def verify_nhs_service_desk_email(context):
 )
 def verify_context_logged_out(context, context_name, state):
     """Verify that a specific context is logged out"""
-    original_context = context.active_context
+    original_page_context = context.active_page
     try:
         # Switch to the specified context
         context.execute_steps(f'Given I switch browser context to "{context_name}"')
@@ -110,8 +111,7 @@ def verify_context_logged_out(context, context_name, state):
             assert logged_out_page.is_timeout_session_displayed()
     finally:
         # Switch back to original context
-        context.active_context = original_context
-        context.active_page = context.active_context.active_pages[0]
+        context.active_page = original_page_context
 
 
 @then('the "{context_name}" context should remain logged in')
