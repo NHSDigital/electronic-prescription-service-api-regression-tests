@@ -9,17 +9,13 @@ from pages.session_logged_out import SessionLoggedOutPage
 @when("the session expires because of automatic timeout")
 def clear_active_session(context):
     # Call clear active session lambda for user
-    clear_scenario_user_sessions(context, [context.config.tags])
+    clear_scenario_user_sessions(context, context.scenario.tags)
 
 
 @then("I should see the timeout session logged out page")
 def verify_timeout_logged_out_page(context):
     """Verify the timeout session logged out page is displayed"""
     context.active_page.clock.fast_forward("06:00")  # Jump 6 mins to trigger auto-check
-
-    context.active_page.wait_for_load_state(
-        "networkidle", timeout=5000
-    )  # Wait for reload
 
     logged_out_page = SessionLoggedOutPage(context.active_page)
     expect(logged_out_page.timeout_session_container).to_be_visible()

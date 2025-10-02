@@ -8,6 +8,7 @@ from pages.search_for_a_prescription import SearchForAPrescription
 
 
 @when("I search for the prescription by prescription ID")
+@then("I search for the prescription by prescription ID")
 def search_context_prescription_id(context):
     prescription_id = context.prescription_id
     search_input = context.active_page.get_by_test_id("prescription-id-input")

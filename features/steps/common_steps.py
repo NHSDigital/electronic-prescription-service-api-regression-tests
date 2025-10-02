@@ -57,16 +57,16 @@ def switch_browser_context(context, browser):
         raise ValueError(f"Unknown browser context: {browser}")
 
 
-@when('I switch browser context to "{browser}" and login again')
+@when('I switch the browser context to "{browser}" and login again')
 def switch_browser_context_and_login(context, browser):
     switch_browser_context(context, browser)
     login_by_access_tag(context)
 
 
 # Switch active browser context to make use of 2 browsers
-@given('I switch browser context to "{browser}"')
-@when('I switch browser context to "{browser}"')
-@then('I switch browser context to "{browser}"')
+@given('I switch the browser context to "{browser}"')
+@when('I switch the browser context to "{browser}"')
+@then('I switch the browser context to "{browser}"')
 def switch_browser_context_step(context, browser):
     switch_browser_context(context, browser)
 
