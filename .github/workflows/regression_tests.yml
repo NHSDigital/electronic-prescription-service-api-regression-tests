@@ -205,9 +205,6 @@ jobs:
           export PULL_REQUEST_ID="$PULL_REQUEST_ID"
           echo Pull request ID = "$PULL_REQUEST_ID"
           case "$MATRIX_TAG" in
-            concurrency)
-              TAGS="@concurrency:@${INPUT_TAG}"
-              ;;
             multiple_access)
               TAGS="@multiple_access:${INPUT_TAG}"
               ;;
