@@ -11,6 +11,7 @@ def i_have_selected_role(context):
     context.execute_steps("then I see the 'your selected role' page")
 
 
+@given("I select a role")
 @when("I select a role")
 def i_select_a_role(context):
     select_your_role_page = SelectYourRole(context.active_page)

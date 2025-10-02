@@ -1,18 +1,9 @@
 # # pylint: disable=no-name-in-module
-from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
+from behave import when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
 
 from pages.session_selection import SessionSelectionPage
 from pages.session_logged_out import SessionLoggedOutPage
-
-
-# GIVEN
-@given("I clear the session for the user")
-def clear_user_session(context):
-    """Clear the session to simulate timeout"""
-    context.active_page.evaluate(
-        "() => { localStorage.clear(); sessionStorage.clear(); }"
-    )
 
 
 # WHEN
@@ -22,17 +13,6 @@ def click_close_window(context):
     session_page = SessionSelectionPage(context.active_page)
     session_page.close_window_button.click()
     context.active_page.wait_for_load_state("networkidle", timeout=5000)
-
-
-@when("I click the login link")
-def click_login_link(context):
-    """Click the login link on the logged out page"""
-    logged_out_page = SessionLoggedOutPage(context.active_page)
-    # Click whichever login link is visible
-    if logged_out_page.concurrent_session_container.is_visible():
-        logged_out_page.concurrent_login_link.click()
-    else:
-        logged_out_page.timeout_login_link.click()
 
 
 # THEN

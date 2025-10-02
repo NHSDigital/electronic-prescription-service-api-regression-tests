@@ -13,51 +13,6 @@ from features.environment import (
 
 from .home_steps import goto_page
 
-
-###############################################################################
-# GIVEN
-###############################################################################
-@given("I am on the login page")
-def i_am_on_login_page(context):
-    goto_page(context, "login")
-
-
-@given("I am logged in as a user with no roles")
-def login_no_role(context):
-    context.execute_steps("when I log in as a user with no roles")
-
-
-@given("I am logged in as a user with a single access role")
-@when("I am logged in as a user with a single access role")
-@then("I am logged in as a user with a single access role")
-def login_single_role(context):
-    context.execute_steps("when I log in as a user with a single access role")
-
-
-@given("I am logged in as a user with multiple access roles")
-def login_multiple_access_roles(context):
-    context.execute_steps("when I log in as a user with multiple access roles")
-
-
-@given("I am logged in as a user with only roles that do not have access")
-def login_without_access(context):
-    context.execute_steps(
-        "when I log in as a user with only roles that do not have access"
-    )
-
-
-@given("I am logged in as a user with a pre selected role")
-def login_pre_role_selected(context):
-    context.execute_steps("when I log in as a user with a pre selected role")
-
-
-@given("I am logged in with a single access role and multiple without access")
-def login_single_role_with_access_multiple_without(context):
-    context.execute_steps(
-        "when I log in with a single access role and multiple without access"
-    )
-
-
 ###############################################################################
 # Helper functions to retry login
 ###############################################################################
@@ -84,6 +39,51 @@ def login_with_retries(context, user_id, max_retries=5):
         except Exception as e:
             if attempt == max_retries:
                 raise RuntimeError("Login failed after 5 attempts") from e
+
+
+###############################################################################
+# GIVEN
+###############################################################################
+@given("I am on the login page")
+def i_am_on_login_page(context):
+    goto_page(context, "login")
+
+
+@given("I am logged in as a user with no roles")
+def login_no_role(context):
+    context.execute_steps("when I log in as a user with no roles")
+
+
+@given("I am logged in as a user with a single access role")
+@when("I am logged in as a user with a single access role")
+@then("I am logged in as a user with a single access role")
+def login_single_role(context):
+    context.execute_steps("when I log in as a user with a single access role")
+
+
+@given("I am logged in as a user with only roles that do not have access")
+def login_without_access(context):
+    context.execute_steps(
+        "when I log in as a user with only roles that do not have access"
+    )
+
+
+@given("I am logged in as a user with a pre selected role")
+def login_pre_role_selected(context):
+    context.execute_steps("when I log in as a user with a pre selected role")
+
+
+@given("I am logged in with a single access role and multiple without access")
+def login_single_role_with_access_multiple_without(context):
+    context.execute_steps(
+        "when I log in with a single access role and multiple without access"
+    )
+
+
+@given("I am logged in as a user with multiple access roles")
+@when("I am logged in as a user with multiple access roles")
+def login_multiple_access_roles(context):
+    context.execute_steps("when I log in as a user with multiple access roles")
 
 
 ###############################################################################
