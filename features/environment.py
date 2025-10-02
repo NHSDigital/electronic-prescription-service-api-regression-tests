@@ -214,15 +214,6 @@ def count_of_scenarios_to_run(context):
 
 
 def before_feature(context, feature):
-    # Only allow concurrency feature to run when `--tags=@concurrency` is explicitly used
-    # Otherwise potential race condition occurs
-    if "@concurrency" in feature.tags:
-        if not any(
-            tag.startswith("concurrency") for tag in context.config.tags.defined
-        ):
-            feature.skip(
-                "Skipped concurrency condition scenarios, must explicitly run with @concurrency"
-            )
     if "skip" in feature.tags:
         feature.skip("Marked with @skip")
         return
@@ -480,8 +471,6 @@ def after_all(context):
         if os.path.exists(directory_path) and os.path.isdir(directory_path):
             print(f"Directory '{directory_path}' exists. Deleting...")
             shutil.rmtree(directory_path)
-        # if "_page" in vars() or "_page" in globals():
-        #     _page.close()
 
 
 def setup_logging(level: int = logging.INFO):
@@ -518,11 +507,3 @@ def write_properties_file(file_path, properties_dict):
     with open(file_path, "w") as file:
         for key, value in properties_dict.items():
             file.write(f"{key}={value}\n")
-
-
-# def get_page(self):
-#     return self._page
-
-
-# def set_page(self, _page):
-#     self._page = _page
