@@ -1,4 +1,4 @@
-@cpts_ui @concurrent @regression @ui
+@cpts_ui @concurrency @regression @ui
 Feature: Concurrent session protections prohibit a second session
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5519
