@@ -3,17 +3,17 @@ on:
   workflow_dispatch:
     inputs:
       tags:
-        description: 'Test scenario tags. If you want to specify multiple tags, you should separate them with a colon :'
+        description: "Test scenario tags. If you want to specify multiple tags, you should separate them with a colon :"
         required: true
         type: string
         default: "@regression"
       environment:
-        description: 'Environment to run tests against'
+        description: "Environment to run tests against"
         type: environment
         required: true
         default: "DEV"
       product:
-        description: 'The product we are testing'
+        description: "The product we are testing"
         type: choice
         options:
           - CPTS-UI
@@ -27,20 +27,20 @@ on:
         required: false
         default: EPS-FHIR
       id:
-        description: 'Unique run identifier (Do not change this)'
+        description: "Unique run identifier (Do not change this)"
         required: false
         default: "Manually Triggered Run"
       pull_request_id:
-        description: 'The ID of the pull request. This should be in the format pr-xxxx where xxxx is the pull request id'
+        description: "The ID of the pull request. This should be in the format pr-xxxx where xxxx is the pull request id"
         required: false
         default: ""
       github_tag:
-        description: 'The github tag to run the test pack from'
+        description: "The github tag to run the test pack from"
         required: false
         default: "main"
       generate_report:
         type: boolean
-        description: 'Generate a report for successful test runs'
+        description: "Generate a report for successful test runs"
         default: false
 
 jobs:
@@ -91,7 +91,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        tag: ["multiple_access", "multiple_access_pre_selected", "single_access", "multiple_roles_single_access", "multiple_roles_no_access", "others"]
+        tag:
+          [
+            "multiple_access",
+            "multiple_access_pre_selected",
+            "single_access",
+            "multiple_roles_single_access",
+            "multiple_roles_no_access",
+            "others",
+          ]
     steps:
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
@@ -236,7 +244,6 @@ jobs:
         run: |
           exit 1
 
-
   upload_results:
     runs-on: ubuntu-22.04
     environment: ${{ inputs.environment }}
@@ -301,7 +308,7 @@ jobs:
         with:
           name: allure-results
           path: allure-results
-  
+
       - name: Generate a token
         id: generate-token
         uses: actions/create-github-app-token@v2
@@ -312,7 +319,7 @@ jobs:
           repositories: "electronic-prescription-service-api-regression-tests,eps-test-reports"
 
       - name: Report failure on test failure
-        if: contains(needs.*.result, 'failure') 
+        if: contains(needs.*.result, 'failure')
         run: |
           poetry run python scripts/send_test_results.py --token=${{ steps.generate-token.outputs.token }} --run_id ${{GITHUB.RUN_ID}}
           echo The regression tests step failed, this likely means there are test failures.
@@ -320,7 +327,7 @@ jobs:
           exit 1
 
       - name: Report failure on test cancelled or skipped
-        if: contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped') 
+        if: contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped')
         run: |
           echo The regression tests step was cancelled or skipped
           exit 1
