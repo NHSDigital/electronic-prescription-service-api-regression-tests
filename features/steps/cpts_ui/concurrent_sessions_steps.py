@@ -20,7 +20,7 @@ def click_close_window(context):
 @then("the automatic periodic check occurs")
 def skip_time_for_auto_check(context):
     # pylint: disable=broad-exception-raised
-    if "fake_time" not in context.config.tags:
+    if "fake_time" not in context.tags:
         raise Exception("Fake_time tag required in this scenario. See README.md")
 
     context.active_page.clock.fast_forward("06:00")  # Jump 6 mins to trigger auto-check
