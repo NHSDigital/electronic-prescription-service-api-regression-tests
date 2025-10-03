@@ -16,28 +16,14 @@ def click_close_window(context):
 
 
 # THEN
-@when('I should be logged out because of "{state}" protections')
-@then('I should be logged out because of "{state}" protections')
-def verify_context_logged_out(context, state):
-    """Verify that a specific context is logged out"""
-    if state == "concurrency":
-        logged_out_page = SessionLoggedOutPage(context.active_page)
+@when("the automatic periodic check occurs")
+@then("the automatic periodic check occurs")
+def skip_time_for_auto_check(context):
+    # pylint: disable=broad-exception-raised
+    if "fake_time" not in context.config.tags:
+        raise Exception("Fake_time tag required in this scenario. See README.md")
 
-        context.active_page.clock.fast_forward(
-            "06:00"
-        )  # Jump 6 mins to trigger auto-check
-
-        logged_out_page = SessionLoggedOutPage(context.active_page)
-        expect(logged_out_page.concurrent_session_container).to_be_visible()
-
-        context.execute_steps(
-            "then I should see the concurrent session logged out page"
-        )
-
-    if state == "timeout":
-        logged_out_page = SessionLoggedOutPage(context.active_page)
-        context.active_page.wait_for_load_state("networkidle", timeout=5000)
-        expect(logged_out_page.timeout_session_container).to_be_visible()
+    context.active_page.clock.fast_forward("06:00")  # Jump 6 mins to trigger auto-check
 
 
 @when("I should see the session selection page")

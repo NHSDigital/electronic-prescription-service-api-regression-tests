@@ -20,7 +20,7 @@ Feature: Concurrent session protections prohibit a second session
     And I can see the RBAC banner
     And I am on the search for a prescription page
 
-    When I switch the browser context to "concurrent" and login again
+    When the automatic periodic check occurs
     Then I should see the session selection page
     And I am not able to navigate away from session selection page
 
@@ -36,7 +36,7 @@ Feature: Concurrent session protections prohibit a second session
     And I am on the search for a prescription page
 
     And I switch the browser context to "primary"
-    And I should be logged out because of "concurrency" protections
+    And the automatic periodic check occurs
     And I should see the concurrent session logged out page
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-5519

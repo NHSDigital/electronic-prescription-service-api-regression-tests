@@ -270,9 +270,12 @@ def before_scenario(context, scenario):
             };
         """
         )
-        context.concurrent_context.tracing.start(
-            screenshots=True, snapshots=True, sources=True, title="concurrent"
-        )
+
+        if "concurrency" in scenario.effective_tags:
+            # Don't create a trace file if the concurrent browser context isn't being used in the scenario
+            context.concurrent_context.tracing.start(
+                screenshots=True, snapshots=True, sources=True, title="concurrent"
+            )
 
         context.primary_page = context.primary_context.new_page()
         context.concurrent_page = context.concurrent_context.new_page()
@@ -302,7 +305,10 @@ def after_scenario(context, scenario):
                     name="playwright_failure_trace.zip",
                     attachment_type="application/zip",
                 )
-        if hasattr(context, "concurrent_context"):
+        if (
+            hasattr(context, "concurrent_context")
+            and "concurrency" in scenario.effective_tags
+        ):
             context.concurrent_context.tracing.stop(path="/tmp/trace_concurrent.zip")
             if scenario.status == "failed":
                 allure.attach(

@@ -41,6 +41,10 @@ def login_by_access_tag(context):
 
 
 def switch_browser_context(context, browser):
+    # pylint: disable=broad-exception-raised
+    if "concurrency" not in context.config.tags:
+        raise Exception("Concurrency tag required for this scenario. See README.md")
+    # pylint: enable=broad-exception-raised
     if browser == "primary":
         if not hasattr(context, "primary_page"):
             context.primary_page = context.primary_context.new_page()

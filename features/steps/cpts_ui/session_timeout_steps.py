@@ -15,8 +15,6 @@ def clear_active_session(context):
 @then("I should see the timeout session logged out page")
 def verify_timeout_logged_out_page(context):
     """Verify the timeout session logged out page is displayed"""
-    context.active_page.clock.fast_forward("06:00")  # Jump 6 mins to trigger auto-check
-
     logged_out_page = SessionLoggedOutPage(context.active_page)
     expect(logged_out_page.timeout_session_container).to_be_visible()
     expect(logged_out_page.timeout_title).to_have_text(
