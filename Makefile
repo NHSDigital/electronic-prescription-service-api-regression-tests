@@ -29,6 +29,7 @@ install-asdf:
 	asdf plugin add nodejs
 	asdf plugin add actionlint
 	asdf plugin add allure
+	asdf install python
 	asdf install
 
 install-python:
@@ -77,6 +78,8 @@ asdf-uninstall:
 
 deep-clean-install:
 	make clear-virtualenv
+	find . -name '__pycache__' -type d -prune -exec rm -rf '{}' +
+	find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +
 	make asdf-uninstall
 	make install-full
 
