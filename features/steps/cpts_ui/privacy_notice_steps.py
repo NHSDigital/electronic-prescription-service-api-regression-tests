@@ -15,14 +15,14 @@ def before_all(context):
 @given("I am on the privacy notice page")
 def i_am_on_the_privacy_notice_page(context):
     goto_page(context, "privacy-notice")
-    header = Header(context.page)
+    header = Header(context.active_page)
     header.page.is_visible(header.header)
 
 
 @then("I am on the privacy notice page")
 def i_am_on_the_cookies_page(context):
     expected_path = "/site/privacy-notice"
-    current_url = context.page.url
+    current_url = context.active_page.url
     assert (
         expected_path in current_url
     ), f"Expected '{expected_path}' to be in '{current_url}'"
@@ -30,5 +30,5 @@ def i_am_on_the_cookies_page(context):
 
 @then("I can read the full privacy notice")
 def i_read_privacy_notice(context):
-    text = context.page.get_by_test_id("privacy-notice-content")
+    text = context.active_page.get_by_test_id("privacy-notice-content")
     expect(text).to_contain_text(PRIVACY_NOTICE_TEXT)

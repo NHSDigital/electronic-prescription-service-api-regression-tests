@@ -177,3 +177,13 @@ If you did not set up your environment using the `make install-full` command, th
 Playwright contains a handy (but not perfect) feature which will record actions you make and give you the code for them
 to begin, run the command: <br />
 `playwright codegen`
+
+## Building new tests:
+
+### Fake Time / Mocked time
+For tests making use of Playwright's clock functionality, you will need to provide the `@fake_time` tag on the scenario.
+This tag is identified in the Behave before scenario function and will instatiate the Playwright clock mock.
+
+### Concurrent sessions
+For concurrent session testing, you'll need to make use of the Behave step "I switch the browser context to "{browser}" and login again".
+This step has protection in place that the `@concurrency` tag is supplied on the scenario; this is to ensure the concurrent session Playwright trace is created, as it is disabled in `environment.py` otherwise.
