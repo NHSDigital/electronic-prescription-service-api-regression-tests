@@ -659,14 +659,14 @@ files = [
 
 [[package]]
 name = "isort"
-version = "6.0.1"
+version = "6.1.0"
 description = "A Python utility / library to sort Python imports."
 optional = false
 python-versions = ">=3.9.0"
 groups = ["main"]
 files = [
-    {file = "isort-6.0.1-py3-none-any.whl", hash = "sha256:2dc5d7f65c9678d94c88dfc29161a320eec67328bc97aad576874cb4be1e9615"},
-    {file = "isort-6.0.1.tar.gz", hash = "sha256:1cb5df28dfbc742e490c5e41bad6da41b805b0a8be7bc93cd0fb2a8a890ac450"},
+    {file = "isort-6.1.0-py3-none-any.whl", hash = "sha256:58d8927ecce74e5087aef019f778d4081a3b6c98f15a80ba35782ca8a2097784"},
+    {file = "isort-6.1.0.tar.gz", hash = "sha256:9b8f96a14cfee0677e78e941ff62f03769a06d412aabb9e2a90487b3b7e8d481"},
 ]
 
 [package.extras]
@@ -1494,14 +1494,14 @@ test = ["coverage", "mypy", "ruff", "wheel"]
 
 [[package]]
 name = "pyright"
-version = "1.1.405"
+version = "1.1.406"
 description = "Command line wrapper for pyright"
 optional = false
 python-versions = ">=3.7"
 groups = ["main"]
 files = [
-    {file = "pyright-1.1.405-py3-none-any.whl", hash = "sha256:a2cb13700b5508ce8e5d4546034cb7ea4aedb60215c6c33f56cec7f53996035a"},
-    {file = "pyright-1.1.405.tar.gz", hash = "sha256:5c2a30e1037af27eb463a1cc0b9f6d65fec48478ccf092c1ac28385a15c55763"},
+    {file = "pyright-1.1.406-py3-none-any.whl", hash = "sha256:1d81fb43c2407bf566e97e57abb01c811973fdb21b2df8df59f870f688bdca71"},
+    {file = "pyright-1.1.406.tar.gz", hash = "sha256:c4872bc58c9643dac09e8a2e74d472c62036910b3bd37a32813989ef7576ea2c"},
 ]
 
 [package.dependencies]
@@ -1537,14 +1537,14 @@ dev = ["argcomplete", "attrs (>=19.2)", "hypothesis (>=3.56)", "mock", "requests
 
 [[package]]
 name = "pytest-nhsd-apim"
-version = "5.0.4"
+version = "5.0.5"
 description = "Pytest plugin accessing NHSDigital's APIM proxies"
 optional = false
 python-versions = "<4.0,>=3.8"
 groups = ["main"]
 files = [
-    {file = "pytest_nhsd_apim-5.0.4-py3-none-any.whl", hash = "sha256:04a17d90ec85958cb9823db29a798a42ab8cfd37c3c36379294e0eb0a60e0815"},
-    {file = "pytest_nhsd_apim-5.0.4.tar.gz", hash = "sha256:9b8d1c2d6fe69dcffd148fc3102e43bf0be2b39c6db950f7ae82711f3b58bfbc"},
+    {file = "pytest_nhsd_apim-5.0.5-py3-none-any.whl", hash = "sha256:5db90189e9efadc1c5288df402e5c4e94949bccc2832aa59b3996b41152d3df9"},
+    {file = "pytest_nhsd_apim-5.0.5.tar.gz", hash = "sha256:435abf521719188fe6b5c257d4635be204309666b95f5fca75cfa8c0314aefa1"},
 ]
 
 [package.dependencies]
@@ -2038,4 +2038,4 @@ test = ["pytest (>=3.0.0)"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "bbdcd7f537fd6146cb27ee8180a013fc0980c042f2ab21e88390f9d934dd7e88"
+content-hash = "1132b893f27364c99fba45ac7f7dd0b016dcfb5af60d59bde06eefd5748a35ec"
