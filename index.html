@@ -32,25 +32,31 @@ Given I am logged in as a user with no roles
 
 Given I am logged in as a user with a single access role
 
-Given I am logged in as a user with multiple access roles
-
 Given I am logged in as a user with only roles that do not have access
 
 Given I am logged in as a user with a pre selected role
 
 Given I am logged in with a single access role and multiple without access
 
+Given I am logged in as a user with multiple access roles
+
 Given the logout confirmation modal is displayed
 
 Given I am on the logout successful page
+
+Given I can see the RBAC banner
 
 Given I am on the search for a prescription page
 
 Given I have selected a role
 
+Given I select a role
+
 Given I am on the your selected role page
 
 Given I have confirmed a role
+
+Given I click the confirm and continue button on the your selected role page
 
 Given I am on the cookies page
 
@@ -61,6 +67,8 @@ Given I am on the basic details search results page
 Given I have searched for patients with the following details
 
 Given I am on the privacy notice page
+
+Given I switch the browser context to &quot;{browser}&quot;
 
 Given I successfully prepare and sign a {nomination} {prescription_type} prescription
 
@@ -103,6 +111,10 @@ When I click the &quot;{link_name}&quot; link in the footer
 When I go to the {page} page
 
 When I have a screen size of {pixel_width} pixels wide
+
+When I am logged in as a user with a single access role
+
+When I am logged in as a user with multiple access roles
 
 When I log in as a user with multiple access roles
 
@@ -163,11 +175,11 @@ When I select a role
 
 When I click on the summary expander
 
+When I click the confirm and continue button on the your selected role page
+
 When I click the change link next to the role text
 
 When I click the change link next to the org text
-
-When I click the confirm and continue button on the your selected role page
 
 When I navigate to a non-existent page
 
@@ -228,6 +240,20 @@ When I click the &quot;{link_text}&quot; link
 When I am on the patient not found page
 
 When I am on the too many results page
+
+When I click the &quot;Close this window&quot; button
+    Click the close window button
+
+When the automatic periodic check occurs
+
+When I should see the session selection page
+    Verify the session selection page is displayed
+
+When the session expires because of automatic timeout
+
+When I switch the browser context to &quot;{browser}&quot; and login again
+
+When I switch the browser context to &quot;{browser}&quot;
 
 When I make a request to the &quot;{product}&quot; ping endpoint
 
@@ -336,6 +362,8 @@ Then I can see the links on the header
 
 Then I can see the header links in a dropdown menu
 
+Then I am logged in as a user with a single access role
+
 Then I am logged in
 
 Then I am logged out
@@ -441,6 +469,8 @@ Then The clipboard contains &quot;{expected}&quot;
 
 Then The page shows the loading message &quot;{expected_message}&quot;
 
+Then I search for the prescription by prescription ID
+
 Then I can see the heading &quot;{heading_text}&quot;
 
 Then I can see the results count message
@@ -538,6 +568,24 @@ Then I am on the privacy notice page
 Then I can read the full privacy notice
 
 Then I should see the unknown error message
+
+Then the automatic periodic check occurs
+
+Then I should see the session selection page
+    Verify the session selection page is displayed
+
+Then I click the &quot;Start a new session&quot; button
+    Click the start new session button
+
+Then I am not able to navigate away from session selection page
+
+Then I should see the concurrent session logged out page
+    Verify the concurrent session logged out title
+
+Then I should see the timeout session logged out page
+    Verify the timeout session logged out page is displayed
+
+Then I switch the browser context to &quot;{browser}&quot;
 
 Then the response indicates a success
 
