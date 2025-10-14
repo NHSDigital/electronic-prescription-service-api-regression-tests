@@ -22,49 +22,49 @@ def goto_page(context, page):
         target = "privacy-notice"
 
     url = f"{context.cpts_ui_base_url}site/{target}"
-    context.page.goto(url)
+    context.active_page.goto(url)
 
 
 @given("I am on the homepage")
 def i_am_on_the_home_page(context):
     goto_page(context, "home")
-    header = Header(context.page)
+    header = Header(context.active_page)
     header.page.is_visible(header.header)
 
 
 @then("I am on the homepage")
 def verify_on_home_page(context):
-    header = Header(context.page)
+    header = Header(context.active_page)
     header.page.is_visible(header.header)
 
 
 @then("I can see the footer")
 def i_can_see_the_footer(context):
-    footer = Footer(context.page)
+    footer = Footer(context.active_page)
     expect(footer.footer).to_be_visible()
 
 
 @then("I can see the header")
 def i_can_see_the_header(context):
-    header = Header(context.page)
+    header = Header(context.active_page)
     header.page.is_visible(header.header)
 
 
 @then("I can see the links on the header")
 def i_can_see_the_links_on_the_header(context):
-    header = Header(context.page)
+    header = Header(context.active_page)
     expect(header.change_role_link).to_be_visible()
     expect(header.logout_link).to_be_visible()
 
 
 @when("I have a screen size of {pixel_width} pixels wide")
 def i_have_a_screen_size_of_x_pixels_wide(context, pixel_width):
-    context.page.set_viewport_size({"width": int(pixel_width), "height": 1200})
+    context.active_page.set_viewport_size({"width": int(pixel_width), "height": 1200})
 
 
 @then("I can see the header links in a dropdown menu")
 def i_can_see_the_header_links_in_a_dropdown_menu(context):
-    header = Header(context.page)
+    header = Header(context.active_page)
     expect(header.menu_button).to_be_visible()
     header.menu_button.click()
     expect(header.change_role_link).to_be_visible()
