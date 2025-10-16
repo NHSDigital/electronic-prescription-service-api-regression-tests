@@ -29,12 +29,6 @@ class PrescriptionDetailsPage:
 
         # Summary details
         self.prescription_summary = page.get_by_test_id("prescription-summary-list")
-        self.initial_prescription_details = page.get_by_test_id(
-            "initial-prescription-details"
-        )
-        self.initial_prescription_summary = page.get_by_test_id(
-            "initial-prescription-summary-list"
-        )
 
         # EPS status tag
         self.eps_status_tag = page.get_by_test_id("eps-status-tag")

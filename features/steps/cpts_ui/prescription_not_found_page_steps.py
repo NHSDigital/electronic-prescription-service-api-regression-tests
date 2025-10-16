@@ -7,7 +7,7 @@ from pages.prescription_not_found import PrescriptionNotFound
 
 @then("I am on the prescription not found page with redirect to {}")
 def i_am_on_prescription_not_found_page(context, tab_name):
-    page = PrescriptionNotFound(context.page)
+    page = PrescriptionNotFound(context.active_page)
 
     expect(page.heading).to_be_visible()
     expect(page.query_summary).to_be_visible()
@@ -28,14 +28,14 @@ def i_am_on_prescription_not_found_page(context, tab_name):
 
 @when("I click the Go Back link on the prescription not found page")
 def i_click_go_back_presc_not_found(context):
-    page = PrescriptionNotFound(context.page)
+    page = PrescriptionNotFound(context.active_page)
 
     page.back_link.click()
 
 
 @then("I should see the prescription not found message")
 def i_should_see_prescription_not_found_message(context):
-    page = PrescriptionNotFound(context.page)
+    page = PrescriptionNotFound(context.active_page)
     expect(page.heading).to_be_visible()
     expect(page.query_summary).to_be_visible()
     expect(page.back_link).to_be_visible()
