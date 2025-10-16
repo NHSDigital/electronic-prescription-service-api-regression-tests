@@ -248,9 +248,7 @@ def assume_aws_role(role_arn: str, session_name: str):
             WebIdentityToken=web_identity_token,
         )
     except (BotoCoreError, ClientError) as err:
-        raise ValueError(
-            f"tken: {web_identity_token}. Unable to assume AWS role: " + str(err)
-        ) from err
+        raise ValueError("Unable to assume AWS role: " + str(err)) from err
 
     # extract and return temporary credentials
     credentials = response.get("Credentials", {})
