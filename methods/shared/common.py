@@ -1,5 +1,10 @@
 import json
+from os import environ
+import urllib.request
+from urllib.error import HTTPError
 import allure
+import boto3
+from botocore.exceptions import BotoCoreError, ClientError
 
 from assertpy import assert_that as assertpy_assert  # type: ignore
 from pytest_nhsd_apim.identity_service import (
@@ -100,6 +105,7 @@ def get_auth(env, product, user="prescriber"):
         "EPS-FHIR-DISPENSING",
         "PFP-APIGEE",
         "PSU",
+        "EPS-ASSIST-ME",
     ]:
         raise ValueError(f"Unknown product {product}")
     env = env.lower()
@@ -189,3 +195,67 @@ def convert_to_uri(page_name):
     if page_name == "search by basic details":
         return "search-by-basic-details"
     return page_name
+
+
+def fetch_oidc_jwt() -> str:
+    # fetch GitHub environment variables to make HTTP token fetch request
+    req_url = environ.get("ACTIONS_ID_TOKEN_REQUEST_URL")
+    assert (
+        req_url is not None
+    ), "expected ACTIONS_ID_TOKEN_REQUEST_URL environment variable not found"
+
+    req_token = environ.get("ACTIONS_ID_TOKEN_REQUEST_TOKEN")
+    assert (
+        req_token is not None
+    ), "expected ACTIONS_ID_TOKEN_REQUEST_TOKEN environment variable not found"
+
+    # build HTTP request and execute
+    request = urllib.request.Request(
+        headers={"Authorization": "bearer " + req_token},
+        url=req_url,
+    )
+    try:
+        response = urllib.request.urlopen(request)
+    except HTTPError as err:
+        raise ValueError(
+            "unexpected error fetching OIDC web identity value: " + str(err.read())
+        ) from err
+
+    # parse response, return `value` property - containing the desired web identity JWT
+    try:
+        token_data = json.load(response)
+    except json.decoder.JSONDecodeError as exc:
+        raise ValueError(
+            "unable to fetch OIDC web identity token - malformed HTTP response"
+        ) from exc
+
+    response.close()
+    return token_data.get("value", "")
+
+
+def assume_aws_role(role_arn: str, session_name: str):
+
+    web_identity_token = fetch_oidc_jwt()
+    # create STS client
+    sts_client = boto3.client("sts")
+
+    # call AssumeRoleWithWebIdentity to obtain temporary credentials
+    try:
+        response = sts_client.assume_role_with_web_identity(
+            RoleArn=role_arn,
+            RoleSessionName=session_name,
+            WebIdentityToken=web_identity_token,
+        )
+    except (BotoCoreError, ClientError) as err:
+        raise ValueError("unable to assume AWS role: " + str(err)) from err
+
+    # extract and return temporary credentials
+    credentials = response.get("Credentials", {})
+    if not credentials:
+        raise ValueError("unable to assume AWS role - no credentials returned")
+
+    return {
+        "aws_access_key_id": credentials.get("AccessKeyId", ""),
+        "aws_secret_access_key": credentials.get("SecretAccessKey", ""),
+        "aws_session_token": credentials.get("SessionToken", ""),
+    }

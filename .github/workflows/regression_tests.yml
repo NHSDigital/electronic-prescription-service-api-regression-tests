@@ -24,6 +24,7 @@ on:
           - PFP-APIGEE
           - PFP-AWS
           - PSU
+          - EPS-ASSIST-ME
         required: false
         default: EPS-FHIR
       id:

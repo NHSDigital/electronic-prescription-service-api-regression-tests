@@ -90,6 +90,11 @@ CIS2_USERS = {
     "prescriber": {"user_id": "656005750107", "role_id": "555254242105"},
     "dispenser": {"user_id": "555260695103", "role_id": "555265434108"},
 }
+
+AWS_ROLES = {
+    "eps-assist-me": {"role_id": os.getenv("EPS_ASSIST_ME_ROLE_ARN")},
+}
+
 LOGIN_USERS = {"user_id": "9449304130"}
 # Roles with Access: multiple | Roles without Access: multiple | Selected Role: No
 # this is not used
@@ -138,6 +143,7 @@ REPOS = {
     "PFP-APIGEE": "https://github.com/NHSDigital/prescriptions-for-patients",
     "PFP-AWS": "https://github.com/NHSDigital/prescriptionsforpatients",
     "PSU": "https://github.com/NHSDigital/eps-prescription-status-update-api",
+    "EPS-ASSIST-ME": "https://github.com/NHSDigital/eps-assist-me",
 }
 
 CERTIFICATE = os.getenv("CERTIFICATE")
