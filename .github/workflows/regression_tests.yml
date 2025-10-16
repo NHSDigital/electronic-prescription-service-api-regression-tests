@@ -24,6 +24,7 @@ on:
           - PFP-APIGEE
           - PFP-AWS
           - PSU
+          - EPS-ASSIST-ME
         required: false
         default: EPS-FHIR
       id:
@@ -88,6 +89,10 @@ jobs:
     runs-on: ubuntu-22.04
     environment: ${{ inputs.environment }}
     needs: [regression_tests]
+    permissions:
+      id-token: write
+      contents: read
+      packages: read
     strategy:
       fail-fast: false
       matrix:
@@ -181,6 +186,7 @@ jobs:
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           JWT_KID: ${{ secrets.JWT_KID }}
           JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
+          EPS_ASSIST_ME_ROLE_ARN: ${{ secrets.EPS_ASSIST_ME_ROLE_ARN }}
         run: |
           export CPT_FHIR_CLIENT_ID="$CPT_FHIR_CLIENT_ID"
           export CPT_FHIR_CLIENT_SECRET="$CPT_FHIR_CLIENT_SECRET"
@@ -203,6 +209,7 @@ jobs:
           export JWT_KID="$JWT_KID"
           export JWT_PRIVATE_KEY="$JWT_PRIVATE_KEY"
           export PULL_REQUEST_ID="$PULL_REQUEST_ID"
+          export EPS_ASSIST_ME_ROLE_ARN="$EPS_ASSIST_ME_ROLE_ARN"
           echo Pull request ID = "$PULL_REQUEST_ID"
           case "$MATRIX_TAG" in
             multiple_access)

@@ -3,6 +3,8 @@ from behave import given, when, then  # pyright: ignore [reportAttributeAccessIs
 from methods.shared import common
 from methods.api.common_api_methods import request_ping
 from methods.api.common_api_methods import request_metadata
+
+from features.environment import AWS_ROLES
 from methods.shared.common import assert_that
 from playwright.sync_api import Route
 
@@ -185,6 +187,17 @@ def i_see_commit_id_in_response(context):
 @then("I can see the ping information in the response")
 def i_can_see_the_ping_information(context):
     i_see_version_in_response(context)
+
+
+@given("I am authenticated with AWS for eps-assist-me")
+def step_given(context):
+    product = "eps-assist-me"
+    role_arn = AWS_ROLES[product]["role_id"]
+    if role_arn is None:
+        raise ValueError(
+            f"Role ARN for '{product}' is not set in environment variables"
+        )
+    common.assume_aws_role(role_arn=role_arn, session_name="regression_tests")
 
 
 @then("the {code:d} error occurs")
