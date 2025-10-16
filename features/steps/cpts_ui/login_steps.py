@@ -13,6 +13,33 @@ from features.environment import (
 
 from .home_steps import goto_page
 
+###############################################################################
+# Helper functions to retry login
+###############################################################################
+
+
+def login(context, user_id):
+    context.execute_steps("given I am on the login page")
+    environment = context.config.userdata["env"].lower()
+    # for qa environment we need to click the button to login
+    # for other environments we auto redirect to mock login
+    if environment == "internal-qa":
+        context.active_page.get_by_role("button", name="Log in with mock CIS2").click()
+    context.active_page.get_by_label("Username").fill(user_id)
+    context.active_page.get_by_role("button", name="Sign In").click()
+
+    context.execute_steps("When the login has finished")
+
+
+def login_with_retries(context, user_id, max_retries=5):
+    for attempt in range(1, max_retries + 1):
+        try:
+            login(context, user_id)
+            break
+        except Exception as e:
+            if attempt == max_retries:
+                raise RuntimeError("Login failed after 5 attempts") from e
+
 
 ###############################################################################
 # GIVEN
@@ -28,13 +55,10 @@ def login_no_role(context):
 
 
 @given("I am logged in as a user with a single access role")
+@when("I am logged in as a user with a single access role")
+@then("I am logged in as a user with a single access role")
 def login_single_role(context):
     context.execute_steps("when I log in as a user with a single access role")
-
-
-@given("I am logged in as a user with multiple access roles")
-def login_multiple_access_roles(context):
-    context.execute_steps("when I log in as a user with multiple access roles")
 
 
 @given("I am logged in as a user with only roles that do not have access")
@@ -56,32 +80,10 @@ def login_single_role_with_access_multiple_without(context):
     )
 
 
-###############################################################################
-# Helper functions to retry login
-###############################################################################
-
-
-def login(context, user_id):
-    context.execute_steps("given I am on the login page")
-    environment = context.config.userdata["env"].lower()
-    # for qa environment we need to click the button to login
-    # for other environments we auto redirect to mock login
-    if environment == "internal-qa":
-        context.page.get_by_role("button", name="Log in with mock CIS2").click()
-    context.page.get_by_label("Username").fill(user_id)
-    context.page.get_by_role("button", name="Sign In").click()
-
-    context.execute_steps("When the login has finished")
-
-
-def login_with_retries(context, user_id, max_retries=5):
-    for attempt in range(1, max_retries + 1):
-        try:
-            login(context, user_id)
-            break
-        except Exception as e:
-            if attempt == max_retries:
-                raise RuntimeError("Login failed after 5 attempts") from e
+@given("I am logged in as a user with multiple access roles")
+@when("I am logged in as a user with multiple access roles")
+def login_multiple_access_roles(context):
+    context.execute_steps("when I log in as a user with multiple access roles")
 
 
 ###############################################################################
@@ -158,7 +160,7 @@ def the_login_is_finished(context):
         ]
         return url in valid_urls
 
-    context.page.wait_for_url(logged_in_urls, wait_until="load", timeout=2000)
+    context.active_page.wait_for_url(logged_in_urls, wait_until="load", timeout=2000)
     context.execute_steps("then I am logged in")
 
 
@@ -171,7 +173,7 @@ def i_am_logged_in(context):
     period = 5  # 5 second polling delay
     mustend = time.time() + timeout
     while time.time() < mustend:
-        storage_state = context.browser.storage_state()
+        storage_state = context.active_browser_context.storage_state()
         for origin in storage_state.get("origins", []):
             for item in origin.get("localStorage", []):
                 if item.get("name") == "isSignedIn":
@@ -189,7 +191,7 @@ def i_am_logged_out(context):
     period = 5  # 5 second polling delay
     mustend = time.time() + timeout
     while time.time() < mustend:
-        storage_state = context.browser.storage_state()
+        storage_state = context.active_browser_context.storage_state()
         for origin in storage_state.get("origins", []):
             for item in origin.get("localStorage", []):
                 if item.get("name") == "isSignedIn":
