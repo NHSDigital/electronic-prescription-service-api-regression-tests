@@ -7,5 +7,5 @@ Feature: Timedout session protections prohibit activity
     Given I am logged in as a user with a single access role
     And I am on the search for a prescription page
     When the session expires because of automatic timeout
-    And the automatic period check occurs
+    And the automatic periodic check occurs
     Then I should see the timeout session logged out page
