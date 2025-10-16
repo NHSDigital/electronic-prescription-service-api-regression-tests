@@ -209,6 +209,7 @@ def fetch_oidc_jwt() -> str:
         req_token is not None
     ), "expected ACTIONS_ID_TOKEN_REQUEST_TOKEN environment variable not found"
 
+    req_url = req_url + "&audience=sts.amazonaws.com"
     # build HTTP request and execute
     request = urllib.request.Request(
         headers={"Authorization": "bearer " + req_token},
