@@ -89,6 +89,10 @@ jobs:
     runs-on: ubuntu-22.04
     environment: ${{ inputs.environment }}
     needs: [regression_tests]
+    permissions:
+      id-token: write
+      contents: read
+      packages: read
     strategy:
       fail-fast: false
       matrix:
