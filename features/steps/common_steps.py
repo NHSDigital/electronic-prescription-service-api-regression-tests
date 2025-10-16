@@ -121,8 +121,9 @@ def i_can_see_the_ping_information(context):
     i_see_version_in_response(context)
 
 
-@given("I am authenticated with AWS for {product}")
-def step_given(context, product):
+@given("I am authenticated with AWS for eps-assist-me")
+def step_given(context):
+    product = "eps-assist-me"
     role_arn = AWS_ROLES[product]["role_id"]
     if role_arn is None:
         raise ValueError(
