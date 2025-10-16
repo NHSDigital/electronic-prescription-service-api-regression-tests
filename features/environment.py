@@ -90,6 +90,11 @@ CIS2_USERS = {
     "prescriber": {"user_id": "656005750107", "role_id": "555254242105"},
     "dispenser": {"user_id": "555260695103", "role_id": "555265434108"},
 }
+
+AWS_ROLES = {
+    "eps-assist-me": {"role_id": os.getenv("EPS_ASSIST_ME_ROLE_ARN")},
+}
+
 LOGIN_USERS = {"user_id": "9449304130"}
 # Roles with Access: multiple | Roles without Access: multiple | Selected Role: No
 # this is not used
@@ -138,6 +143,7 @@ REPOS = {
     "PFP-APIGEE": "https://github.com/NHSDigital/prescriptions-for-patients",
     "PFP-AWS": "https://github.com/NHSDigital/prescriptionsforpatients",
     "PSU": "https://github.com/NHSDigital/eps-prescription-status-update-api",
+    "EPS-ASSIST-ME": "https://github.com/NHSDigital/eps-assist-me",
 }
 
 CERTIFICATE = os.getenv("CERTIFICATE")
@@ -241,8 +247,14 @@ def before_scenario(context, scenario):
         global _playwright  # noqa: F824
         global _page  # noqa:
         expect.set_options(timeout=10_000)
-        context.browser = context.browser.new_context()
-        context.browser.add_init_script(
+        # Playwright supports browser contexts that allow for isolated instances
+        # See: https://playwright.dev/python/docs/browser-contexts
+        context.primary_context = context.browser.new_context()
+        context.concurrent_context = context.browser.new_context()
+
+        # Set primary context as default
+        # Concurrent context usage is only need in concurrent scenarios
+        context.primary_context.add_init_script(
             """
             window.__copiedText = "";
             navigator.clipboard.writeText = (text) => {
@@ -251,21 +263,47 @@ def before_scenario(context, scenario):
             };
         """
         )
-        context.browser.tracing.start(screenshots=True, snapshots=True, sources=True)
-        context.page = context.browser.new_page()
-        _page = context.page
-        set_page(context, _page)
+        context.primary_context.tracing.start(
+            screenshots=True, snapshots=True, sources=True
+        )
+
+        context.concurrent_context.add_init_script(
+            """
+            window.__copiedText = "";
+            navigator.clipboard.writeText = (text) => {
+                window.__copiedText = text;
+                return Promise.resolve();
+            };
+        """
+        )
+
+        if "concurrency" in scenario.effective_tags:
+            # Don't create a trace file if the concurrent browser context isn't being used in the scenario
+            context.concurrent_context.tracing.start(
+                screenshots=True, snapshots=True, sources=True, title="concurrent"
+            )
+
+        context.primary_page = context.primary_context.new_page()
+        context.concurrent_page = context.concurrent_context.new_page()
+
+        # Default active context
+        context.active_browser_context = context.primary_context
+        context.active_page = context.primary_page
+
+        if "fake_time" in scenario.effective_tags:
+            # Install playwright mock clock for use in tests later
+            context.primary_page.clock.install()
+            context.concurrent_page.clock.install()
 
 
 def after_scenario(context, scenario):
     product = context.config.userdata["product"].upper()
     if product == "CPTS-UI":
-        if hasattr(context.browser, "tracing"):
-            context.browser.tracing.stop(path="/tmp/trace.zip")
-        if hasattr(context, "page"):
+        if hasattr(context, "primary_context"):
+            context.primary_context.tracing.stop(path="/tmp/trace.zip")
             if scenario.status == "failed":
                 allure.attach(
-                    context.page.screenshot(),
+                    context.primary_page.screenshot(),
                     attachment_type=allure.attachment_type.PNG,
                 )
                 allure.attach.file(
@@ -273,9 +311,21 @@ def after_scenario(context, scenario):
                     name="playwright_failure_trace.zip",
                     attachment_type="application/zip",
                 )
-            if context.page is not None:
-                global _page  # noqa: F824
-                _page.close()
+        if (
+            hasattr(context, "concurrent_context")
+            and "concurrency" in scenario.effective_tags
+        ):
+            context.concurrent_context.tracing.stop(path="/tmp/trace_concurrent.zip")
+            if scenario.status == "failed":
+                allure.attach(
+                    context.concurrent_page.screenshot(),
+                    attachment_type=allure.attachment_type.PNG,
+                )
+                allure.attach.file(
+                    "/tmp/trace_concurrent.zip",
+                    name="playwright_failure_trace_concurrent.zip",
+                    attachment_type="application/zip",
+                )
 
 
 def before_all(context):
@@ -433,8 +483,6 @@ def after_all(context):
         if os.path.exists(directory_path) and os.path.isdir(directory_path):
             print(f"Directory '{directory_path}' exists. Deleting...")
             shutil.rmtree(directory_path)
-        if "_page" in vars() or "_page" in globals():
-            _page.close()
 
 
 def setup_logging(level: int = logging.INFO):
@@ -471,11 +519,3 @@ def write_properties_file(file_path, properties_dict):
     with open(file_path, "w") as file:
         for key, value in properties_dict.items():
             file.write(f"{key}={value}\n")
-
-
-def get_page(self):
-    return self._page
-
-
-def set_page(self, _page):
-    self._page = _page
