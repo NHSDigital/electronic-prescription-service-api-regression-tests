@@ -20,6 +20,6 @@ jobs:
     uses: ./.github/workflows/regression_tests.yml
     with:
       tags: "@ping"
-      environment: DEV
+      environment: INTERNAL-DEV
       product: EPS-FHIR
       id: "Pull Request Basic Regression Tests"
