@@ -264,6 +264,7 @@ jobs:
 
       - name: Place matrix artifacts in allure results
         run: |
+          ls -la downloaded_artifacts
           mkdir -p allure-results
           rsync -av downloaded_artifacts/*/* allure-results/
           rsync -av downloaded_artifacts/*/environment.properties allure-results/
