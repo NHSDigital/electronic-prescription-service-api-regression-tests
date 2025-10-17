@@ -43,6 +43,39 @@ on:
         type: boolean
         description: "Generate a report for successful test runs"
         default: false
+  workflow_call:
+    inputs:
+      tags:
+        description: "Test scenario tags. If you want to specify multiple tags, you should separate them with a colon :"
+        required: true
+        type: string
+      environment:
+        description: "Environment to run tests against"
+        type: string
+        default: "DEV"
+      product:
+        description: "The product we are testing"
+        type: string
+        default: EPS-FHIR
+      id:
+        description: "Unique run identifier (Do not change this)"
+        required: false
+        type: string
+        default: "Manually Triggered Run"
+      pull_request_id:
+        description: "The ID of the pull request. This should be in the format pr-xxxx where xxxx is the pull request id"
+        required: false
+        type: string
+        default: ""
+      github_tag:
+        description: "The github tag to run the test pack from"
+        required: false
+        type: string
+        default: "main"
+      generate_report:
+        type: boolean
+        description: "Generate a report for successful test runs"
+        default: false
 
 jobs:
   regression_tests:

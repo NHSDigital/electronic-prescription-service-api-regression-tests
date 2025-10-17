@@ -12,6 +12,14 @@ jobs:
     uses: NHSDigital/eps-workflow-quality-checks/.github/workflows/quality-checks.yml@v4.1.3
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-  
+
   pr_title_format_check:
-    uses: ./.github/workflows/pr_title_check.yml
+    uses: NHSDigital/eps-workflow-semantic-release/.github/workflows/pr_title_check.yml@1.0.0
+
+  run_basic_regression_test:
+    uses: ./.github/workflows/regression_tests.yml
+    with:
+      tags: "@ping"
+      environment: DEV
+      product: EPS-FHIR
+      id: "Pull Request Basic Regression Tests"
