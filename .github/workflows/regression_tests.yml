@@ -96,15 +96,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        tag:
-          [
-            "multiple_access",
-            "multiple_access_pre_selected",
-            "single_access",
-            "multiple_roles_single_access",
-            "multiple_roles_no_access",
-            "others",
-          ]
+        tag: ${{ inputs.product == 'EPS-ASSIST-ME' && fromJson('["eps_assist_me"]') || fromJson('["multiple_access", "multiple_access_pre_selected", "single_access", "multiple_roles_single_access", "multiple_roles_no_access", "others"]') }}
     steps:
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
@@ -141,6 +133,14 @@ jobs:
       - name: Install Dependencies
         if: steps.cache-venv.outputs.cache-hit != 'true'
         run: make install
+
+      - name: Configure AWS credentials for EPS-ASSIST-ME
+        if: inputs.product == 'EPS-ASSIST-ME'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.EPS_ASSIST_ME_ROLE_ARN }}
+          role-session-name: regression-tests-${{ github.run_id }}
+          aws-region: eu-west-2
 
       - name: App product to APP for PR
         continue-on-error: true
@@ -229,6 +229,9 @@ jobs:
               ;;
             others)
               TAGS="~@multiple_access:~@multiple_access_pre_selected:~@single_access:~@multiple_roles_single_access:~@multiple_roles_no_access:${INPUT_TAG}"
+              ;;
+            eps_assist_me)
+              TAGS="@eps_assist_me:${INPUT_TAG}"
               ;;
             *)
               echo "Unknown MATRIX_TAG value: $MATRIX_TAG"
