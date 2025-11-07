@@ -66,4 +66,4 @@ Feature: Role selection page renders roles properly when logged in
   Scenario: URL navigation bypass blocked when no role selected
       Given I am logged in as a user with multiple access roles
       When I directly navigate to "/site/prescription-list-current"
-      Then I should be redirected to "/site/select-your-role"
+      Then I should be redirected to "/site/select-active-session"
