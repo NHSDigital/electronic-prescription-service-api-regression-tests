@@ -25,8 +25,8 @@ class SelectYourRole:
         self.first_row_role_name = page.get_by_test_id("change-role-role-cell").first
 
         # Role cards - roles with access
-        self.roles_with_access_cards = page.locator(".nhsuk-card--clickable")
-        self.first_role_card = self.roles_with_access_cards.first
+        self.roles_with_access_cards = page.get_by_test_id("eps-card")
+        self.first_role_card = page.locator(".eps-card__org-focus-area").first
         self.role_card_headings = page.locator(".nhsuk-card__heading")
         self.role_card_descriptions = page.locator(".eps-card__roleName")
 
