@@ -291,7 +291,7 @@ jobs:
     if: always()
     steps:
       - name: Download matrix artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           path: downloaded_artifacts
 
@@ -344,7 +344,7 @@ jobs:
         run: |
           make install
       - name: download
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: allure-results
           path: allure-results
