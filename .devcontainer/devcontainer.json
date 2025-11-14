@@ -2,20 +2,19 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/ubuntu
 {
   "name": "Ubuntu",
-  // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
   "build": {
     "dockerfile": "Dockerfile",
     "context": "..",
-    "args": {}
+    "args": {
+      "DOCKER_GID": "${env:DOCKER_GID:}"
+    }
   },
-  "runArgs": [
-    "--network=host"
-  ],
   "mounts": [
+    "source=${env:HOME}${env:USERPROFILE}/.aws,target=/home/vscode/.aws,type=bind",
     "source=${env:HOME}${env:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind",
-    "source=${env:HOME}${env:USERPROFILE}/.gnupg,target=/home/vscode/.gnupg,type=bind"
+    "source=${env:HOME}${env:USERPROFILE}/.gnupg,target=/home/vscode/.gnupg,type=bind",
+    "source=${env:HOME}${env:USERPROFILE}/.gitconfig,target=/home/vscode/.gitconfig,type=bind"
   ],
-  // Features to add to the dev container. More info: https://containers.dev/features.
   "features": {
     "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {
       "version": "latest",
@@ -24,64 +23,61 @@
     },
     "ghcr.io/devcontainers/features/github-cli:1": {}
   },
+  "remoteEnv": { "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}/" },
   "customizations": {
     "vscode": {
       "extensions": [
+        "AmazonWebServices.aws-toolkit-vscode",
         "redhat.vscode-yaml",
         "ms-python.python",
+        "ms-python.black-formatter",
+        "ms-python.flake8",
+        "ms-python.pylint",
         "eamodio.gitlens",
         "github.vscode-pull-request-github",
-        "orta.vscode-jest",
         "42crunch.vscode-openapi",
         "mermade.openapi-lint",
-        "rvest.vs-code-prettier-eslint",
-        "dbaeumer.vscode-eslint",
         "lfm.vscode-makefile-term",
         "GrapeCity.gc-excelviewer",
         "redhat.vscode-xml",
         "streetsidesoftware.code-spell-checker",
         "timonwong.shellcheck",
         "github.vscode-github-actions",
-        "ms-python.pylint",
-        "ms-python.black-formatter",
         "jimasp.behave-vsc",
         "Gruntfuggly.todo-tree"
       ],
       "settings": {
-        "python.defaultInterpreterPath": "/workspaces/electronic-prescription-service-api-regression-tests/.venv/bin/python",
+        "python.defaultInterpreterPath": "/home/vscode/.asdf/shims/python",
         "python.analysis.autoSearchPaths": true,
         "python.analysis.extraPaths": [],
         "python.testing.unittestEnabled": false,
-        "python.testing.pytestEnabled": false,
-        "python.linting.enabled": true, // required to format on save
-        "python.experiments.optOutFrom": [
-          "pythonTestAdapter"
-        ],
-        "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
-        "editor.formatOnPaste": false, // required
-        "editor.formatOnType": false, // required
-        "editor.formatOnSave": true, // optional
+        "python.testing.pytestEnabled": true,
+        "python.linting.pylintEnabled": true,
+        "python.linting.flake8Enabled": true,
+        "python.linting.enabled": true,
+        "python.formatting.provider": "black",
+        "black-formatter.args": ["--line-length=120"],
+        "[python]": {
+          "editor.defaultFormatter": "ms-python.black-formatter"
+        },
+        "editor.formatOnPaste": false,
+        "editor.formatOnType": false,
+        "editor.formatOnSave": true,
         "editor.formatOnSaveMode": "file",
         "cSpell.words": [
           "fhir",
           "Formik",
           "pino",
-          "serialisation"
-        ]
+          "serialisation",
+          "behave",
+          "gherkin",
+          "epsam",
+          "bedrock",
+          "allure"
+        ],
+        "python.experiments.optOutFrom": ["pythonTestAdapter"]
       }
     }
   },
-  "remoteEnv": {
-    "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
-  },
-  "postCreateCommand": "rm -f ~/.docker/config.json; git config --global --add safe.directory /workspaces/electronic-prescription-service-api-regression-tests; make install; docker build -f https://raw.githubusercontent.com/NHSDigital/eps-workflow-quality-checks/refs/heads/main/dockerfiles/nhsd-git-secrets.dockerfile -t git-secrets . && poetry run pre-commit install --install-hooks -f"
-  // "features": {},
-  // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  // "forwardPorts": [],
-  // Use 'postCreateCommand' to run commands after the container is created.
-  // "postCreateCommand": ""
-  // Configure tool-specific properties.
-  // "customizations": {},
-  // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-  // "remoteUser": "root"
+  "postCreateCommand": "rm -f ~/.docker/config.json; git config --global --add safe.directory /workspaces/electronic-prescription-service-api-regression-tests; source ~/.bashrc; export PATH=\"/home/vscode/.asdf/shims:$PATH\"; make install"
 }

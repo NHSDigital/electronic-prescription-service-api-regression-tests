@@ -39,7 +39,7 @@ boto3 = "^1.40.58"
 pre-commit = "^4.3.0"
 
 [tool.pyright]
-include = ["src"]
+include = ["features", "methods", "messages", "scripts", "pages", "utils"]
 exclude = ["**/.*",
     "**/__pycache__",
     "**/venv",
