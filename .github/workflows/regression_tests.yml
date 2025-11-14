@@ -274,7 +274,7 @@ jobs:
           poetry run python ./runner.py --env="$ENVIRONMENT" --product="$PRODUCT" --tags="$TAGS"
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: allure-results-${{ matrix.tag }}
           path: allure-results
@@ -302,7 +302,7 @@ jobs:
           rsync -av downloaded_artifacts/environment.properties allure-results/
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: allure-results
           path: allure-results
