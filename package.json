@@ -1,10 +1,4 @@
 {
-  "devDependencies": {
-    "@semantic-release/changelog": "^6.0.3",
-    "@semantic-release/release-notes-generator": "^14.1.0",
-    "conventional-changelog-eslint": "^6.0.0",
-    "semantic-release": "^25.0.1"
-  },
   "dependencies": {
     "@playwright/test": "^1.56.1",
     "npm": "^11.6.2"
