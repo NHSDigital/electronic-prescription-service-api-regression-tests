@@ -15,17 +15,29 @@ from methods.shared.common import assert_that
 lambda_client = None
 
 
-def get_lambda_client():
+def get_lambda_client(credentials):
     """initialise lambda client with assumed role credentials"""
     global lambda_client
     if lambda_client is None:
-        lambda_client = boto3.client("lambda", region_name="eu-west-2")
+        lambda_client = boto3.client(
+            "lambda",
+            region_name="eu-west-2",
+            aws_access_key_id=credentials["aws_access_key_id"],
+            aws_secret_access_key=credentials["aws_secret_access_key"],
+            aws_session_token=credentials["aws_session_token"],
+        )
     return lambda_client
 
 
 def get_lambda_function_name(context) -> str:
     """construct lambda function name from environment context"""
-    client = boto3.client("cloudformation", region_name="eu-west-2")
+    client = boto3.client(
+        "cloudformation",
+        region_name="eu-west-2",
+        aws_access_key_id=context.aws_credentials["aws_access_key_id"],
+        aws_secret_access_key=context.aws_credentials["aws_secret_access_key"],
+        aws_session_token=context.aws_credentials["aws_session_token"],
+    )
     paginator = client.get_paginator("list_exports")
 
     for page in paginator.paginate():
@@ -37,7 +49,7 @@ def get_lambda_function_name(context) -> str:
 
 def invoke_lambda_direct(context, payload):
     """invoke lambda with direct invocation payload"""
-    client = get_lambda_client()
+    client = get_lambda_client(credentials=context.aws_credentials)
     function_name = get_lambda_function_name(context)
 
     response = client.invoke(
