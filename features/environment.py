@@ -162,6 +162,10 @@ EPS_FHIR_DISPENSING_SUFFIX = "fhir-dispensing"
 PFP_SUFFIX = "prescriptions-for-patients"
 PSU_SUFFIX = "prescription-status-update"
 
+EPSAM_SLACKBOT_FUNCTION_EXPORT_NAME = (
+    "epsam{{aws_pull_request_id}}:lambda:SlackBot:FunctionName"
+)
+
 
 class ConflictException(Exception):
     pass
@@ -387,6 +391,17 @@ def before_all(context):
     print("EPS-DISPENSING: ", context.eps_fhir_dispensing_base_url)
     print("PFP: ", context.pfp_base_url)
     print("PSU: ", context.psu_base_url)
+
+
+def get_function_export_name(context, env):
+    if PULL_REQUEST_ID is not None:
+        pull_request_id = PULL_REQUEST_ID.lower()
+        context.espamSlackBotFunctionName = EPSAM_SLACKBOT_FUNCTION_EXPORT_NAME.replace(
+            "{{aws_pull_request_id}}", f"-{pull_request_id}"
+        )
+    context.espamSlackBotFunctionName = EPSAM_SLACKBOT_FUNCTION_EXPORT_NAME.replace(
+        "{{aws_pull_request_id}}", ""
+    )
 
 
 def get_url_with_pr(context, env, product):

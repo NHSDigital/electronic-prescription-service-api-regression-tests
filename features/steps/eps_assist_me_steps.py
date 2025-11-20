@@ -19,16 +19,20 @@ def get_lambda_client():
     """initialise lambda client with assumed role credentials"""
     global lambda_client
     if lambda_client is None:
-        lambda_client = boto3.client("lambda")
+        lambda_client = boto3.client("lambda", region_name="eu-west-2")
     return lambda_client
 
 
 def get_lambda_function_name(context) -> str:
     """construct lambda function name from environment context"""
-    env = getattr(context, "env", "dev").lower()
-    if env == "dev":
-        return "epsam-SlackBotFunction"
-    return f"epsam-{env}-SlackBotFunction"
+    client = boto3.client("cloudformation")
+    paginator = client.get_paginator("list_exports")
+
+    for page in paginator.paginate():
+        for export in page["Exports"]:
+            if export["Name"] == context.espamSlackBotFunctionName:
+                return export["Value"]
+    return ""
 
 
 def invoke_lambda_direct(context, payload):
