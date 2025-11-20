@@ -25,7 +25,7 @@ def get_lambda_client():
 
 def get_lambda_function_name(context) -> str:
     """construct lambda function name from environment context"""
-    client = boto3.client("cloudformation")
+    client = boto3.client("cloudformation", region_name="eu-west-2")
     paginator = client.get_paginator("list_exports")
 
     for page in paginator.paginate():
