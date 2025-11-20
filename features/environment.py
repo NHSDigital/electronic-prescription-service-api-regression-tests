@@ -165,6 +165,7 @@ PSU_SUFFIX = "prescription-status-update"
 EPSAM_SLACKBOT_FUNCTION_EXPORT_NAME = (
     "epsam{{aws_pull_request_id}}:lambda:SlackBot:FunctionName"
 )
+EPSAM_STACK_NAME = "epsam{{aws_pull_request_id}}"
 
 
 class ConflictException(Exception):
@@ -396,9 +397,16 @@ def before_all(context):
 def get_function_export_name(context, env):
     if PULL_REQUEST_ID is not None:
         pull_request_id = PULL_REQUEST_ID.lower()
+        context.espamCloudFormationStackName = EPSAM_STACK_NAME.replace(
+            "{{aws_pull_request_id}}", f"-{pull_request_id}"
+        )
         context.espamSlackBotFunctionName = EPSAM_SLACKBOT_FUNCTION_EXPORT_NAME.replace(
             "{{aws_pull_request_id}}", f"-{pull_request_id}"
         )
+
+    context.espamCloudFormationStackName = EPSAM_STACK_NAME.replace(
+        "{{aws_pull_request_id}}", ""
+    )
     context.espamSlackBotFunctionName = EPSAM_SLACKBOT_FUNCTION_EXPORT_NAME.replace(
         "{{aws_pull_request_id}}", ""
     )

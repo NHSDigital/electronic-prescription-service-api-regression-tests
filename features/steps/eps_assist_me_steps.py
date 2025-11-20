@@ -39,7 +39,7 @@ def get_lambda_function_name(context) -> str:
         aws_session_token=context.aws_credentials["aws_session_token"],
     )
 
-    response = client.describe_stacks()  # stack_name should be passed in context
+    response = client.describe_stacks(StackName=context.espamCloudFormationStackName)
     stacks = response.get("Stacks", [])
     outputs = stacks[0].get("Outputs", [])
     for output in outputs:
