@@ -30,7 +30,7 @@ def get_lambda_client(credentials):
 
 
 def get_lambda_function_name(context) -> str:
-    """construct lambda function name from environment context"""
+    """Construct lambda function name from environment context using DescribeStacks"""
     client = boto3.client(
         "cloudformation",
         region_name="eu-west-2",
@@ -38,12 +38,13 @@ def get_lambda_function_name(context) -> str:
         aws_secret_access_key=context.aws_credentials["aws_secret_access_key"],
         aws_session_token=context.aws_credentials["aws_session_token"],
     )
-    paginator = client.get_paginator("list_exports")
 
-    for page in paginator.paginate():
-        for export in page["Exports"]:
-            if export["Name"] == context.espamSlackBotFunctionName:
-                return export["Value"]
+    response = client.describe_stacks()  # stack_name should be passed in context
+    stacks = response.get("Stacks", [])
+    outputs = stacks[0].get("Outputs", [])
+    for output in outputs:
+        if output.get("ExportName") == context.espamSlackBotFunctionName:
+            return output.get("OutputValue", "")
     return ""
 
 
