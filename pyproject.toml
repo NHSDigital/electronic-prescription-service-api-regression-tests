@@ -23,7 +23,7 @@ pre-commit = "^4.3.0"
 isort = "^6.1.0"
 cryptography = "^46.0.3"
 python-dateutil = "^2.9.0.post0"
-python-dotenv = "^1.1.1"
+python-dotenv = "^1.2.1"
 requests-oauthlib = "^2.0.0"
 nhs-number-generator = {git = "https://github.com/Iain-S/nhs_number_generator.git"}
 pyright = "^1.1.407"
