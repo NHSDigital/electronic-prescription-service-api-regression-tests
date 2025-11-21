@@ -33,13 +33,16 @@ jobs:
           echo "TAG_FORMAT=$TAG_FORMAT" >> "$GITHUB_OUTPUT"
  
   quality_checks:
-    uses: NHSDigital/eps-common-workflows/.github/workflows/quality-checks.yml@ba86b0c6a2a3d4b87398e538e410cec90f57133d
+    uses: NHSDigital/eps-common-workflows/.github/workflows/quality-checks.yml@dev_container_build
     needs: [get_asdf_version]
     with:
       asdfVersion: ${{ needs.get_asdf_version.outputs.asdf_version }}
       reinstall_poetry: true
+      dev_container_ecr: dev-container-quality-checks
+      dev_container_image_tag: foo
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      PUSH_IMAGE_ROLE: ${{ secrets.DEV_CONTAINER_PUSH_IMAGE_ROLE }}
 
   pr_title_format_check:
     uses: NHSDigital/eps-common-workflows/.github/workflows/pr_title_check.yml@ba86b0c6a2a3d4b87398e538e410cec90f57133d
