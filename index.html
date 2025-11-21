@@ -94,6 +94,12 @@ Given the prescription has been cancelled
 
 Given I successfully prepare a {nomination} {prescription_type} prescription
 
+Given A regression test suite is executed
+    initialise regression test context
+
+Given A regression test with multiple related queries
+    prepare context for session continuity testing
+
 Given I am authorised to send prescription updates
 
 When I click on the change role summary expander
@@ -297,6 +303,12 @@ When I withdraw the dispense notification
 When I make a {validity} request to the {product} validator endpoint with show validation set to {show_validation}
 
 When I make a request with file {filename} to the {product} validator endpoint
+
+When The test invokes the slackbot lambda with a direct invocation event
+    perform basic direct invocation test
+
+When Tests are run with session_id continuity
+    execute multiple queries maintaining session context
 
 When I am authenticated with {app} app
 
@@ -639,6 +651,12 @@ Then the validator response has error with diagnostic containing {diagnostic}
 Then the validator response matches {filename}
 
 Then the signing algorithm is {algorithm}
+
+Then The lambda returns a structured AI response matching expected format
+    validate complete response structure compliance
+
+Then Lambda maintains conversation context across invocations
+    verify session continuity maintained between queries
 
 Then I can see my prescription
 
