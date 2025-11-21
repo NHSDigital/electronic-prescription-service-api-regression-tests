@@ -363,6 +363,8 @@ def before_all(context):
             select_apigee_base_url(env), CPTS_FHIR_SUFFIX
         )
 
+        get_function_export_name(context, env)
+
         if PULL_REQUEST_ID and env != "LOCALHOST":
             print(f"--- Using pull request id: '{PULL_REQUEST_ID}'")
             pull_request_id = PULL_REQUEST_ID.lower()
