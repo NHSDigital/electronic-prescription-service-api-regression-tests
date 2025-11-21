@@ -31,6 +31,7 @@ jobs:
     uses: NHSDigital/eps-common-workflows/.github/workflows/quality-checks.yml@ba86b0c6a2a3d4b87398e538e410cec90f57133d
     with:
       asdfVersion: ${{ needs.get_asdf_version.outputs.asdf_version }}
+      reinstall_poetry: true
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 

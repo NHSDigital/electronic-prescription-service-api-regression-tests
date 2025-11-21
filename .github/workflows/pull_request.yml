@@ -37,6 +37,7 @@ jobs:
     needs: [get_asdf_version]
     with:
       asdfVersion: ${{ needs.get_asdf_version.outputs.asdf_version }}
+      reinstall_poetry: true
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
