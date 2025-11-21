@@ -31,6 +31,9 @@ def get_lambda_client(credentials):
 
 def get_lambda_function_name(context) -> str:
     """Construct lambda function name from environment context using DescribeStacks"""
+    print(f"DEBUG: Stack name: '{context.espamCloudFormationStackName}'")
+    print(f"DEBUG: Looking for export name: '{context.espamSlackBotFunctionName}'")
+
     client = boto3.client(
         "cloudformation",
         region_name="eu-west-2",
@@ -39,13 +42,58 @@ def get_lambda_function_name(context) -> str:
         aws_session_token=context.aws_credentials["aws_session_token"],
     )
 
-    response = client.describe_stacks(StackName=context.espamCloudFormationStackName)
-    stacks = response.get("Stacks", [])
-    outputs = stacks[0].get("Outputs", [])
-    for output in outputs:
-        if output.get("ExportName") == context.espamSlackBotFunctionName:
-            return output.get("OutputValue", "")
-    return ""
+    try:
+        response = client.describe_stacks(
+            StackName=context.espamCloudFormationStackName
+        )
+        stacks = response.get("Stacks", [])
+        print(f"DEBUG: Found {len(stacks)} stack(s)")
+
+        if not stacks:
+            print("DEBUG: No stacks found!")
+            return ""
+
+        outputs = stacks[0].get("Outputs", [])
+        print(f"DEBUG: Found {len(outputs)} output(s)")
+
+        available_exports = [output.get("ExportName") for output in outputs]
+        print(f"DEBUG: Available export names: {available_exports}")
+
+        for output in outputs:
+            export_name = output.get("ExportName")
+            if export_name == context.espamSlackBotFunctionName:
+                function_name = output.get("OutputValue", "")
+                print(f"DEBUG: Found matching export! Function name: '{function_name}'")
+                return function_name
+
+        print(
+            f"DEBUG: No matching export found for '{context.espamSlackBotFunctionName}'"
+        )
+        print("DEBUG: Falling back to environment-based function naming")
+        return get_fallback_function_name(context)
+
+    except Exception as e:
+        print(f"DEBUG: Error describing stacks: {e}")
+        print("DEBUG: Falling back to environment-based function naming")
+        return get_fallback_function_name(context)
+
+
+def get_fallback_function_name(context) -> str:
+    """Fallback function name construction when CloudFormation lookup fails"""
+    env = getattr(context, "env", None)
+    if not env:
+        env = getattr(context, "config", {}).get("userdata", {}).get("env", "dev")
+
+    env = env.lower()
+    print(f"DEBUG: Using environment '{env}' for fallback naming")
+
+    if env == "dev" or env == "localhost":
+        function_name = "epsam-SlackBotFunction"
+    else:
+        function_name = f"epsam-{env}-SlackBotFunction"
+
+    print(f"DEBUG: Fallback function name: '{function_name}'")
+    return function_name
 
 
 def invoke_lambda_direct(context, payload):

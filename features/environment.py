@@ -405,13 +405,13 @@ def get_function_export_name(context, env):
         context.espamSlackBotFunctionName = EPSAM_SLACKBOT_FUNCTION_EXPORT_NAME.replace(
             "{{aws_pull_request_id}}", f"-{pull_request_id}"
         )
-
-    context.espamCloudFormationStackName = EPSAM_STACK_NAME.replace(
-        "{{aws_pull_request_id}}", ""
-    )
-    context.espamSlackBotFunctionName = EPSAM_SLACKBOT_FUNCTION_EXPORT_NAME.replace(
-        "{{aws_pull_request_id}}", ""
-    )
+    else:
+        context.espamCloudFormationStackName = EPSAM_STACK_NAME.replace(
+            "{{aws_pull_request_id}}", ""
+        )
+        context.espamSlackBotFunctionName = EPSAM_SLACKBOT_FUNCTION_EXPORT_NAME.replace(
+            "{{aws_pull_request_id}}", ""
+        )
 
 
 def get_url_with_pr(context, env, product):

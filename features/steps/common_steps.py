@@ -197,9 +197,29 @@ def step_given(context):
         raise ValueError(
             f"Role ARN for '{product}' is not set in environment variables"
         )
+
+    # Debug: Check context state before AWS authentication
+    print(f"DEBUG: Role ARN: {role_arn}")
+    print(
+        f"DEBUG: Has espamCloudFormationStackName: {hasattr(context, 'espamCloudFormationStackName')}"
+    )
+    print(
+        f"DEBUG: Has espamSlackBotFunctionName: {hasattr(context, 'espamSlackBotFunctionName')}"
+    )
+
+    if hasattr(context, "espamCloudFormationStackName"):
+        print(
+            f"DEBUG: espamCloudFormationStackName: '{context.espamCloudFormationStackName}'"
+        )
+    if hasattr(context, "espamSlackBotFunctionName"):
+        print(
+            f"DEBUG: espamSlackBotFunctionName: '{context.espamSlackBotFunctionName}'"
+        )
+
     context.aws_credentials = common.assume_aws_role(
         role_arn=role_arn, session_name="regression_tests"
     )
+    print("DEBUG: AWS credentials obtained successfully")
 
 
 @then("the {code:d} error occurs")
