@@ -298,6 +298,7 @@ jobs:
         with:
           path: downloaded_artifacts
           pattern: allure-results-*
+          merge-multiple: true
 
       - name: Place matrix artifacts in allure results
         run: |
