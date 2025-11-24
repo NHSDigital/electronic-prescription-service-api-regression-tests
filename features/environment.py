@@ -4,6 +4,7 @@ import shutil
 import sys
 import uuid
 from behave.model import Scenario
+from behave.contrib.scenario_autoretry import patch_scenario_with_autoretry
 from dotenv import load_dotenv
 from playwright.sync_api import sync_playwright, expect
 from methods.api import eps_api_methods
@@ -232,6 +233,9 @@ def before_feature(context, feature):
     if "skip-sandbox" in feature.tags and "sandbox" in environment:
         feature.skip("Marked with @skip-sandbox")
         return
+    if environment == "internal-dev":
+        for scenario in feature.walk_scenarios():
+            patch_scenario_with_autoretry(scenario, max_attempts=3)
 
 
 def before_scenario(context, scenario):
