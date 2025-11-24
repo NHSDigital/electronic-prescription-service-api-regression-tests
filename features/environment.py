@@ -363,7 +363,7 @@ def before_all(context):
             select_apigee_base_url(env), CPTS_FHIR_SUFFIX
         )
 
-        get_function_export_name(context, env)
+        get_function_export_name(context)
 
         if PULL_REQUEST_ID and env != "LOCALHOST":
             print(f"--- Using pull request id: '{PULL_REQUEST_ID}'")
@@ -396,22 +396,19 @@ def before_all(context):
     print("PSU: ", context.psu_base_url)
 
 
-def get_function_export_name(context, env):
-    if PULL_REQUEST_ID is not None:
-        pull_request_id = PULL_REQUEST_ID.lower()
-        context.espamCloudFormationStackName = EPSAM_STACK_NAME.replace(
-            "{{aws_pull_request_id}}", f"-{pull_request_id}"
-        )
-        context.espamSlackBotFunctionName = EPSAM_SLACKBOT_FUNCTION_EXPORT_NAME.replace(
-            "{{aws_pull_request_id}}", f"-{pull_request_id}"
-        )
+def get_function_export_name(context):
+    # only apply suffix if PR ID exists and starts with lowercase "pr-"
+    if PULL_REQUEST_ID is not None and PULL_REQUEST_ID.startswith("pr-"):
+        suffix = f"-{PULL_REQUEST_ID}"
     else:
-        context.espamCloudFormationStackName = EPSAM_STACK_NAME.replace(
-            "{{aws_pull_request_id}}", ""
-        )
-        context.espamSlackBotFunctionName = EPSAM_SLACKBOT_FUNCTION_EXPORT_NAME.replace(
-            "{{aws_pull_request_id}}", ""
-        )
+        suffix = ""
+
+    context.espamCloudFormationStackName = EPSAM_STACK_NAME.replace(
+        "{{aws_pull_request_id}}", suffix
+    )
+    context.espamSlackBotFunctionName = EPSAM_SLACKBOT_FUNCTION_EXPORT_NAME.replace(
+        "{{aws_pull_request_id}}", suffix
+    )
 
 
 def get_url_with_pr(context, env, product):
