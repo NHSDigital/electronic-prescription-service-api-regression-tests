@@ -28,7 +28,7 @@ jobs:
 
   quality_checks:
     needs: [get_asdf_version]
-    uses: NHSDigital/eps-common-workflows/.github/workflows/quality-checks.yml@ba86b0c6a2a3d4b87398e538e410cec90f57133d
+    uses: NHSDigital/eps-common-workflows/.github/workflows/quality-checks.yml@cf765bb1264f0f44fba00516bd0412ac792d37c9
     with:
       asdfVersion: ${{ needs.get_asdf_version.outputs.asdf_version }}
       reinstall_poetry: true
@@ -46,7 +46,7 @@ jobs:
           echo "commit_id=${{ github.sha }}" >> "$GITHUB_OUTPUT"
   tag_release:
     needs: [quality_checks, get_commit_id, get_asdf_version]
-    uses: NHSDigital/eps-common-workflows/.github/workflows/tag-release.yml@a7daff06de7b695f601d9b1723ca184daca7d898
+    uses: NHSDigital/eps-common-workflows/.github/workflows/tag-release.yml@4fb41faab9c92d8a1444719bc1ab45a989caf756
     with:
       dry_run: false
       asdfVersion: ${{ needs.get_asdf_version.outputs.asdf_version }}
@@ -69,7 +69,7 @@ jobs:
         run: echo "version=$(awk '!/^#/ && NF {print $1; exit}' .tool-versions.asdf)" >> "$GITHUB_OUTPUT"
 
       - name: Install asdf
-        uses: asdf-vm/actions/setup@1902764435ca0dd2f3388eea723a4f92a4eb8302
+        uses: asdf-vm/actions/setup@b7bcd026f18772e44fe1026d729e1611cc435d47
         with:
           asdf_version: ${{ steps.asdf-version.outputs.version }}
 
@@ -81,7 +81,7 @@ jobs:
           key: ${{ runner.os }}-asdf-${{ hashFiles('**/.tool-versions') }}
 
       - name: Install asdf dependencies in .tool-versions
-        uses: asdf-vm/actions/install@1902764435ca0dd2f3388eea723a4f92a4eb8302
+        uses: asdf-vm/actions/install@b7bcd026f18772e44fe1026d729e1611cc435d47
         with:
           asdf_version: ${{ steps.asdf-version.outputs.version }}
         env:
