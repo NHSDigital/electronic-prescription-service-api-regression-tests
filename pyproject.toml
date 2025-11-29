@@ -19,7 +19,7 @@ semver = "^3.0.4"
 gitpython = "^3.1.45"
 pip-licenses = "^5.5.0"
 flake8 = "^7.3.0"
-pre-commit = "^4.4.0"
+pre-commit = "^4.5.0"
 isort = "^7.0.0"
 cryptography = "^46.0.3"
 python-dateutil = "^2.9.0.post0"
@@ -36,7 +36,7 @@ boto3 = "^1.41.5"
 
 
 [tool.poetry.group.dev.dependencies]
-pre-commit = "^4.4.0"
+pre-commit = "^4.5.0"
 
 [tool.pyright]
 include = ["features", "methods", "messages", "scripts", "pages", "utils"]
