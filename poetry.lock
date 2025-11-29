@@ -2,30 +2,30 @@
 
 [[package]]
 name = "allure-behave"
-version = "2.15.0"
+version = "2.15.2"
 description = "Allure behave integration"
 optional = false
 python-versions = "*"
 groups = ["main"]
 files = [
-    {file = "allure_behave-2.15.0-py3-none-any.whl", hash = "sha256:bcb7af818bc196e3b7b53285c8a084e50aa22306573e07d285414cc6cf663484"},
-    {file = "allure_behave-2.15.0.tar.gz", hash = "sha256:a6e26e69e03ab85251175652ee3598e793269366384908ae8591841a2ef27b1b"},
+    {file = "allure_behave-2.15.2-py3-none-any.whl", hash = "sha256:339e9e652bdeb68c94b03aec51768f6e95bf0ad92644601631fcd6f88b07aa05"},
+    {file = "allure_behave-2.15.2.tar.gz", hash = "sha256:1ed3c3db44ec86bc2f4b3ddecf1d3e0cbf9a9bbc31199b29020c171711266dce"},
 ]
 
 [package.dependencies]
-allure-python-commons = "2.15.0"
+allure-python-commons = "2.15.2"
 behave = ">=1.2.5"
 
 [[package]]
 name = "allure-python-commons"
-version = "2.15.0"
+version = "2.15.2"
 description = "Contains the API for end users as well as helper functions and classes to build Allure adapters for Python test frameworks"
 optional = false
 python-versions = ">=3.6"
 groups = ["main"]
 files = [
-    {file = "allure_python_commons-2.15.0-py3-none-any.whl", hash = "sha256:84ebbbca2e4c147ed151e615f995eb2e0dd688818d06c55df9e8e3ce4de6eeeb"},
-    {file = "allure_python_commons-2.15.0.tar.gz", hash = "sha256:4f639c8bb4b79df0d94f1baa88782c9399be3f45fd839ae583a314a5d451b978"},
+    {file = "allure_python_commons-2.15.2-py3-none-any.whl", hash = "sha256:d5dd1b56d978d1a1e3f8dd4efd15037add1c457cfb6d0445695dffde6f196446"},
+    {file = "allure_python_commons-2.15.2.tar.gz", hash = "sha256:19ef4a48bc6d30db484ce95dba74b639fcf87084746aac39d265ab3a1cc70e89"},
 ]
 
 [package.dependencies]
@@ -177,18 +177,18 @@ uvloop = ["uvloop (>=0.15.2)"]
 
 [[package]]
 name = "boto3"
-version = "1.41.1"
+version = "1.41.5"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "boto3-1.41.1-py3-none-any.whl", hash = "sha256:05009dadcb0c63a2a4a11780f615362a811aa85e7a6950f2793ecf8055fcd1f2"},
-    {file = "boto3-1.41.1.tar.gz", hash = "sha256:fdee48cff828cfe0fb66295ae4d5f47736ee35f11e1de6be6c6dcd910f0810a4"},
+    {file = "boto3-1.41.5-py3-none-any.whl", hash = "sha256:bb278111bfb4c33dca8342bda49c9db7685e43debbfa00cc2a5eb854dd54b745"},
+    {file = "boto3-1.41.5.tar.gz", hash = "sha256:bc7806bee681dfdff2fe2b74967b107a56274f1e66ebe4d20dc8eee1ea408d17"},
 ]
 
 [package.dependencies]
-botocore = ">=1.41.1,<1.42.0"
+botocore = ">=1.41.5,<1.42.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.15.0,<0.16.0"
 
@@ -197,14 +197,14 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "botocore"
-version = "1.41.1"
+version = "1.41.5"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "botocore-1.41.1-py3-none-any.whl", hash = "sha256:0db40b7dbddef56fe8cfa06b5eda73b327786db9d64c09c3a616fc9b5548120d"},
-    {file = "botocore-1.41.1.tar.gz", hash = "sha256:e98095492ef8f18d0d6a02ba87d9135c663d4627322e049228143b3a4ef4c2a3"},
+    {file = "botocore-1.41.5-py3-none-any.whl", hash = "sha256:3fef7fcda30c82c27202d232cfdbd6782cb27f20f8e7e21b20606483e66ee73a"},
+    {file = "botocore-1.41.5.tar.gz", hash = "sha256:0367622b811597d183bfcaab4a350f0d3ede712031ce792ef183cabdee80d3bf"},
 ]
 
 [package.dependencies]
@@ -213,7 +213,7 @@ python-dateutil = ">=2.1,<3.0.0"
 urllib3 = {version = ">=1.25.4,<2.2.0 || >2.2.0,<3", markers = "python_version >= \"3.10\""}
 
 [package.extras]
-crt = ["awscrt (==0.28.4)"]
+crt = ["awscrt (==0.29.0)"]
 
 [[package]]
 name = "certifi"
@@ -1234,14 +1234,14 @@ testing = ["pytest", "pytest-benchmark"]
 
 [[package]]
 name = "pre-commit"
-version = "4.4.0"
+version = "4.5.0"
 description = "A framework for managing and maintaining multi-language pre-commit hooks."
 optional = false
 python-versions = ">=3.10"
 groups = ["main", "dev"]
 files = [
-    {file = "pre_commit-4.4.0-py2.py3-none-any.whl", hash = "sha256:b35ea52957cbf83dcc5d8ee636cbead8624e3a15fbfa61a370e42158ac8a5813"},
-    {file = "pre_commit-4.4.0.tar.gz", hash = "sha256:f0233ebab440e9f17cabbb558706eb173d19ace965c68cdce2c081042b4fab15"},
+    {file = "pre_commit-4.5.0-py2.py3-none-any.whl", hash = "sha256:25e2ce09595174d9c97860a95609f9f852c0614ba602de3561e267547f2335e1"},
+    {file = "pre_commit-4.5.0.tar.gz", hash = "sha256:dc5a065e932b19fc1d4c653c6939068fe54325af8e741e74e88db4d28a4dd66b"},
 ]
 
 [package.dependencies]
@@ -2103,4 +2103,4 @@ test = ["pytest (>=3.0.0)"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "a0d497bf7d63c93c6551743e8cffad5874d9e8ed043cf58bfec8f362fa0d7642"
+content-hash = "f987abad742b613d04d9e177762def804e8e597877acbbcde251c6228f46bcf3"
