@@ -27,8 +27,11 @@ from messages.eps_fhir.common_maps import THERAPY_TYPE_MAP, INTENT_MAP
 from messages.eps_fhir.dispense_notification import DNProps
 
 
-def setup_new_prescription(context, nomination, prescription_type):
-    context.nhs_number = generate_single()
+def setup_new_prescription(
+    context, nomination, prescription_type, generate_nhs_number=True
+):
+    if generate_nhs_number:
+        context.nhs_number = generate_single()
     if nomination == "non-nominated":
         context.nomination_code = "0004"
     if nomination == "nominated":
@@ -189,6 +192,19 @@ def i_am_an_authorised_user(context, user, app):
         context.user = user
         context.auth_token = get_auth(env, app, user)
         context.auth_method = "oauth2"
+
+
+@given(
+    "I successfully prepare and sign '{count:d}' {nomination} {prescription_type} prescriptions"
+)
+def i_successfully_prepare_and_sign_prescriptions(
+    context, count, nomination, prescription_type
+):
+    context.nhs_number = generate_single()
+    for _ in range(count):
+        setup_new_prescription(context, nomination, prescription_type, False)
+        prepare_prescription(context)
+        create_signed_prescription(context)
 
 
 @given("I successfully prepare a {nomination} {prescription_type} prescription")
