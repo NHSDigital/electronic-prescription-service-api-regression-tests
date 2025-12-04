@@ -25,7 +25,6 @@ def i_request_my_prescriptions(context):
     ):
         context.nhs_number = "9449304130"
     get_prescriptions(context)
-    print(context.response)
 
 
 @when("I attempt to request my prescriptions via '{method}' method")
@@ -41,7 +40,6 @@ def i_attempt_to_request_my_prescriptions_via_method(context, method):
 @then("I can see my prescription")
 def i_can_see_my_prescription(context):
     json_response = json.loads(context.response.content)
-    print(json_response)
     entries = json_response["entry"]
     bundle = [
         entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"
@@ -79,7 +77,6 @@ def i_can_see_my_prescriptions(context, number):
 @then("I cannot see my prescription")
 def i_cannot_see_my_prescription(context):
     json_response = json.loads(context.response.content)
-    print(json_response)
     entries = json_response["entry"]
     bundle_entries = [
         entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"
@@ -90,9 +87,6 @@ def i_cannot_see_my_prescription(context):
 
 @then("I validate the response for FHIR compliance")
 def i_validate_the_response_for_fhir_compliance(context):
-    json_response = json.loads(context.response.content)
-    print(json_response)
-
     context.nomination_code = "0004"
     context.intent = "order"
     context.type_code = "acute"
@@ -108,7 +102,6 @@ def i_validate_the_response_for_fhir_compliance(context):
 @then("I do not see an eRD prescription")
 def i_do_not_see_an_erd_prescription(context):
     json_response = json.loads(context.response.content)
-    print(json_response)
     entries = json_response["entry"]
     bundle_entries = [
         entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"
@@ -118,3 +111,44 @@ def i_do_not_see_an_erd_prescription(context):
             0
         ]["code"]
         assert_that(prescription_type).is_not_equal_to("continuous-repeat-dispensing")
+
+
+@then("I validate the prescription matches my prepared prescription")
+def i_validate_the_response_prescription_matches_my_prepared_prescription(context):
+    json_response = json.loads(context.response.content)
+    entries = json_response["entry"]
+
+    # Mock prescription construct builds the same "prescription" each time
+    # so using 0 index is safe for asserting values
+    bundle = [
+        entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"
+    ]
+
+    prescription = bundle[0]["resource"]["entry"]
+
+    # Dynamically test against Medication Requests
+    expected_entries = json.loads(context.prepare_body)["entry"]
+    returned_medication_codeable_concepts = [
+        each
+        for each in prescription
+        if each["resource"]["resourceType"] == "MedicationRequest"
+    ]
+    expected_medication_codeable_concepts = [
+        each
+        for each in expected_entries
+        if each["resource"]["resourceType"] == "MedicationRequest"
+    ]
+
+    expected_items = expected_medication_codeable_concepts[0]["resource"][
+        "medicationCodeableConcept"
+    ]["coding"]
+    returned_items = returned_medication_codeable_concepts[0]["resource"][
+        "medicationCodeableConcept"
+    ]["coding"]
+    for item in expected_items:
+        for key, value in item.items():
+            if key != "system":
+                assert_that(returned_items[0][key]).is_equal_to(value)
+            else:
+                # Skip system as the mock prescription uses http vs. PFP returning https address
+                pass
