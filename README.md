@@ -43,10 +43,11 @@ The following environment variables may need to be set for the correct environme
 * PRIVATE_KEY
 * CERTIFICATE
 
-
 To make this easier, a `template.env` file is located on the root. Fill in the values and rename this to `.env`
-
 Any file that begins with `.env` is automatically ignored by Git
+
+The client ids and secrets can be copied from the EPS_TEAM
+The PRIVATE_KEY AND CERTIFICATE required to sign prescriptions are in AWS SecretsManager under the names listed in `template.env`.
 
 ### Preparing your development environment
 This test pack utilises the power of Docker to quickly and easily spin up a dev environment for you to work in
