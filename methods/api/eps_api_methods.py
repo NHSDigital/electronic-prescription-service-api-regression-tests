@@ -59,8 +59,7 @@ def create_signed_prescription(context):
     headers = get_headers(context, context.auth_method)
 
     context.signed_body = SignedPrescription(context).body
-    response = post(data=context.signed_body, url=url, context=context, headers=headers)
-    print(response.content)
+    post(data=context.signed_body, url=url, context=context, headers=headers)
     the_expected_response_code_is_returned(context, 200)
 
 

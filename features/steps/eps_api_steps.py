@@ -201,10 +201,16 @@ def i_successfully_prepare_and_sign_prescriptions(
     context, count, nomination, prescription_type
 ):
     context.nhs_number = generate_single()
+    prescription_ids = []
     for _ in range(count):
         setup_new_prescription(context, nomination, prescription_type, False)
         prepare_prescription(context)
+
+        # Capture IDs as object created
+        prescription_ids.append(context.prescription_id)
         create_signed_prescription(context)
+
+    context.prescription_ids = prescription_ids
 
 
 @given("I successfully prepare a {nomination} {prescription_type} prescription")
@@ -222,6 +228,14 @@ def i_try_to_prepare_a_new_prescription(context, nomination, prescription_type):
 @when("I sign the prescription")
 def i_sign_a_new_prescription(context):
     create_signed_prescription(context)
+
+
+@given("I release all prescriptions")
+def i_release_all_prescriptions(context):
+    for prescription_id in context.prescription_ids:
+        context.prescription_id = prescription_id
+        print(f"Releasing prescription ID: {prescription_id}")
+        release_signed_prescription(context)
 
 
 @when("I try to release the prescription")

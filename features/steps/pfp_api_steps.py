@@ -37,6 +37,29 @@ def i_attempt_to_request_my_prescriptions_via_method(context, method):
     get_prescriptions(context, method=method)
 
 
+@when("I check the prescription item statuses for '{status}'")
+def i_check_the_prescription_item_statuses_for_status(context, status):
+    json_response = json.loads(context.response.content)
+    entries = json_response["entry"]
+    bundles = [
+        entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"
+    ]
+
+    # Extract all status codes from MedicationRequest extensions
+    status_codes = [
+        extension["valueCoding"]["code"]
+        for bundle in bundles
+        for entry in bundle["resource"]["entry"]
+        if entry["resource"]["resourceType"] == "MedicationRequest"
+        for extension in entry["resource"]["extension"][0]["extension"]
+        if extension["url"] == "status"
+    ]
+
+    # Assert all status codes match the expected status
+    for status_code in status_codes:
+        assert_that(status_code).is_equal_to(status)
+
+
 @then("I can see my prescription")
 def i_can_see_my_prescription(context):
     json_response = json.loads(context.response.content)
@@ -152,3 +175,49 @@ def i_validate_the_response_prescription_matches_my_prepared_prescription(contex
             else:
                 # Skip system as the mock prescription uses http vs. PFP returning https address
                 pass
+
+
+@when("I set the statuses I will update through")
+def set_statuses_for_pfp(context):
+    context.statuses = [row["Status"] for row in context.table]
+
+
+@then(
+    "I process the status updates for the prescription items and verify they are returned"
+)
+def process_status_updates_and_verify(context):
+    # For each prescription ID in the scenario, update the status according to data table
+    # Loop over all available statuses
+    for status in context.statuses:
+        print(f"Processing status update to {status} for all prescription IDs")
+        context.execute_steps(
+            """
+            When I am authorised to send prescription updates
+            """
+        )
+        for prescription_id in context.prescription_ids:
+            context.prescription_id = prescription_id
+            print(f"Processing status update for prescription ID: {prescription_id}")
+            if (
+                status.upper() == "COLLECTED"
+                or status.upper() == "DISPENSED"
+                or status.upper() == "NOT DISPENSED"
+            ):
+                terminal = "completed"
+            else:
+                terminal = "in-progress"
+
+            context.execute_steps(
+                f"""
+                When I send an {status} update with a terminal status of {terminal}
+                """
+            )
+        # Call the PFP API to get the prescriptions and verify the statuses
+        print(f"Verifying updated prescription statuses to be {status}")
+        context.execute_steps(
+            f"""
+            When I am authenticated with PFP-APIGEE app
+            And I request my prescriptions
+            And I check the prescription item statuses for '{status}'
+            """
+        )
