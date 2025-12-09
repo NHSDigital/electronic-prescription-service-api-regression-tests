@@ -511,7 +511,7 @@ def after_all(context):
             shutil.rmtree(directory_path)
 
 
-def setup_logging(level: int = logging.DEBUG):
+def setup_logging(level: int = logging.INFO):
     handlers = [logging.StreamHandler(sys.stdout)]
     logging.basicConfig(
         format="[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)d] %(message)s",
