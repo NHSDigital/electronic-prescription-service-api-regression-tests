@@ -9,7 +9,6 @@ Feature: I can see my prescriptions
     And I request my prescriptions
     Then I can see my prescription
 
-  # TODO: for all of the following, test as L9 or app user
   # Spine defined limit of 25 prescriptions per request
   Scenario: I can see a maximum of 25 prescriptions
     Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app
