@@ -204,7 +204,10 @@ def step_given(context):
         raise ValueError(
             f"Role ARN for '{product}' is not set in environment variables"
         )
-    common.assume_aws_role(role_arn=role_arn, session_name="regression_tests")
+
+    context.aws_credentials = common.assume_aws_role(
+        role_arn=role_arn, session_name="regression_tests"
+    )
 
 
 @then("the {code:d} error occurs")

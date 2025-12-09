@@ -4,6 +4,7 @@ import shutil
 import sys
 import uuid
 from behave.model import Scenario
+from behave.contrib.scenario_autoretry import patch_scenario_with_autoretry
 from dotenv import load_dotenv
 from playwright.sync_api import sync_playwright, expect
 from methods.api import eps_api_methods
@@ -162,6 +163,11 @@ EPS_FHIR_DISPENSING_SUFFIX = "fhir-dispensing"
 PFP_SUFFIX = "prescriptions-for-patients"
 PSU_SUFFIX = "prescription-status-update"
 
+EPSAM_SLACKBOT_FUNCTION_EXPORT_NAME = (
+    "epsam{{aws_pull_request_id}}:lambda:SlackBot:FunctionName"
+)
+EPSAM_STACK_NAME = "epsam{{aws_pull_request_id}}"
+
 
 class ConflictException(Exception):
     pass
@@ -227,6 +233,9 @@ def before_feature(context, feature):
     if "skip-sandbox" in feature.tags and "sandbox" in environment:
         feature.skip("Marked with @skip-sandbox")
         return
+    if environment == "internal-dev":
+        for scenario in feature.walk_scenarios():
+            patch_scenario_with_autoretry(scenario, max_attempts=3)
 
 
 def before_scenario(context, scenario):
@@ -358,6 +367,8 @@ def before_all(context):
             select_apigee_base_url(env), CPTS_FHIR_SUFFIX
         )
 
+        get_function_export_name(context)
+
         if PULL_REQUEST_ID and env != "LOCALHOST":
             print(f"--- Using pull request id: '{PULL_REQUEST_ID}'")
             pull_request_id = PULL_REQUEST_ID.lower()
@@ -387,6 +398,21 @@ def before_all(context):
     print("EPS-DISPENSING: ", context.eps_fhir_dispensing_base_url)
     print("PFP: ", context.pfp_base_url)
     print("PSU: ", context.psu_base_url)
+
+
+def get_function_export_name(context):
+    # only apply suffix if PR ID exists and starts with lowercase "pr-"
+    if PULL_REQUEST_ID is not None and PULL_REQUEST_ID.startswith("pr-"):
+        suffix = f"-{PULL_REQUEST_ID}"
+    else:
+        suffix = ""
+
+    context.espamCloudFormationStackName = EPSAM_STACK_NAME.replace(
+        "{{aws_pull_request_id}}", suffix
+    )
+    context.espamSlackBotFunctionName = EPSAM_SLACKBOT_FUNCTION_EXPORT_NAME.replace(
+        "{{aws_pull_request_id}}", suffix
+    )
 
 
 def get_url_with_pr(context, env, product):
