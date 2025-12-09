@@ -149,6 +149,13 @@ def indicate_bad_request_response(context):
     common.the_expected_response_code_is_returned(context, 400)
 
 
+@then("the response indicates forbidden")
+def indicate_forbidden_response(context):
+    if "sandbox" in context.config.userdata["env"].lower():
+        return
+    common.the_expected_response_code_is_returned(context, 403)
+
+
 @then("the response indicates not found resource")
 def indicate_not_found_response(context):
     if "sandbox" in context.config.userdata["env"].lower():

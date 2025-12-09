@@ -26,11 +26,15 @@ def i_send_an_update(context, status, terminal):
     if "e2e" not in context.tags or "sandbox" in context.config.userdata["env"].lower():
         context.receiver_ods_code = "FA565"
         context.prescription_id = generate_short_form_id(context.receiver_ods_code)
+        print(f"id from here {context.prescription_id}")
         context.prescription_item_id = uuid.uuid4()
         context.nhs_number = generate_single()
     context.terminal_status = terminal
     context.item_status = status
-
+    print(
+        f"""Sending status update: {status} with terminal status: {terminal}
+        for prescription ID: {context.prescription_id}"""
+    )
     send_status_update(context)
 
 
