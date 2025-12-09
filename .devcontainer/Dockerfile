@@ -25,6 +25,12 @@ RUN apt-get update \
     libreadline-dev libsqlite3-dev wget llvm libncurses5-dev libncursesw5-dev \
     xz-utils tk-dev liblzma-dev netcat-traditional libyaml-dev
 
+# Install ASDF
+RUN ASDF_VERSION=$(awk '!/^#/ && NF {print $1; exit}' /tmp/.tool-versions.asdf) && \
+    wget -O /tmp/asdf.tar.gz https://github.com/asdf-vm/asdf/releases/download/v${ASDF_VERSION}/asdf-v${ASDF_VERSION}-linux-amd64.tar.gz; \
+    tar -xvzf /tmp/asdf.tar.gz; \
+    mv asdf /usr/bin
+
 # specify DOCKER_GID to force container docker group id to match host
 RUN if [ -n "${DOCKER_GID}" ]; then \
       if ! getent group docker; then \
