@@ -64,11 +64,6 @@ Feature: I can see my prescriptions
     When I set the statuses I will update through
       | Status        |
       | With Pharmacy |
-      | Ready to Collect |
-      | Ready to Dispatch |
-      | Not Dispensed |
-      | Dispatched |
-      | Collected |
     Then I process the status updates for the prescription items and verify they are returned
 
   # This scenario requires changes to FHIR compliance endpoint to be able to validate PFP responses

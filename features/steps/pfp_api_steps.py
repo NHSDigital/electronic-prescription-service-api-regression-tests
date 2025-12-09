@@ -188,6 +188,7 @@ def set_statuses_for_pfp(context):
 def process_status_updates_and_verify(context):
     # For each prescription ID in the scenario, update the status according to data table
     # Loop over all available statuses
+    # DON'T COPY THIS -- It's crude for now until we come back to it.
     for status in context.statuses:
         print(f"Processing status update to {status} for all prescription IDs")
         context.execute_steps(
