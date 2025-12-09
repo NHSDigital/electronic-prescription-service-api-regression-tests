@@ -24,3 +24,4 @@ body = f"username={urllib\.parse\.quote\(username\)}&password={urllib\.parse\.qu
 f"username={encoded_username}&password={encoded_password}&grant_type=password"
 self\.token = token
 id-token: write
+.*poetry\.lock.*brotli.*platform_python_implementation.*
