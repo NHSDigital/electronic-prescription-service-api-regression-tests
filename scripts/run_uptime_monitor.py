@@ -89,7 +89,13 @@ def validate_env(product, options: Dict):
 
 
 def display_summary_statistics(
-    request_count, success_count, failure_count, response_times, csv_filename
+    request_count,
+    success_count,
+    failure_count,
+    response_times,
+    csv_filename,
+    target_interval,
+    actual_duration,
 ):
     """Display summary statistics after monitoring ends."""
     separator = "=" * 80
@@ -110,6 +116,13 @@ def display_summary_statistics(
         p95 = sorted_times[int(len(sorted_times) * 0.95)] if sorted_times else 0
         p99 = sorted_times[int(len(sorted_times) * 0.99)] if sorted_times else 0
 
+        # Calculate actual interval and RPM
+        actual_interval = actual_duration / request_count if request_count > 0 else 0
+        actual_rpm = (
+            (request_count / actual_duration) * 60 if actual_duration > 0 else 0
+        )
+        target_rpm = 60.0 / target_interval if target_interval > 0 else 0
+
         print(f"\n{separator}")
         print("MONITORING SUMMARY")
         print(separator)
@@ -123,6 +136,10 @@ def display_summary_statistics(
         print(f"  Maximum:           {max_response:.2f}ms")
         print(f"  95th Percentile:   {p95:.2f}ms")
         print(f"  99th Percentile:   {p99:.2f}ms")
+        print("\nThroughput:")
+        print(f"  Target Interval:   {target_interval:.2f}s ({target_rpm:.1f} req/min)")
+        print(f"  Actual Interval:   {actual_interval:.2f}s ({actual_rpm:.1f} req/min)")
+        print(f"  Total Duration:    {actual_duration:.1f}s")
         print(f"\nDetailed log saved to: {csv_filename}")
         print(f"{separator}\n")
 
@@ -262,6 +279,7 @@ def run_monitoring_loop(env, product, command, interval, csv_filename):
     failure_count = 0
     response_times = []
     timeout = 30  # Timeout for each request in seconds
+    monitoring_start_time = time.time()
 
     try:
         while True:
@@ -347,8 +365,16 @@ def run_monitoring_loop(env, product, command, interval, csv_filename):
                 time.sleep(sleep_time)
 
     except KeyboardInterrupt:
+        monitoring_end_time = time.time()
+        actual_duration = monitoring_end_time - monitoring_start_time
         display_summary_statistics(
-            request_count, success_count, failure_count, response_times, csv_filename
+            request_count,
+            success_count,
+            failure_count,
+            response_times,
+            csv_filename,
+            interval,
+            actual_duration,
         )
         sys.exit(0)
 
