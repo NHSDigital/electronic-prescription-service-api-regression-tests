@@ -28,7 +28,7 @@ jobs:
 
   quality_checks:
     needs: [get_asdf_version]
-    uses: NHSDigital/eps-common-workflows/.github/workflows/quality-checks.yml@41e3450a9869f278be0e431a4b47b5c77bd55559
+    uses: NHSDigital/eps-common-workflows/.github/workflows/quality-checks.yml@86a580e5eb38584c877ccfba5fc6f3f071faeffe
     with:
       asdfVersion: ${{ needs.get_asdf_version.outputs.asdf_version }}
       reinstall_poetry: true
