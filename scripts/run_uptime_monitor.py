@@ -21,9 +21,9 @@ USAGE:
 CSV OUTPUT FORMAT:
     Columns:
     - timestamp: ISO 8601 timestamp of request
-    - status_code: HTTP status code (or ERROR if exception occurred)
+    - status_code: HTTP status code (PASS,FAIL,TIMEOUT,ERROR)
     - response_time_ms: Response time in milliseconds
-    - success: Boolean indicating if request was successful (200 status)
+    - success: Boolean indicating if request was successful
     - error_message: Error details (empty if successful)
     - endpoint_url: Full URL of the endpoint being monitored
 
@@ -116,8 +116,6 @@ def validate_env(product: str, options: Dict):
     product_key = (
         product.replace("-", "_").replace("APIGEE", "").replace("AWS", "").strip("_")
     )
-    if product_key == "PFP":
-        product_key = "PFP"
 
     client_id_key = f"{product_key}_CLIENT_ID"
     client_secret_key = f"{product_key}_CLIENT_SECRET"
