@@ -43,10 +43,11 @@ OUTPUT FILES:
 """
 
 import argparse
+import asyncio
 import csv
 import datetime
 import os
-import subprocess
+import signal
 import sys
 import time
 from dataclasses import dataclass, field
@@ -300,22 +301,117 @@ def init_report_file(product: str, output_dir: str) -> str:
     return csv_filename
 
 
-def run_monitoring_loop(
+async def execute_request(
+    command: List[str],
+    timeout: int,
+    report: Report,
+    csv_filename: str,
+    request_number: int,
+) -> None:
+    """
+    Execute a single monitoring request asynchronously.
+
+    Args:
+        command: The behave command to execute
+        timeout: Timeout for the request in seconds
+        report: Report object to update with results
+        csv_filename: Path to CSV file for logging
+        request_number: Sequential request number for display
+    """
+    start_time = time.time()
+
+    try:
+        # Run behave asynchronously
+        process = await asyncio.create_subprocess_exec(
+            *command,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+
+        try:
+            stdout, stderr = await asyncio.wait_for(
+                process.communicate(), timeout=timeout
+            )
+            return_code = process.returncode
+
+            endpoint_result = EndpointResult(
+                status_code="PASS" if return_code == 0 else "FAIL",
+                response_time_ms=(time.time() - start_time) * 1000,
+                error_message="" if return_code == 0 else stderr.decode()[:100],
+            )
+
+            if endpoint_result.success:
+                report.success_count += 1
+            else:
+                report.failure_count += 1
+
+            report.response_times.append(endpoint_result.response_time_ms)
+
+        except asyncio.TimeoutError:
+            process.kill()
+            await process.wait()
+
+            endpoint_result = EndpointResult(
+                status_code="TIMEOUT",
+                response_time_ms=(time.time() - start_time) * 1000,
+                error_message=f"Request timed out after {timeout} seconds",
+            )
+            report.failure_count += 1
+            report.response_times.append(endpoint_result.response_time_ms)
+
+    except Exception as e:  # pylint: disable=broad-except
+        endpoint_result = EndpointResult(
+            status_code="ERROR",
+            response_time_ms=(time.time() - start_time) * 1000,
+            error_message=str(e)[:100],
+        )
+        report.failure_count += 1
+        report.response_times.append(endpoint_result.response_time_ms)
+
+    # Write to CSV immediately (with flush for crash safety)
+    with open(csv_filename, "a", newline="", encoding="utf-8") as csvfile:
+        csv_writer = csv.writer(csvfile)
+        csv_writer.writerow(endpoint_result.to_csv_row(report.endpoint_url))
+        csvfile.flush()
+        os.fsync(csvfile.fileno())
+
+    # Console output
+    status_symbol = "✓" if endpoint_result.success else "✗"
+    uptime_pct = (report.success_count / report.request_count) * 100
+    avg_response_time = (
+        sum(report.response_times) / len(report.response_times)
+        if report.response_times
+        else 0
+    )
+
+    print(
+        f"[{endpoint_result.timestamp}] {status_symbol} Request #{request_number} | "
+        f"Status: {endpoint_result.status_code} | "
+        f"Response: {endpoint_result.response_time_ms:.2f}ms | "
+        f"Uptime: {uptime_pct:.2f}% | "
+        f"Avg: {avg_response_time:.2f}ms"
+    )
+
+    if not endpoint_result.success:
+        print(f"  └─ Error: {endpoint_result.error_message}")
+
+
+async def run_monitoring_loop_async(
     env: str, product: str, command: List[str], interval: float, csv_filename: str
 ) -> None:
     """
-    Execute the monitoring loop, repeatedly invoking behave and logging results.
+    Execute the monitoring loop asynchronously, allowing concurrent requests.
 
     Args:
         env: Environment to monitor
         product: Product to monitor
         command: The behave command to execute
-        interval: Time to wait between requests (seconds)
+        interval: Time to wait between launching requests (seconds)
         csv_filename: Path to CSV file for logging
     """
     separator = "=" * 80
     print(f"\n{separator}")
-    print("Starting API Uptime Monitor")
+    print("Starting API Uptime Monitor (Async Mode)")
     print(f"Product: {product}")
     print(f"Environment: {env}")
     print(f"Interval: {interval} seconds")
@@ -328,91 +424,66 @@ def run_monitoring_loop(
     timeout = 30  # Timeout for each request in seconds
     monitoring_start_time = time.time()
 
-    try:
-        while True:
-            report.request_count += 1
-            start_time = time.time()
+    while True:
+        report.request_count += 1
+        request_number = report.request_count
 
-            # Run behave for single request
-            try:
-                result = subprocess.run(
-                    command, capture_output=True, text=True, timeout=timeout, check=True
-                )
-
-                # Check if scenario passed
-                endpoint_result = EndpointResult(
-                    status_code="PASS" if result.returncode == 0 else "FAIL",
-                    response_time_ms=(time.time() - start_time) * 1000,
-                    error_message="" if result.returncode == 0 else result.stderr[:100],
-                )
-
-                if endpoint_result.success:
-                    report.success_count += 1
-                else:
-                    report.failure_count += 1
-
-                report.response_times.append(endpoint_result.response_time_ms)
-
-            except subprocess.TimeoutExpired:
-                endpoint_result = EndpointResult(
-                    status_code="TIMEOUT",
-                    response_time_ms=(time.time() - start_time) * 1000,
-                    error_message=f"Request timed out after {timeout} seconds",
-                )
-                report.failure_count += 1
-                report.response_times.append(endpoint_result.response_time_ms)
-            except Exception as e:  # pylint: disable=broad-except
-                endpoint_result = EndpointResult(
-                    status_code="ERROR",
-                    response_time_ms=(time.time() - start_time) * 1000,
-                    error_message=str(e)[:100],
-                )
-                report.failure_count += 1
-                report.response_times.append(endpoint_result.response_time_ms)
-
-            # Write to CSV immediately (with flush for crash safety)
-            with open(csv_filename, "a", newline="", encoding="utf-8") as csvfile:
-                csv_writer = csv.writer(csvfile)
-                csv_writer.writerow(endpoint_result.to_csv_row(report.endpoint_url))
-                csvfile.flush()
-                os.fsync(csvfile.fileno())
-
-            # Console output
-            status_symbol = "✓" if endpoint_result.success else "✗"
-            uptime_pct = (report.success_count / report.request_count) * 100
-            avg_response_time = (
-                sum(report.response_times) / len(report.response_times)
-                if report.response_times
-                else 0
-            )
-
-            print(
-                f"[{endpoint_result.timestamp}] {status_symbol} Request #{report.request_count} | "
-                f"Status: {endpoint_result.status_code} | "
-                f"Response: {endpoint_result.response_time_ms:.2f}ms | "
-                f"Uptime: {uptime_pct:.2f}% | "
-                f"Avg: {avg_response_time:.2f}ms"
-            )
-
-            if not endpoint_result.success:
-                print(f"  └─ Error: {endpoint_result.error_message}")
-
-            # Sleep for the remaining interval time (accounting for request duration)
-            elapsed_seconds = endpoint_result.response_time_ms / 1000
-            sleep_time = max(0, interval - elapsed_seconds)
-            if sleep_time > 0:
-                time.sleep(sleep_time)
-
-    except KeyboardInterrupt:
-        monitoring_end_time = time.time()
-        actual_duration = monitoring_end_time - monitoring_start_time
-        display_summary_statistics(
-            csv_filename,
-            interval,
-            actual_duration,
-            report,
+        # Launch request asynchronously (doesn't block)
+        asyncio.create_task(
+            execute_request(command, timeout, report, csv_filename, request_number)
         )
-        sys.exit(0)
+
+        # Wait for interval before launching next request
+        try:
+            await asyncio.sleep(interval)
+        except asyncio.CancelledError:
+            # Wait for pending requests to complete
+            print("\n\nStopping monitor, waiting for pending requests...")
+            await asyncio.sleep(2)
+
+            monitoring_end_time = time.time()
+            actual_duration = monitoring_end_time - monitoring_start_time
+            display_summary_statistics(
+                csv_filename,
+                interval,
+                actual_duration,
+                report,
+            )
+            break
+
+
+def run_monitoring_loop(
+    env: str, product: str, command: List[str], interval: float, csv_filename: str
+) -> None:
+    """
+    Wrapper to run the async monitoring loop with proper signal handling.
+
+    Args:
+        env: Environment to monitor
+        product: Product to monitor
+        command: The behave command to execute
+        interval: Time to wait between requests (seconds)
+        csv_filename: Path to CSV file for logging
+    """
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+    main_task = loop.create_task(
+        run_monitoring_loop_async(env, product, command, interval, csv_filename)
+    )
+
+    # Handle Ctrl+C gracefully
+    def signal_handler(sig, frame):
+        main_task.cancel()
+
+    signal.signal(signal.SIGINT, signal_handler)
+
+    try:
+        loop.run_until_complete(main_task)
+    except asyncio.CancelledError:
+        pass
+    finally:
+        loop.close()
 
 
 def main():
