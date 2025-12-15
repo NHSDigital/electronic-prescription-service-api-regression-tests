@@ -49,19 +49,65 @@ import os
 import subprocess
 import sys
 import time
-from typing import Dict
+from dataclasses import dataclass, field
+from typing import Dict, List
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv(override=True)
 
 
-def calculate_interval_from_rpm(rpm):
+@dataclass
+class Report:
+    """Container for monitoring statistics and metrics."""
+
+    endpoint_url: str
+    request_count: int = 0
+    success_count: int = 0
+    failure_count: int = 0
+    response_times: List[float] = field(default_factory=list)
+
+
+@dataclass
+class EndpointResult:
+    status_code: str
+    response_time_ms: float
+    error_message: str = ""
+    success: bool = field(init=False)
+    timestamp: str = field(
+        init=False, default_factory=lambda: datetime.datetime.now().isoformat()
+    )
+
+    def __post_init__(self):
+        self.success = self.error_message == ""
+
+    def to_csv_row(self, endpoint_url: str):
+        """Return a list suitable for CSV writing."""
+        return [
+            self.timestamp,
+            self.status_code,
+            f"{self.response_time_ms:.2f}",
+            self.success,
+            self.error_message,
+            endpoint_url,
+        ]
+
+
+def calculate_interval_from_rpm(rpm: int) -> float:
     """Convert requests per minute to interval in seconds."""
     return 60.0 / rpm
 
 
-def validate_env(product, options: Dict):
+def get_endpoint_url(product: str, env: str) -> str:
+    """Get the endpoint URL for the specified product and environment."""
+    if product == "PFP-APIGEE":
+        return f"https://{env}.api.service.nhs.uk/prescriptions-for-patients"
+    raise ValueError(
+        f"Unsupported product: {product}. Only PFP-APIGEE is currently supported."
+    )
+
+
+def validate_env(product: str, options: Dict):
     if options.get("interval") and options.get("rpm"):
         print("Error: Cannot specify both --interval and --rpm")
         sys.exit(1)
@@ -89,13 +135,10 @@ def validate_env(product, options: Dict):
 
 
 def display_summary_statistics(
-    request_count,
-    success_count,
-    failure_count,
-    response_times,
-    csv_filename,
-    target_interval,
-    actual_duration,
+    csv_filename: str,
+    target_interval: float,
+    actual_duration: float,
+    report: Report,
 ):
     """Display summary statistics after monitoring ends."""
     separator = "=" * 80
@@ -103,33 +146,37 @@ def display_summary_statistics(
     print("Monitoring stopped by user")
     print(separator)
 
-    if request_count > 0:
-        uptime_pct = (success_count / request_count) * 100
+    if report.request_count > 0:
+        uptime_pct = (report.success_count / report.request_count) * 100
         avg_response = (
-            sum(response_times) / len(response_times) if response_times else 0
+            sum(report.response_times) / len(report.response_times)
+            if report.response_times
+            else 0
         )
-        min_response = min(response_times) if response_times else 0
-        max_response = max(response_times) if response_times else 0
+        min_response = min(report.response_times) if report.response_times else 0
+        max_response = max(report.response_times) if report.response_times else 0
 
         # Calculate percentiles
-        sorted_times = sorted(response_times) if response_times else []
+        sorted_times = sorted(report.response_times) if report.response_times else []
         p95 = sorted_times[int(len(sorted_times) * 0.95)] if sorted_times else 0
         p99 = sorted_times[int(len(sorted_times) * 0.99)] if sorted_times else 0
 
         # Calculate actual interval and RPM
-        actual_interval = actual_duration / request_count if request_count > 0 else 0
+        actual_interval = (
+            actual_duration / report.request_count if report.request_count > 0 else 0
+        )
         actual_rpm = (
-            (request_count / actual_duration) * 60 if actual_duration > 0 else 0
+            (report.request_count / actual_duration) * 60 if actual_duration > 0 else 0
         )
         target_rpm = 60.0 / target_interval if target_interval > 0 else 0
 
         print(f"\n{separator}")
         print("MONITORING SUMMARY")
         print(separator)
-        print(f"Total Requests:      {request_count}")
-        print(f"Successful:          {success_count} ({uptime_pct:.2f}%)")
-        failed_pct = (failure_count / request_count) * 100
-        print(f"Failed:              {failure_count} ({failed_pct:.2f}%)")
+        print(f"Total Requests:      {report.request_count}")
+        print(f"Successful:          {report.success_count} ({uptime_pct:.2f}%)")
+        failed_pct = (report.failure_count / report.request_count) * 100
+        print(f"Failed:              {report.failure_count} ({failed_pct:.2f}%)")
         print("\nResponse Times (ms):")
         print(f"  Average:           {avg_response:.2f}ms")
         print(f"  Minimum:           {min_response:.2f}ms")
@@ -144,7 +191,7 @@ def display_summary_statistics(
         print(f"{separator}\n")
 
 
-def get_command(options: Dict):
+def get_command(options: Dict) -> List[str]:
     arm64_setting = os.getenv("ARM64", "False")
 
     command = [
@@ -168,7 +215,7 @@ def get_command(options: Dict):
     return command
 
 
-def get_config(args) -> Dict:
+def get_config(args: list[str]) -> Dict:
     parser = argparse.ArgumentParser(
         description="Run API uptime monitor for endpoint switchover testing",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -214,11 +261,10 @@ def get_config(args) -> Dict:
         help="Feature file to use for monitoring (default: features/pfp/view_prescriptions.feature)",
     )
 
-    args = parser.parse_args()
-    return vars(args)
+    return vars(parser.parse_args())
 
 
-def get_interval(options: Dict):
+def get_interval(options: Dict) -> float:
     if options.get("rpm"):
         interval = calculate_interval_from_rpm(options["rpm"])
         print(f"Using --rpm {options['rpm']} (interval: {interval:.1f} seconds)")
@@ -230,7 +276,7 @@ def get_interval(options: Dict):
     return interval
 
 
-def init_report_file(product, output_dir):
+def init_report_file(product: str, output_dir: str) -> str:
     timestamp_str = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     product_slug = product.replace("-", "_").lower()
     csv_filename = os.path.join(
@@ -254,15 +300,18 @@ def init_report_file(product, output_dir):
     return csv_filename
 
 
-def run_monitoring_loop(env, product, command, interval, csv_filename):
+def run_monitoring_loop(
+    env: str, product: str, command: List[str], interval: float, csv_filename: str
+) -> None:
     """
     Execute the monitoring loop, repeatedly invoking behave and logging results.
 
     Args:
+        env: Environment to monitor
+        product: Product to monitor
         command: The behave command to execute
         interval: Time to wait between requests (seconds)
         csv_filename: Path to CSV file for logging
-        args: Parsed command line arguments
     """
     separator = "=" * 80
     print(f"\n{separator}")
@@ -274,92 +323,82 @@ def run_monitoring_loop(env, product, command, interval, csv_filename):
     print("Press Ctrl+C to stop monitoring and view summary")
     print(f"{separator}\n")
 
-    request_count = 0
-    success_count = 0
-    failure_count = 0
-    response_times = []
+    endpoint_url = get_endpoint_url(product, env)
+    report = Report(endpoint_url=endpoint_url)
     timeout = 30  # Timeout for each request in seconds
     monitoring_start_time = time.time()
 
     try:
         while True:
-            request_count += 1
-            timestamp = datetime.datetime.now().isoformat()
+            report.request_count += 1
             start_time = time.time()
-            endpoint_url = (
-                f"https://{env}.api.service.nhs.uk/prescriptions-for-patients"
-            )
 
             # Run behave for single request
             try:
                 result = subprocess.run(
-                    command, capture_output=True, text=True, timeout=timeout
+                    command, capture_output=True, text=True, timeout=timeout, check=True
                 )
-                elapsed_time = (time.time() - start_time) * 1000
 
                 # Check if scenario passed
-                success = result.returncode == 0
-                status_code = "PASS" if success else "FAIL"
-                error_message = "" if success else result.stderr[:100]
+                endpoint_result = EndpointResult(
+                    status_code="PASS" if result.returncode == 0 else "FAIL",
+                    response_time_ms=(time.time() - start_time) * 1000,
+                    error_message="" if result.returncode == 0 else result.stderr[:100],
+                )
 
-                if success:
-                    success_count += 1
+                if endpoint_result.success:
+                    report.success_count += 1
                 else:
-                    failure_count += 1
+                    report.failure_count += 1
 
-                response_times.append(elapsed_time)
+                report.response_times.append(endpoint_result.response_time_ms)
 
             except subprocess.TimeoutExpired:
-                elapsed_time = (time.time() - start_time) * 1000
-                status_code = "TIMEOUT"
-                success = False
-                error_message = f"Request timed out after {timeout} seconds"
-                failure_count += 1
-                response_times.append(elapsed_time)
-            except Exception as e:
-                elapsed_time = (time.time() - start_time) * 1000
-                status_code = "ERROR"
-                success = False
-                error_message = str(e)[:100]
-                failure_count += 1
-                response_times.append(elapsed_time)
+                endpoint_result = EndpointResult(
+                    status_code="TIMEOUT",
+                    response_time_ms=(time.time() - start_time) * 1000,
+                    error_message=f"Request timed out after {timeout} seconds",
+                )
+                report.failure_count += 1
+                report.response_times.append(endpoint_result.response_time_ms)
+            except Exception as e:  # pylint: disable=broad-except
+                endpoint_result = EndpointResult(
+                    status_code="ERROR",
+                    response_time_ms=(time.time() - start_time) * 1000,
+                    error_message=str(e)[:100],
+                )
+                report.failure_count += 1
+                report.response_times.append(endpoint_result.response_time_ms)
 
             # Write to CSV immediately (with flush for crash safety)
             with open(csv_filename, "a", newline="", encoding="utf-8") as csvfile:
                 csv_writer = csv.writer(csvfile)
-                csv_writer.writerow(
-                    [
-                        timestamp,
-                        status_code,
-                        f"{elapsed_time:.2f}",
-                        success,
-                        error_message,
-                        endpoint_url,
-                    ]
-                )
+                csv_writer.writerow(endpoint_result.to_csv_row(report.endpoint_url))
                 csvfile.flush()
                 os.fsync(csvfile.fileno())
 
             # Console output
-            status_symbol = "✓" if success else "✗"
-            uptime_pct = (success_count / request_count) * 100
+            status_symbol = "✓" if endpoint_result.success else "✗"
+            uptime_pct = (report.success_count / report.request_count) * 100
             avg_response_time = (
-                sum(response_times) / len(response_times) if response_times else 0
+                sum(report.response_times) / len(report.response_times)
+                if report.response_times
+                else 0
             )
 
             print(
-                f"[{timestamp}] {status_symbol} Request #{request_count} | "
-                f"Status: {status_code} | "
-                f"Response: {elapsed_time:.2f}ms | "
+                f"[{endpoint_result.timestamp}] {status_symbol} Request #{report.request_count} | "
+                f"Status: {endpoint_result.status_code} | "
+                f"Response: {endpoint_result.response_time_ms:.2f}ms | "
                 f"Uptime: {uptime_pct:.2f}% | "
                 f"Avg: {avg_response_time:.2f}ms"
             )
 
-            if not success:
-                print(f"  └─ Error: {error_message}")
+            if not endpoint_result.success:
+                print(f"  └─ Error: {endpoint_result.error_message}")
 
             # Sleep for the remaining interval time (accounting for request duration)
-            elapsed_seconds = elapsed_time / 1000
+            elapsed_seconds = endpoint_result.response_time_ms / 1000
             sleep_time = max(0, interval - elapsed_seconds)
             if sleep_time > 0:
                 time.sleep(sleep_time)
@@ -368,13 +407,10 @@ def run_monitoring_loop(env, product, command, interval, csv_filename):
         monitoring_end_time = time.time()
         actual_duration = monitoring_end_time - monitoring_start_time
         display_summary_statistics(
-            request_count,
-            success_count,
-            failure_count,
-            response_times,
             csv_filename,
             interval,
             actual_duration,
+            report,
         )
         sys.exit(0)
 
