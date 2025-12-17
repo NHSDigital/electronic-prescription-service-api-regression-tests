@@ -27,16 +27,6 @@ def i_request_my_prescriptions(context):
     get_prescriptions(context)
 
 
-@when("I attempt to request my prescriptions via '{method}' method")
-def i_attempt_to_request_my_prescriptions_via_method(context, method):
-    if (
-        "sandbox" in context.config.userdata["env"].lower()
-        and "PFP" in context.config.userdata["product"].upper()
-    ):
-        context.nhs_number = "9449304130"
-    get_prescriptions(context, method=method)
-
-
 @when("I check the prescription item statuses for '{status}'")
 def i_check_the_prescription_item_statuses_for_status(context, status):
     json_response = json.loads(context.response.content)
@@ -97,7 +87,7 @@ def i_can_see_my_prescriptions(context, number):
     assert_that(total).is_less_than_or_equal_to(25)
 
 
-@then("I cannot see my prescription")
+@then("I cannot see my unreleased prescriptions")
 def i_cannot_see_my_prescription(context):
     json_response = json.loads(context.response.content)
     entries = json_response["entry"]

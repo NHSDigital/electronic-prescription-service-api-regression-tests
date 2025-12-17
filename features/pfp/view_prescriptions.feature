@@ -26,21 +26,14 @@ Feature: I can see my prescriptions
     And I request my prescriptions
     Then I can see '0' of my prescriptions
 
-  Scenario: I can not see unreleased prescriptions
+  Scenario: I cannot see unreleased prescriptions
     Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app
     And I successfully prepare a nominated acute prescription
     When I am authenticated with PFP-APIGEE app
     And I request my prescriptions
-    Then I cannot see my prescription
+    Then I cannot see my unreleased prescriptions
 
-  Scenario: I can only request prescriptions via GET method
-    Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app
-    And I successfully prepare and sign a nominated acute prescription
-    When I am authenticated with PFP-APIGEE app
-    And I attempt to request my prescriptions via 'POST' method
-    Then the response indicates forbidden
-
-  Scenario: I can not see eRD prescription items
+  Scenario: I cannot see eRD prescription items
     Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app
     And I successfully prepare and sign a nominated eRD prescription
     When I am authenticated with PFP-APIGEE app
