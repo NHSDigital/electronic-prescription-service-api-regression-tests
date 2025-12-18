@@ -22,6 +22,7 @@ on:
           - EPS-FHIR-PRESCRIBING
           - EPS-FHIR-DISPENSING
           - PFP-APIGEE
+          - PFP-PROXYGEN
           - PFP-AWS
           - PSU
           - EPS-ASSIST-ME
@@ -216,6 +217,8 @@ jobs:
           EPS_FHIR_DISPENSING_CLIENT_SECRET: ${{ secrets.EPS_FHIR_DISPENSING_CLIENT_SECRET }}
           PFP_CLIENT_ID: ${{ secrets.PFP_CLIENT_ID }}
           PFP_CLIENT_SECRET: ${{ secrets.PFP_CLIENT_SECRET }}
+          PFP_PROXYGEN_CLIENT_ID: ${{ secrets.PFP_PROXYGEN_CLIENT_ID }}
+          PFP_PROXYGEN_CLIENT_SECRET: ${{ secrets.PFP_PROXYGEN_CLIENT_SECRET }}
           PSU_CLIENT_ID: ${{ secrets.PSU_CLIENT_ID }}
           PSU_CLIENT_SECRET: ${{ secrets.PSU_CLIENT_SECRET }}
           CERTIFICATE: ${{ secrets.CERTIFICATE }}
@@ -238,6 +241,8 @@ jobs:
           export EPS_FHIR_DISPENSING_CLIENT_SECRET="$EPS_FHIR_DISPENSING_CLIENT_SECRET"
           export PFP_CLIENT_ID="$PFP_CLIENT_ID"
           export PFP_CLIENT_SECRET="$PFP_CLIENT_SECRET"
+          export PFP_PROXYGEN_CLIENT_ID="$PFP_PROXYGEN_CLIENT_ID"
+          export PFP_PROXYGEN_CLIENT_SECRET="$PFP_PROXYGEN_CLIENT_SECRET"
           export PSU_CLIENT_ID="$PSU_CLIENT_ID"
           export PSU_CLIENT_SECRET="$PSU_CLIENT_SECRET"
           export CERTIFICATE="$CERTIFICATE"

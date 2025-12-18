@@ -35,10 +35,9 @@ def get_psu_authenticator(env, url):
         jwt_kid=JWT_KID,
     )
     # 2. Pass the config to the Authenticator
-    authenticator = ClientCredentialsAuthenticator(
-        config=config  # pyright: ignore [reportArgumentType]
-    )
-
+    # fmt: off
+    authenticator = ClientCredentialsAuthenticator(config=config)  # pyright: ignore [reportArgumentType]
+    # fmt: on
     return authenticator
 
 
@@ -62,17 +61,17 @@ def get_eps_fhir_authenticator(user, env, url, product):
         scope=scope,
         login_form=login_form,
     )
-    authenticator = AuthorizationCodeAuthenticator(
-        config=config  # pyright: ignore [reportArgumentType]
-    )
+    # fmt: off
+    authenticator = AuthorizationCodeAuthenticator(config=config)  # pyright: ignore [reportArgumentType]
+    # fmt: on
     return authenticator
 
 
-def get_pfp_apigee_authenticator(env, url):
+def get_pfp_apigee_authenticator(env, url, product):
     scope = "nhs-login"
     login_form = {"username": LOGIN_USERS["user_id"]}
-    client_id = APIGEE_APPS["PFP-APIGEE"]["client_id"]
-    client_secret = APIGEE_APPS["PFP-APIGEE"]["client_secret"]
+    client_id = APIGEE_APPS[product]["client_id"]
+    client_secret = APIGEE_APPS[product]["client_secret"]
     if client_id is None or client_secret is None:
         raise ValueError("You must provide BOTH CLIENT_ID and CLIENT_SECRET")
     config = AuthorizationCodeConfig(
@@ -88,9 +87,9 @@ def get_pfp_apigee_authenticator(env, url):
         scope=scope,
         login_form=login_form,
     )
-    authenticator = AuthorizationCodeAuthenticator(
-        config=config  # pyright: ignore [reportArgumentType]
-    )
+    # fmt: off
+    authenticator = AuthorizationCodeAuthenticator(config=config)  # pyright: ignore [reportArgumentType]
+    # fmt: on
     return authenticator
 
 
@@ -104,6 +103,7 @@ def get_auth(env, product, user="prescriber"):
         "EPS-FHIR-PRESCRIBING-SHA1",
         "EPS-FHIR-DISPENSING",
         "PFP-APIGEE",
+        "PFP-PROXYGEN",
         "PSU",
         "EPS-ASSIST-ME",
     ]:
@@ -120,7 +120,9 @@ def get_auth(env, product, user="prescriber"):
     ]:
         authenticator = get_eps_fhir_authenticator(user, env, url, product)
     if product == "PFP-APIGEE":
-        authenticator = get_pfp_apigee_authenticator(env, url)
+        authenticator = get_pfp_apigee_authenticator(env, url, "PFP-APIGEE")
+    if product == "PFP-PROXYGEN":
+        authenticator = get_pfp_apigee_authenticator(env, url, "PFP-PROXYGEN")
     if product == "PSU":
         authenticator = get_psu_authenticator(env, url)
     if authenticator is not None:
