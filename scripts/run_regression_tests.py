@@ -85,7 +85,7 @@ def trigger_test_run(
 
     print(f"Dispatch workflow. Unique workflow identifier: {run_id}")
     assert (
-        response.status_code == 204
+        response.status_code == 204 or response.status_code == 200
     ), f"Failed to trigger test run. Expected 204, got {response.status_code}. Response: {response.text}"
 
 
