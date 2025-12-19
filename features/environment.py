@@ -161,6 +161,7 @@ EPS_FHIR_SUFFIX = "electronic-prescriptions"
 EPS_FHIR_PRESCRIBING_SUFFIX = "fhir-prescribing"
 EPS_FHIR_DISPENSING_SUFFIX = "fhir-dispensing"
 PFP_SUFFIX = "prescriptions-for-patients"
+PFP_PROXYGEN_SUFFIX = "pfp-proxygen"
 PSU_SUFFIX = "prescription-status-update"
 
 EPSAM_SLACKBOT_FUNCTION_EXPORT_NAME = (
@@ -361,11 +362,18 @@ def before_all(context):
         context.eps_fhir_dispensing_base_url = os.path.join(
             select_apigee_base_url(env), EPS_FHIR_DISPENSING_SUFFIX
         )
-        context.pfp_base_url = os.path.join(select_apigee_base_url(env), PFP_SUFFIX)
         context.psu_base_url = os.path.join(select_apigee_base_url(env), PSU_SUFFIX)
         context.cpts_fhir_base_url = os.path.join(
             select_apigee_base_url(env), CPTS_FHIR_SUFFIX
         )
+
+        if "PFP-PROXYGEN" in product:
+            # Don't use PFP-PROXYGEN AND PFP-APIGEE TOGETHER
+            context.pfp_base_url = os.path.join(
+                select_apigee_base_url(env), PFP_PROXYGEN_SUFFIX
+            )
+        else:
+            context.pfp_base_url = os.path.join(select_apigee_base_url(env), PFP_SUFFIX)
 
         get_function_export_name(context)
 
@@ -434,6 +442,10 @@ def get_url_with_pr(context, env, product):
     if product == "PFP-APIGEE":
         context.pfp_base_url = os.path.join(
             INTERNAL_DEV_BASE_URL, f"{PFP_SUFFIX}-{pull_request_id}"
+        )
+    if product == "PFP-PROXYGEN":
+        context.pfp_base_url = os.path.join(
+            INTERNAL_DEV_BASE_URL, f"{PFP_PROXYGEN_SUFFIX}-{pull_request_id}"
         )
     if product == "PSU":
         context.psu_base_url = os.path.join(

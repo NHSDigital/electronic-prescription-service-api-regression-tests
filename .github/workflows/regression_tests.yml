@@ -22,6 +22,7 @@ on:
           - EPS-FHIR-PRESCRIBING
           - EPS-FHIR-DISPENSING
           - PFP-APIGEE
+          - PFP-PROXYGEN
           - PFP-AWS
           - PSU
           - EPS-ASSIST-ME
