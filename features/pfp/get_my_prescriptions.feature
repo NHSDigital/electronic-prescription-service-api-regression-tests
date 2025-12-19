@@ -58,12 +58,12 @@ Feature: I can see my prescriptions via PFP Proxygen
       | With Pharmacy |
     Then I process the status updates for the prescription items and verify they are returned
 
-  # This scenario requires changes to FHIR compliance endpoint to be able to validate PFP responses
-  # Scenario: I can see prescription item details in FHIR compliant response
-  #   Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app
-  #   And I successfully prepare and sign a prescription
-  #   When I am authenticated with PFP-PROXYGEN app
-  #   And I request my prescriptions
-  #   Then I am an authorised prescriber with EPS-FHIR app
-  #   And I validate the response for FHIR compliance
-  #   And the response indicates a success
+# # This scenario requires changes to FHIR compliance endpoint to be able to validate PFP responses
+# # Scenario: I can see prescription item details in FHIR compliant response
+# #   Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app
+# #   And I successfully prepare and sign a prescription
+# #   When I am authenticated with PFP-PROXYGEN app
+# #   And I request my prescriptions
+# #   Then I am an authorised prescriber with EPS-FHIR app
+# #   And I validate the response for FHIR compliance
+# #   And the response indicates a success

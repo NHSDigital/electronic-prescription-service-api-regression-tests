@@ -82,10 +82,6 @@ APIGEE_APPS = {
         "client_id": os.getenv("PFP_CLIENT_ID"),
         "client_secret": os.getenv("PFP_CLIENT_SECRET"),
     },
-    "PFP-PROXYGEN": {
-        "client_id": os.getenv("PFP_PROXYGEN_CLIENT_ID"),
-        "client_secret": os.getenv("PFP_PROXYGEN_CLIENT_SECRET"),
-    },
     "PSU": {
         "client_id": os.getenv("PSU_CLIENT_ID"),
         "client_secret": os.getenv("PSU_CLIENT_SECRET"),
