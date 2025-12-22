@@ -52,6 +52,7 @@ def i_check_the_prescription_item_statuses_for_status(context, status):
 
 @then("I can see my prescription")
 def i_can_see_my_prescription(context):
+    assert_that(context.response.status_code).is_equal_to(200)
     json_response = json.loads(context.response.content)
     entries = json_response["entry"]
     bundle = [
