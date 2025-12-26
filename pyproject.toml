@@ -32,7 +32,7 @@ jycm = "^1.5.0"
 pyotp = "^2.9.0"
 lxml = "5.4.0"
 pytest-nhsd-apim = "^5.0.6"
-boto3 = "^1.42.14"
+boto3 = "^1.42.16"
 
 
 [tool.poetry.group.dev.dependencies]
