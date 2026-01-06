@@ -1,4 +1,12 @@
-FROM mcr.microsoft.com/devcontainers/base:ubuntu
+FROM ubuntu:22.04
+
+# Create vscode user with sudo capabilities
+RUN groupadd --gid 1000 vscode \
+    && useradd --uid 1000 --gid vscode --shell /bin/bash --create-home vscode \
+    && apt-get update \
+    && apt-get install -y sudo \
+    && echo vscode ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/vscode \
+    && chmod 0440 /etc/sudoers.d/vscode
 
 # provide DOCKER_GID via build args if you need to force group id to match host
 ARG DOCKER_GID
@@ -23,7 +31,7 @@ RUN apt-get update \
   openjdk-8-jdk jq apt-transport-https ca-certificates gnupg-agent \
   software-properties-common bash-completion python3-pip make \
   libreadline-dev libsqlite3-dev wget llvm libncurses5-dev libncursesw5-dev \
-  xz-utils tk-dev liblzma-dev netcat-traditional libyaml-dev
+  xz-utils tk-dev liblzma-dev netcat-traditional libyaml-dev unzip
 
 # Install ASDF
 RUN ASDF_VERSION=$(awk '!/^#/ && NF {print $1; exit}' /tmp/.tool-versions.asdf) && \
