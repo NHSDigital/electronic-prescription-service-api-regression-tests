@@ -14,10 +14,12 @@ SSO_LOGIN_URL = "https://login.apigee.com/oauth/token"
 EPS_FHIR_DISPENSING_APP_ID = "1427007d-7dd3-4153-901a-df027fa6e6d6"
 EPS_FHIR_PRESCRIBING_APP_ID = "b6013742-6e0b-42df-b185-f05e7c753fe8"
 EPS_FHIR_PRESCRIBING_SHA1_APP_ID = "1122eb42-c783-4748-84b7-47e20446306d"
+PFP_APP_ID = "fa7eaadb-da69-4c4b-8821-83e21cb649f5"
 
 global DISPENSING_CONSUMER_KEY
 global PRESCRIBING_CONSUMER_KEY
 global PRESCRIBING_SHA1_CONSUMER_KEY
+global PFP_KEY
 load_dotenv(override=True)
 
 
@@ -67,6 +69,7 @@ def add_products_to_apps():
         f"{base_apps_url}"
         f"REGRESSION_INTERNAL_DEV_EPS_FHIR_PRESCRIBING_SHA1/keys/{PRESCRIBING_SHA1_CONSUMER_KEY}"
     )
+    pfp_url = f"{base_apps_url}REGRESSION_INTERNAL_DEV_PFP/keys/{PFP_KEY}"
     headers = get_headers()
 
     def add_product_to_prescribing_app():
@@ -117,8 +120,28 @@ def add_products_to_apps():
             response.status_code == 200
         ), f"expected 200, but got {response.status_code}\n{response.text}"
 
+    def add_product_to_pfp_app():
+        print(f"adding {pr_id} to product pfp app")
+        body = json.dumps(
+            {
+                "apiProducts": [
+                    f"prescriptions-for-patients-proxygen--internal-dev--pfp-proxygen-{pr_id}--nhs-login-p9"
+                ]
+            }
+        )
+
+        response = requests.put(
+            url=pfp_url,
+            headers=headers,
+            data=body,
+        )
+        assert (
+            response.status_code == 200
+        ), f"expected 200, but got {response.status_code}\n{response.text}"
+
     add_product_to_dispensing_app()
     add_product_to_prescribing_app()
+    add_product_to_pfp_app()
 
 
 def get_consumer_keys():
@@ -127,6 +150,7 @@ def get_consumer_keys():
     dispensing_url = base_apps_url + EPS_FHIR_DISPENSING_APP_ID
     prescribing_url = base_apps_url + EPS_FHIR_PRESCRIBING_APP_ID
     prescribing_sha1_url = base_apps_url + EPS_FHIR_PRESCRIBING_SHA1_APP_ID
+    pfp_url = base_apps_url + PFP_APP_ID
 
     def get_consumer_key(url):
         response = requests.get(url=url, headers=headers)
@@ -144,6 +168,9 @@ def get_consumer_keys():
     global PRESCRIBING_SHA1_CONSUMER_KEY
     PRESCRIBING_SHA1_CONSUMER_KEY = get_consumer_key(prescribing_sha1_url)
 
+    global PFP_KEY
+    PFP_KEY = get_consumer_key(pfp_url)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -155,10 +182,7 @@ if __name__ == "__main__":
     password = os.getenv("APIGEE_PASSWORD")
     secret = os.getenv("APIGEE_MFA_SECRET")
     product = arguments.product
-    if product not in [
-        "EPS-FHIR-PRESCRIBING",
-        "EPS-FHIR-DISPENSING",
-    ]:
+    if product not in ["EPS-FHIR-PRESCRIBING", "EPS-FHIR-DISPENSING", "PFP-PROXYGEN"]:
         print(f"{product} Not supported. Exiting.")
         exit(0)
     pr_id = arguments.pr.lower()
