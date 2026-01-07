@@ -48,6 +48,7 @@ import csv
 import datetime
 import os
 import signal
+import statistics
 import sys
 import time
 from dataclasses import dataclass, field
@@ -166,9 +167,13 @@ def display_summary_statistics(
         max_response = max(report.response_times) if report.response_times else 0
 
         # Calculate percentiles
-        sorted_times = sorted(report.response_times) if report.response_times else []
-        p95 = sorted_times[int(len(sorted_times) * 0.95)] if sorted_times else 0
-        p99 = sorted_times[int(len(sorted_times) * 0.99)] if sorted_times else 0
+        if report.response_times and len(report.response_times) >= 2:
+            quantiles = statistics.quantiles(report.response_times, n=100)
+            p95 = quantiles[94]
+            p99 = quantiles[98]
+        else:
+            p95 = report.response_times[0] if report.response_times else 0
+            p99 = report.response_times[0] if report.response_times else 0
 
         # Calculate actual interval and RPM
         actual_interval = (
