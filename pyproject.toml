@@ -1,3 +1,8 @@
+
+[project]
+python = "^3.12"
+name = "electronic-prescription-service-api-regression-tests"
+
 [tool.poetry]
 name = "electronic-prescription-service-api-regression-tests"
 version = "0.1.0"
