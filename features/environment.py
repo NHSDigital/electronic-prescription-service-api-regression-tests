@@ -142,6 +142,7 @@ REPOS = {
     "EPS-FHIR-PRESCRIBING": "https://github.com/NHSDigital/electronic-prescription-service-api",
     "EPS-FHIR-DISPENSING": "https://github.com/NHSDigital/electronic-prescription-service-api",
     "PFP-APIGEE": "https://github.com/NHSDigital/prescriptions-for-patients",
+    "PFP-PROXYGEN": "https://github.com/NHSDigital/prescriptionsforpatients",
     "PFP-AWS": "https://github.com/NHSDigital/prescriptionsforpatients",
     "PSU": "https://github.com/NHSDigital/eps-prescription-status-update-api",
     "EPS-ASSIST-ME": "https://github.com/NHSDigital/eps-assist-me",
