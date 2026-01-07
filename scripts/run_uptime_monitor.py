@@ -90,7 +90,7 @@ class EndpointResult:
     )
 
     def __post_init__(self):
-        self.success = self.error_message == ""
+        self.success = True if self.status == Status.PASS else False
 
     def to_csv_row(self, endpoint_url: str):
         """Return a list suitable for CSV writing."""
