@@ -21,7 +21,7 @@ USAGE:
 CSV OUTPUT FORMAT:
     Columns:
     - timestamp: ISO 8601 timestamp of request
-    - status_code: HTTP status code (PASS,FAIL,TIMEOUT,ERROR)
+    - status: response status code (PASS,FAIL,TIMEOUT,ERROR)
     - response_time_ms: Response time in milliseconds
     - success: Boolean indicating if request was successful
     - error_message: Error details (empty if successful)
@@ -51,11 +51,21 @@ import signal
 import sys
 import time
 from dataclasses import dataclass, field
-from typing import Dict, List
+from enum import Enum
 from dotenv import load_dotenv
+from typing import Dict, List
 
 # Load environment variables from .env file
 load_dotenv(override=True)
+
+
+class Status(Enum):
+    """Enumeration of possible endpoint statuses."""
+
+    PASS = "PASS"
+    FAIL = "FAIL"
+    TIMEOUT = "TIMEOUT"
+    ERROR = "ERROR"
 
 
 @dataclass
@@ -71,7 +81,7 @@ class Report:
 
 @dataclass
 class EndpointResult:
-    status_code: str
+    status: Status
     response_time_ms: float
     error_message: str = ""
     success: bool = field(init=False)
@@ -86,7 +96,7 @@ class EndpointResult:
         """Return a list suitable for CSV writing."""
         return [
             self.timestamp,
-            self.status_code,
+            self.status.value,
             f"{self.response_time_ms:.2f}",
             self.success,
             self.error_message,
@@ -289,7 +299,7 @@ def init_report_file(product: str, output_dir: str) -> str:
         csv_writer.writerow(
             [
                 "timestamp",
-                "status_code",
+                "status",
                 "response_time_ms",
                 "success",
                 "error_message",
@@ -333,7 +343,7 @@ async def execute_request(
             return_code = process.returncode
 
             endpoint_result = EndpointResult(
-                status_code="PASS" if return_code == 0 else "FAIL",
+                status=Status.PASS if return_code == 0 else Status.FAIL,
                 response_time_ms=(time.time() - start_time) * 1000,
                 error_message="" if return_code == 0 else stderr.decode()[:100],
             )
@@ -350,7 +360,7 @@ async def execute_request(
             await process.wait()
 
             endpoint_result = EndpointResult(
-                status_code="TIMEOUT",
+                status=Status.TIMEOUT,
                 response_time_ms=(time.time() - start_time) * 1000,
                 error_message=f"Request timed out after {timeout} seconds",
             )
@@ -359,7 +369,7 @@ async def execute_request(
 
     except Exception as e:  # pylint: disable=broad-except
         endpoint_result = EndpointResult(
-            status_code="ERROR",
+            status=Status.ERROR,
             response_time_ms=(time.time() - start_time) * 1000,
             error_message=str(e)[:100],
         )
@@ -384,7 +394,7 @@ async def execute_request(
 
     print(
         f"[{endpoint_result.timestamp}] {status_symbol} Request #{request_number} | "
-        f"Status: {endpoint_result.status_code} | "
+        f"Status: {endpoint_result.status} | "
         f"Response: {endpoint_result.response_time_ms:.2f}ms | "
         f"Uptime: {uptime_pct:.2f}% | "
         f"Avg: {avg_response_time:.2f}ms"
