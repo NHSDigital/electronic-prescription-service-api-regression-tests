@@ -78,6 +78,39 @@ class Report:
     success_count: int = 0
     failure_count: int = 0
     response_times: List[float] = field(default_factory=list)
+    _lock: asyncio.Lock = field(default_factory=asyncio.Lock, init=False, repr=False)
+
+    async def increment_request_count(self) -> int:
+        """Thread-safe increment of request count. Returns new count."""
+        async with self._lock:
+            self.request_count += 1
+            return self.request_count
+
+    async def record_result(self, success: bool, response_time_ms: float):
+        """Thread-safe recording of a request result."""
+        async with self._lock:
+            if success:
+                self.success_count += 1
+            else:
+                self.failure_count += 1
+            self.response_times.append(response_time_ms)
+
+    async def get_stats(self) -> tuple[int, int, int, float]:
+        """Thread-safe retrieval of current statistics.
+        Returns: (request_count, success_count, failure_count, avg_response_time)
+        """
+        async with self._lock:
+            avg_response = (
+                sum(self.response_times) / len(self.response_times)
+                if self.response_times
+                else 0.0
+            )
+            return (
+                self.request_count,
+                self.success_count,
+                self.failure_count,
+                avg_response,
+            )
 
 
 @dataclass
@@ -353,12 +386,9 @@ async def execute_request(
                 error_message="" if return_code == 0 else stderr.decode()[:100],
             )
 
-            if endpoint_result.success:
-                report.success_count += 1
-            else:
-                report.failure_count += 1
-
-            report.response_times.append(endpoint_result.response_time_ms)
+            await report.record_result(
+                endpoint_result.success, endpoint_result.response_time_ms
+            )
 
         except asyncio.TimeoutError:
             process.kill()
@@ -369,8 +399,7 @@ async def execute_request(
                 response_time_ms=(time.time() - start_time) * 1000,
                 error_message=f"Request timed out after {timeout} seconds",
             )
-            report.failure_count += 1
-            report.response_times.append(endpoint_result.response_time_ms)
+            await report.record_result(False, endpoint_result.response_time_ms)
 
     except Exception as e:  # pylint: disable=broad-except
         endpoint_result = EndpointResult(
@@ -378,8 +407,7 @@ async def execute_request(
             response_time_ms=(time.time() - start_time) * 1000,
             error_message=str(e)[:100],
         )
-        report.failure_count += 1
-        report.response_times.append(endpoint_result.response_time_ms)
+        await report.record_result(False, endpoint_result.response_time_ms)
 
     # Write to CSV immediately (with flush for crash safety)
     with open(csv_filename, "a", newline="", encoding="utf-8") as csvfile:
@@ -390,16 +418,12 @@ async def execute_request(
 
     # Console output
     status_symbol = "✓" if endpoint_result.success else "✗"
-    uptime_pct = (report.success_count / report.request_count) * 100
-    avg_response_time = (
-        sum(report.response_times) / len(report.response_times)
-        if report.response_times
-        else 0
-    )
+    request_count, success_count, _, avg_response_time = await report.get_stats()
+    uptime_pct = (success_count / request_count) * 100 if request_count > 0 else 0.0
 
     print(
         f"[{endpoint_result.timestamp}] {status_symbol} Request #{request_number} | "
-        f"Status: {endpoint_result.status} | "
+        f"Status: {endpoint_result.status.value} | "
         f"Response: {endpoint_result.response_time_ms:.2f}ms | "
         f"Uptime: {uptime_pct:.2f}% | "
         f"Avg: {avg_response_time:.2f}ms"
@@ -438,8 +462,7 @@ async def run_monitoring_loop_async(
     monitoring_start_time = time.time()
 
     while True:
-        report.request_count += 1
-        request_number = report.request_count
+        request_number = await report.increment_request_count()
 
         # Launch request asynchronously (doesn't block)
         asyncio.create_task(
