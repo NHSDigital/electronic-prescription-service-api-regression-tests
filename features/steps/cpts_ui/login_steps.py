@@ -157,11 +157,16 @@ def the_login_is_finished(context):
             f"{context.cpts_ui_base_url}site/select-your-role/",
             f"{context.cpts_ui_base_url}site/search-by-prescription-id",
             f"{context.cpts_ui_base_url}site/search-by-prescription-id/",
+            f"{context.cpts_ui_base_url}site/select-active-session",  # Concurrent session page
+            f"{context.cpts_ui_base_url}site/select-active-session/",
         ]
         return url in valid_urls
 
     context.active_page.wait_for_url(logged_in_urls, wait_until="load", timeout=2000)
-    context.execute_steps("then I am logged in")
+
+    # For concurrent sessions, landing on select-active-session is success, don't run "I am logged in"
+    if "select-active-session" not in context.active_page.url:
+        context.execute_steps("then I am logged in")
 
 
 ###############################################################################

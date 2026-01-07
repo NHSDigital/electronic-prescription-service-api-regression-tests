@@ -22,6 +22,7 @@ on:
           - EPS-FHIR-PRESCRIBING
           - EPS-FHIR-DISPENSING
           - PFP-APIGEE
+          - PFP-PROXYGEN
           - PFP-AWS
           - PSU
           - EPS-ASSIST-ME
@@ -277,7 +278,7 @@ jobs:
           poetry run python ./runner.py --env="$ENVIRONMENT" --product="$PRODUCT" --tags="$TAGS"
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: allure-results-${{ matrix.tag }}
           path: allure-results
@@ -294,7 +295,7 @@ jobs:
     if: always()
     steps:
       - name: Download matrix artifacts
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
         with:
           path: downloaded_artifacts
           pattern: allure-results-*
@@ -307,7 +308,7 @@ jobs:
           rsync -av downloaded_artifacts/environment.properties allure-results/
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: allure-results
           path: allure-results
@@ -353,14 +354,14 @@ jobs:
         run: |
           make install
       - name: download
-        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131
         with:
           name: allure-results
           path: allure-results
 
       - name: Generate a token
         id: generate-token
-        uses: actions/create-github-app-token@7e473efe3cb98aa54f8d4bac15400b15fad77d94
+        uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf
         if: contains(needs.*.result, 'failure') || github.event.inputs.generate_report == 'true'
         with:
           app-id: ${{ vars.REGRESSION_TESTS_APP_ID }}

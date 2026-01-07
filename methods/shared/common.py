@@ -35,10 +35,9 @@ def get_psu_authenticator(env, url):
         jwt_kid=JWT_KID,
     )
     # 2. Pass the config to the Authenticator
-    authenticator = ClientCredentialsAuthenticator(
-        config=config  # pyright: ignore [reportArgumentType]
-    )
-
+    # fmt: off
+    authenticator = ClientCredentialsAuthenticator(config=config)  # pyright: ignore [reportArgumentType]
+    # fmt: on
     return authenticator
 
 
@@ -62,9 +61,9 @@ def get_eps_fhir_authenticator(user, env, url, product):
         scope=scope,
         login_form=login_form,
     )
-    authenticator = AuthorizationCodeAuthenticator(
-        config=config  # pyright: ignore [reportArgumentType]
-    )
+    # fmt: off
+    authenticator = AuthorizationCodeAuthenticator(config=config)  # pyright: ignore [reportArgumentType]
+    # fmt: on
     return authenticator
 
 
@@ -88,9 +87,9 @@ def get_pfp_apigee_authenticator(env, url):
         scope=scope,
         login_form=login_form,
     )
-    authenticator = AuthorizationCodeAuthenticator(
-        config=config  # pyright: ignore [reportArgumentType]
-    )
+    # fmt: off
+    authenticator = AuthorizationCodeAuthenticator(config=config)  # pyright: ignore [reportArgumentType]
+    # fmt: on
     return authenticator
 
 
@@ -104,6 +103,7 @@ def get_auth(env, product, user="prescriber"):
         "EPS-FHIR-PRESCRIBING-SHA1",
         "EPS-FHIR-DISPENSING",
         "PFP-APIGEE",
+        "PFP-PROXYGEN",
         "PSU",
         "EPS-ASSIST-ME",
     ]:
@@ -119,7 +119,7 @@ def get_auth(env, product, user="prescriber"):
         "EPS-FHIR-PRESCRIBING-SHA1",
     ]:
         authenticator = get_eps_fhir_authenticator(user, env, url, product)
-    if product == "PFP-APIGEE":
+    if product == "PFP-APIGEE" or product == "PFP-PROXYGEN":
         authenticator = get_pfp_apigee_authenticator(env, url)
     if product == "PSU":
         authenticator = get_psu_authenticator(env, url)
