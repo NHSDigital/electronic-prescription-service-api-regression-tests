@@ -1,5 +1,5 @@
 python 3.12.9
-poetry 2.1.1
+poetry 2.2.1
 shellcheck 0.10.0
 nodejs 22.14.0
 actionlint 1.7.7
