@@ -46,6 +46,7 @@ import argparse
 import asyncio
 import csv
 import datetime
+import io
 import os
 import signal
 import statistics
@@ -55,6 +56,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Dict, List
 
+import aiofiles
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -434,11 +436,13 @@ async def execute_request(
         await report.record_result(False, endpoint_result.response_time_ms)
 
     # Write to CSV immediately (with flush for crash safety)
-    with open(csv_filename, "a", newline="", encoding="utf-8") as csvfile:
-        csv_writer = csv.writer(csvfile)
+    async with aiofiles.open(csv_filename, "a", encoding="utf-8") as csvfile:
+        # Use StringIO to properly format CSV row
+        output = io.StringIO()
+        csv_writer = csv.writer(output)
         csv_writer.writerow(endpoint_result.to_csv_row(report.endpoint_url))
-        csvfile.flush()
-        os.fsync(csvfile.fileno())
+        await csvfile.write(output.getvalue())
+        await csvfile.flush()
 
     # Console output
     status_symbol = "✓" if endpoint_result.success else "✗"
