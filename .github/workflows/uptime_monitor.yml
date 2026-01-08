@@ -1,0 +1,211 @@
+name: Uptime Monitor
+
+on:
+  workflow_dispatch:
+    inputs:
+      product:
+        description: "Product to monitor"
+        type: choice
+        options:
+          - PFP-APIGEE
+        required: true
+        default: PFP-APIGEE
+      environment:
+        description: "Environment to run against (GitHub env context)"
+        type: environment
+        required: true
+        default: INT
+      env:
+        description: "Script env (int, internal-dev, internal-qa, ref)"
+        type: choice
+        options:
+          - int
+          - internal-dev
+          - internal-qa
+          - ref
+        required: true
+        default: int
+      rpm:
+        description: "Requests per minute (mutually exclusive with interval)"
+        type: number
+        required: false
+      interval:
+        description: "Interval in seconds (mutually exclusive with rpm)"
+        type: number
+        required: false
+      output_dir:
+        description: "Directory for CSV output"
+        type: string
+        required: false
+        default: reports
+      feature_file:
+        description: "Behave feature file to run"
+        type: string
+        required: false
+        default: features/pfp/view_prescriptions.feature
+
+jobs:
+  show_inputs:
+    runs-on: ubuntu-22.04
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Show inputs
+        run: |
+          echo "product: ${{ inputs.product }}"
+          echo "environment (context): ${{ inputs.environment }}"
+          echo "env (script): ${{ inputs.env }}"
+          echo "rpm: ${{ inputs.rpm }}"
+          echo "interval: ${{ inputs.interval }}"
+          echo "output_dir: ${{ inputs.output_dir }}"
+          echo "feature_file: ${{ inputs.feature_file }}"
+          echo "product: ${{ inputs.product }}" >> "$GITHUB_STEP_SUMMARY"
+          {
+            echo "environment (context): ${{ inputs.environment }}";
+            echo "env (script): ${{ inputs.env }}";
+            echo "rpm: ${{ inputs.rpm }}";
+            echo "interval: ${{ inputs.interval }}";
+            echo "output_dir: ${{ inputs.output_dir }}";
+            echo "feature_file: ${{ inputs.feature_file }}";
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  run_uptime_monitor:
+    runs-on: ubuntu-22.04
+    environment: ${{ inputs.environment }}
+    needs: [show_inputs]
+    permissions:
+      id-token: write
+      contents: read
+      packages: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+
+      - name: Get asdf version
+        id: asdf-version
+        run: echo "version=$(awk '!/^#/ && NF {print $1; exit}' .tool-versions.asdf)" >> "$GITHUB_OUTPUT"
+
+      - name: Install asdf
+        uses: asdf-vm/actions/setup@b7bcd026f18772e44fe1026d729e1611cc435d47
+        with:
+          asdf_version: ${{ steps.asdf-version.outputs.version }}
+
+      - name: Cache asdf
+        uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb
+        with:
+          path: |
+            ~/.asdf
+          key: ${{ runner.os }}-asdf-${{ hashFiles('**/.tool-versions') }}
+
+      - name: Install asdf dependencies in .tool-versions
+        uses: asdf-vm/actions/install@b7bcd026f18772e44fe1026d729e1611cc435d47
+        with:
+          asdf_version: ${{ steps.asdf-version.outputs.version }}
+        env:
+          PYTHON_CONFIGURE_OPTS: --enable-shared
+
+      - name: Cache Virtualenv
+        uses: actions/cache@v5
+        id: cache-venv
+        with:
+          path: .venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('poetry.lock') }}
+
+      - name: Install Dependencies
+        if: steps.cache-venv.outputs.cache-hit != 'true'
+        run: make install
+
+      - name: Run Uptime Monitor (graceful cancel + log CSV)
+        id: run-monitor
+        continue-on-error: true
+        env:
+          PRODUCT: ${{ inputs.product }}
+          ENVIRONMENT: ${{ inputs.env }}
+          OUTPUT_DIR: ${{ inputs.output_dir }}
+          FEATURE_FILE: ${{ inputs.feature_file }}
+          ARM64: False
+          # Secrets mapped to expected env vars
+          CPT_FHIR_CLIENT_ID: ${{ secrets.CPT_FHIR_CLIENT_ID }}
+          CPT_FHIR_CLIENT_SECRET: ${{ secrets.CPT_FHIR_CLIENT_SECRET }}
+          EPS_FHIR_CLIENT_ID: ${{ secrets.EPS_FHIR_CLIENT_ID }}
+          EPS_FHIR_CLIENT_SECRET: ${{ secrets.EPS_FHIR_CLIENT_SECRET }}
+          EPS_FHIR_SHA1_CLIENT_ID: ${{ secrets.EPS_FHIR_SHA1_CLIENT_ID }}
+          EPS_FHIR_SHA1_CLIENT_SECRET: ${{ secrets.EPS_FHIR_SHA1_CLIENT_SECRET }}
+          EPS_FHIR_PRESCRIBING_CLIENT_ID: ${{ secrets.EPS_FHIR_PRESCRIBING_CLIENT_ID }}
+          EPS_FHIR_PRESCRIBING_CLIENT_SECRET: ${{ secrets.EPS_FHIR_PRESCRIBING_CLIENT_SECRET }}
+          EPS_FHIR_PRESCRIBING_SHA1_CLIENT_ID: ${{ secrets.EPS_FHIR_PRESCRIBING_SHA1_CLIENT_ID }}
+          EPS_FHIR_PRESCRIBING_SHA1_CLIENT_SECRET: ${{ secrets.EPS_FHIR_PRESCRIBING_SHA1_CLIENT_SECRET }}
+          EPS_FHIR_DISPENSING_CLIENT_ID: ${{ secrets.EPS_FHIR_DISPENSING_CLIENT_ID }}
+          EPS_FHIR_DISPENSING_CLIENT_SECRET: ${{ secrets.EPS_FHIR_DISPENSING_CLIENT_SECRET }}
+          PFP_CLIENT_ID: ${{ secrets.PFP_CLIENT_ID }}
+          PFP_CLIENT_SECRET: ${{ secrets.PFP_CLIENT_SECRET }}
+          PSU_CLIENT_ID: ${{ secrets.PSU_CLIENT_ID }}
+          PSU_CLIENT_SECRET: ${{ secrets.PSU_CLIENT_SECRET }}
+          CERTIFICATE: ${{ secrets.CERTIFICATE }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          JWT_KID: ${{ secrets.JWT_KID }}
+          JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          IFS=$'\n\t'
+
+          # Export env vars required by Behave environment
+          export CPT_FHIR_CLIENT_ID="$CPT_FHIR_CLIENT_ID"
+          export CPT_FHIR_CLIENT_SECRET="$CPT_FHIR_CLIENT_SECRET"
+          export EPS_FHIR_CLIENT_ID="$EPS_FHIR_CLIENT_ID"
+          export EPS_FHIR_CLIENT_SECRET="$EPS_FHIR_CLIENT_SECRET"
+          export EPS_FHIR_SHA1_CLIENT_ID="$EPS_FHIR_SHA1_CLIENT_ID"
+          export EPS_FHIR_SHA1_CLIENT_SECRET="$EPS_FHIR_SHA1_CLIENT_SECRET"
+          export EPS_FHIR_PRESCRIBING_CLIENT_ID="$EPS_FHIR_PRESCRIBING_CLIENT_ID"
+          export EPS_FHIR_PRESCRIBING_CLIENT_SECRET="$EPS_FHIR_PRESCRIBING_CLIENT_SECRET"
+          export EPS_FHIR_PRESCRIBING_SHA1_CLIENT_ID="$EPS_FHIR_PRESCRIBING_SHA1_CLIENT_ID"
+          export EPS_FHIR_PRESCRIBING_SHA1_CLIENT_SECRET="$EPS_FHIR_PRESCRIBING_SHA1_CLIENT_SECRET"
+          export EPS_FHIR_DISPENSING_CLIENT_ID="$EPS_FHIR_DISPENSING_CLIENT_ID"
+          export EPS_FHIR_DISPENSING_CLIENT_SECRET="$EPS_FHIR_DISPENSING_CLIENT_SECRET"
+          export PFP_CLIENT_ID="$PFP_CLIENT_ID"
+          export PFP_CLIENT_SECRET="$PFP_CLIENT_SECRET"
+          export PSU_CLIENT_ID="$PSU_CLIENT_ID"
+          export PSU_CLIENT_SECRET="$PSU_CLIENT_SECRET"
+          export CERTIFICATE="$CERTIFICATE"
+          export PRIVATE_KEY="$PRIVATE_KEY"
+          export JWT_KID="$JWT_KID"
+          export JWT_PRIVATE_KEY="$JWT_PRIVATE_KEY"
+          export ARM64="$ARM64"
+
+          # Build CLI args
+          ARGS=("--product" "$PRODUCT" "--env" "$ENVIRONMENT" "--output-dir" "$OUTPUT_DIR" "--feature-file" "$FEATURE_FILE")
+          if [ -n "${{ inputs.rpm }}" ]; then
+            ARGS+=("--rpm" "${{ inputs.rpm }}")
+          fi
+          if [ -n "${{ inputs.interval }}" ]; then
+            ARGS+=("--interval" "${{ inputs.interval }}")
+          fi
+
+          # Trap TERM and forward INT to the monitor for graceful summary
+          trap 'echo "Received TERM, stopping monitor gracefully..."; if [ -n "${MONITOR_PID:-}" ]; then kill -INT "$MONITOR_PID" || true; fi' TERM
+
+          echo "Starting uptime monitor..."
+          poetry run python ./scripts/run_uptime_monitor.py "${ARGS[@]}" &
+          MONITOR_PID=$!
+          wait "$MONITOR_PID" || true
+
+          # Find latest CSV and print to logs and summary
+          LATEST_CSV="$(find "$OUTPUT_DIR" -type f -name 'uptime_monitor_*' -printf '%T@ %p\n' | sort -nr | head -n 1 | sed -E 's/^[^ ]+ //')"
+          if [ -n "$LATEST_CSV" ]; then
+            echo "Latest CSV: $LATEST_CSV"
+            echo "Latest CSV: $LATEST_CSV" >> "$GITHUB_STEP_SUMMARY"
+            echo "--- CSV Content Start ---"
+            cat "$LATEST_CSV"
+            echo "--- CSV Content End ---"
+            echo "csv_path=$LATEST_CSV" >> "$GITHUB_OUTPUT"
+          else
+            echo "No CSV file found in $OUTPUT_DIR"
+            echo "csv_path=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload CSV Artifact
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: uptime-monitor-csv
+          path: ${{ steps.run-monitor.outputs.csv_path }}
+          if-no-files-found: warn
