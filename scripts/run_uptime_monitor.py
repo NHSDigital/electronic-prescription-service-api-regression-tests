@@ -485,8 +485,7 @@ async def run_monitoring_loop_async(
     while True:
         request_number = await report.increment_request_count()
 
-        # Launch request asynchronously (doesn't block)
-        asyncio.create_task(
+        _ = asyncio.create_task(
             execute_request(command, report, csv_filename, request_number)
         )
 
@@ -506,28 +505,25 @@ async def run_monitoring_loop_async(
             break
 
 
-def run_monitoring_loop(
-    env: str, product: str, command: List[str], interval: float, csv_filename: str
-) -> None:
-    """
-    Wrapper to run the async monitoring loop with proper signal handling.
+def main():
+    options = get_config()
+    validate_env(options["product"], options)
 
-    Args:
-        env: Environment to monitor
-        product: Product to monitor
-        command: The behave command to execute
-        interval: Time to wait between requests (seconds)
-        csv_filename: Path to CSV file for logging
-    """
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
     main_task = loop.create_task(
-        run_monitoring_loop_async(env, product, command, interval, csv_filename)
+        run_monitoring_loop_async(
+            options["env"],
+            options["product"],
+            get_command(options),
+            get_interval(options),
+            init_report_file(options["product"], options["output_dir"]),
+        )
     )
 
     # Handle Ctrl+C gracefully
-    def signal_handler(sig, frame):
+    def signal_handler(_sig, _frame):
         main_task.cancel()
 
     signal.signal(signal.SIGINT, signal_handler)
@@ -538,18 +534,6 @@ def run_monitoring_loop(
         pass
     finally:
         loop.close()
-
-
-def main():
-    options = get_config()
-    validate_env(options["product"], options)
-    run_monitoring_loop(
-        options["env"],
-        options["product"],
-        get_command(options),
-        get_interval(options),
-        init_report_file(options["product"], options["output_dir"]),
-    )
 
 
 if __name__ == "__main__":
