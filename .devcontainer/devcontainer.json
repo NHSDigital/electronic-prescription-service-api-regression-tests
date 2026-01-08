@@ -23,7 +23,15 @@
     },
     "ghcr.io/devcontainers/features/github-cli:1": {}
   },
-  "remoteEnv": { "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}/" },
+  "remoteEnv": { 
+    "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}/",
+    "DISPLAY": "${localEnv:DISPLAY}",
+    "WAYLAND_DISPLAY": ""
+  },
+  "runArgs": [
+    "--security-opt", "seccomp=unconfined",
+    "--add-host=host.docker.internal:host-gateway"
+  ],
   "customizations": {
     "vscode": {
       "extensions": [

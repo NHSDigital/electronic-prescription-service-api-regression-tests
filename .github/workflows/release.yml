@@ -28,7 +28,7 @@ jobs:
 
   quality_checks:
     needs: [get_asdf_version]
-    uses: NHSDigital/eps-common-workflows/.github/workflows/quality-checks.yml@41e3450a9869f278be0e431a4b47b5c77bd55559
+    uses: NHSDigital/eps-common-workflows/.github/workflows/quality-checks.yml@2b3ddfd1e59daf9905522d0140c6cd08e2547432
     with:
       asdfVersion: ${{ needs.get_asdf_version.outputs.asdf_version }}
       reinstall_poetry: true
@@ -46,7 +46,7 @@ jobs:
           echo "commit_id=${{ github.sha }}" >> "$GITHUB_OUTPUT"
   tag_release:
     needs: [quality_checks, get_commit_id, get_asdf_version]
-    uses: NHSDigital/eps-common-workflows/.github/workflows/tag-release.yml@41e3450a9869f278be0e431a4b47b5c77bd55559
+    uses: NHSDigital/eps-common-workflows/.github/workflows/tag-release.yml@2b3ddfd1e59daf9905522d0140c6cd08e2547432
     with:
       dry_run: false
       asdfVersion: ${{ needs.get_asdf_version.outputs.asdf_version }}
@@ -74,7 +74,7 @@ jobs:
           asdf_version: ${{ steps.asdf-version.outputs.version }}
 
       - name: Cache asdf
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+        uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb
         with:
           path: |
             ~/.asdf
@@ -88,7 +88,7 @@ jobs:
           PYTHON_CONFIGURE_OPTS: --enable-shared
 
       - name: Cache Virtualenv
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+        uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb
         id: cache-venv
         with:
           path: .venv

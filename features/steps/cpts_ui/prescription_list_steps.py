@@ -19,7 +19,7 @@ def search_context_prescription_id(context):
 
 @when("I click on the NHS number search tab")
 def click_on_nhs_number_search_tab(context):
-    context.active_page.get_by_test_id("eps-tab-heading /search-by-nhs-number").click()
+    context.active_page.get_by_role("tab", name="NHS Number Search").click()
 
 
 @when("I search for the prescription by NHS number search")

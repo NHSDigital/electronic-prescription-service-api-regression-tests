@@ -1,3 +1,8 @@
+
+[project]
+python = "^3.12"
+name = "electronic-prescription-service-api-regression-tests"
+
 [tool.poetry]
 name = "electronic-prescription-service-api-regression-tests"
 version = "0.1.0"
@@ -11,15 +16,15 @@ python = "^3.12"
 jsonschema = "^4.25.1"
 requests = "^2.32.5"
 assertpy = "^1.1"
-behave = "^1.2.6"
+behave = "1.2.6"
 behave-cucumber-formatter = "^1.0.1"
-allure-behave = "^2.15.2"
-black = "^25.11.0"
+allure-behave = "^2.15.3"
+black = "^25.12.0"
 semver = "^3.0.4"
-gitpython = "^3.1.45"
+gitpython = "^3.1.46"
 pip-licenses = "^5.5.0"
 flake8 = "^7.3.0"
-pre-commit = "^4.5.0"
+pre-commit = "^4.5.1"
 isort = "^7.0.0"
 cryptography = "^46.0.3"
 python-dateutil = "^2.9.0.post0"
@@ -27,16 +32,16 @@ python-dotenv = "^1.2.1"
 requests-oauthlib = "^2.0.0"
 nhs-number-generator = {git = "https://github.com/Iain-S/nhs_number_generator.git"}
 pyright = "^1.1.407"
-playwright = "^1.56.0"
+playwright = "^1.57.0"
 jycm = "^1.5.0"
 pyotp = "^2.9.0"
 lxml = "5.4.0"
 pytest-nhsd-apim = "^5.0.6"
-boto3 = "^1.41.5"
+boto3 = "^1.42.19"
 
 
 [tool.poetry.group.dev.dependencies]
-pre-commit = "^4.5.0"
+pre-commit = "^4.5.1"
 
 [tool.pyright]
 include = ["features", "methods", "messages", "scripts", "pages", "utils"]
