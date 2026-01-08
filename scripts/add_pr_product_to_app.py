@@ -148,7 +148,7 @@ if __name__ == "__main__":
     products_to_run = []
     products_to_run.append(product)
 
-    accompanying_product = product_configs[product]["accompanying_product"]
+    accompanying_product = product_configs[product].get("accompanying_product")
     if accompanying_product:
         print(f"Adding accompanying product to run for {accompanying_product}")
         products_to_run.append(accompanying_product)
