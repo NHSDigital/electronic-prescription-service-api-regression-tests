@@ -17,6 +17,8 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--tags",
+        action="append",  # allow multiple tags as behave does
+        dest="tags",
         required=False,
         help="Tags to include or exclude. use ~tag_name to exclude tags",
     )
@@ -28,11 +30,11 @@ if __name__ == "__main__":
     )
     argument = parser.parse_args()
 
-    # Convert to behave commandline args
     product_tag = argument.product.lower().replace("-", "_")
-    tags = f" --tags {product_tag} "
-    if argument.tags:
-        tags += " ".join(f"--tags {tag}" for tag in argument.tags.split(":"))
+    tags = [tag.split(":") for tag in argument.tags] if argument.tags else []
+    # Prepend product_tag to flattened list of tags
+    tags = [product_tag] + [item for sublist in tags for item in sublist]
+
     PRODUCT = f" -D product={argument.product}"
     ENV = f" -D env={argument.env}"
     ARM64 = f" -D arm64={argument.arm64}"
@@ -49,7 +51,7 @@ if __name__ == "__main__":
         f" --no-skipped "
         f" --expand"
         f" --logging-level=DEBUG"
-        f" {tags}"
+        f" {" ".join(f"--tags {tag}" for tag in tags)}"
     )
     print(f"Running subprocess with command: '{command}'")
     subprocess.run(command, shell=True, check=True)
