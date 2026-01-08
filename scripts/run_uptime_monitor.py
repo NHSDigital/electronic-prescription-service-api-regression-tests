@@ -53,8 +53,9 @@ import sys
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from dotenv import load_dotenv
 from typing import Dict, List
+
+from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv(override=True)
@@ -96,21 +97,13 @@ class Report:
                 self.failure_count += 1
             self.response_times.append(response_time_ms)
 
-    async def get_stats(self) -> tuple[int, int, int, float]:
-        """Thread-safe retrieval of current statistics.
-        Returns: (request_count, success_count, failure_count, avg_response_time)
-        """
+    async def get_avg_response_time(self) -> float:
+        """Thread-safe retrieval of current statistics."""
         async with self._lock:
-            avg_response = (
+            return (
                 sum(self.response_times) / len(self.response_times)
                 if self.response_times
                 else 0.0
-            )
-            return (
-                self.request_count,
-                self.success_count,
-                self.failure_count,
-                avg_response,
             )
 
     @property
@@ -264,7 +257,9 @@ def display_summary_statistics(
         print(f"  99th Percentile:   {p99:.2f}ms")
         print("\nThroughput:")
         print(f"  Target Interval:   {target_interval:.2f}s ({target_rpm:.1f} req/min)")
-        print(f"  Actual Interval:   {report.actual_interval:.2f}s ({report.actual_rpm:.1f} req/min)")
+        print(
+            f"  Actual Interval:   {report.actual_interval:.2f}s ({report.actual_rpm:.1f} req/min)"
+        )
         print(f"  Total Duration:    {report.actual_duration:.1f}s")
         print(f"\nDetailed log saved to: {csv_filename}")
         print(f"{separator}\n")
@@ -294,7 +289,7 @@ def get_command(options: Dict) -> List[str]:
     return command
 
 
-def get_config(args: list[str]) -> Dict:
+def get_config() -> Dict:
     parser = argparse.ArgumentParser(
         description="Run API uptime monitor for endpoint switchover testing",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -381,7 +376,6 @@ def init_report_file(product: str, output_dir: str) -> str:
 
 async def execute_request(
     command: List[str],
-    timeout: int,
     report: Report,
     csv_filename: str,
     request_number: int,
@@ -391,11 +385,11 @@ async def execute_request(
 
     Args:
         command: The behave command to execute
-        timeout: Timeout for the request in seconds
         report: Report object to update with results
         csv_filename: Path to CSV file for logging
         request_number: Sequential request number for display
     """
+    timeout = 30  # Timeout for each request in seconds
     start_time = time.time()
 
     try:
@@ -407,9 +401,7 @@ async def execute_request(
         )
 
         try:
-            stdout, stderr = await asyncio.wait_for(
-                process.communicate(), timeout=timeout
-            )
+            _, stderr = await asyncio.wait_for(process.communicate(), timeout=timeout)
             return_code = process.returncode
 
             endpoint_result = EndpointResult(
@@ -450,7 +442,7 @@ async def execute_request(
 
     # Console output
     status_symbol = "✓" if endpoint_result.success else "✗"
-    request_count, success_count, _, avg_response_time = await report.get_stats()
+    avg_response_time = await report.get_avg_response_time()
 
     print(
         f"[{endpoint_result.timestamp}] {status_symbol} Request #{request_number} | "
@@ -489,14 +481,13 @@ async def run_monitoring_loop_async(
 
     endpoint_url = get_endpoint_url(product, env)
     report = Report(endpoint_url=endpoint_url)
-    timeout = 30  # Timeout for each request in seconds
 
     while True:
         request_number = await report.increment_request_count()
 
         # Launch request asynchronously (doesn't block)
         asyncio.create_task(
-            execute_request(command, timeout, report, csv_filename, request_number)
+            execute_request(command, report, csv_filename, request_number)
         )
 
         # Wait for interval before launching next request
@@ -550,7 +541,7 @@ def run_monitoring_loop(
 
 
 def main():
-    options = get_config(sys.argv)
+    options = get_config()
     validate_env(options["product"], options)
     run_monitoring_loop(
         options["env"],
