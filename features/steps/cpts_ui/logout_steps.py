@@ -93,11 +93,9 @@ def then_i_see_logout_confirmation_modal(context):
 @then("the logout confirmation modal is not displayed")
 def then_logout_confirmation_modal_not_displayed(context):
     logout_page = Logout(context.active_page)
-    # For the new dialog implementation, check if the element is either not attached or not open
     try:
         expect(logout_page.logout_modal_content).not_to_be_attached()
     except AssertionError:
-        # If it's still attached, check that it doesn't have the open attribute
         expect(logout_page.logout_modal_content).not_to_have_attribute("open", "")
 
 
