@@ -492,7 +492,7 @@ async def run_monitoring_loop_async(
         # Wait for interval before launching next request
         try:
             await asyncio.sleep(interval)
-        except asyncio.CancelledError:
+        except asyncio.CancelledError as e:
             # Wait for pending requests to complete
             print("\n\nStopping monitor, waiting for pending requests...")
             await asyncio.sleep(2)
@@ -502,7 +502,7 @@ async def run_monitoring_loop_async(
                 interval,
                 report,
             )
-            break
+            raise e
 
 
 def main():
