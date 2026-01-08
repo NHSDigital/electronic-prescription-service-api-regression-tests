@@ -26,9 +26,9 @@ class SelectYourRole:
 
         # Role cards - roles with access
         self.roles_with_access_cards = page.get_by_test_id("eps-card")
-        self.first_role_card = page.locator(".eps-card__org-focus-area").first
-        self.role_card_headings = page.locator(".nhsuk-card__heading")
-        self.role_card_descriptions = page.locator(".eps-card__roleName")
+        self.first_role_card = page.get_by_test_id("eps-card").first
+        self.role_card_headings = page.locator(".eps-card__org-name")
+        self.role_card_descriptions = page.locator(".nhsuk-u-margin-top-2")
 
         self.select_role_header = page.locator(
             "span[data-testid='eps_header_selectYourRole'] > span.nhsuk-title"

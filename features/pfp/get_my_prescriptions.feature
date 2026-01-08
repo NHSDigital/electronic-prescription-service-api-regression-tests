@@ -1,11 +1,11 @@
-@pfp_apigee @pfp_aws @regression
-Feature: I can see my prescriptions
+@pfp_proxygen @pfp_aws @regression
+Feature: I can see my prescriptions via PFP Proxygen
 
   @blocker @smoke @e2e @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4222
   Scenario: I can see a single prescription
     Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app
     And I successfully prepare and sign a prescription
-    When I am authenticated with PFP-APIGEE app
+    When I am authenticated with PFP-PROXYGEN app
     And I request my prescriptions
     Then I can see my prescription
 
@@ -13,7 +13,7 @@ Feature: I can see my prescriptions
   Scenario: I can see a maximum of 25 prescriptions
     Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app
     And I successfully prepare and sign '26' nominated acute prescriptions
-    When I am authenticated with PFP-APIGEE app
+    When I am authenticated with PFP-PROXYGEN app
     And I request my prescriptions
     Then I can see '25' of my prescriptions
 
@@ -22,28 +22,28 @@ Feature: I can see my prescriptions
   Scenario: I can see no prescriptions
     Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app
     And I successfully prepare and sign '0' nominated acute prescriptions
-    When I am authenticated with PFP-APIGEE app
+    When I am authenticated with PFP-PROXYGEN app
     And I request my prescriptions
     Then I can see '0' of my prescriptions
 
   Scenario: I cannot see unreleased prescriptions
     Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app
     And I successfully prepare a nominated acute prescription
-    When I am authenticated with PFP-APIGEE app
+    When I am authenticated with PFP-PROXYGEN app
     And I request my prescriptions
     Then I cannot see my unreleased prescriptions
 
   Scenario: I cannot see eRD prescription items
     Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app
     And I successfully prepare and sign a nominated eRD prescription
-    When I am authenticated with PFP-APIGEE app
+    When I am authenticated with PFP-PROXYGEN app
     And I request my prescriptions
     Then I do not see an eRD prescription
 
   Scenario: I can see a FHIR compliant response for my prescriptions
     Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app
     And I successfully prepare and sign a nominated acute prescription
-    When I am authenticated with PFP-APIGEE app
+    When I am authenticated with PFP-PROXYGEN app
     And I request my prescriptions
     Then I validate the prescription matches my prepared prescription
 
@@ -58,12 +58,12 @@ Feature: I can see my prescriptions
       | With Pharmacy |
     Then I process the status updates for the prescription items and verify they are returned
 
-  # This scenario requires changes to FHIR compliance endpoint to be able to validate PFP responses
-  # Scenario: I can see prescription item details in FHIR compliant response
-  #   Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app
-  #   And I successfully prepare and sign a prescription
-  #   When I am authenticated with PFP-APIGEE app
-  #   And I request my prescriptions
-  #   Then I am an authorised prescriber with EPS-FHIR app
-  #   And I validate the response for FHIR compliance
-  #   And the response indicates a success
+# # This scenario requires changes to FHIR compliance endpoint to be able to validate PFP responses
+# # Scenario: I can see prescription item details in FHIR compliant response
+# #   Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app
+# #   And I successfully prepare and sign a prescription
+# #   When I am authenticated with PFP-PROXYGEN app
+# #   And I request my prescriptions
+# #   Then I am an authorised prescriber with EPS-FHIR app
+# #   And I validate the response for FHIR compliance
+# #   And the response indicates a success
