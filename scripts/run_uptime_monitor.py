@@ -272,8 +272,8 @@ def get_config(args: list[str]) -> Dict:
     parser.add_argument(
         "--product",
         default="PFP-APIGEE",
-        help="Product to monitor. Options: PFP-APIGEE, EPS-FHIR, EPS-FHIR-PRESCRIBING, "
-        "EPS-FHIR-DISPENSING, PSU, CPTS-FHIR",
+        help="Product to monitor (PFP-APIGEE). Options: PFP-APIGEE, EPS-FHIR, "
+        "EPS-FHIR-PRESCRIBING, EPS-FHIR-DISPENSING, PSU, CPTS-FHIR",
     )
 
     parser.add_argument(
