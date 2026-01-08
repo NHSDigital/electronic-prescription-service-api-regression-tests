@@ -84,7 +84,7 @@ def slash_join(*args):
 
 
 def add_product_to_app(base_url, config, headers):
-    body = json.dumps(config["api_product_name"])
+    body = json.dumps({"apiProducts": [config["api_product_name"]]})
 
     built_url = slash_join(base_url, config["app_name"], "keys", config["consumer_key"])
     response = requests.put(url=built_url, headers=headers, data=body, timeout=60)
