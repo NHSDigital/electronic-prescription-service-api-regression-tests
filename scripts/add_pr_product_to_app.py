@@ -15,6 +15,24 @@ load_dotenv(override=True)
 
 
 def get_product_config(pr_id):
+    """
+    Docstring for get_product_config
+
+    :param pr_id: Pull request ID provided by pipeline
+
+    Hydrates the product configuration dynamically by the PR ID provided.
+
+    Product config keys:
+    app_id - The URL based ID for the app when viewing within Apigee
+    app_name - The application name on Apigee
+    api_product_name - The pull request product name on Apigee, substituing the "pr-1234" with the variable
+    accompanying_product - Any product which also needs adding to an app in parallel to another,
+                            as only one product is provided at a time.
+                            Accompanying products should reference themselves to ensure regardless of which product
+                            is provided, the other is setup additionally.
+
+    noqa: E501 is your friend for long lines.
+    """
     product_config = {
         "EPS-FHIR-PRESCRIBING": {
             "app_id": "b6013742-6e0b-42df-b185-f05e7c753fe8",
