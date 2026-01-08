@@ -29,7 +29,7 @@ def get_product_config(pr_id):
             "accompanying_product": "EPS-FHIR-PRESCRIBING",
         },
         "EPS-FHIR-DISPENSING": {
-            "app_is": "1427007d-7dd3-4153-901a-df027fa6e6d6",
+            "app_id": "1427007d-7dd3-4153-901a-df027fa6e6d6",
             "app_name": "REGRESSION_INTERNAL_DEV_EPS_FHIR_DISPENSING",
             "api_product_name": f"fhir-dispensing--internal-dev--fhir-dispensing-{pr_id}--nhs-cis2-aal3",
         },
