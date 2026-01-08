@@ -78,6 +78,7 @@ class Report:
     success_count: int = 0
     failure_count: int = 0
     response_times: List[float] = field(default_factory=list)
+    start_time: float = field(default_factory=time.time)
     _lock: asyncio.Lock = field(default_factory=asyncio.Lock, init=False, repr=False)
 
     async def increment_request_count(self) -> int:
@@ -111,6 +112,53 @@ class Report:
                 self.failure_count,
                 avg_response,
             )
+
+    @property
+    def uptime_pct(self) -> float:
+        """Calculate uptime percentage."""
+        if self.request_count == 0:
+            return 0.0
+        return (self.success_count / self.request_count) * 100
+
+    @property
+    def avg_response(self) -> float:
+        """Calculate average response time."""
+        if not self.response_times:
+            return 0.0
+        return sum(self.response_times) / len(self.response_times)
+
+    @property
+    def min_response(self) -> float:
+        """Get minimum response time."""
+        if not self.response_times:
+            return 0.0
+        return min(self.response_times)
+
+    @property
+    def max_response(self) -> float:
+        """Get maximum response time."""
+        if not self.response_times:
+            return 0.0
+        return max(self.response_times)
+
+    @property
+    def actual_duration(self) -> float:
+        """Calculate actual monitoring duration in seconds."""
+        return time.time() - self.start_time
+
+    @property
+    def actual_interval(self) -> float:
+        """Calculate actual interval between requests in seconds."""
+        if self.request_count == 0:
+            return 0.0
+        return self.actual_duration / self.request_count
+
+    @property
+    def actual_rpm(self) -> float:
+        """Calculate actual requests per minute."""
+        if self.actual_duration == 0:
+            return 0.0
+        return (self.request_count / self.actual_duration) * 60
 
 
 @dataclass
@@ -180,7 +228,6 @@ def validate_env(product: str, options: Dict):
 def display_summary_statistics(
     csv_filename: str,
     target_interval: float,
-    actual_duration: float,
     report: Report,
 ):
     """Display summary statistics after monitoring ends."""
@@ -190,15 +237,6 @@ def display_summary_statistics(
     print(separator)
 
     if report.request_count > 0:
-        uptime_pct = (report.success_count / report.request_count) * 100
-        avg_response = (
-            sum(report.response_times) / len(report.response_times)
-            if report.response_times
-            else 0
-        )
-        min_response = min(report.response_times) if report.response_times else 0
-        max_response = max(report.response_times) if report.response_times else 0
-
         # Calculate percentiles
         if report.response_times and len(report.response_times) >= 2:
             quantiles = statistics.quantiles(report.response_times, n=100)
@@ -208,32 +246,26 @@ def display_summary_statistics(
             p95 = report.response_times[0] if report.response_times else 0
             p99 = report.response_times[0] if report.response_times else 0
 
-        # Calculate actual interval and RPM
-        actual_interval = (
-            actual_duration / report.request_count if report.request_count > 0 else 0
-        )
-        actual_rpm = (
-            (report.request_count / actual_duration) * 60 if actual_duration > 0 else 0
-        )
+        # Calculate target RPM
         target_rpm = 60.0 / target_interval if target_interval > 0 else 0
 
         print(f"\n{separator}")
         print("MONITORING SUMMARY")
         print(separator)
         print(f"Total Requests:      {report.request_count}")
-        print(f"Successful:          {report.success_count} ({uptime_pct:.2f}%)")
+        print(f"Successful:          {report.success_count} ({report.uptime_pct:.2f}%)")
         failed_pct = (report.failure_count / report.request_count) * 100
         print(f"Failed:              {report.failure_count} ({failed_pct:.2f}%)")
         print("\nResponse Times (ms):")
-        print(f"  Average:           {avg_response:.2f}ms")
-        print(f"  Minimum:           {min_response:.2f}ms")
-        print(f"  Maximum:           {max_response:.2f}ms")
+        print(f"  Average:           {report.avg_response:.2f}ms")
+        print(f"  Minimum:           {report.min_response:.2f}ms")
+        print(f"  Maximum:           {report.max_response:.2f}ms")
         print(f"  95th Percentile:   {p95:.2f}ms")
         print(f"  99th Percentile:   {p99:.2f}ms")
         print("\nThroughput:")
         print(f"  Target Interval:   {target_interval:.2f}s ({target_rpm:.1f} req/min)")
-        print(f"  Actual Interval:   {actual_interval:.2f}s ({actual_rpm:.1f} req/min)")
-        print(f"  Total Duration:    {actual_duration:.1f}s")
+        print(f"  Actual Interval:   {report.actual_interval:.2f}s ({report.actual_rpm:.1f} req/min)")
+        print(f"  Total Duration:    {report.actual_duration:.1f}s")
         print(f"\nDetailed log saved to: {csv_filename}")
         print(f"{separator}\n")
 
@@ -419,13 +451,12 @@ async def execute_request(
     # Console output
     status_symbol = "✓" if endpoint_result.success else "✗"
     request_count, success_count, _, avg_response_time = await report.get_stats()
-    uptime_pct = (success_count / request_count) * 100 if request_count > 0 else 0.0
 
     print(
         f"[{endpoint_result.timestamp}] {status_symbol} Request #{request_number} | "
         f"Status: {endpoint_result.status.value} | "
         f"Response: {endpoint_result.response_time_ms:.2f}ms | "
-        f"Uptime: {uptime_pct:.2f}% | "
+        f"Uptime: {report.uptime_pct:.2f}% | "
         f"Avg: {avg_response_time:.2f}ms"
     )
 
@@ -459,7 +490,6 @@ async def run_monitoring_loop_async(
     endpoint_url = get_endpoint_url(product, env)
     report = Report(endpoint_url=endpoint_url)
     timeout = 30  # Timeout for each request in seconds
-    monitoring_start_time = time.time()
 
     while True:
         request_number = await report.increment_request_count()
@@ -477,12 +507,9 @@ async def run_monitoring_loop_async(
             print("\n\nStopping monitor, waiting for pending requests...")
             await asyncio.sleep(2)
 
-            monitoring_end_time = time.time()
-            actual_duration = monitoring_end_time - monitoring_start_time
             display_summary_statistics(
                 csv_filename,
                 interval,
-                actual_duration,
                 report,
             )
             break
