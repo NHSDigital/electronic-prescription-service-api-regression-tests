@@ -277,7 +277,7 @@ def get_command(options: Dict) -> List[str]:
         "-D",
         f"env={options['env']}",
         "-D",
-        f"arm63={arm64_setting}",
+        f"arm64={arm64_setting}",
         "-D",
         f"output_dir={options['output_dir']}",
         "--tags",
