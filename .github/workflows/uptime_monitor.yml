@@ -39,6 +39,11 @@ on:
         type: string
         required: false
         default: features/pfp/ping.feature
+      log_level:
+        description: "Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)"
+        type: string
+        required: false
+        default: INFO
 
 jobs:
   show_inputs:
@@ -121,6 +126,7 @@ jobs:
           ENVIRONMENT: ${{ inputs.env }}
           OUTPUT_DIR: ${{ inputs.output_dir }}
           FEATURE_FILE: ${{ inputs.feature_file }}
+          LOG_LEVEL: ${{ inputs.log_level }}
           ARM64: False
           # Secrets mapped to expected env vars
           CPT_FHIR_CLIENT_ID: ${{ secrets.CPT_FHIR_CLIENT_ID }}
