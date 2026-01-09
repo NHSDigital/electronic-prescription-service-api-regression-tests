@@ -23,13 +23,14 @@
     },
     "ghcr.io/devcontainers/features/github-cli:1": {}
   },
-  "remoteEnv": { 
+  "remoteEnv": {
     "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}/",
     "DISPLAY": "${localEnv:DISPLAY}",
     "WAYLAND_DISPLAY": ""
   },
   "runArgs": [
-    "--security-opt", "seccomp=unconfined",
+    "--security-opt",
+    "seccomp=unconfined",
     "--add-host=host.docker.internal:host-gateway"
   ],
   "customizations": {
@@ -53,7 +54,8 @@
         "github.vscode-github-actions",
         "jimasp.behave-vsc",
         "Gruntfuggly.todo-tree",
-        "SonarSource.sonarlint-vscode"
+        "SonarSource.sonarlint-vscode",
+        "editorconfig.editorconfig"
       ],
       "settings": {
         "python.defaultInterpreterPath": "/home/vscode/.asdf/shims/python",
@@ -65,7 +67,9 @@
         "python.linting.flake8Enabled": true,
         "python.linting.enabled": true,
         "python.formatting.provider": "black",
-        "black-formatter.args": ["--line-length=120"],
+        "black-formatter.args": [
+          "--line-length=120"
+        ],
         "[python]": {
           "editor.defaultFormatter": "ms-python.black-formatter"
         },
@@ -84,7 +88,9 @@
           "bedrock",
           "allure"
         ],
-        "python.experiments.optOutFrom": ["pythonTestAdapter"]
+        "python.experiments.optOutFrom": [
+          "pythonTestAdapter"
+        ]
       }
     }
   },
