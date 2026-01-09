@@ -11,14 +11,54 @@ from dotenv import load_dotenv
 APIGEE_BASE_URL = "https://api.enterprise.apigee.com/v1/organizations/nhsd-nonprod/"
 SSO_LOGIN_URL = "https://login.apigee.com/oauth/token"
 
-EPS_FHIR_DISPENSING_APP_ID = "1427007d-7dd3-4153-901a-df027fa6e6d6"
-EPS_FHIR_PRESCRIBING_APP_ID = "b6013742-6e0b-42df-b185-f05e7c753fe8"
-EPS_FHIR_PRESCRIBING_SHA1_APP_ID = "1122eb42-c783-4748-84b7-47e20446306d"
-
-global DISPENSING_CONSUMER_KEY
-global PRESCRIBING_CONSUMER_KEY
-global PRESCRIBING_SHA1_CONSUMER_KEY
 load_dotenv(override=True)
+
+
+def get_product_config(pr_id):
+    """
+    Docstring for get_product_config
+
+    :param pr_id: Pull request ID provided by pipeline
+
+    Hydrates the product configuration dynamically by the PR ID provided.
+
+    Product config keys:
+    app_id - The URL based ID for the app when viewing within Apigee
+    app_name - The application name on Apigee
+    api_product_name - The pull request product name on Apigee, substituing the "pr-1234" with the variable
+    accompanying_product - Any product which also needs adding to an app in parallel to another,
+                            as only one product is provided at a time.
+                            Accompanying products should reference themselves to ensure regardless of which product
+                            is provided, the other is setup additionally.
+
+    noqa: E501 is your friend for long lines.
+    """
+    product_config = {
+        "EPS-FHIR-PRESCRIBING": {
+            "app_id": "b6013742-6e0b-42df-b185-f05e7c753fe8",
+            "app_name": "REGRESSION_INTERNAL_DEV_EPS_FHIR_PRESCRIBING",
+            "api_product_name": f"fhir-prescribing--internal-dev--fhir-prescribing-{pr_id}--nhs-cis2-aal3",
+            "accompanying_product": "EPS-FHIR-PRESCRIBING-SHA1",
+        },
+        "EPS-FHIR-PRESCRIBING-SHA1": {
+            "app_id": "1122eb42-c783-4748-84b7-47e20446306d",
+            "app_name": "REGRESSION_INTERNAL_DEV_EPS_FHIR_PRESCRIBING_SHA1",
+            "api_product_name": f"fhir-dispensing--internal-dev--fhir-dispensing-{pr_id}--nhs-cis2-aal3",
+            "accompanying_product": "EPS-FHIR-PRESCRIBING",
+        },
+        "EPS-FHIR-DISPENSING": {
+            "app_id": "1427007d-7dd3-4153-901a-df027fa6e6d6",
+            "app_name": "REGRESSION_INTERNAL_DEV_EPS_FHIR_DISPENSING",
+            "api_product_name": f"fhir-dispensing--internal-dev--fhir-dispensing-{pr_id}--nhs-cis2-aal3",
+        },
+        "PFP-PROXYGEN": {
+            "app_id": "fa7eaadb-da69-4c4b-8821-83e21cb649f5",
+            "app_name": "REGRESSION_INTERNAL_DEV_PFP",
+            "api_product_name": f"prescriptions-for-patients-proxygen--internal-dev--pfp-proxygen-{pr_id}--nhs-login-p9",  # noqa: E501
+        },
+    }
+
+    return product_config
 
 
 def get_headers():
@@ -57,76 +97,33 @@ def get_token():
     return response.json()["access_token"], response.json()["refresh_token"]
 
 
-def add_products_to_apps():
+def slash_join(*args):
+    return "/".join(arg.strip("/") for arg in args)
+
+
+def add_product_to_app(base_url, config, headers):
+    body = json.dumps({"apiProducts": [config["api_product_name"]]})
+
+    built_url = slash_join(base_url, config["app_name"], "keys", config["consumer_key"])
+    response = requests.put(url=built_url, headers=headers, data=body, timeout=60)
+    assert (
+        response.status_code == 200
+    ), f"expected 200, but got {response.status_code}\n{response.text}"
+
+
+def add_products_to_apps(pr, product_config, selected_product):
     base_apps_url = (
         f"{APIGEE_BASE_URL}companies/c4bd161b-0bc5-4a29-866e-85c81b704bd0/apps/"
     )
-    dispensing_url = f"{base_apps_url}REGRESSION_INTERNAL_DEV_EPS_FHIR_DISPENSING/keys/{DISPENSING_CONSUMER_KEY}"
-    prescribing_url = f"{base_apps_url}REGRESSION_INTERNAL_DEV_EPS_FHIR_PRESCRIBING/keys/{PRESCRIBING_CONSUMER_KEY}"
-    prescribing_sha1_url = (
-        f"{base_apps_url}"
-        f"REGRESSION_INTERNAL_DEV_EPS_FHIR_PRESCRIBING_SHA1/keys/{PRESCRIBING_SHA1_CONSUMER_KEY}"
-    )
     headers = get_headers()
 
-    def add_product_to_prescribing_app():
-        print(f"adding {pr_id} to product prescribing")
-        body = json.dumps(
-            {
-                "apiProducts": [
-                    f"fhir-prescribing--internal-dev--fhir-prescribing-{pr_id}--nhs-cis2-aal3"
-                ]
-            }
-        )
-
-        response = requests.put(
-            url=prescribing_sha1_url,
-            headers=headers,
-            data=body,
-        )
-        assert (
-            response.status_code == 200
-        ), f"expected 200, but got {response.status_code}\n{response.text}"
-
-        print(f"adding {pr_id} to product prescribing SHA1")
-        response = requests.put(
-            url=prescribing_url,
-            headers=headers,
-            data=body,
-        )
-        assert (
-            response.status_code == 200
-        ), f"expected 200, but got {response.status_code}\n{response.text}"
-
-    def add_product_to_dispensing_app():
-        print(f"adding {pr_id} to product dispensing")
-        body = json.dumps(
-            {
-                "apiProducts": [
-                    f"fhir-dispensing--internal-dev--fhir-dispensing-{pr_id}--nhs-cis2-aal3"
-                ]
-            }
-        )
-
-        response = requests.put(
-            url=dispensing_url,
-            headers=headers,
-            data=body,
-        )
-        assert (
-            response.status_code == 200
-        ), f"expected 200, but got {response.status_code}\n{response.text}"
-
-    add_product_to_dispensing_app()
-    add_product_to_prescribing_app()
+    print(f"Adding {pr} to {selected_product}")
+    add_product_to_app(base_apps_url, product_config[selected_product], headers)
 
 
-def get_consumer_keys():
+def get_consumer_keys(config, selected_product):
     headers = get_headers()
     base_apps_url = f"{APIGEE_BASE_URL}apps/"
-    dispensing_url = base_apps_url + EPS_FHIR_DISPENSING_APP_ID
-    prescribing_url = base_apps_url + EPS_FHIR_PRESCRIBING_APP_ID
-    prescribing_sha1_url = base_apps_url + EPS_FHIR_PRESCRIBING_SHA1_APP_ID
 
     def get_consumer_key(url):
         response = requests.get(url=url, headers=headers)
@@ -135,14 +132,11 @@ def get_consumer_keys():
         ), f"expected 200, but got {response.status_code}\n{response.text}"
         return response.json()["credentials"][0]["consumerKey"]
 
-    global DISPENSING_CONSUMER_KEY
-    DISPENSING_CONSUMER_KEY = get_consumer_key(dispensing_url)
+    print(f"Requesting consumer keys for {selected_product}")
+    url = base_apps_url + config[selected_product]["app_id"]
+    config[selected_product]["consumer_key"] = get_consumer_key(url)
 
-    global PRESCRIBING_CONSUMER_KEY
-    PRESCRIBING_CONSUMER_KEY = get_consumer_key(prescribing_url)
-
-    global PRESCRIBING_SHA1_CONSUMER_KEY
-    PRESCRIBING_SHA1_CONSUMER_KEY = get_consumer_key(prescribing_sha1_url)
+    return config
 
 
 if __name__ == "__main__":
@@ -155,18 +149,29 @@ if __name__ == "__main__":
     password = os.getenv("APIGEE_PASSWORD")
     secret = os.getenv("APIGEE_MFA_SECRET")
     product = arguments.product
-    if product not in [
-        "EPS-FHIR-PRESCRIBING",
-        "EPS-FHIR-DISPENSING",
-    ]:
-        print(f"{product} Not supported. Exiting.")
-        exit(0)
     pr_id = arguments.pr.lower()
     if "pr-" not in pr_id:
         print("Not a Pull Request. Exiting.")
         exit(0)
 
+    product_configs = get_product_config(pr_id)
+    if product not in product_configs.keys():
+        print(f"{product} Not supported. Exiting.")
+        exit(0)
+
+    global access_token
+    global refresh_token
     access_token, refresh_token = get_token()
-    get_consumer_keys()
-    add_products_to_apps()
+
+    products_to_run = []
+    products_to_run.append(product)
+
+    accompanying_product = product_configs[product].get("accompanying_product")
+    if accompanying_product:
+        print(f"Adding accompanying product to run for {accompanying_product}")
+        products_to_run.append(accompanying_product)
+
+    for product in products_to_run:
+        product_configs = get_consumer_keys(product_configs, product)
+        add_products_to_apps(pr_id, product_configs, product)
     print("Finished!")
