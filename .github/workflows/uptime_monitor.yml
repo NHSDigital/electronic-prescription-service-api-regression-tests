@@ -1,4 +1,4 @@
-name: Uptime Monitor
+name: API changeover monitor
 
 on:
   workflow_dispatch:
@@ -10,27 +10,23 @@ on:
           - PFP-APIGEE
         required: true
         default: PFP-APIGEE
-      environment:
-        description: "Environment to run against (GitHub env context)"
-        type: environment
-        required: true
-        default: INT
       env:
-        description: "Script env (int, internal-dev, internal-qa, ref)"
+        description: "Environment to run against (internal-dev, internal-qa, int, ref)"
         type: choice
         options:
-          - int
           - internal-dev
           - internal-qa
+          - int
           - ref
         required: true
         default: int
-      rpm:
-        description: "Requests per minute (mutually exclusive with interval)"
-        type: number
-        required: false
       interval:
         description: "Interval in seconds (mutually exclusive with rpm)"
+        type: number
+        required: false
+        default: 1
+      rpm:
+        description: "Requests per minute (mutually exclusive with interval)"
         type: number
         required: false
       output_dir:
@@ -47,30 +43,33 @@ on:
 jobs:
   show_inputs:
     runs-on: ubuntu-22.04
-    environment: ${{ inputs.environment }}
     steps:
       - name: Show inputs
+        env:
+          PRODUCT: ${{ inputs.product }}
+          ENVIRONMENT: ${{ inputs.env }}
+          RPM: ${{ inputs.rpm }}
+          INTERVAL: ${{ inputs.interval }}
+          OUTPUT_DIR: ${{ inputs.output_dir }}
+          FEATURE_FILE: ${{ inputs.feature_file }}
         run: |
-          echo "product: ${{ inputs.product }}"
-          echo "environment (context): ${{ inputs.environment }}"
-          echo "env (script): ${{ inputs.env }}"
-          echo "rpm: ${{ inputs.rpm }}"
-          echo "interval: ${{ inputs.interval }}"
-          echo "output_dir: ${{ inputs.output_dir }}"
-          echo "feature_file: ${{ inputs.feature_file }}"
-          echo "product: ${{ inputs.product }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "product: $PRODUCT"
+          echo "env (script): $ENVIRONMENT"
+          echo "rpm: $RPM"
+          echo "interval: $INTERVAL"
+          echo "output_dir: $OUTPUT_DIR"
+          echo "feature_file: $FEATURE_FILE"
+          echo "product: $PRODUCT" >> "$GITHUB_STEP_SUMMARY"
           {
-            echo "environment (context): ${{ inputs.environment }}";
-            echo "env (script): ${{ inputs.env }}";
-            echo "rpm: ${{ inputs.rpm }}";
-            echo "interval: ${{ inputs.interval }}";
-            echo "output_dir: ${{ inputs.output_dir }}";
-            echo "feature_file: ${{ inputs.feature_file }}";
+          echo "env (script): $ENVIRONMENT";
+          echo "rpm: $RPM";
+          echo "interval: $INTERVAL";
+          echo "output_dir: $OUTPUT_DIR";
+          echo "feature_file: $FEATURE_FILE";
           } >> "$GITHUB_STEP_SUMMARY"
 
   run_uptime_monitor:
     runs-on: ubuntu-22.04
-    environment: ${{ inputs.environment }}
     needs: [show_inputs]
     permissions:
       id-token: write
@@ -174,10 +173,10 @@ jobs:
           # Build CLI args
           ARGS=("--product" "$PRODUCT" "--env" "$ENVIRONMENT" "--output-dir" "$OUTPUT_DIR" "--feature-file" "$FEATURE_FILE")
           if [ -n "${{ inputs.rpm }}" ]; then
-            ARGS+=("--rpm" "${{ inputs.rpm }}")
+          ARGS+=("--rpm" "${{ inputs.rpm }}")
           fi
           if [ -n "${{ inputs.interval }}" ]; then
-            ARGS+=("--interval" "${{ inputs.interval }}")
+          ARGS+=("--interval" "${{ inputs.interval }}")
           fi
 
           # Trap TERM and forward INT to the monitor for graceful summary
@@ -191,15 +190,15 @@ jobs:
           # Find latest CSV and print to logs and summary
           LATEST_CSV="$(find "$OUTPUT_DIR" -type f -name 'uptime_monitor_*' -printf '%T@ %p\n' | sort -nr | head -n 1 | sed -E 's/^[^ ]+ //')"
           if [ -n "$LATEST_CSV" ]; then
-            echo "Latest CSV: $LATEST_CSV"
-            echo "Latest CSV: $LATEST_CSV" >> "$GITHUB_STEP_SUMMARY"
-            echo "--- CSV Content Start ---"
-            cat "$LATEST_CSV"
-            echo "--- CSV Content End ---"
-            echo "csv_path=$LATEST_CSV" >> "$GITHUB_OUTPUT"
+          echo "Latest CSV: $LATEST_CSV"
+          echo "Latest CSV: $LATEST_CSV" >> "$GITHUB_STEP_SUMMARY"
+          echo "--- CSV Content Start ---"
+          cat "$LATEST_CSV"
+          echo "--- CSV Content End ---"
+          echo "csv_path=$LATEST_CSV" >> "$GITHUB_OUTPUT"
           else
-            echo "No CSV file found in $OUTPUT_DIR"
-            echo "csv_path=" >> "$GITHUB_OUTPUT"
+          echo "No CSV file found in $OUTPUT_DIR"
+          echo "csv_path=" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Upload CSV Artifact
