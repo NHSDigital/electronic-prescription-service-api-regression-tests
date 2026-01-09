@@ -288,6 +288,8 @@ def get_command(options: Dict) -> List[str]:
         "--tags",
         options["product"].lower().replace("-", "_"),
         "--tags",
+        "smoke",
+        "--tags",
         "~slow",
         "--no-capture",
         "--no-logcapture",
@@ -340,8 +342,8 @@ def get_config() -> Dict:
 
     parser.add_argument(
         "--feature-file",
-        default="features/pfp/ping.feature",
-        help="Feature file to use for monitoring (default: features/pfp/ping.feature)",
+        default="features/pfp/view_prescriptions.feature",
+        help="Feature file to use for monitoring (default: features/pfp/view_prescriptions.feature)",
     )
 
     return vars(parser.parse_args())

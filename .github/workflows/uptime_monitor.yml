@@ -38,7 +38,7 @@ on:
         description: "Behave feature file to run"
         type: string
         required: false
-        default: features/pfp/ping.feature
+        default: features/pfp/view_prescriptions.feature
       log_level:
         description: "Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)"
         type: string
