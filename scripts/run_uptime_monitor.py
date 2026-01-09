@@ -47,6 +47,7 @@ import asyncio
 import csv
 import datetime
 import io
+import logging
 import os
 import signal
 import statistics
@@ -61,6 +62,10 @@ from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv(override=True)
+logger = logging.getLogger(__name__)
+log_level = os.getenv("LOG_LEVEL", "INFO").upper()
+logging.basicConfig(level=getattr(logging, log_level, logging.INFO))
+print(f"Log level set to: {log_level}")
 
 
 class Status(Enum):
@@ -405,7 +410,9 @@ async def execute_request(
         )
 
         try:
-            _, stderr = await asyncio.wait_for(process.communicate(), timeout=timeout)
+            stdout, stderr = await asyncio.wait_for(
+                process.communicate(), timeout=timeout
+            )
             return_code = process.returncode
 
             endpoint_result = EndpointResult(
@@ -414,6 +421,9 @@ async def execute_request(
                 error_message="" if return_code == 0 else stderr.decode()[:100],
             )
 
+            if return_code != 0 or logger.isEnabledFor(logging.DEBUG):
+                logger.debug("Request #%s stdout: %s", request_number, stdout.decode())
+                logger.debug("Request #%s stderr: %s", request_number, stderr.decode())
             await report.record_result(
                 endpoint_result.success, endpoint_result.response_time_ms
             )
