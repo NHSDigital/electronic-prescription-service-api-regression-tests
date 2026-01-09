@@ -156,13 +156,14 @@ jobs:
           ARGS+=("--interval" "${{ inputs.interval }}")
           fi
 
-          # Trap TERM and forward INT to the monitor for graceful summary
-          trap 'echo "Received TERM, stopping monitor gracefully..."; if [ -n "${MONITOR_PID:-}" ]; then kill -INT "$MONITOR_PID" || true; wait "$MONITOR_PID" || true; fi' TERM
+          # Trap TERM and forward INT to the monitor, then wait for graceful shutdown
+          trap 'echo "Received TERM, stopping monitor gracefully..."; if [ -n "${MONITOR_PID:-}" ]; then kill -INT "$MONITOR_PID" 2>/dev/null || true; sleep 5; wait "$MONITOR_PID" 2>/dev/null || true; fi' TERM
 
           echo "Starting uptime monitor..."
           poetry run python ./scripts/run_uptime_monitor.py "${ARGS[@]}" &
           MONITOR_PID=$!
-          wait "$MONITOR_PID" || true
+          wait "$MONITOR_PID" || EXIT_CODE=$?
+          echo "Uptime monitor exited with code ${EXIT_CODE:-0}"
 
           # Find latest CSV and print to logs and summary
           LATEST_CSV="$(find "$OUTPUT_DIR" -type f -name 'uptime_monitor_*' -printf '%T@ %p\n' | sort -nr | head -n 1 | sed -E 's/^[^ ]+ //')"

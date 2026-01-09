@@ -462,7 +462,7 @@ async def execute_request(
 
 async def run_monitoring_loop_async(
     env: str, product: str, command: List[str], interval: float, csv_filename: str
-) -> None:
+) -> Report:
     """
     Execute the monitoring loop asynchronously, allowing concurrent requests.
 
@@ -472,6 +472,9 @@ async def run_monitoring_loop_async(
         command: The behave command to execute
         interval: Time to wait between launching requests (seconds)
         csv_filename: Path to CSV file for logging
+
+    Returns:
+        Report object containing final statistics
     """
     separator = "=" * 80
     print(f"\n{separator}")
@@ -486,27 +489,22 @@ async def run_monitoring_loop_async(
     endpoint_url = get_endpoint_url(product, env)
     report = Report(endpoint_url=endpoint_url)
 
-    while True:
-        request_number = await report.increment_request_count()
+    try:
+        while True:
+            request_number = await report.increment_request_count()
 
-        _ = asyncio.create_task(
-            execute_request(command, report, csv_filename, request_number)
-        )
-
-        # Wait for interval before launching next request
-        try:
-            await asyncio.sleep(interval)
-        except asyncio.CancelledError as e:
-            # Wait for pending requests to complete
-            print("\n\nStopping monitor, waiting for pending requests...")
-            await asyncio.sleep(2)
-
-            display_summary_statistics(
-                csv_filename,
-                interval,
-                report,
+            _ = asyncio.create_task(
+                execute_request(command, report, csv_filename, request_number)
             )
-            raise e
+
+            # Wait for interval before launching next request
+            await asyncio.sleep(interval)
+
+    except asyncio.CancelledError:
+        # Wait for pending requests to complete
+        print("\n\nStopping monitor, waiting for pending requests...")
+        await asyncio.sleep(3)
+        return report
 
 
 def main():
@@ -516,27 +514,38 @@ def main():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
+    csv_filename = init_report_file(options["product"], options["output_dir"])
+    interval = get_interval(options)
+
     main_task = loop.create_task(
         run_monitoring_loop_async(
             options["env"],
             options["product"],
             get_command(options),
-            get_interval(options),
-            init_report_file(options["product"], options["output_dir"]),
+            interval,
+            csv_filename,
         )
     )
 
-    # Handle Ctrl+C gracefully
-    def signal_handler(_sig, _frame):
+    # Handle SIGINT and SIGTERM gracefully
+    def signal_handler(sig, _frame):
+        print(f"\n\nReceived signal {sig}, initiating graceful shutdown...")
         main_task.cancel()
 
     signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
 
+    report = None
     try:
-        loop.run_until_complete(main_task)
+        report = loop.run_until_complete(main_task)
     except asyncio.CancelledError:
-        pass
+        # Task was cancelled, report should be returned from the coroutine
+        if main_task.done() and not main_task.cancelled():
+            report = main_task.result()
     finally:
+        # Always display summary if we have a report
+        if report and report.request_count > 0:
+            display_summary_statistics(csv_filename, interval, report)
         loop.close()
 
 
