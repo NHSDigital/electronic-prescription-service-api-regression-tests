@@ -52,7 +52,8 @@
         "timonwong.shellcheck",
         "github.vscode-github-actions",
         "jimasp.behave-vsc",
-        "Gruntfuggly.todo-tree"
+        "Gruntfuggly.todo-tree",
+        "SonarSource.sonarlint-vscode"
       ],
       "settings": {
         "python.defaultInterpreterPath": "/home/vscode/.asdf/shims/python",
