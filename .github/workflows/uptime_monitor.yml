@@ -165,6 +165,15 @@ jobs:
           # Trap TERM and forward INT to the monitor, then wait for graceful shutdown
           trap 'echo "Received TERM, stopping monitor gracefully..."; if [ -n "${MONITOR_PID:-}" ]; then kill -INT "$MONITOR_PID" 2>/dev/null || true; sleep 5; wait "$MONITOR_PID" 2>/dev/null || true; fi' TERM
 
+          # Create allure-results directory if it does not exist
+          mkdir -p allure-results
+          touch allure-results/environment.properties
+
+          # Write PRODUCT and ENV to environment.properties for Allure reporting
+          {
+            echo "PRODUCT=$PRODUCT"
+            echo "ENV=$ENVIRONMENT"
+          } > allure-results/environment.properties
           export LOG_LEVEL="DEBUG" # tmp override for testing
           echo "Starting uptime monitor with log level $LOG_LEVEL..."
           poetry run python ./scripts/run_uptime_monitor.py "${ARGS[@]}" &
