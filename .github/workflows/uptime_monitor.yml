@@ -157,7 +157,7 @@ jobs:
           fi
 
           # Trap TERM and forward INT to the monitor for graceful summary
-          trap 'echo "Received TERM, stopping monitor gracefully..."; if [ -n "${MONITOR_PID:-}" ]; then kill -INT "$MONITOR_PID" || true; fi' TERM
+          trap 'echo "Received TERM, stopping monitor gracefully..."; if [ -n "${MONITOR_PID:-}" ]; then kill -INT "$MONITOR_PID" || true; wait "$MONITOR_PID" || true; fi' TERM
 
           echo "Starting uptime monitor..."
           poetry run python ./scripts/run_uptime_monitor.py "${ARGS[@]}" &
