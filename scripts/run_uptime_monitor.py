@@ -281,7 +281,9 @@ def get_command(options: Dict) -> List[str]:
         "-D",
         f"output_dir={options['output_dir']}",
         "--tags",
-        "uptime_monitor",
+        options["product"].lower().replace("-", "_"),
+        "--tags",
+        "~slow",
         "--no-capture",
         "--no-logcapture",
         "-f",
@@ -333,8 +335,8 @@ def get_config() -> Dict:
 
     parser.add_argument(
         "--feature-file",
-        default="features/pfp/view_prescriptions.feature",
-        help="Feature file to use for monitoring (default: features/pfp/view_prescriptions.feature)",
+        default="features/pfp/ping.feature",
+        help="Feature file to use for monitoring (default: features/pfp/ping.feature)",
     )
 
     return vars(parser.parse_args())
@@ -500,7 +502,7 @@ async def run_monitoring_loop_async(
             # Wait for interval before launching next request
             await asyncio.sleep(interval)
 
-    except asyncio.CancelledError:
+    except asyncio.CancelledError:  # NOSONAR
         # Wait for pending requests to complete
         print("\n\nStopping monitor, waiting for pending requests...")
         await asyncio.sleep(3)
