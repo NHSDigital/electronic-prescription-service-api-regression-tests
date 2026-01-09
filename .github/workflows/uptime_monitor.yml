@@ -165,7 +165,8 @@ jobs:
           # Trap TERM and forward INT to the monitor, then wait for graceful shutdown
           trap 'echo "Received TERM, stopping monitor gracefully..."; if [ -n "${MONITOR_PID:-}" ]; then kill -INT "$MONITOR_PID" 2>/dev/null || true; sleep 5; wait "$MONITOR_PID" 2>/dev/null || true; fi' TERM
 
-          echo "Starting uptime monitor..."
+          export LOG_LEVEL="DEBUG" # tmp override for testing
+          echo "Starting uptime monitor with log level $LOG_LEVEL..."
           poetry run python ./scripts/run_uptime_monitor.py "${ARGS[@]}" &
           MONITOR_PID=$!
           wait "$MONITOR_PID" || EXIT_CODE=$?
