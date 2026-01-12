@@ -258,8 +258,6 @@ def display_summary_statistics(
         print(f"Failed:              {report.failure_count} ({failed_pct:.2f}%)")
         print("\nResponse Times (ms):")
         print(f"  Average:           {report.avg_response:.2f}ms")
-        print(f"  Minimum:           {report.min_response:.2f}ms")
-        print(f"  Maximum:           {report.max_response:.2f}ms")
         print(f"  95th Percentile:   {p95:.2f}ms")
         print(f"  99th Percentile:   {p99:.2f}ms")
         print("\nThroughput:")
@@ -290,13 +288,14 @@ def get_command(options: Dict) -> List[str]:
         "-f",
         "plain",
         options["feature_file"],
-        "--tags",
-        options["product"].lower().replace("-", "_"),
     ]
-    # Additionally, append user-specified tags
+    # EITHER append user-specified tags
     if options.get("tags"):
         for tag in options["tags"].split(","):
             command.extend(["--tags", tag.strip()])
+    # OR append default product tag
+    else:
+        command.extend(["--tags", options["product"].lower().replace("-", "_")])
 
     logger.info("Constructed command: %s", " ".join(command))
     return command
