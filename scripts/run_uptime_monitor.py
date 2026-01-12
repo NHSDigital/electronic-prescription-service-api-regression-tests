@@ -522,14 +522,12 @@ def main():
     options = get_config()
     validate_env(options["product"], options)
 
-    csv_filename = init_report_file(options["product"], options["output_dir"])
-    interval = get_interval(options)
-
-    # Create event loop
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
-    # Create the main monitoring task
+    csv_filename = init_report_file(options["product"], options["output_dir"])
+    interval = get_interval(options)
+
     main_task = loop.create_task(
         run_monitoring_loop_async(
             options["env"],
@@ -540,27 +538,15 @@ def main():
         )
     )
 
-    # Flag to track if shutdown was requested
-    shutdown_requested = False
+    # Handle SIGINT and SIGTERM gracefully using asyncio's signal handling
+    def signal_handler():
+        print("\n\nReceived signal, initiating graceful shutdown...", flush=True)
+        sys.stdout.flush()  # Force flush
+        main_task.cancel()
 
-    # Handle SIGINT and SIGTERM using standard signal module
-    # This works more reliably when run via poetry in background
-    def signal_handler(signum, frame):
-        nonlocal shutdown_requested
-        if not shutdown_requested:
-            shutdown_requested = True
-            sig_name = signal.Signals(signum).name
-            print(
-                f"\n\nReceived {sig_name}, initiating graceful shutdown...", flush=True
-            )
-            sys.stdout.flush()
-            # Cancel the task from within the loop
-            loop.call_soon_threadsafe(main_task.cancel)
-
-    # Register signal handlers
-    signal.signal(signal.SIGINT, signal_handler)
-    signal.signal(signal.SIGTERM, signal_handler)
-    print("Signal handlers registered for SIGINT and SIGTERM", flush=True)
+    # Use loop.add_signal_handler() instead of signal.signal()
+    for sig in (signal.SIGINT, signal.SIGTERM):
+        loop.add_signal_handler(sig, signal_handler)
 
     report = None
     try:
