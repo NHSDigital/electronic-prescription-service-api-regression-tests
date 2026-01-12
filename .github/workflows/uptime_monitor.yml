@@ -43,11 +43,12 @@ on:
         description: "Behave feature file to run"
         type: string
         required: false
-        default: features/pfp/view_prescriptions.feature
+        default: features/pfp/get_prescriptions.feature
       tags:
-        description: "Tags to filter Behave scenarios"
+        description: "Tags to filter Behave scenarios (uses product if unspecified)"
         type: string
         required: false
+        default: "pfp_uptime_monitor"
 
 jobs:
   show_inputs:
