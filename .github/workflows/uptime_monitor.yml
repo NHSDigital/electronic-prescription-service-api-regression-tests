@@ -177,7 +177,14 @@ jobs:
           echo "Starting uptime monitor with log level $LOG_LEVEL..."
           poetry run python ./scripts/run_uptime_monitor.py "${ARGS[@]}" &
           MONITOR_PID=$!
-          wait "$MONITOR_PID" || EXIT_CODE=$?
+
+          # Wait with signal handling (-0 means send 'test' signal)
+          while kill -0 "$MONITOR_PID" 2>/dev/null; do
+            wait "$MONITOR_PID" 2>/dev/null || true
+            sleep 0.1
+          done
+
+          EXIT_CODE=$?
           echo "Uptime monitor exited with code ${EXIT_CODE:-0}"
 
           # Find latest CSV and print to logs and summary
