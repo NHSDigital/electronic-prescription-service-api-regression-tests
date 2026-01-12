@@ -297,6 +297,7 @@ def get_command(options: Dict) -> List[str]:
         "plain",
         options["feature_file"],
     ]
+    logger.info("Constructed command: %s", " ".join(command))
     return command
 
 
