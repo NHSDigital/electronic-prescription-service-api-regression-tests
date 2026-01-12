@@ -285,18 +285,19 @@ def get_command(options: Dict) -> List[str]:
         f"arm64={arm64_setting}",
         "-D",
         f"output_dir={options['output_dir']}",
-        "--tags",
-        options["product"].lower().replace("-", "_"),
-        "--tags",
-        "smoke",
-        "--tags",
-        "~slow",
         "--no-capture",
         "--no-logcapture",
         "-f",
         "plain",
         options["feature_file"],
+        "--tags",
+        options["product"].lower().replace("-", "_"),
     ]
+    # Additionally, append user-specified tags
+    if options.get("tags"):
+        for tag in options["tags"].split(","):
+            command.extend(["--tags", tag.strip()])
+
     logger.info("Constructed command: %s", " ".join(command))
     return command
 
@@ -345,6 +346,11 @@ def get_config() -> Dict:
         "--feature-file",
         default="features/pfp/view_prescriptions.feature",
         help="Feature file to use for monitoring (default: features/pfp/view_prescriptions.feature)",
+    )
+
+    parser.add_argument(
+        "--tags",
+        help="Comma-separated list of tags to add to product tag (e.g., 'smoke,~slow')",
     )
 
     return vars(parser.parse_args())

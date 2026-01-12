@@ -34,16 +34,20 @@ on:
         type: string
         required: false
         default: reports
-      feature_file:
-        description: "Behave feature file to run"
-        type: string
-        required: false
-        default: features/pfp/view_prescriptions.feature
       log_level:
         description: "Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)"
         type: string
         required: false
         default: INFO
+      feature_file:
+        description: "Behave feature file to run"
+        type: string
+        required: false
+        default: features/pfp/view_prescriptions.feature
+      tags:
+        description: "Tags to filter Behave scenarios"
+        type: string
+        required: false
 
 jobs:
   show_inputs:
@@ -57,6 +61,7 @@ jobs:
           INTERVAL: ${{ inputs.interval }}
           OUTPUT_DIR: ${{ inputs.output_dir }}
           FEATURE_FILE: ${{ inputs.feature_file }}
+          ADDITIONAL_TAGS: ${{ inputs.tags }}
         run: |
           echo "product: $PRODUCT"
           echo "env (script): $ENVIRONMENT"
@@ -64,6 +69,7 @@ jobs:
           echo "interval: $INTERVAL"
           echo "output_dir: $OUTPUT_DIR"
           echo "feature_file: $FEATURE_FILE"
+          echo "additional_tags: $ADDITIONAL_TAGS"
           echo "product: $PRODUCT" >> "$GITHUB_STEP_SUMMARY"
           {
           echo "env (script): $ENVIRONMENT";
@@ -126,6 +132,7 @@ jobs:
           ENVIRONMENT: ${{ inputs.env }}
           OUTPUT_DIR: ${{ inputs.output_dir }}
           FEATURE_FILE: ${{ inputs.feature_file }}
+          ADDITIONAL_TAGS: ${{ inputs.tags }}
           LOG_LEVEL: ${{ inputs.log_level }}
           ARM64: False
           # Secrets mapped to expected env vars
@@ -154,7 +161,7 @@ jobs:
           IFS=$'\n\t'
 
           # Build CLI args
-          ARGS=("--product" "$PRODUCT" "--env" "$ENVIRONMENT" "--output-dir" "$OUTPUT_DIR" "--feature-file" "$FEATURE_FILE")
+          ARGS=("--product" "$PRODUCT" "--env" "$ENVIRONMENT" "--output-dir" "$OUTPUT_DIR" "--feature-file" "$FEATURE_FILE" "--tags" "$ADDITIONAL_TAGS")
           if [ -n "${{ inputs.rpm }}" ]; then
           ARGS+=("--rpm" "${{ inputs.rpm }}")
           fi
@@ -177,7 +184,7 @@ jobs:
           # Get the virtualenv path from poetry and activate it
           VENV_PATH="$(poetry env info --path)"
           echo "Virtual environment path: $VENV_PATH"
-          
+
           # Activate the virtual environment and run Python directly
           echo "Starting uptime monitor with log level $LOG_LEVEL..."
           (
