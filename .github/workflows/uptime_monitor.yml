@@ -162,8 +162,8 @@ jobs:
           ARGS+=("--interval" "${{ inputs.interval }}")
           fi
 
-          # Trap TERM and forward INT to the monitor, then wait for graceful shutdown
-          trap 'echo "Received TERM, stopping monitor gracefully..."; if [ -n "${MONITOR_PID:-}" ]; then kill -INT "$MONITOR_PID" 2>/dev/null || true; sleep 5; wait "$MONITOR_PID" 2>/dev/null || true; fi' TERM
+          # Trap TERM and forward INT to the monitor
+          trap 'echo "Received TERM, stopping monitor gracefully..." >&2; if [ -n "${MONITOR_PID:-}" ]; then kill -INT "$MONITOR_PID" 2>/dev/null || true; fi' TERM
 
           # Create allure-results directory if it does not exist
           mkdir -p allure-results
@@ -177,14 +177,27 @@ jobs:
           echo "Starting uptime monitor with log level $LOG_LEVEL..."
           poetry run python ./scripts/run_uptime_monitor.py "${ARGS[@]}" &
           MONITOR_PID=$!
+          echo "Monitor PID: $MONITOR_PID"
 
-          # Wait with signal handling (-0 means send 'test' signal)
+          # Wait with signal handling, allow plenty of time for graceful shutdown
+          TIMEOUT=0
+          MAX_TIMEOUT=10
           while kill -0 "$MONITOR_PID" 2>/dev/null; do
-            wait "$MONITOR_PID" 2>/dev/null || true
-            sleep 0.1
+            if wait "$MONITOR_PID" 2>/dev/null; then
+              break
+            fi
+            sleep 1
+            TIMEOUT=$((TIMEOUT + 1))
+            if [ $TIMEOUT -ge $MAX_TIMEOUT ]; then
+              echo "Timeout waiting for graceful shutdown, forcing termination..." >&2
+              kill -TERM "$MONITOR_PID" 2>/dev/null || true
+              sleep 2
+              kill -KILL "$MONITOR_PID" 2>/dev/null || true
+              break
+            fi
           done
 
-          EXIT_CODE=$?
+          wait "$MONITOR_PID" 2>/dev/null || EXIT_CODE=$?
           echo "Uptime monitor exited with code ${EXIT_CODE:-0}"
 
           # Find latest CSV and print to logs and summary

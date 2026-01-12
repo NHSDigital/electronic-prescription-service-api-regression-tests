@@ -540,7 +540,8 @@ def main():
 
     # Handle SIGINT and SIGTERM gracefully using asyncio's signal handling
     def signal_handler():
-        print("\n\nReceived signal, initiating graceful shutdown...")
+        print("\n\nReceived signal, initiating graceful shutdown...", flush=True)
+        sys.stdout.flush()  # Force flush
         main_task.cancel()
 
     # Use loop.add_signal_handler() instead of signal.signal()
@@ -551,13 +552,19 @@ def main():
     try:
         report = loop.run_until_complete(main_task)
     except asyncio.CancelledError:
-        # Task was cancelled, report should be returned from the coroutine
+        print("Graceful shutdown in progress...", flush=True)
+        sys.stdout.flush()
+        if main_task.done() and not main_task.cancelled():
+            report = main_task.result()
+    except Exception as e:  # pylint: disable=broad-except
+        logger.exception("An unexpected error occurred: %s", e)
         if main_task.done() and not main_task.cancelled():
             report = main_task.result()
     finally:
-        # Always display summary if we have a report
         if report and report.request_count > 0:
             display_summary_statistics(csv_filename, interval, report)
+        print("Cleanup complete, exiting...", flush=True)
+        sys.stdout.flush()
         loop.close()
 
 

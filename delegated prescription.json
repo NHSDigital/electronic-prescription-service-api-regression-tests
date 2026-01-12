@@ -1,0 +1,188 @@
+{
+  "resourceType": "Bundle",
+  "id": "abb6b105-e2a5-4cca-adbb-b6f757794b49",
+  "meta": {
+    "lastUpdated": "2025-12-05T17:08:41+00:00"
+  },
+  "type": "searchset",
+  "total": 1,
+  "entry": [
+    {
+      "fullUrl": "urn:uuid:bc8e3dd0-f448-4a6e-b19f-432aa1f740a1",
+      "search": {
+        "mode": "match"
+      },
+      "resource": {
+        "resourceType": "Bundle",
+        "type": "collection",
+        "entry": [
+          {
+            "fullUrl": "urn:uuid:22837379-a63d-4cf2-b30c-a395b9e5dbb6",
+            "resource": {
+              "id": "22837379-a63d-4cf2-b30c-a395b9e5dbb6",
+              "extension": [
+                {
+                  "extension": [
+                    {
+                      "url": "statusDate",
+                      "valueDateTime": "2025-12-04T00:00:00+00:00"
+                    },
+                    {
+                      "url": "status",
+                      "valueCoding": {
+                        "code": "Prescriber Approved",
+                        "system": "https://fhir.nhs.uk/CodeSystem/task-businessStatus-nppt"
+                      }
+                    }
+                  ],
+                  "url": "https://fhir.nhs.uk/StructureDefinition/Extension-DM-PrescriptionStatusHistory"
+                }
+              ],
+              "courseOfTherapyType": {
+                "coding": [
+                  {
+                    "code": "acute",
+                    "display": "Short course (acute) therapy",
+                    "system": "https://terminology.hl7.org/CodeSystem/medicationrequest-course-of-therapy"
+                  }
+                ]
+              },
+              "dispenseRequest": {
+                "performer": {
+                  "reference": "urn:uuid:7d84a651-bd76-4277-8480-758889ec0fed"
+                },
+                "quantity": {
+                  "code": "428673006",
+                  "system": "https://snomed.info/sct",
+                  "unit": "tablet",
+                  "value": 100
+                },
+                "validityPeriod": {
+                  "start": "2025-12-04"
+                }
+              },
+              "groupIdentifier": {
+                "system": "https://fhir.nhs.uk/Id/prescription-order-number",
+                "value": "EBB76B-A83008-41F78A"
+              },
+              "identifier": [
+                {
+                  "system": "https://fhir.nhs.uk/Id/prescription-order-item-number",
+                  "value": "51E3D918-DBAB-47B7-A1AE-D2288DABE582"
+                }
+              ],
+              "intent": "order",
+              "medicationCodeableConcept": {
+                "coding": [
+                  {
+                    "code": "322237000",
+                    "display": "Paracetamol 500mg soluble tablet (product)",
+                    "system": "https://snomed.info/sct"
+                  }
+                ]
+              },
+              "requester": {
+                "reference": "urn:uuid:6fd14f5f-d2e3-44d1-a3c9-64258060b93f"
+              },
+              "status": "active",
+              "subject": {
+                "identifier": {
+                  "system": "https://fhir.nhs.uk/Id/nhs-number",
+                  "value": "6494897681"
+                }
+              },
+              "substitution": {
+                "allowedBoolean": false
+              },
+              "resourceType": "MedicationRequest"
+            }
+          },
+          {
+            "fullUrl": "urn:uuid:7710bf7a-249e-40b8-ad58-bf8962482652",
+            "resource": {
+              "id": "7710bf7a-249e-40b8-ad58-bf8962482652",
+              "name": [
+                {
+                  "family": "BOIN",
+                  "given": [
+                    "C"
+                  ],
+                  "prefix": [
+                    "DR"
+                  ]
+                }
+              ],
+              "resourceType": "Practitioner"
+            }
+          },
+          {
+            "fullUrl": "urn:uuid:6fd14f5f-d2e3-44d1-a3c9-64258060b93f",
+            "resource": {
+              "id": "6fd14f5f-d2e3-44d1-a3c9-64258060b93f",
+              "organization": {
+                "reference": "urn:uuid:4efe192c-cd04-4944-aa76-ee7db3e0f825"
+              },
+              "practitioner": {
+                "reference": "urn:uuid:7710bf7a-249e-40b8-ad58-bf8962482652"
+              },
+              "resourceType": "PractitionerRole"
+            }
+          },
+          {
+            "fullUrl": "urn:uuid:4efe192c-cd04-4944-aa76-ee7db3e0f825",
+            "resource": {
+              "id": "4efe192c-cd04-4944-aa76-ee7db3e0f825",
+              "address": [
+                {
+                  "line": [
+                    "MUSGROVE PARK HOSPITAL",
+                    "TAUNTON"
+                  ],
+                  "postalCode": "TA1 5DA",
+                  "type": "both",
+                  "use": "work"
+                }
+              ],
+              "identifier": [
+                {
+                  "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                  "value": "A83008"
+                }
+              ],
+              "name": "SOMERSET BOWEL CANCER SCREENING CENTRE",
+              "telecom": [
+                {
+                  "system": "phone",
+                  "use": "work",
+                  "value": "01823333444"
+                }
+              ],
+              "resourceType": "Organization"
+            }
+          },
+          {
+            "fullUrl": "urn:uuid:7d84a651-bd76-4277-8480-758889ec0fed",
+            "resource": {
+              "id": "7d84a651-bd76-4277-8480-758889ec0fed",
+              "address": [
+                {
+                  "text": "63 BRIARFIELD ROAD, TIMPERLEY, ALTRINCHAM, CHESHIRE, CHESHIRE, WA15 7DD",
+                  "type": "both",
+                  "use": "work"
+                }
+              ],
+              "identifier": [
+                {
+                  "system": "https://fhir.nhs.uk/Id/ods-organization-code",
+                  "value": "FA565"
+                }
+              ],
+              "name": "BROOMWOOD PHARMACY LTD",
+              "resourceType": "Organization"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
