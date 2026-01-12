@@ -510,10 +510,7 @@ async def run_monitoring_loop_async(
             _ = asyncio.create_task(
                 execute_request(command, report, csv_filename, request_number)
             )
-
-            # Wait for interval before launching next request
             await asyncio.sleep(interval)
-
     except asyncio.CancelledError:  # NOSONAR
         # Wait for pending requests to complete
         print("\n\nStopping monitor, waiting for pending requests...")
@@ -541,13 +538,14 @@ def main():
         )
     )
 
-    # Handle SIGINT and SIGTERM gracefully
-    def signal_handler(sig, _frame):
-        print(f"\n\nReceived signal {sig}, initiating graceful shutdown...")
+    # Handle SIGINT and SIGTERM gracefully using asyncio's signal handling
+    def signal_handler():
+        print("\n\nReceived signal, initiating graceful shutdown...")
         main_task.cancel()
 
-    signal.signal(signal.SIGINT, signal_handler)
-    signal.signal(signal.SIGTERM, signal_handler)
+    # Use loop.add_signal_handler() instead of signal.signal()
+    for sig in (signal.SIGINT, signal.SIGTERM):
+        loop.add_signal_handler(sig, signal_handler)
 
     report = None
     try:
