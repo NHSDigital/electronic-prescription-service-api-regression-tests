@@ -18,6 +18,7 @@ from methods.api.eps_api_methods import (
     return_prescription,
     withdraw_dispense_notification,
     call_validator,
+    claim_prescription,
 )
 from methods.shared.common import assert_that, get_auth
 from features.environment import APIGEE_APPS
@@ -346,6 +347,13 @@ def i_amend_a_dispense_notification(context):
         "previous_dn_id": context.dispense_notification_id,
     }
     dispense_prescription(context, dn_props)
+
+
+@when("I claim for the prescription")
+def i_claim_for_a_prescription(context):
+    if "sandbox" in context.config.userdata["env"].lower():
+        return
+    claim_prescription(context)
 
 
 @when("I withdraw the dispense notification")
