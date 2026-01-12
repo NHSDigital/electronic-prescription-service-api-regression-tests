@@ -162,8 +162,8 @@ jobs:
           ARGS+=("--interval" "${{ inputs.interval }}")
           fi
 
-          # Trap TERM and signal the process group to ensure signal reaches Python
-          trap 'echo "Received TERM, stopping monitor gracefully..." >&2; if [ -n "${MONITOR_PID:-}" ]; then kill -INT -"$MONITOR_PID" 2>/dev/null || kill -INT "$MONITOR_PID" 2>/dev/null || true; fi' TERM
+          # Trap TERM and signal the Python process directly
+          trap 'echo "Received TERM, stopping monitor gracefully..." >&2; if [ -n "${MONITOR_PID:-}" ]; then kill -INT "$MONITOR_PID" 2>/dev/null || true; fi' TERM
 
           # Create allure-results directory if it does not exist
           mkdir -p allure-results
@@ -174,9 +174,17 @@ jobs:
             echo "ENV=$ENVIRONMENT"
           } > allure-results/environment.properties
 
+          # Get the virtualenv path from poetry and activate it
+          VENV_PATH="$(poetry env info --path)"
+          echo "Virtual environment path: $VENV_PATH"
+          
+          # Activate the virtual environment and run Python directly
           echo "Starting uptime monitor with log level $LOG_LEVEL..."
-          # Run in a new process group, then we can signal the entire group
-          setsid poetry run python ./scripts/run_uptime_monitor.py "${ARGS[@]}" &
+          (
+            # Source the activation script to set up PATH properly
+            source "$VENV_PATH/bin/activate"
+            exec python ./scripts/run_uptime_monitor.py "${ARGS[@]}"
+          ) &
           MONITOR_PID=$!
           echo "Monitor PID: $MONITOR_PID"
           sleep 2
