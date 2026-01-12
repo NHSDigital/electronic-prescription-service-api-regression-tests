@@ -175,9 +175,14 @@ jobs:
           } > allure-results/environment.properties
 
           echo "Starting uptime monitor with log level $LOG_LEVEL..."
-          poetry run python ./scripts/run_uptime_monitor.py "${ARGS[@]}" &
+          # Use bash -c with exec to replace the shell with the Python process
+          # This ensures signals are sent directly to Python, not to a wrapper
+          bash -c "exec poetry run python ./scripts/run_uptime_monitor.py ${ARGS[*]@Q}" &
           MONITOR_PID=$!
           echo "Monitor PID: $MONITOR_PID"
+          sleep 2
+          echo "Verifying process is running..."
+          ps -fp "$MONITOR_PID" || echo "Warning: Process not found at PID $MONITOR_PID"
 
           # Wait with signal handling, allow plenty of time for graceful shutdown
           TIMEOUT=0
@@ -202,20 +207,22 @@ jobs:
 
           # Find latest CSV and print to logs and summary
           LATEST_CSV="$(find "$OUTPUT_DIR" -type f -name 'uptime_monitor_*' -printf '%T@ %p\n' | sort -nr | head -n 1 | sed -E 's/^[^ ]+ //')"
-          if [ -n "$LATEST_CSV" ]; then
-          echo "Latest CSV: $LATEST_CSV"
-          echo "Latest CSV: $LATEST_CSV" >> "$GITHUB_STEP_SUMMARY"
-          echo "--- CSV Content Start ---"
-          cat "$LATEST_CSV"
-          echo "--- CSV Content End ---"
-          echo "csv_path=$LATEST_CSV" >> "$GITHUB_OUTPUT"
+          if [ -n "$LATEST_CSV" ] && [ -f "$LATEST_CSV" ]; then
+            echo "Latest CSV: $LATEST_CSV"
+            echo "Latest CSV: $LATEST_CSV" >> "$GITHUB_STEP_SUMMARY"
+            echo "--- CSV Content Start ---"
+            cat "$LATEST_CSV"
+            echo "--- CSV Content End ---"
+            echo "csv_path=$LATEST_CSV" >> "$GITHUB_OUTPUT"
+            echo "csv_exists=true" >> "$GITHUB_OUTPUT"
           else
-          echo "No CSV file found in $OUTPUT_DIR"
-          echo "csv_path=" >> "$GITHUB_OUTPUT"
+            echo "No CSV file found in $OUTPUT_DIR"
+            echo "csv_path=" >> "$GITHUB_OUTPUT"
+            echo "csv_exists=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Upload CSV Artifact
-        if: always()
+        if: always() && steps.run-monitor.outputs.csv_exists == 'true'
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
         with:
           name: uptime-monitor-csv
