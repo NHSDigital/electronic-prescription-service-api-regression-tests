@@ -310,9 +310,9 @@ When The test invokes the slackbot lambda with a direct invocation event
 When Tests are run with session_id continuity
     execute multiple queries maintaining session context
 
-When I am authenticated with {app} app
-
 When I request my prescriptions
+
+When I request prescriptions for NHS number &#x27;{nhs_number}&#x27;
 
 When I check the prescription item statuses for &#x27;{status}&#x27;
 
@@ -664,6 +664,8 @@ Then The lambda returns a structured AI response matching expected format
 Then Lambda maintains conversation context across invocations
     verify session continuity maintained between queries
 
+Then I can see my prescription &#x27;{prescription_id}&#x27;
+
 Then I can see my prescription
 
 Then I can see &#x27;{number}&#x27; of my prescriptions
@@ -711,6 +713,10 @@ Given I cancel all line items on the prescription with a &quot;{reason}&quot; re
 Given I non-dispense a line item with a &quot;{reason}&quot; reason
  When I non-dispense a line item with a &quot;{reason}&quot; reason
  Then I non-dispense a line item with a &quot;{reason}&quot; reason
+
+Given I am authenticated with {app} app
+ When I am authenticated with {app} app
+ Then I am authenticated with {app} app
 
 
 
