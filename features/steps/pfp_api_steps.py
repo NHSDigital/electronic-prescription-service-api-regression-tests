@@ -1,7 +1,7 @@
 import json
 
 # pylint: disable=no-name-in-module
-from behave import when, then  # pyright: ignore [reportAttributeAccessIssue]
+from behave import when, then, step  # pyright: ignore [reportAttributeAccessIssue]
 
 from methods.api.pfp_api_methods import get_prescriptions
 from methods.shared.common import assert_that, get_auth
@@ -9,7 +9,7 @@ from methods.api.eps_api_methods import call_validator
 from messages.eps_fhir.prescription import Prescription
 
 
-@when("I am authenticated with {app} app")
+@step("I am authenticated with {app} app")
 def i_am_authenticated(context, app):
     env = context.config.userdata["env"].lower()
     if "sandbox" in env:
@@ -24,6 +24,12 @@ def i_request_my_prescriptions(context):
         and "PFP" in context.config.userdata["product"].upper()
     ):
         context.nhs_number = "9449304130"
+    get_prescriptions(context)
+
+
+@when("I request prescriptions for NHS number '{nhs_number}'")
+def i_request_prescriptions_for_nhs_number(context, nhs_number):
+    context.nhs_number = nhs_number
     get_prescriptions(context)
 
 
@@ -48,6 +54,16 @@ def i_check_the_prescription_item_statuses_for_status(context, status):
     # Assert all status codes match the expected status
     for status_code in status_codes:
         assert_that(status_code).is_equal_to(status)
+
+
+@then("I can see my prescription '{prescription_id}'")
+def i_can_see_my_prescription_by_id(context, prescription_id):
+    context.prescription_id = prescription_id
+    context.execute_steps(
+        """
+        Then I can see my prescription
+        """
+    )
 
 
 @then("I can see my prescription")
