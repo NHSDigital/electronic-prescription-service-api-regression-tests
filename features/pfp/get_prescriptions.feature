@@ -1,6 +1,8 @@
 Feature: I can see my prescriptions
 
   @pfp_uptime_monitor
+  # NOTE: do not include within regression tests because the prescription
+  # expires periodically
   Scenario: I can see a single prescription
     Given I am authenticated with PFP-APIGEE app
     When I request prescriptions for NHS number '3163910432'
