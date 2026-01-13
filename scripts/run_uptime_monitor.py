@@ -53,6 +53,7 @@ import signal
 import statistics
 import sys
 import time
+from contextlib import redirect_stdout, redirect_stderr
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Dict, List
@@ -410,42 +411,61 @@ async def execute_request(
     start_time = time.time()
 
     try:
-        # Run behave asynchronously
-        process = await asyncio.create_subprocess_exec(
-            *command,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
+        # Run Behave in-process and capture stdout/stderr.
+        import behave.__main__ as behave_main
+
+        buf_out = io.StringIO()
+        buf_err = io.StringIO()
+        return_code = 1
+        with redirect_stdout(buf_out), redirect_stderr(buf_err):
+            try:
+                # Remove leading 'behave' if present
+                result = behave_main.main([a for a in command if a != "behave"])
+                # behave_main.main() may return a result code or boolean
+                if isinstance(result, int):
+                    return_code = result
+                elif isinstance(result, bool):
+                    return_code = 0 if result else 1
+                else:
+                    return_code = 0
+            except SystemExit as se:  # NOSONAR
+                # Behave may call sys.exit(), so we catch SystemExit and use its code.
+                return_code = se.code if isinstance(se.code, int) else 1
+                stdout_str = buf_out.getvalue()
+                stderr_str = buf_err.getvalue()
+            except Exception as exc:  # pylint: disable=broad-except
+                print(f"Behave in-process error: {exc}")
+                return_code = 1
+                stdout_str = buf_out.getvalue()
+                stderr_str = buf_err.getvalue()
+        # return code, buf_out.getvalue(), buf_err.getvalue()
+        # return_code, stdout_str, stderr_str = await asyncio.wait_for(
+        #     asyncio.to_thread(run_behave_sync, command), timeout=timeout
+        # )
+
+        stdout_str = buf_out.getvalue()
+        stderr_str = buf_err.getvalue()
+        endpoint_result = EndpointResult(
+            status=Status.PASS if return_code == 0 else Status.FAIL,
+            response_time_ms=(time.time() - start_time) * 1000,
+            error_message="" if return_code == 0 else (stderr_str or stdout_str)[:100],
         )
 
-        try:
-            stdout, stderr = await asyncio.wait_for(
-                process.communicate(), timeout=timeout
-            )
-            return_code = process.returncode
+        if return_code != 0 or logger.isEnabledFor(logging.DEBUG):
+            logger.debug("Request #%s stdout: %s", request_number, stdout_str)
+            logger.debug("Request #%s stderr: %s", request_number, stderr_str)
+        await report.record_result(
+            endpoint_result.success, endpoint_result.response_time_ms
+        )
 
-            endpoint_result = EndpointResult(
-                status=Status.PASS if return_code == 0 else Status.FAIL,
-                response_time_ms=(time.time() - start_time) * 1000,
-                error_message="" if return_code == 0 else stderr.decode()[:100],
-            )
-
-            if return_code != 0 or logger.isEnabledFor(logging.DEBUG):
-                logger.debug("Request #%s stdout: %s", request_number, stdout.decode())
-                logger.debug("Request #%s stderr: %s", request_number, stderr.decode())
-            await report.record_result(
-                endpoint_result.success, endpoint_result.response_time_ms
-            )
-
-        except asyncio.TimeoutError:
-            process.kill()
-            await process.wait()
-
-            endpoint_result = EndpointResult(
-                status=Status.TIMEOUT,
-                response_time_ms=(time.time() - start_time) * 1000,
-                error_message=f"Request timed out after {timeout} seconds",
-            )
-            await report.record_result(False, endpoint_result.response_time_ms)
+    except asyncio.TimeoutError:
+        # In-process execution cannot be force-killed safely; record timeout.
+        endpoint_result = EndpointResult(
+            status=Status.TIMEOUT,
+            response_time_ms=(time.time() - start_time) * 1000,
+            error_message=f"Request timed out after {timeout} seconds",
+        )
+        await report.record_result(False, endpoint_result.response_time_ms)
 
     except Exception as e:  # pylint: disable=broad-except
         endpoint_result = EndpointResult(
@@ -509,18 +529,35 @@ async def run_monitoring_loop_async(
     endpoint_url = get_endpoint_url(product, env)
     report = Report(endpoint_url=endpoint_url)
 
+    # Track all background tasks
+    pending_tasks = set()
+
     try:
         while True:
             request_number = await report.increment_request_count()
 
-            _ = asyncio.create_task(
+            task = asyncio.create_task(
                 execute_request(command, report, csv_filename, request_number)
             )
+            pending_tasks.add(task)
+            # Remove completed tasks from tracking
+            task.add_done_callback(pending_tasks.discard)
+
             await asyncio.sleep(interval)
     except asyncio.CancelledError:  # NOSONAR
-        # Wait for pending requests to complete
-        print("\n\nStopping monitor, waiting for pending requests...")
-        await asyncio.sleep(3)
+        # Cancel all pending request tasks
+        print(
+            f"\n\nStopping monitor, cancelling {len(pending_tasks)} pending requests...",
+            flush=True,
+        )
+        for task in pending_tasks:
+            task.cancel()
+
+        # Wait for all tasks to complete or be cancelled
+        if pending_tasks:
+            await asyncio.gather(*pending_tasks, return_exceptions=True)
+
+        print("All requests completed or cancelled", flush=True)
         return report
 
 
@@ -557,18 +594,34 @@ def main():
     report = None
     try:
         report = loop.run_until_complete(main_task)
+        print("Monitor completed normally", flush=True)
     except asyncio.CancelledError:
-        print("Graceful shutdown in progress...", flush=True)
+        print("Task was cancelled, retrieving results...", flush=True)
         sys.stdout.flush()
-        if main_task.done() and not main_task.cancelled():
-            report = main_task.result()
+        # Try to get the result even if cancelled
+        try:
+            if main_task.done():
+                report = main_task.result()
+        except asyncio.CancelledError:
+            # Task didn't return a result before cancellation
+            print("No results available from cancelled task", flush=True)
     except Exception as e:  # pylint: disable=broad-except
         logger.exception("An unexpected error occurred: %s", e)
-        if main_task.done() and not main_task.cancelled():
-            report = main_task.result()
+        # Try to get partial results
+        try:
+            if main_task.done():
+                report = main_task.result()
+        except Exception:  # pylint: disable=broad-except
+            pass
     finally:
+        print(
+            f"Finally block: report={report}, count={report.request_count if report else 0}",
+            flush=True,
+        )
         if report and report.request_count > 0:
             display_summary_statistics(csv_filename, interval, report)
+        else:
+            print("No statistics to display (no completed requests)", flush=True)
         print("Cleanup complete, exiting...", flush=True)
         sys.stdout.flush()
         loop.close()
