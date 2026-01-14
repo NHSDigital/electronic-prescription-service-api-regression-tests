@@ -15,9 +15,10 @@ class Logout:
         # Modal elements
         self.logout_modal_logout_button = page.get_by_role("button", name="Log out")
         self.logout_modal_cancel_button = page.get_by_role("button", name="Cancel")
-        self.logout_modal_close_button = page.get_by_label("Close modal")
         self.logout_modal_overlay = page.get_by_test_id("eps-modal-overlay")
-        self.logout_modal_content = page.get_by_test_id("eps-modal-content")
+        self.logout_modal_content = page.get_by_test_id(
+            "eps-modal-overlay"
+        )  # Dialog element is both overlay and content
 
         # Logout successful page elements
         self.logout_page_heading = page.get_by_role("heading", name="Logout successful")
