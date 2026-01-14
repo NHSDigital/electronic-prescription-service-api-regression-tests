@@ -47,6 +47,7 @@ import asyncio
 import csv
 import datetime
 import io
+import logging
 import os
 import signal
 import statistics
@@ -61,6 +62,10 @@ from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv(override=True)
+logger = logging.getLogger(__name__)
+log_level = os.getenv("LOG_LEVEL", "INFO").upper()
+logging.basicConfig(level=getattr(logging, log_level, logging.INFO))
+print(f"Log level set to: {log_level}")
 
 
 class Status(Enum):
@@ -253,8 +258,6 @@ def display_summary_statistics(
         print(f"Failed:              {report.failure_count} ({failed_pct:.2f}%)")
         print("\nResponse Times (ms):")
         print(f"  Average:           {report.avg_response:.2f}ms")
-        print(f"  Minimum:           {report.min_response:.2f}ms")
-        print(f"  Maximum:           {report.max_response:.2f}ms")
         print(f"  95th Percentile:   {p95:.2f}ms")
         print(f"  99th Percentile:   {p99:.2f}ms")
         print("\nThroughput:")
@@ -280,14 +283,21 @@ def get_command(options: Dict) -> List[str]:
         f"arm64={arm64_setting}",
         "-D",
         f"output_dir={options['output_dir']}",
-        "--tags",
-        "uptime_monitor",
         "--no-capture",
         "--no-logcapture",
         "-f",
         "plain",
         options["feature_file"],
     ]
+    # EITHER append user-specified tags
+    if options.get("tags"):
+        for tag in options["tags"].split(","):
+            command.extend(["--tags", tag.strip()])
+    # OR append default product tag
+    else:
+        command.extend(["--tags", options["product"].lower().replace("-", "_")])
+
+    logger.info("Constructed command: %s", " ".join(command))
     return command
 
 
@@ -335,6 +345,11 @@ def get_config() -> Dict:
         "--feature-file",
         default="features/pfp/view_prescriptions.feature",
         help="Feature file to use for monitoring (default: features/pfp/view_prescriptions.feature)",
+    )
+
+    parser.add_argument(
+        "--tags",
+        help="Comma-separated list of tags to add to product tag (e.g., 'smoke,~slow')",
     )
 
     return vars(parser.parse_args())
@@ -403,7 +418,9 @@ async def execute_request(
         )
 
         try:
-            _, stderr = await asyncio.wait_for(process.communicate(), timeout=timeout)
+            stdout, stderr = await asyncio.wait_for(
+                process.communicate(), timeout=timeout
+            )
             return_code = process.returncode
 
             endpoint_result = EndpointResult(
@@ -412,6 +429,9 @@ async def execute_request(
                 error_message="" if return_code == 0 else stderr.decode()[:100],
             )
 
+            if return_code != 0 or logger.isEnabledFor(logging.DEBUG):
+                logger.debug("Request #%s stdout: %s", request_number, stdout.decode())
+                logger.debug("Request #%s stderr: %s", request_number, stderr.decode())
             await report.record_result(
                 endpoint_result.success, endpoint_result.response_time_ms
             )
@@ -462,7 +482,7 @@ async def execute_request(
 
 async def run_monitoring_loop_async(
     env: str, product: str, command: List[str], interval: float, csv_filename: str
-) -> None:
+) -> Report:
     """
     Execute the monitoring loop asynchronously, allowing concurrent requests.
 
@@ -472,6 +492,9 @@ async def run_monitoring_loop_async(
         command: The behave command to execute
         interval: Time to wait between launching requests (seconds)
         csv_filename: Path to CSV file for logging
+
+    Returns:
+        Report object containing final statistics
     """
     separator = "=" * 80
     print(f"\n{separator}")
@@ -486,27 +509,19 @@ async def run_monitoring_loop_async(
     endpoint_url = get_endpoint_url(product, env)
     report = Report(endpoint_url=endpoint_url)
 
-    while True:
-        request_number = await report.increment_request_count()
+    try:
+        while True:
+            request_number = await report.increment_request_count()
 
-        _ = asyncio.create_task(
-            execute_request(command, report, csv_filename, request_number)
-        )
-
-        # Wait for interval before launching next request
-        try:
-            await asyncio.sleep(interval)
-        except asyncio.CancelledError as e:
-            # Wait for pending requests to complete
-            print("\n\nStopping monitor, waiting for pending requests...")
-            await asyncio.sleep(2)
-
-            display_summary_statistics(
-                csv_filename,
-                interval,
-                report,
+            _ = asyncio.create_task(
+                execute_request(command, report, csv_filename, request_number)
             )
-            raise e
+            await asyncio.sleep(interval)
+    except asyncio.CancelledError:  # NOSONAR
+        # Wait for pending requests to complete
+        print("\n\nStopping monitor, waiting for pending requests...")
+        await asyncio.sleep(3)
+        return report
 
 
 def main():
@@ -516,27 +531,46 @@ def main():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
+    csv_filename = init_report_file(options["product"], options["output_dir"])
+    interval = get_interval(options)
+
     main_task = loop.create_task(
         run_monitoring_loop_async(
             options["env"],
             options["product"],
             get_command(options),
-            get_interval(options),
-            init_report_file(options["product"], options["output_dir"]),
+            interval,
+            csv_filename,
         )
     )
 
-    # Handle Ctrl+C gracefully
-    def signal_handler(_sig, _frame):
+    # Handle SIGINT and SIGTERM gracefully using asyncio's signal handling
+    def signal_handler():
+        print("\n\nReceived signal, initiating graceful shutdown...", flush=True)
+        sys.stdout.flush()  # Force flush
         main_task.cancel()
 
-    signal.signal(signal.SIGINT, signal_handler)
+    # Use loop.add_signal_handler() instead of signal.signal()
+    for sig in (signal.SIGINT, signal.SIGTERM):
+        loop.add_signal_handler(sig, signal_handler)
 
+    report = None
     try:
-        loop.run_until_complete(main_task)
+        report = loop.run_until_complete(main_task)
     except asyncio.CancelledError:
-        pass
+        print("Graceful shutdown in progress...", flush=True)
+        sys.stdout.flush()
+        if main_task.done() and not main_task.cancelled():
+            report = main_task.result()
+    except Exception as e:  # pylint: disable=broad-except
+        logger.exception("An unexpected error occurred: %s", e)
+        if main_task.done() and not main_task.cancelled():
+            report = main_task.result()
     finally:
+        if report and report.request_count > 0:
+            display_summary_statistics(csv_filename, interval, report)
+        print("Cleanup complete, exiting...", flush=True)
+        sys.stdout.flush()
         loop.close()
 
 
