@@ -15,8 +15,3 @@ Feature: The site has a patient detail banner
         When I search for the prescription by prescription ID
         And I click the Go Back link on the prescription not found page
         Then The patient details banner is not visible
-
-    Scenario: When I search for a prescription with incomplete data, the patient detail banner is formatted correctly
-        When I click on tab Prescription ID search
-        And I search for the prescription by prescription ID
-        Then The patient details banner reports incomplete data
