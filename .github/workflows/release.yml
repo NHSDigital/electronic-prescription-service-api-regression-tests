@@ -2,7 +2,7 @@ name: release workflow
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 env:
   BRANCH_NAME: ${{ github.event.ref.BRANCH_NAME }}
@@ -51,7 +51,6 @@ jobs:
       dry_run: false
       asdfVersion: ${{ needs.get_asdf_version.outputs.asdf_version }}
       branch_name: main
-      publish_package: false
       tag_format: ${{ needs.get_asdf_version.outputs.tag_format }}
     secrets: inherit
   generate_behave_steps_catalog:
@@ -98,7 +97,6 @@ jobs:
         if: steps.cache-venv.outputs.cache-hit != 'true'
         run: make install
 
-
       - name: Generate Behave steps catalog as HTML
         run: |
           set +H  # Disable history expansion to prevent !DOCTYPE error
@@ -132,4 +130,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs
-          publish_branch: gh-pages  # Change if using another branch
+          publish_branch: gh-pages # Change if using another branch
