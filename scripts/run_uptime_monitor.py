@@ -59,6 +59,7 @@ from enum import Enum
 from typing import Dict, List
 
 import aiofiles
+import behave.__main__ as behave_main
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -88,6 +89,7 @@ class Report:
     failure_count: int = 0
     response_times: List[float] = field(default_factory=list)
     start_time: float = field(default_factory=time.time)
+    shutting_down: bool = False
     _lock: asyncio.Lock = field(default_factory=asyncio.Lock, init=False, repr=False)
 
     async def increment_request_count(self) -> int:
@@ -113,6 +115,11 @@ class Report:
                 if self.response_times
                 else 0.0
             )
+
+    async def set_shutdown(self):
+        """Thread-safe setting of shutdown flag."""
+        async with self._lock:
+            self.shutting_down = True
 
     @property
     def uptime_pct(self) -> float:
@@ -408,46 +415,36 @@ async def execute_request(
         request_number: Sequential request number for display
     """
     timeout = 30  # Timeout for each request in seconds
-    start_time = time.time()
+    start_time = time.perf_counter()
 
-    try:
-        # Run Behave in-process and capture stdout/stderr.
-        import behave.__main__ as behave_main
-
+    def run_behave_sync():
+        """Run behave synchronously in executor thread."""
         buf_out = io.StringIO()
         buf_err = io.StringIO()
         return_code = 1
         with redirect_stdout(buf_out), redirect_stderr(buf_err):
-            try:
-                # Remove leading 'behave' if present
-                result = behave_main.main([a for a in command if a != "behave"])
-                # behave_main.main() may return a result code or boolean
-                if isinstance(result, int):
-                    return_code = result
-                elif isinstance(result, bool):
-                    return_code = 0 if result else 1
-                else:
-                    return_code = 0
-            except SystemExit as se:  # NOSONAR
-                # Behave may call sys.exit(), so we catch SystemExit and use its code.
-                return_code = se.code if isinstance(se.code, int) else 1
-                stdout_str = buf_out.getvalue()
-                stderr_str = buf_err.getvalue()
-            except Exception as exc:  # pylint: disable=broad-except
-                print(f"Behave in-process error: {exc}")
-                return_code = 1
-                stdout_str = buf_out.getvalue()
-                stderr_str = buf_err.getvalue()
-        # return code, buf_out.getvalue(), buf_err.getvalue()
-        # return_code, stdout_str, stderr_str = await asyncio.wait_for(
-        #     asyncio.to_thread(run_behave_sync, command), timeout=timeout
-        # )
-
+            # Remove leading 'behave' if present
+            result = behave_main.main([a for a in command if a != "behave"])
+            # behave_main.main() may return a result code or boolean
+            if isinstance(result, int):
+                return_code = result
+            elif isinstance(result, bool):
+                return_code = 0 if result else 1
+            else:
+                return_code = 0
         stdout_str = buf_out.getvalue()
         stderr_str = buf_err.getvalue()
+        return return_code, stdout_str, stderr_str
+
+    try:
+        # Run behave in executor with timeout
+        loop = asyncio.get_event_loop()
+        return_code, stdout_str, stderr_str = await asyncio.wait_for(
+            loop.run_in_executor(None, run_behave_sync), timeout=timeout
+        )
         endpoint_result = EndpointResult(
             status=Status.PASS if return_code == 0 else Status.FAIL,
-            response_time_ms=(time.time() - start_time) * 1000,
+            response_time_ms=(time.perf_counter() - start_time) * 1000,
             error_message="" if return_code == 0 else (stderr_str or stdout_str)[:100],
         )
 
@@ -458,19 +455,19 @@ async def execute_request(
             endpoint_result.success, endpoint_result.response_time_ms
         )
 
-    except asyncio.TimeoutError:
-        # In-process execution cannot be force-killed safely; record timeout.
-        endpoint_result = EndpointResult(
-            status=Status.TIMEOUT,
-            response_time_ms=(time.time() - start_time) * 1000,
-            error_message=f"Request timed out after {timeout} seconds",
-        )
-        await report.record_result(False, endpoint_result.response_time_ms)
+    # except asyncio.TimeoutError:
+    #     # Behave execution exceeded timeout limit
+    #     endpoint_result = EndpointResult(
+    #         status=Status.TIMEOUT,
+    #         response_time_ms=(time.perf_counter() - start_time) * 1000,
+    #         error_message=f"Behave execution timed out after {timeout} seconds",
+    #     )
+    #     await report.record_result(False, endpoint_result.response_time_ms)
 
     except Exception as e:  # pylint: disable=broad-except
         endpoint_result = EndpointResult(
             status=Status.ERROR,
-            response_time_ms=(time.time() - start_time) * 1000,
+            response_time_ms=(time.perf_counter() - start_time) * 1000,
             error_message=str(e)[:100],
         )
         await report.record_result(False, endpoint_result.response_time_ms)
@@ -500,132 +497,60 @@ async def execute_request(
         print(f"  └─ Error: {endpoint_result.error_message}")
 
 
-async def run_monitoring_loop_async(
-    env: str, product: str, command: List[str], interval: float, csv_filename: str
-) -> Report:
-    """
-    Execute the monitoring loop asynchronously, allowing concurrent requests.
-
-    Args:
-        env: Environment to monitor
-        product: Product to monitor
-        command: The behave command to execute
-        interval: Time to wait between launching requests (seconds)
-        csv_filename: Path to CSV file for logging
-
-    Returns:
-        Report object containing final statistics
-    """
-    separator = "=" * 80
-    print(f"\n{separator}")
-    print("Starting API Uptime Monitor (Async Mode)")
-    print(f"Product: {product}")
-    print(f"Environment: {env}")
-    print(f"Interval: {interval} seconds")
-    print(f"Output CSV: {csv_filename}")
-    print("Press Ctrl+C to stop monitoring and view summary")
-    print(f"{separator}\n")
-
-    endpoint_url = get_endpoint_url(product, env)
-    report = Report(endpoint_url=endpoint_url)
-
-    # Track all background tasks
-    pending_tasks = set()
-
-    try:
-        while True:
-            request_number = await report.increment_request_count()
-
-            task = asyncio.create_task(
-                execute_request(command, report, csv_filename, request_number)
-            )
-            pending_tasks.add(task)
-            # Remove completed tasks from tracking
-            task.add_done_callback(pending_tasks.discard)
-
-            await asyncio.sleep(interval)
-    except asyncio.CancelledError:  # NOSONAR
-        # Cancel all pending request tasks
-        print(
-            f"\n\nStopping monitor, cancelling {len(pending_tasks)} pending requests...",
-            flush=True,
-        )
-        for task in pending_tasks:
-            task.cancel()
-
-        # Wait for all tasks to complete or be cancelled
-        if pending_tasks:
-            await asyncio.gather(*pending_tasks, return_exceptions=True)
-
-        print("All requests completed or cancelled", flush=True)
-        return report
-
-
-def main():
+async def main() -> None:
     options = get_config()
     validate_env(options["product"], options)
-
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-
-    csv_filename = init_report_file(options["product"], options["output_dir"])
     interval = get_interval(options)
+    endpoint_url = get_endpoint_url(options["product"], options["env"])
+    csv_filename = init_report_file(options["product"], options["output_dir"])
+    report = Report(endpoint_url=endpoint_url)
+    start_wall = time.perf_counter()
+    start_cpu = time.process_time()
 
-    main_task = loop.create_task(
-        run_monitoring_loop_async(
-            options["env"],
-            options["product"],
-            get_command(options),
-            interval,
-            csv_filename,
-        )
-    )
+    tasks: list[asyncio.Task] = []
+    count = 0
+    stop_event = asyncio.Event()
 
-    # Handle SIGINT and SIGTERM gracefully using asyncio's signal handling
-    def signal_handler():
-        print("\n\nReceived signal, initiating graceful shutdown...", flush=True)
-        sys.stdout.flush()  # Force flush
-        main_task.cancel()
+    loop = asyncio.get_running_loop()
 
-    # Use loop.add_signal_handler() instead of signal.signal()
-    for sig in (signal.SIGINT, signal.SIGTERM):
-        loop.add_signal_handler(sig, signal_handler)
+    def _handle_stop() -> None:
+        print("X" * 80)
+        print("Stopping monitor... please wait for summary statistics")
+        asyncio.create_task(report.set_shutdown())
+        stop_event.set()
 
-    report = None
+    # Register signal handlers (Linux/Unix). Also handle SIGTERM so we can test.
     try:
-        report = loop.run_until_complete(main_task)
-        print("Monitor completed normally", flush=True)
-    except asyncio.CancelledError:
-        print("Task was cancelled, retrieving results...", flush=True)
-        sys.stdout.flush()
-        # Try to get the result even if cancelled
-        try:
-            if main_task.done():
-                report = main_task.result()
-        except asyncio.CancelledError:
-            # Task didn't return a result before cancellation
-            print("No results available from cancelled task", flush=True)
-    except Exception as e:  # pylint: disable=broad-except
-        logger.exception("An unexpected error occurred: %s", e)
-        # Try to get partial results
-        try:
-            if main_task.done():
-                report = main_task.result()
-        except Exception:  # pylint: disable=broad-except
-            pass
+        loop.add_signal_handler(signal.SIGINT, _handle_stop)
+        loop.add_signal_handler(signal.SIGTERM, _handle_stop)
+    except NotImplementedError:
+        # Fallback for platforms where asyncio signal handlers aren't supported
+        pass
+
+    try:
+        while not stop_event.is_set():
+            count += 1
+            t = asyncio.create_task(
+                execute_request(
+                    command=get_command(options),
+                    report=report,
+                    csv_filename=csv_filename,
+                    request_number=count,
+                )
+            )
+            tasks.append(t)
+            await asyncio.sleep(interval)
     finally:
+        if tasks:
+            await asyncio.gather(*tasks, return_exceptions=True)
+
+        elapsed_wall = time.perf_counter() - start_wall
+        elapsed_cpu = time.process_time() - start_cpu
         print(
-            f"Finally block: report={report}, count={report.request_count if report else 0}",
-            flush=True,
+            f"Stopped. tasks_run={count}, execution_time={elapsed_cpu:.3f}s, "
+            f"elapsed_time={elapsed_wall:.3f}s"
         )
-        if report and report.request_count > 0:
-            display_summary_statistics(csv_filename, interval, report)
-        else:
-            print("No statistics to display (no completed requests)", flush=True)
-        print("Cleanup complete, exiting...", flush=True)
-        sys.stdout.flush()
-        loop.close()
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

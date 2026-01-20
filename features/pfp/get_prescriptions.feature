@@ -1,4 +1,4 @@
-@pfp_uptime_monitor
+@pfp_apigee @pfp_uptime_monitor
 Feature: I can see my prescriptions
 
   @pfp_uptime_monitor
