@@ -235,7 +235,7 @@ def before_feature(context, feature):
     if "skip-sandbox" in feature.tags and "sandbox" in environment:
         feature.skip("Marked with @skip-sandbox")
         return
-    if environment in ["internal-dev", "qa"]:
+    if environment in ["internal-dev", "internal-qa"]:
         for scenario in feature.walk_scenarios():
             patch_scenario_with_autoretry(scenario, max_attempts=3)
 
