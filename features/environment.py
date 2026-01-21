@@ -162,7 +162,7 @@ EPS_FHIR_SUFFIX = "electronic-prescriptions"
 EPS_FHIR_PRESCRIBING_SUFFIX = "fhir-prescribing"
 EPS_FHIR_DISPENSING_SUFFIX = "fhir-dispensing"
 PFP_SUFFIX = "prescriptions-for-patients"
-PFP_PROXYGEN_SUFFIX = "pfp-proxygen"
+PFP_PROXYGEN_SUFFIX = "prescrioptions-for-patients-v2"
 PSU_SUFFIX = "prescription-status-update"
 
 EPSAM_SLACKBOT_FUNCTION_EXPORT_NAME = (
