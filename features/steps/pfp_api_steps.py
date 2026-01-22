@@ -33,6 +33,13 @@ def i_request_prescriptions_for_nhs_number(context, nhs_number):
     get_prescriptions(context)
 
 
+@when("I request prescriptions on behalf of '{nhs_number}'")
+def i_request_prescriptions_on_behalf_of(context, nhs_number):
+    """Request prescriptions for a specific patient NHS number in delegated access scenarios."""
+    context.nhs_number = nhs_number
+    get_prescriptions(context)
+
+
 @when("I check the prescription item statuses for '{status}'")
 def i_check_the_prescription_item_statuses_for_status(context, status):
     json_response = json.loads(context.response.content)
@@ -84,6 +91,22 @@ def i_can_see_my_prescription(context):
     assert_that(bundle["subject"]["identifier"]["value"]).is_equal_to(
         expected_nhs_number
     )
+    assert_that(bundle["groupIdentifier"]["value"]).is_equal_to(
+        expected_prescription_id
+    )
+
+
+@then("I can see a prescription for '{nhs_number}'")
+def i_can_see_prescription_for_nhs_number(context, nhs_number):
+    """Verify prescription is visible for a specific NHS number in delegated access scenarios."""
+    json_response = json.loads(context.response.content)
+    entries = json_response["entry"]
+    bundle = [
+        entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"
+    ][0]["resource"]["entry"][0]["resource"]
+
+    expected_prescription_id = context.prescription_id
+    assert_that(bundle["subject"]["identifier"]["value"]).is_equal_to(nhs_number)
     assert_that(bundle["groupIdentifier"]["value"]).is_equal_to(
         expected_prescription_id
     )

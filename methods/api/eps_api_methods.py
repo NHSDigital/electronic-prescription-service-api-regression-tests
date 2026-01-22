@@ -57,8 +57,16 @@ def try_prepare_prescription(context):
 def create_signed_prescription(context):
     url = f"{PRESCRIBING_BASE_URL}/FHIR/R4/$process-message#prescription-order"
     headers = get_headers(context, context.auth_method)
+    print("create_signed_prescription url:", url)
+    print("  headers:", headers)
+    print("  context nhs number: ", getattr(context, "nhs_number", "NOT SET"))
+    print(
+        "  context subject nhs number: ",
+        getattr(context, "subject_nhs_number", "NOT SET"),
+    )
 
     context.signed_body = SignedPrescription(context).body
+    print("create_signed_prescription body:", context.signed_body)
     post(data=context.signed_body, url=url, context=context, headers=headers)
     the_expected_response_code_is_returned(context, 200)
 

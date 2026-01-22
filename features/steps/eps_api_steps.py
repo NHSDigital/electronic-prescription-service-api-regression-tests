@@ -56,6 +56,41 @@ def i_prepare_and_sign_a_prescription(context):
     )
 
 
+@step(
+    "I successfully prepare and sign a prescription on behalf of a patient whose NHS number is '{nhs_number}'"
+)
+def i_prepare_and_sign_prescription_for_patient(context, nhs_number):
+    """Prepare and sign a prescription for a specific patient NHS number in delegated access scenarios."""
+    print(
+        f"[DEBUG] Starting prescription preparation for patient NHS number: {nhs_number}"
+    )
+    context.subject_nhs_number = nhs_number
+    context.nhs_number = nhs_number
+    print(f"[DEBUG] Set context.subject_nhs_number: {context.subject_nhs_number}")
+    print(f"[DEBUG] Set context.nhs_number: {context.nhs_number}")
+
+    print("[DEBUG] Calling setup_new_prescription with generate_nhs_number=False")
+    setup_new_prescription(context, "nominated", "acute", generate_nhs_number=False)
+    print(
+        f"[DEBUG] After setup - nomination_code: {context.nomination_code}, "
+        + f" type_code: {context.type_code}, intent: {context.intent}"
+    )
+
+    print("[DEBUG] Calling prepare_prescription")
+    prepare_prescription(context)
+    print(
+        f"[DEBUG] After prepare - prescription_id: {getattr(context, 'prescription_id', 'NOT SET')}"
+    )
+    print(f"[DEBUG] After prepare - digest: {getattr(context, 'digest', 'NOT SET')}")
+
+    print("[DEBUG] Calling create_signed_prescription")
+    create_signed_prescription(context)
+    print(
+        f"[DEBUG] After sign - long_prescription_id: {getattr(context, 'long_prescription_id', 'NOT SET')}"
+    )
+    print("[DEBUG] Prescription preparation completed successfully")
+
+
 @given(
     "I successfully prepare and sign a {nomination} {prescription_type} prescription"
 )
@@ -192,6 +227,14 @@ def i_am_an_authorised_user(context, user, app):
         context.user = user
         context.auth_token = get_auth(env, app, user)
         context.auth_method = "oauth2"
+
+
+@step("I am an authorised {user} with {app} app whose NHS number is '{nhs_number}'")
+def i_am_an_authorised_user_with_nhs_number(context, user, app, nhs_number):
+    """Authenticate as a user with a specific NHS number for delegated access scenarios."""
+    context.actor_nhs_number = nhs_number
+    context.nhs_number = nhs_number
+    context.execute_steps(f"Given I am an authorised {user} with {app} app")
 
 
 @given(
