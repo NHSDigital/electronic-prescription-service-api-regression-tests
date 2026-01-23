@@ -10,4 +10,4 @@ def get_prescriptions(context):
     }
 
     headers = get_headers(context, "oauth2", additional_headers)
-    context.response = get(url=url, context=context, headers=headers)
+    context.response = get(url=url, context=context, headers=headers, timeout=10)

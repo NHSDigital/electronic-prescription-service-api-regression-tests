@@ -23,7 +23,16 @@
     },
     "ghcr.io/devcontainers/features/github-cli:1": {}
   },
-  "remoteEnv": { "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}/" },
+  "remoteEnv": {
+    "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}/",
+    "DISPLAY": "${localEnv:DISPLAY}",
+    "WAYLAND_DISPLAY": ""
+  },
+  "runArgs": [
+    "--security-opt",
+    "seccomp=unconfined",
+    "--add-host=host.docker.internal:host-gateway"
+  ],
   "customizations": {
     "vscode": {
       "extensions": [
@@ -44,7 +53,9 @@
         "timonwong.shellcheck",
         "github.vscode-github-actions",
         "jimasp.behave-vsc",
-        "Gruntfuggly.todo-tree"
+        "Gruntfuggly.todo-tree",
+        "SonarSource.sonarlint-vscode",
+        "editorconfig.editorconfig"
       ],
       "settings": {
         "python.defaultInterpreterPath": "/home/vscode/.asdf/shims/python",
@@ -56,7 +67,9 @@
         "python.linting.flake8Enabled": true,
         "python.linting.enabled": true,
         "python.formatting.provider": "black",
-        "black-formatter.args": ["--line-length=120"],
+        "black-formatter.args": [
+          "--line-length=120"
+        ],
         "[python]": {
           "editor.defaultFormatter": "ms-python.black-formatter"
         },
@@ -75,7 +88,9 @@
           "bedrock",
           "allure"
         ],
-        "python.experiments.optOutFrom": ["pythonTestAdapter"]
+        "python.experiments.optOutFrom": [
+          "pythonTestAdapter"
+        ]
       }
     }
   },
