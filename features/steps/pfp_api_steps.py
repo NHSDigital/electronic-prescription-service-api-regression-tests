@@ -1,7 +1,7 @@
 import json
 
 # pylint: disable=no-name-in-module
-from behave import when, then  # pyright: ignore [reportAttributeAccessIssue]
+from behave import when, then, step  # pyright: ignore [reportAttributeAccessIssue]
 
 from methods.api.pfp_api_methods import get_prescriptions
 from methods.shared.common import assert_that, get_auth
@@ -9,7 +9,7 @@ from methods.api.eps_api_methods import call_validator
 from messages.eps_fhir.prescription import Prescription
 
 
-@when("I am authenticated with {app} app")
+@step("I am authenticated with {app} app")
 def i_am_authenticated(context, app):
     env = context.config.userdata["env"].lower()
     if "sandbox" in env:
@@ -24,6 +24,12 @@ def i_request_my_prescriptions(context):
         and "PFP" in context.config.userdata["product"].upper()
     ):
         context.nhs_number = "9449304130"
+    get_prescriptions(context)
+
+
+@when("I request prescriptions for NHS number '{nhs_number}'")
+def i_request_prescriptions_for_nhs_number(context, nhs_number):
+    context.nhs_number = nhs_number
     get_prescriptions(context)
 
 
@@ -50,8 +56,19 @@ def i_check_the_prescription_item_statuses_for_status(context, status):
         assert_that(status_code).is_equal_to(status)
 
 
+@then("I can see my prescription '{prescription_id}'")
+def i_can_see_my_prescription_by_id(context, prescription_id):
+    context.prescription_id = prescription_id
+    context.execute_steps(
+        """
+        Then I can see my prescription
+        """
+    )
+
+
 @then("I can see my prescription")
 def i_can_see_my_prescription(context):
+    assert_that(context.response.status_code).is_equal_to(200)
     json_response = json.loads(context.response.content)
     entries = json_response["entry"]
     bundle = [
@@ -70,6 +87,20 @@ def i_can_see_my_prescription(context):
     )
     assert_that(bundle["groupIdentifier"]["value"]).is_equal_to(
         expected_prescription_id
+    )
+    address_texts = [
+        resource["resource"]["address"][0]["text"]
+        for entry in entries
+        for resource in entry["resource"]["entry"]
+        if resource["resource"]["resourceType"] == "Organization"
+        and "address" in resource["resource"]
+        and resource["resource"]["address"]
+        and "text" in resource["resource"]["address"][0]
+    ]
+    assert_that(address_texts).is_not_empty()
+    # corresponds to "FA565" set in messages/eps_fhir/prescription.py
+    assert_that(address_texts[0]).is_equal_to(
+        "63 BRIARFIELD ROAD, TIMPERLEY, ALTRINCHAM, CHESHIRE, CHESHIRE, WA15 7DD"
     )
 
 

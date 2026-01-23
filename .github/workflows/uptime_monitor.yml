@@ -1,0 +1,245 @@
+name: API changeover monitor
+
+on:
+  workflow_dispatch:
+    inputs:
+      product:
+        description: "Product to monitor"
+        type: choice
+        options:
+          - PFP-APIGEE
+        required: true
+        default: PFP-APIGEE
+      env:
+        description: "Environment to run against (internal-dev, internal-qa, int, ref)"
+        type: choice
+        options:
+          - internal-dev
+          - internal-qa
+          - int
+          - ref
+        required: true
+        default: int
+      interval:
+        description: "Interval in seconds (mutually exclusive with rpm)"
+        type: number
+        required: false
+        default: 1
+      rpm:
+        description: "Requests per minute (mutually exclusive with interval)"
+        type: number
+        required: false
+      output_dir:
+        description: "Directory for CSV output"
+        type: string
+        required: false
+        default: reports
+      log_level:
+        description: "Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)"
+        type: string
+        required: false
+        default: INFO
+      feature_file:
+        description: "Behave feature file to run"
+        type: string
+        required: false
+        default: features/pfp/get_prescriptions.feature
+      tags:
+        description: "Tags to filter Behave scenarios (uses product if unspecified)"
+        type: string
+        required: false
+        default: "pfp_uptime_monitor"
+
+jobs:
+  show_inputs:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Show inputs
+        env:
+          PRODUCT: ${{ inputs.product }}
+          ENVIRONMENT: ${{ inputs.env }}
+          RPM: ${{ inputs.rpm }}
+          INTERVAL: ${{ inputs.interval }}
+          OUTPUT_DIR: ${{ inputs.output_dir }}
+          FEATURE_FILE: ${{ inputs.feature_file }}
+          ADDITIONAL_TAGS: ${{ inputs.tags }}
+        run: |
+          echo "product: $PRODUCT"
+          echo "env (script): $ENVIRONMENT"
+          echo "rpm: $RPM"
+          echo "interval: $INTERVAL"
+          echo "output_dir: $OUTPUT_DIR"
+          echo "feature_file: $FEATURE_FILE"
+          echo "additional_tags: $ADDITIONAL_TAGS"
+          echo "product: $PRODUCT" >> "$GITHUB_STEP_SUMMARY"
+          {
+          echo "env (script): $ENVIRONMENT";
+          echo "rpm: $RPM";
+          echo "interval: $INTERVAL";
+          echo "output_dir: $OUTPUT_DIR";
+          echo "feature_file: $FEATURE_FILE";
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  run_uptime_monitor:
+    runs-on: ubuntu-22.04
+    needs: [show_inputs]
+    permissions:
+      id-token: write
+      contents: read
+      packages: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+
+      - name: Get asdf version
+        id: asdf-version
+        run: echo "version=$(awk '!/^#/ && NF {print $1; exit}' .tool-versions.asdf)" >> "$GITHUB_OUTPUT"
+
+      - name: Install asdf
+        uses: asdf-vm/actions/setup@b7bcd026f18772e44fe1026d729e1611cc435d47
+        with:
+          asdf_version: ${{ steps.asdf-version.outputs.version }}
+
+      - name: Cache asdf
+        uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb
+        with:
+          path: |
+            ~/.asdf
+          key: ${{ runner.os }}-asdf-${{ hashFiles('**/.tool-versions') }}
+
+      - name: Install asdf dependencies in .tool-versions
+        uses: asdf-vm/actions/install@b7bcd026f18772e44fe1026d729e1611cc435d47
+        with:
+          asdf_version: ${{ steps.asdf-version.outputs.version }}
+        env:
+          PYTHON_CONFIGURE_OPTS: --enable-shared
+
+      - name: Cache Virtualenv
+        uses: actions/cache@v5
+        id: cache-venv
+        with:
+          path: .venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('poetry.lock') }}
+
+      - name: Install Dependencies
+        if: steps.cache-venv.outputs.cache-hit != 'true'
+        run: make install
+
+      - name: Run Uptime Monitor (graceful cancel + log CSV)
+        id: run-monitor
+        continue-on-error: true
+        env:
+          PRODUCT: ${{ inputs.product }}
+          ENVIRONMENT: ${{ inputs.env }}
+          OUTPUT_DIR: ${{ inputs.output_dir }}
+          FEATURE_FILE: ${{ inputs.feature_file }}
+          ADDITIONAL_TAGS: ${{ inputs.tags }}
+          LOG_LEVEL: ${{ inputs.log_level }}
+          ARM64: False
+          # Secrets mapped to expected env vars
+          CPT_FHIR_CLIENT_ID: ${{ secrets.CPT_FHIR_CLIENT_ID }}
+          CPT_FHIR_CLIENT_SECRET: ${{ secrets.CPT_FHIR_CLIENT_SECRET }}
+          EPS_FHIR_CLIENT_ID: ${{ secrets.EPS_FHIR_CLIENT_ID }}
+          EPS_FHIR_CLIENT_SECRET: ${{ secrets.EPS_FHIR_CLIENT_SECRET }}
+          EPS_FHIR_SHA1_CLIENT_ID: ${{ secrets.EPS_FHIR_SHA1_CLIENT_ID }}
+          EPS_FHIR_SHA1_CLIENT_SECRET: ${{ secrets.EPS_FHIR_SHA1_CLIENT_SECRET }}
+          EPS_FHIR_PRESCRIBING_CLIENT_ID: ${{ secrets.EPS_FHIR_PRESCRIBING_CLIENT_ID }}
+          EPS_FHIR_PRESCRIBING_CLIENT_SECRET: ${{ secrets.EPS_FHIR_PRESCRIBING_CLIENT_SECRET }}
+          EPS_FHIR_PRESCRIBING_SHA1_CLIENT_ID: ${{ secrets.EPS_FHIR_PRESCRIBING_SHA1_CLIENT_ID }}
+          EPS_FHIR_PRESCRIBING_SHA1_CLIENT_SECRET: ${{ secrets.EPS_FHIR_PRESCRIBING_SHA1_CLIENT_SECRET }}
+          EPS_FHIR_DISPENSING_CLIENT_ID: ${{ secrets.EPS_FHIR_DISPENSING_CLIENT_ID }}
+          EPS_FHIR_DISPENSING_CLIENT_SECRET: ${{ secrets.EPS_FHIR_DISPENSING_CLIENT_SECRET }}
+          PFP_CLIENT_ID: ${{ secrets.PFP_CLIENT_ID }}
+          PFP_CLIENT_SECRET: ${{ secrets.PFP_CLIENT_SECRET }}
+          PSU_CLIENT_ID: ${{ secrets.PSU_CLIENT_ID }}
+          PSU_CLIENT_SECRET: ${{ secrets.PSU_CLIENT_SECRET }}
+          CERTIFICATE: ${{ secrets.CERTIFICATE }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          JWT_KID: ${{ secrets.JWT_KID }}
+          JWT_PRIVATE_KEY: ${{ secrets.JWT_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          IFS=$'\n\t'
+
+          # Build CLI args
+          ARGS=("--product" "$PRODUCT" "--env" "$ENVIRONMENT" "--output-dir" "$OUTPUT_DIR" "--feature-file" "$FEATURE_FILE" "--tags" "$ADDITIONAL_TAGS")
+          if [ -n "${{ inputs.rpm }}" ]; then
+          ARGS+=("--rpm" "${{ inputs.rpm }}")
+          fi
+          if [ -n "${{ inputs.interval }}" ]; then
+          ARGS+=("--interval" "${{ inputs.interval }}")
+          fi
+
+          # Trap TERM and signal the Python process directly
+          trap 'echo "Received TERM, stopping monitor gracefully..." >&2; if [ -n "${MONITOR_PID:-}" ]; then kill -INT "$MONITOR_PID" 2>/dev/null || true; fi' TERM
+
+          # Create allure-results directory if it does not exist
+          mkdir -p allure-results
+          touch allure-results/environment.properties
+          # Write PRODUCT and ENV to environment.properties for Allure reporting
+          {
+            echo "PRODUCT=$PRODUCT"
+            echo "ENV=$ENVIRONMENT"
+          } > allure-results/environment.properties
+
+          # Get the virtualenv path from poetry and activate it
+          VENV_PATH="$(poetry env info --path)"
+          echo "Virtual environment path: $VENV_PATH"
+
+          # Activate the virtual environment and run Python directly
+          echo "Starting uptime monitor with log level $LOG_LEVEL..."
+          (
+            # Source the activation script to set up PATH properly
+            source "$VENV_PATH/bin/activate"
+            exec python ./scripts/run_uptime_monitor.py "${ARGS[@]}"
+          ) &
+          MONITOR_PID=$!
+          echo "Monitor PID: $MONITOR_PID"
+          sleep 2
+          echo "Verifying process is running..."
+          ps -fp "$MONITOR_PID" || echo "Warning: Process not found at PID $MONITOR_PID"
+
+          # Wait with signal handling, allow plenty of time for graceful shutdown
+          TIMEOUT=0
+          MAX_TIMEOUT=10
+          while kill -0 "$MONITOR_PID" 2>/dev/null; do
+            if wait "$MONITOR_PID" 2>/dev/null; then
+              break
+            fi
+            sleep 1
+            TIMEOUT=$((TIMEOUT + 1))
+            if [ $TIMEOUT -ge $MAX_TIMEOUT ]; then
+              echo "Timeout waiting for graceful shutdown, forcing termination..." >&2
+              kill -TERM "$MONITOR_PID" 2>/dev/null || true
+              sleep 2
+              kill -KILL "$MONITOR_PID" 2>/dev/null || true
+              break
+            fi
+          done
+
+          wait "$MONITOR_PID" 2>/dev/null || EXIT_CODE=$?
+          echo "Uptime monitor exited with code ${EXIT_CODE:-0}"
+
+          # Find latest CSV and print to logs and summary
+          LATEST_CSV="$(find "$OUTPUT_DIR" -type f -name 'uptime_monitor_*' -printf '%T@ %p\n' | sort -nr | head -n 1 | sed -E 's/^[^ ]+ //')"
+          if [ -n "$LATEST_CSV" ] && [ -f "$LATEST_CSV" ]; then
+            echo "Latest CSV: $LATEST_CSV"
+            echo "Latest CSV: $LATEST_CSV" >> "$GITHUB_STEP_SUMMARY"
+            echo "--- CSV Content Start ---"
+            cat "$LATEST_CSV"
+            echo "--- CSV Content End ---"
+            echo "csv_path=$LATEST_CSV" >> "$GITHUB_OUTPUT"
+            echo "csv_exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No CSV file found in $OUTPUT_DIR"
+            echo "csv_path=" >> "$GITHUB_OUTPUT"
+            echo "csv_exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload CSV Artifact
+        if: always() && steps.run-monitor.outputs.csv_exists == 'true'
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        with:
+          name: uptime-monitor-csv
+          path: ${{ steps.run-monitor.outputs.csv_path }}
+          if-no-files-found: warn

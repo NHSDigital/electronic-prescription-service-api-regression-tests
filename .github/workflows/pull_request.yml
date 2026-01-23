@@ -10,7 +10,7 @@ env:
 jobs:
   dependabot-auto-approve-and-merge:
     needs: quality_checks
-    uses: NHSDigital/eps-common-workflows/.github/workflows/dependabot-auto-approve-and-merge.yml@2b3ddfd1e59daf9905522d0140c6cd08e2547432
+    uses: NHSDigital/eps-common-workflows/.github/workflows/dependabot-auto-approve-and-merge.yml@a2edde3fb0e9816a25a5ba4923b4d509db83f552
     secrets:
       AUTOMERGE_APP_ID: ${{ secrets.AUTOMERGE_APP_ID }}
       AUTOMERGE_PEM: ${{ secrets.AUTOMERGE_PEM }}
@@ -31,9 +31,9 @@ jobs:
         run: |
           TAG_FORMAT=$(yq '.TAG_FORMAT' .github/config/settings.yml)
           echo "TAG_FORMAT=$TAG_FORMAT" >> "$GITHUB_OUTPUT"
- 
+
   quality_checks:
-    uses: NHSDigital/eps-common-workflows/.github/workflows/quality-checks.yml@2b3ddfd1e59daf9905522d0140c6cd08e2547432
+    uses: NHSDigital/eps-common-workflows/.github/workflows/quality-checks.yml@a2edde3fb0e9816a25a5ba4923b4d509db83f552
     needs: [get_asdf_version]
     with:
       asdfVersion: ${{ needs.get_asdf_version.outputs.asdf_version }}
@@ -42,7 +42,7 @@ jobs:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   pr_title_format_check:
-    uses: NHSDigital/eps-common-workflows/.github/workflows/pr_title_check.yml@2b3ddfd1e59daf9905522d0140c6cd08e2547432
+    uses: NHSDigital/eps-common-workflows/.github/workflows/pr_title_check.yml@a2edde3fb0e9816a25a5ba4923b4d509db83f552
 
   run_basic_regression_test:
     uses: ./.github/workflows/regression_tests.yml
@@ -53,11 +53,10 @@ jobs:
       id: "Pull Request Basic Regression Tests"
   tag_release:
     needs: [get_asdf_version]
-    uses: NHSDigital/eps-common-workflows/.github/workflows/tag-release.yml@2b3ddfd1e59daf9905522d0140c6cd08e2547432
+    uses: NHSDigital/eps-common-workflows/.github/workflows/tag-release.yml@a2edde3fb0e9816a25a5ba4923b4d509db83f552
     with:
       dry_run: true
       asdfVersion: ${{ needs.get_asdf_version.outputs.asdf_version }}
       branch_name: ${{ github.event.pull_request.head.ref }}
-      publish_package: false
       tag_format: ${{ needs.get_asdf_version.outputs.tag_format }}
     secrets: inherit

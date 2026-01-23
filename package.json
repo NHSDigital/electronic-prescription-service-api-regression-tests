@@ -1,12 +1,13 @@
 {
+  "dependencies": {
+    "@playwright/test": "^1.57.0",
+    "npm": "^11.7.0"
+  },
   "devDependencies": {
+    "@cspell/dict-en-gb": "^5.0.21",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/release-notes-generator": "^14.1.0",
     "conventional-changelog-eslint": "^6.0.0",
     "semantic-release": "^25.0.1"
-  },
-  "dependencies": {
-    "@playwright/test": "^1.57.0",
-    "npm": "^11.7.0"
   }
 }

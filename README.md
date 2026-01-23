@@ -187,3 +187,7 @@ This tag is identified in the Behave before scenario function and will instatiat
 ### Concurrent sessions
 For concurrent session testing, you'll need to make use of the Behave step "I switch the browser context to "{browser}" and login again".
 This step has protection in place that the `@concurrency` tag is supplied on the scenario; this is to ensure the concurrent session Playwright trace is created, as it is disabled in `environment.py` otherwise.
+
+### Uptime monitoring
+During migrations it is useful to monitor responses from the API to quantify outages.
+There is a wrapper script to do this reusing the functionality of the tests at `scripts/run_uptime_monitor.py`

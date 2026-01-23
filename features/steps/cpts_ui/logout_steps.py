@@ -14,6 +14,8 @@ from pages.logout import Logout
 def given_logout_modal_is_displayed(context):
     logout_page = Logout(context.active_page)
     logout_page.logout_modal_header_link.click()
+    # For dialog modals, check if dialog is attached to DOM and visible
+    expect(logout_page.logout_modal_content).to_be_attached()
     expect(logout_page.logout_modal_content).to_be_visible()
 
 
@@ -52,22 +54,10 @@ def when_i_click_log_back_in_button(context):
     logout_page.logout_page_login_link.click()
 
 
-@when("I close the modal with the cross")
-def when_i_close_modal_with_cross(context):
-    logout_page = Logout(context.active_page)
-    logout_page.logout_modal_close_button.click()
-
-
 @when("I close the modal with the cancel button")
 def when_i_close_modal_with_cancel_button(context):
     logout_page = Logout(context.active_page)
     logout_page.logout_modal_cancel_button.click()
-
-
-@when("I close the modal by clicking outside the modal")
-def when_i_close_modal_with_overlay(context):
-    logout_page = Logout(context.active_page)
-    logout_page.logout_modal_overlay.click(force=True, position={"x": 0, "y": 0})
 
 
 @when("I close the modal by hitting escape")
@@ -103,7 +93,10 @@ def then_i_see_logout_confirmation_modal(context):
 @then("the logout confirmation modal is not displayed")
 def then_logout_confirmation_modal_not_displayed(context):
     logout_page = Logout(context.active_page)
-    expect(logout_page.logout_modal_content).not_to_be_visible()
+    try:
+        expect(logout_page.logout_modal_content).not_to_be_attached()
+    except AssertionError:
+        expect(logout_page.logout_modal_content).not_to_have_attribute("open", "")
 
 
 @then("I see the logout successful page")
