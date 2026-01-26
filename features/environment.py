@@ -252,6 +252,9 @@ def before_scenario(context, scenario):
     if "deployed_only" in scenario.effective_tags and environment == "localhost":
         scenario.skip("Marked as only to run in deployed environments")
         return
+    if "only-dev" in scenario.effective_tags and environment != "internal-dev":
+        scenario.skip("Marked with @only-dev, environment not internal-dev")
+        return
     product = context.config.userdata["product"].upper()
     if product == "CPTS-UI":
         clear_scenario_user_sessions(context, scenario.effective_tags)
