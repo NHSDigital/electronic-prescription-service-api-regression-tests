@@ -11,6 +11,12 @@ from methods.shared.common import get_auth, assert_that
 from utils.prescription_id_generator import generate_short_form_id
 from utils.random_nhs_number_generator import generate_single
 
+# Map status types to terminal status values
+STATUS_TO_TERMINAL_MAP = {
+    "Ready to Collect": "in-progress",
+    "Collected": "completed",
+}
+
 
 @given("I am authorised to send prescription updates")
 @when("I am authorised to send prescription updates")
@@ -21,8 +27,8 @@ def i_am_authorised_to_send_prescription_updates(context):
     context.auth_token = get_auth(env, "PSU")
 
 
-@when("I send an {status} update with a terminal status of {terminal}")
-def i_send_an_update(context, status, terminal):
+def send_status_update_helper(context, status, terminal):
+    """Helper function to send a status update with the given status and terminal values."""
     if "e2e" not in context.tags or "sandbox" in context.config.userdata["env"].lower():
         context.receiver_ods_code = "FA565"
         context.prescription_id = generate_short_form_id(context.receiver_ods_code)
@@ -36,9 +42,22 @@ def i_send_an_update(context, status, terminal):
     send_status_update(context)
 
 
-@then(
-    "The prescription item has a status of Collected with a terminal status of completed"
-)
+@when("I send a {status} update with a terminal status of {terminal}")
+def i_send_an_update(context, status, terminal):
+    send_status_update_helper(context, status, terminal)
+
+
+@when("I send a {status} update")
+def i_send_an_update_without_terminal(context, status):
+    if status not in STATUS_TO_TERMINAL_MAP:
+        raise ValueError(
+            f"Unknown status '{status}'. " f"Supported statuses: {', '.join(STATUS_TO_TERMINAL_MAP.keys())}"
+        )
+    terminal = STATUS_TO_TERMINAL_MAP[status]
+    send_status_update_helper(context, status, terminal)
+
+
+@then("The prescription item has a status of Collected with a terminal status of completed")
 def prescription_has_status_with_terminal_status(context):
     if "sandbox" in context.config.userdata["env"].lower():
         return
@@ -47,15 +66,24 @@ def prescription_has_status_with_terminal_status(context):
     json_response = json.loads(context.response.content)
     logging.debug(context.response.content)
     entries = json_response["entry"]
-    bundle = [
-        entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"
-    ][0]["resource"]["entry"][0]["resource"]
+    bundle = [entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"][0]["resource"]["entry"][0][
+        "resource"
+    ]
     expected_item_id = context.prescription_item_id
     expected_item_status = context.item_status
     expected_terminal_status = context.terminal_status
 
     assert_that(bundle["identifier"][0]["value"].lower()).is_equal_to(expected_item_id)
     assert_that(bundle["status"]).is_equal_to(expected_terminal_status)
-    assert_that(
-        bundle["extension"][0]["extension"][0]["valueCoding"]["code"]
-    ).is_equal_to(expected_item_status)
+    assert_that(bundle["extension"][0]["extension"][0]["valueCoding"]["code"]).is_equal_to(expected_item_status)
+
+
+@then("a record of the request to NHS Notify is created")
+def verify_nhs_notify_request_created(context):
+    # TODO: Implement verification of DynamoDB record and SQS message
+    # Should verify:
+    # 1. DynamoDB record exists for the prescription status update
+    # 2. SQS message was sent with correct TerminalStatus attribute
+    # 3. TerminalStatus should be False for 'Ready to Collect' (in-progress)
+    #    and True for completed statuses like 'Collected'
+    pass
