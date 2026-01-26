@@ -69,7 +69,7 @@ Feature: I can see my prescriptions
   #   And the response indicates a success
 
   # Ensuring Stacey Twitchett (EPSAT default prescibee) doesn't break dev by timeout
-  @skip @Allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-6089
+  @skip @only-dev @Allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-6089
   Scenario: Stacey Twitchett can view prescriptions
     Given I am authenticated with PFP-APIGEE app
     When I request prescriptions for NHS number '9449304130'
