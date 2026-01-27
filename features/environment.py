@@ -237,7 +237,8 @@ def before_feature(context, feature):
         return
     if environment in ["internal-dev", "internal-qa"]:
         for scenario in feature.walk_scenarios():
-            patch_scenario_with_autoretry(scenario, max_attempts=3)
+            max_attempts = int(os.getenv("SCENARIO_MAX_RETRIES", "3"))
+            patch_scenario_with_autoretry(scenario, max_attempts=max_attempts)
 
 
 def before_scenario(context, scenario):

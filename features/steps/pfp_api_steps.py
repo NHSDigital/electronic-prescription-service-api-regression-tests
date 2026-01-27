@@ -66,6 +66,7 @@ def i_can_see_my_prescription_by_id(context, prescription_id):
 
 @then("I can see my prescription")
 def i_can_see_my_prescription(context):
+    assert_that(context.response.status_code).is_equal_to(200)
     json_response = json.loads(context.response.content)
     entries = json_response["entry"]
     bundle = [
@@ -84,6 +85,20 @@ def i_can_see_my_prescription(context):
     )
     assert_that(bundle["groupIdentifier"]["value"]).is_equal_to(
         expected_prescription_id
+    )
+    address_texts = [
+        resource["resource"]["address"][0]["text"]
+        for entry in entries
+        for resource in entry["resource"]["entry"]
+        if resource["resource"]["resourceType"] == "Organization"
+        and "address" in resource["resource"]
+        and resource["resource"]["address"]
+        and "text" in resource["resource"]["address"][0]
+    ]
+    assert_that(address_texts).is_not_empty()
+    # corresponds to "FA565" set in messages/eps_fhir/prescription.py
+    assert_that(address_texts[0]).is_equal_to(
+        "63 BRIARFIELD ROAD, TIMPERLEY, ALTRINCHAM, CHESHIRE, CHESHIRE, WA15 7DD"
     )
 
 
