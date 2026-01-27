@@ -23,7 +23,8 @@ def get_product_config(pr_id):
     Hydrates the product configuration dynamically by the PR ID provided.
 
     Product config keys:
-    app_id - The URL based ID for the app when viewing within Apigee
+    app_id - The URL based ID for the app, of which to link to your PR, when viewing within Apigee
+             This will align with your app_name
     app_name - The application name on Apigee
     api_product_name - The pull request product name on Apigee, substituing the "pr-1234" with the variable
     accompanying_product - Any product which also needs adding to an app in parallel to another,
@@ -54,7 +55,7 @@ def get_product_config(pr_id):
         "PFP-PROXYGEN": {
             "app_id": "fa7eaadb-da69-4c4b-8821-83e21cb649f5",
             "app_name": "REGRESSION_INTERNAL_DEV_PFP",
-            "api_product_name": f"prescriptions-for-patients-v2-prod--internal-dev--prescriptions-for-patients-v2-{pr_id}--nhs-login-p9",  # noqa: E501
+            "api_product_name": f"prescriptions-for-patients-v2--internal-dev--prescriptions-for-patients-v2-{pr_id}--nhs-login-p9",  # noqa: E501
         },
     }
 
