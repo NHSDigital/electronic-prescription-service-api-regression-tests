@@ -265,28 +265,24 @@ def before_scenario(context, scenario):
 
         # Set primary context as default
         # Concurrent context usage is only need in concurrent scenarios
-        context.primary_context.add_init_script(
-            """
+        context.primary_context.add_init_script("""
             window.__copiedText = "";
             navigator.clipboard.writeText = (text) => {
                 window.__copiedText = text;
                 return Promise.resolve();
             };
-        """
-        )
+        """)
         context.primary_context.tracing.start(
             screenshots=True, snapshots=True, sources=True
         )
 
-        context.concurrent_context.add_init_script(
-            """
+        context.concurrent_context.add_init_script("""
             window.__copiedText = "";
             navigator.clipboard.writeText = (text) => {
                 window.__copiedText = text;
                 return Promise.resolve();
             };
-        """
-        )
+        """)
 
         if "concurrency" in scenario.effective_tags:
             # Don't create a trace file if the concurrent browser context isn't being used in the scenario

@@ -120,18 +120,14 @@ def i_see_logged_in_message(context):
 
 @then("I can see the available role information")
 def i_see_available_roles(context):
-    context.execute_steps(
-        """Then I can see the summary table body
+    context.execute_steps("""Then I can see the summary table body
     And I can see the table body has a header row
     And I can see the table body has data
-    """
-    )
+    """)
 
 
 @then("I can see the inaccessible role information")
 def i_see_unavailable_roles(context):
-    context.execute_steps(
-        """Then I can see the summary table body
+    context.execute_steps("""Then I can see the summary table body
     And I can see the table body has a header row
-    And I can see the no access table body has data"""
-    )
+    And I can see the no access table body has data""")

@@ -31,10 +31,8 @@ def i_send_an_update(context, status, terminal):
         context.nhs_number = generate_single()
     context.terminal_status = terminal
     context.item_status = status
-    print(
-        f"""Sending status update: {status} with terminal status: {terminal}
-        for prescription ID: {context.prescription_id}"""
-    )
+    print(f"""Sending status update: {status} with terminal status: {terminal}
+        for prescription ID: {context.prescription_id}""")
     send_status_update(context)
 
 

@@ -54,7 +54,7 @@ def get_product_config(pr_id):
         "PFP-PROXYGEN": {
             "app_id": "fa7eaadb-da69-4c4b-8821-83e21cb649f5",
             "app_name": "REGRESSION_INTERNAL_DEV_PFP",
-            "api_product_name": f"prescriptions-for-patients-proxygen--internal-dev--pfp-proxygen-{pr_id}--nhs-login-p9",  # noqa: E501
+            "api_product_name": f"prescriptions-for-patients-v2-prod--internal-dev--prescriptions-for-patients-v2-{pr_id}--nhs-login-p9",  # noqa: E501
         },
     }
 
