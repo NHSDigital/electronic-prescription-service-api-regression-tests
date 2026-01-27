@@ -59,11 +59,9 @@ def i_check_the_prescription_item_statuses_for_status(context, status):
 @then("I can see my prescription '{prescription_id}'")
 def i_can_see_my_prescription_by_id(context, prescription_id):
     context.prescription_id = prescription_id
-    context.execute_steps(
-        """
+    context.execute_steps("""
         Then I can see my prescription
-        """
-    )
+        """)
 
 
 @then("I can see my prescription")
@@ -212,11 +210,9 @@ def process_status_updates_and_verify(context):
     # DON'T COPY THIS -- It's crude for now until we come back to it.
     for status in context.statuses:
         print(f"Processing status update to {status} for all prescription IDs")
-        context.execute_steps(
-            """
+        context.execute_steps("""
             When I am authorised to send prescription updates
-            """
-        )
+            """)
         for prescription_id in context.prescription_ids:
             context.prescription_id = prescription_id
             print(f"Processing status update for prescription ID: {prescription_id}")
@@ -229,17 +225,13 @@ def process_status_updates_and_verify(context):
             else:
                 terminal = "in-progress"
 
-            context.execute_steps(
-                f"""
+            context.execute_steps(f"""
                 When I send an {status} update with a terminal status of {terminal}
-                """
-            )
+                """)
         # Call the PFP API to get the prescriptions and verify the statuses
         print(f"Verifying updated prescription statuses to be {status}")
-        context.execute_steps(
-            f"""
+        context.execute_steps(f"""
             When I am authenticated with PFP-APIGEE app
             And I request my prescriptions
             And I check the prescription item statuses for '{status}'
-            """
-        )
+            """)

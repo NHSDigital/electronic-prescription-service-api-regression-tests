@@ -4,6 +4,7 @@
 Script to generate user defined unique ID which can be used to
 check the status of the regression test run to be reported to the CI.
 """
+
 import argparse
 from datetime import datetime, timedelta, timezone
 import random
