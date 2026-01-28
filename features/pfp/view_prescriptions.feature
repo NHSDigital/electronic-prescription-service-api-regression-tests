@@ -9,6 +9,14 @@ Feature: I can see my prescriptions
     And I request my prescriptions
     Then I can see my prescription
 
+  @blocker @smoke @e2e @service-search
+  Scenario: I can see a single prescription released to a distance selling pharmacy
+    Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app
+    And a non-nominated acute prescription has been created and released to FLM49
+    When I am authenticated with PFP-APIGEE app
+    And I request my prescriptions
+    Then I can see my prescription
+
   # Spine defined limit of 25 prescriptions per request
   Scenario: I can see a maximum of 25 prescriptions
     Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app

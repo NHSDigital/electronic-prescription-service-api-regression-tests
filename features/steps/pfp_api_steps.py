@@ -86,20 +86,33 @@ def i_can_see_my_prescription(context):
     assert_that(bundle["groupIdentifier"]["value"]).is_equal_to(
         expected_prescription_id
     )
-    address_texts = [
-        resource["resource"]["address"][0]["text"]
-        for entry in entries
-        for resource in entry["resource"]["entry"]
-        if resource["resource"]["resourceType"] == "Organization"
-        and "address" in resource["resource"]
-        and resource["resource"]["address"]
-        and "text" in resource["resource"]["address"][0]
-    ]
-    assert_that(address_texts).is_not_empty()
-    # corresponds to "FA565" set in messages/eps_fhir/prescription.py
-    assert_that(address_texts[0]).is_equal_to(
-        "63 BRIARFIELD ROAD, TIMPERLEY, ALTRINCHAM, CHESHIRE, CHESHIRE, WA15 7DD"
-    )
+    if context.receiver_ods_code == "FA565":
+        address_texts = [
+            resource["resource"]["address"][0]["text"]
+            for entry in entries
+            for resource in entry["resource"]["entry"]
+            if resource["resource"]["resourceType"] == "Organization"
+            and "address" in resource["resource"]
+            and resource["resource"]["address"]
+            and "text" in resource["resource"]["address"][0]
+        ]
+        assert_that(address_texts).is_not_empty()
+        assert_that(address_texts[0]).is_equal_to(
+            "63 BRIARFIELD ROAD, TIMPERLEY, ALTRINCHAM, CHESHIRE, CHESHIRE, WA15 7DD"
+        )
+    elif context.receiver_ods_code == "FLM49":
+        urls = [
+            resource["resource"]["telecom"][0]["value"]
+            for entry in entries
+            for resource in entry["resource"]["entry"]
+            if resource["resource"]["resourceType"] == "Organization"
+            and "telecom" in resource["resource"]
+            and resource["resource"]["telecom"]
+            and "system" in resource["resource"]["telecom"][0]
+            and resource["resource"]["telecom"][0]["system"] == "url"
+        ]
+        assert_that(urls).is_not_empty()
+        assert_that(urls[0]).is_equal_to("www.pharmacy2u.co.uk")
 
 
 @then("I can see '{number}' of my prescriptions")
