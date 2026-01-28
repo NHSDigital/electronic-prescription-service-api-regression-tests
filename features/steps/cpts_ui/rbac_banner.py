@@ -4,7 +4,6 @@ from playwright.sync_api import expect
 
 from pages.rbac_banner import RBACBannerPage
 
-
 ############################################################################
 # THEN STEPS
 ############################################################################

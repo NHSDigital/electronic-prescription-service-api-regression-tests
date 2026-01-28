@@ -10,7 +10,6 @@ import boto3
 from behave import given, when, then  # type: ignore
 from methods.shared.common import assert_that
 
-
 # lambda client instance
 lambda_client = None
 
