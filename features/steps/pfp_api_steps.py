@@ -59,11 +59,9 @@ def i_check_the_prescription_item_statuses_for_status(context, status):
 @then("I can see my prescription '{prescription_id}'")
 def i_can_see_my_prescription_by_id(context, prescription_id):
     context.prescription_id = prescription_id
-    context.execute_steps(
-        """
+    context.execute_steps("""
         Then I can see my prescription
-        """
-    )
+        """)
 
 
 @then("I can see my prescription")
@@ -88,20 +86,33 @@ def i_can_see_my_prescription(context):
     assert_that(bundle["groupIdentifier"]["value"]).is_equal_to(
         expected_prescription_id
     )
-    address_texts = [
-        resource["resource"]["address"][0]["text"]
-        for entry in entries
-        for resource in entry["resource"]["entry"]
-        if resource["resource"]["resourceType"] == "Organization"
-        and "address" in resource["resource"]
-        and resource["resource"]["address"]
-        and "text" in resource["resource"]["address"][0]
-    ]
-    assert_that(address_texts).is_not_empty()
-    # corresponds to "FA565" set in messages/eps_fhir/prescription.py
-    assert_that(address_texts[0]).is_equal_to(
-        "63 BRIARFIELD ROAD, TIMPERLEY, ALTRINCHAM, CHESHIRE, CHESHIRE, WA15 7DD"
-    )
+    if context.receiver_ods_code == "FA565":
+        address_texts = [
+            resource["resource"]["address"][0]["text"]
+            for entry in entries
+            for resource in entry["resource"]["entry"]
+            if resource["resource"]["resourceType"] == "Organization"
+            and "address" in resource["resource"]
+            and resource["resource"]["address"]
+            and "text" in resource["resource"]["address"][0]
+        ]
+        assert_that(address_texts).is_not_empty()
+        assert_that(address_texts[0]).is_equal_to(
+            "63 BRIARFIELD ROAD, TIMPERLEY, ALTRINCHAM, CHESHIRE, CHESHIRE, WA15 7DD"
+        )
+    elif context.receiver_ods_code == "FLM49":
+        urls = [
+            resource["resource"]["telecom"][0]["value"]
+            for entry in entries
+            for resource in entry["resource"]["entry"]
+            if resource["resource"]["resourceType"] == "Organization"
+            and "telecom" in resource["resource"]
+            and resource["resource"]["telecom"]
+            and "system" in resource["resource"]["telecom"][0]
+            and resource["resource"]["telecom"][0]["system"] == "url"
+        ]
+        assert_that(urls).is_not_empty()
+        assert_that(urls[0]).is_equal_to("www.pharmacy2u.co.uk")
 
 
 @then("I can see '{number}' of my prescriptions")
@@ -212,11 +223,9 @@ def process_status_updates_and_verify(context):
     # DON'T COPY THIS -- It's crude for now until we come back to it.
     for status in context.statuses:
         print(f"Processing status update to {status} for all prescription IDs")
-        context.execute_steps(
-            """
+        context.execute_steps("""
             When I am authorised to send prescription updates
-            """
-        )
+            """)
         for prescription_id in context.prescription_ids:
             context.prescription_id = prescription_id
             print(f"Processing status update for prescription ID: {prescription_id}")
@@ -229,17 +238,13 @@ def process_status_updates_and_verify(context):
             else:
                 terminal = "in-progress"
 
-            context.execute_steps(
-                f"""
+            context.execute_steps(f"""
                 When I send an {status} update with a terminal status of {terminal}
-                """
-            )
+                """)
         # Call the PFP API to get the prescriptions and verify the statuses
         print(f"Verifying updated prescription statuses to be {status}")
-        context.execute_steps(
-            f"""
+        context.execute_steps(f"""
             When I am authenticated with PFP-APIGEE app
             And I request my prescriptions
             And I check the prescription item statuses for '{status}'
-            """
-        )
+            """)
