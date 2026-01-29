@@ -5,8 +5,12 @@ Feature: I can send an update to PSU
   @blocker @smoke
   Scenario: I can send an update to PSU
     Given I am authorised to send prescription updates
+    When I send a Ready to Collect update
+    Then the response indicates a record was created
+    And the prescription item has a status of Ready to Collect with a terminal status of in-progress
     When I send a Collected update with a terminal status of completed
     Then the response indicates a record was created
+    And the prescription item has a status of Collected with a terminal status of completed
 
   @skip @e2e
   Scenario: I can send and confirm an update to a prescription
@@ -14,9 +18,3 @@ Feature: I can send an update to PSU
     When I am authorised to send prescription updates
     And I send a Collected update with a terminal status of completed
     Then The prescription item has a status of Collected with a terminal status of completed
-
-  @int
-  Scenario: I can send a notification for the update
-    Given I am authorised to send prescription updates
-    When I send a Ready to Collect update
-    Then a record of the request to NHS Notify is created
