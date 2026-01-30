@@ -11,8 +11,9 @@ from methods.shared.common import get_auth, assert_that
 from utils.prescription_id_generator import generate_short_form_id
 from utils.random_nhs_number_generator import generate_single
 
-# Map status types to terminal status values
-STATUS_TO_TERMINAL_MAP = {
+# Map coding types to status values
+CODING_TO_STATUS_MAP = {
+    "With Pharmacy": "in-progress",
     "Ready to Collect": "in-progress",
     "Collected": "completed",
 }
@@ -27,35 +28,35 @@ def i_am_authorised_to_send_prescription_updates(context):
     context.auth_token = get_auth(env, "PSU")
 
 
-def send_status_update_helper(context, status, terminal):
-    """Helper function to send a status update with the given status and terminal values."""
+def send_status_update_helper(context, coding, status):
+    """Helper function to send a status update with the given coding and status values."""
     if "e2e" not in context.tags or "sandbox" in context.config.userdata["env"].lower():
         context.receiver_ods_code = "FA565"
         context.prescription_id = generate_short_form_id(context.receiver_ods_code)
         print(f"id from here {context.prescription_id}")
         context.prescription_item_id = uuid.uuid4()
         context.nhs_number = generate_single()
-    context.terminal_status = terminal
-    context.item_status = status
-    print(f"""Sending status update: {status} with terminal status: {terminal}
-        for prescription ID: {context.prescription_id}""")
+    context.terminal_status = status
+    context.item_status = coding
+    print(
+        f"""Sending update for prescription ID: {context.prescription_id}: coding: {coding} status: {status}"""
+    )
     send_status_update(context)
 
 
-@when("I send a {status} update with a terminal status of {terminal}")
-def i_send_an_update(context, status, terminal):
-    send_status_update_helper(context, status, terminal)
+@when("I send a {coding} update with a status of {status}")
+def i_send_an_update(context, coding, status):
+    send_status_update_helper(context, coding, status)
 
 
-@when("I send a {status} update")
-def i_send_an_update_without_terminal(context, status):
-    if status not in STATUS_TO_TERMINAL_MAP:
+@when("I send a {coding} update")
+def i_send_an_update_without_status(context, coding):
+    if coding not in CODING_TO_STATUS_MAP:
         raise ValueError(
-            f"Unknown status '{status}'. "
-            f"Supported statuses: {', '.join(STATUS_TO_TERMINAL_MAP.keys())}"
+            f"Unknown coding '{coding}'. Supported codings: {', '.join(CODING_TO_STATUS_MAP.keys())}"
         )
-    terminal = STATUS_TO_TERMINAL_MAP[status]
-    send_status_update_helper(context, status, terminal)
+    status = CODING_TO_STATUS_MAP[coding]
+    send_status_update_helper(context, coding, status)
 
 
 # @then("The prescription item has a status of {expected_status} with a terminal status of {expected_terminal_status}")
@@ -79,17 +80,17 @@ def i_send_an_update_without_terminal(context, status):
 
 
 @then(
-    "The prescription item has a status of {expected_status} with a terminal status of {expected_terminal_status}"
+    "The prescription item has a coding of {expected_coding} with a status of {expected_status}"
 )
-def verify_update_recorded(context, expected_status, expected_terminal_status):
+def verify_update_recorded(context, expected_coding, expected_status):
     if "sandbox" in context.config.userdata["env"].lower():
         print("Skipping verification in sandbox environment")
         return
 
-    check_update_with_retries(context, expected_status, expected_terminal_status)
+    check_update_with_retries(context, expected_coding, expected_status)
 
 
-def check_update_with_retries(context, expected_status, expected_terminal_status):
+def check_update_with_retries(context, expected_coding, expected_status):
     prescription_id = context.prescription_id
     max_retries = 5
     retry_delay = 2  # seconds
@@ -120,15 +121,13 @@ def check_update_with_retries(context, expected_status, expected_terminal_status
             # TODO: need to handle multiple items
             item = matching_items[0]
 
-            assert_that(item.get("TerminalStatus")).is_equal_to(
-                expected_terminal_status
-            )
-            assert_that(item.get("Status")).is_equal_to(expected_status)
+            assert_that(item.get("TerminalStatus")).is_equal_to(expected_status)
+            assert_that(item.get("Status")).is_equal_to(expected_coding)
             return
 
     # If we exhausted all retries without finding the update
     raise AssertionError(
         f"Failed to verify status update for prescription {prescription_id} "
-        f"after {max_retries} attempts. Expected status '{expected_status}' "
-        f"with terminal status '{expected_terminal_status}' was not found."
+        f"after {max_retries} attempts. Expected coding '{expected_coding}' "
+        f"with status '{expected_status}' was not found."
     )
