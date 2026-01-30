@@ -5,7 +5,6 @@ from playwright.sync_api import expect
 from pages.change_role import ChangeRole
 from pages.your_selected_role import YourSelectedRole
 
-
 ############################################################################
 # GIVEN STEPS
 ############################################################################
