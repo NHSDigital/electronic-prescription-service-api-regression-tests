@@ -70,7 +70,6 @@ def i_can_see_my_prescription_inc_updates(context, status=None):
     print(f"Checking prescription: {context.prescription_id} for {context.nhs_number}")
     json_response = json.loads(context.response.content)
     entries = json_response["entry"]
-    print(entries)
     if entries[0]:
         print(f"Diagnostics info from response: {entries[0]}")
     bundle = [
