@@ -5,7 +5,6 @@ import uuid
 # pylint: disable=no-name-in-module
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 
-# from features.steps import pfp_api_steps
 from methods.api.psu_api_methods import send_status_update, check_status_updates
 from methods.shared.common import get_auth, assert_that
 from utils.prescription_id_generator import generate_short_form_id
@@ -57,26 +56,6 @@ def i_send_an_update_without_status(context, coding):
         )
     status = CODING_TO_STATUS_MAP[coding]
     send_status_update_helper(context, coding, status)
-
-
-# @then("The prescription item has a status of {expected_status} with a terminal status of {expected_terminal_status}")
-# def prescription_has_status_with_terminal_status(context, expected_status, expected_terminal_status):
-#     if "sandbox" in context.config.userdata["env"].lower():
-#         return
-#     pfp_api_steps.i_am_authenticated(context, "PFP-APIGEE")
-#     pfp_api_steps.i_request_my_prescriptions(context)
-#     json_response = json.loads(context.response.content)
-#     logging.debug(context.response.content)
-#     entries = json_response["entry"]
-#     bundle = [entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"][0]["resource"]["entry"][0][
-#         "resource"
-#     ]
-#     expected_item_id = context.prescription_item_id
-#     assert_that(expected_terminal_status).is_equal_to(STATUS_TO_TERMINAL_MAP[expected_status])
-
-#     assert_that(bundle["identifier"][0]["value"].lower()).is_equal_to(expected_item_id)
-#     assert_that(bundle["status"]).is_equal_to(expected_terminal_status)
-#     assert_that(bundle["extension"][0]["extension"][0]["valueCoding"]["code"]).is_equal_to(expected_status)
 
 
 @then(
