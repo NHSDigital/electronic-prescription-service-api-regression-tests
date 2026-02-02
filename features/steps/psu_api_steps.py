@@ -1,5 +1,4 @@
 import json
-import time
 import uuid
 
 # pylint: disable=no-name-in-module
@@ -69,47 +68,20 @@ def verify_update_recorded(context, expected_coding, expected_status):
         print("Skipping verification in sandbox environment")
         return
 
-    check_update_with_retries(context, expected_coding, expected_status)
-
-
-def check_update_with_retries(context, expected_coding, expected_status):
     prescription_id = context.prescription_id
-    max_retries = 5
-    retry_delay = 2  # seconds
 
-    for attempt in range(max_retries):
-        if attempt > 0:
-            print(f"Retry attempt {attempt}/{max_retries - 1}")
-            time.sleep(retry_delay)
+    response = check_status_updates(context, prescription_id=prescription_id)
+    assert_that(response.status_code).is_equal_to(200)
 
-        response = check_status_updates(context, prescription_id=prescription_id)
+    response_data = json.loads(response.content)
+    matching_items = [
+        items
+        for items in response_data.get("items", [])
+        if items.get("PrescriptionID") == prescription_id
+    ]
+    if matching_items:
+        # Note that multiple items are possible, though not in any of our current tests
+        item = matching_items[0]
 
-        if response.status_code != 200:
-            print(f"Check endpoint returned status {response.status_code}")
-            continue
-
-        try:
-            response_data = json.loads(response.content)
-        except json.JSONDecodeError as e:
-            print(f"Failed to parse response: {e}")
-            continue
-
-        matching_items = [
-            items
-            for items in response_data.get("items", [])
-            if items.get("PrescriptionID") == prescription_id
-        ]
-        if matching_items:
-            # Note that multiple items are possible, though not in any of our current tests
-            item = matching_items[0]
-
-            assert_that(item.get("TerminalStatus")).is_equal_to(expected_status)
-            assert_that(item.get("Status")).is_equal_to(expected_coding)
-            return
-
-    # If we exhausted all retries without finding the update
-    raise AssertionError(
-        f"Failed to verify status update for prescription {prescription_id} "
-        f"after {max_retries} attempts. Expected coding '{expected_coding}' "
-        f"with status '{expected_status}' was not found."
-    )
+        assert_that(item.get("TerminalStatus")).is_equal_to(expected_status)
+        assert_that(item.get("Status")).is_equal_to(expected_coding)
