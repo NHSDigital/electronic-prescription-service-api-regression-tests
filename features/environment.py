@@ -337,6 +337,23 @@ def after_scenario(context, scenario):
 
 
 def before_all(context):
+    # Force reconfigure logging after behave has initialized
+    # This is needed for behave 1.2.6 which interferes with logging setup
+    root_logger = logging.getLogger()
+    for handler in root_logger.handlers[:]:
+        root_logger.removeHandler(handler)
+
+    # Re-add our stdout handler
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setFormatter(
+        logging.Formatter(
+            "[%(asctime)s] [%(levelname)s] [%(filename)s:%(lineno)d] %(message)s",
+            datefmt="%m/%d/%Y %I:%M:%S %p",
+        )
+    )
+    root_logger.addHandler(handler)
+    root_logger.setLevel(logging.DEBUG)
+
     product = context.config.userdata["product"].upper()
     if count_of_scenarios_to_run(context) != 0:
         env = context.config.userdata["env"].upper()
