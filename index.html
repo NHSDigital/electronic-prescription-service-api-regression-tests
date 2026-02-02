@@ -106,6 +106,8 @@ Given A regression test with multiple related queries
 
 Given I am authorised to send prescription updates
 
+Given status updates are enabled
+
 When I click on the change role summary expander
 
 When I click a change role role card
@@ -320,7 +322,9 @@ When I set the statuses I will update through
 
 When I am authorised to send prescription updates
 
-When I send an {status} update with a terminal status of {terminal}
+When I send a &#x27;{coding}&#x27; update with a status of &#x27;{status}&#x27;
+
+When I send a &#x27;{coding}&#x27; update
 
 Then I am on the change role page
 
@@ -664,6 +668,8 @@ Then Lambda maintains conversation context across invocations
 
 Then I can see my prescription &#x27;{prescription_id}&#x27;
 
+Then I can see my prescription and it has a status of &#x27;{status}&#x27;
+
 Then I can see my prescription
 
 Then I can see &#x27;{number}&#x27; of my prescriptions
@@ -678,7 +684,7 @@ Then I validate the prescription matches my prepared prescription
 
 Then I process the status updates for the prescription items and verify they are returned
 
-Then The prescription item has a status of Collected with a terminal status of completed
+Then The prescription item has a coding of &#x27;{expected_coding}&#x27; with a status of &#x27;{expected_status}&#x27;
 
 Given I can see the prescription details with the correct issue details
  When I can see the prescription details with the correct issue details
