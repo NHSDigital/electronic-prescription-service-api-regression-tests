@@ -36,9 +36,7 @@ def i_send_an_update(context, status, terminal):
     send_status_update(context)
 
 
-@then(
-    "The prescription item has a status of Collected with a terminal status of completed"
-)
+@then("The prescription item has a status of Collected with a terminal status of completed")
 def prescription_has_status_with_terminal_status(context):
     if "sandbox" in context.config.userdata["env"].lower():
         return
@@ -47,15 +45,13 @@ def prescription_has_status_with_terminal_status(context):
     json_response = json.loads(context.response.content)
     logging.debug(context.response.content)
     entries = json_response["entry"]
-    bundle = [
-        entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"
-    ][0]["resource"]["entry"][0]["resource"]
+    bundle = [entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"][0]["resource"]["entry"][0][
+        "resource"
+    ]
     expected_item_id = context.prescription_item_id
     expected_item_status = context.item_status
     expected_terminal_status = context.terminal_status
 
     assert_that(bundle["identifier"][0]["value"].lower()).is_equal_to(expected_item_id)
     assert_that(bundle["status"]).is_equal_to(expected_terminal_status)
-    assert_that(
-        bundle["extension"][0]["extension"][0]["valueCoding"]["code"]
-    ).is_equal_to(expected_item_status)
+    assert_that(bundle["extension"][0]["extension"][0]["valueCoding"]["code"]).is_equal_to(expected_item_status)

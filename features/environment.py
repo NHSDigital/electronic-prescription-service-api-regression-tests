@@ -26,13 +26,9 @@ LOCALHOST_URL = "http://localhost:3000/"
 
 AWS_BASE_URL = ".eps.national.nhs.uk/"
 PFP_AWS_PR_URL = "https://pfp-{{aws_pull_request_id}}.dev.eps.national.nhs.uk/"
-PFP_AWS_SANDBOX_PR_URL = (
-    "https://pfp-{{aws_pull_request_id}}-sandbox.dev.eps.national.nhs.uk/"
-)
+PFP_AWS_SANDBOX_PR_URL = "https://pfp-{{aws_pull_request_id}}-sandbox.dev.eps.national.nhs.uk/"
 CPTS_UI_PR_URL = "https://cpt-ui-{{aws_pull_request_id}}.dev.eps.national.nhs.uk/"
-CPTS_UI_SANDBOX_PR_URL = (
-    "https://cpt-ui-{{aws_pull_request_id}}sandbox.dev.eps.national.nhs.uk/"
-)
+CPTS_UI_SANDBOX_PR_URL = "https://cpt-ui-{{aws_pull_request_id}}sandbox.dev.eps.national.nhs.uk/"
 
 APIGEE_ENVS = {
     "INTERNAL-DEV": INTERNAL_DEV_BASE_URL,
@@ -165,9 +161,7 @@ PFP_SUFFIX = "prescriptions-for-patients"
 PFP_PROXYGEN_SUFFIX = "prescriptions-for-patients-v2"
 PSU_SUFFIX = "prescription-status-update"
 
-EPSAM_SLACKBOT_FUNCTION_EXPORT_NAME = (
-    "epsam{{aws_pull_request_id}}:lambda:SlackBot:FunctionName"
-)
+EPSAM_SLACKBOT_FUNCTION_EXPORT_NAME = "epsam{{aws_pull_request_id}}:lambda:SlackBot:FunctionName"
 EPSAM_STACK_NAME = "epsam{{aws_pull_request_id}}"
 
 
@@ -192,13 +186,9 @@ def clear_scenario_user_sessions(context, scenario_tags):
         for key, value in account_scenario_tags.items():
             if tag == key:
                 request_id = str(uuid.uuid4())
-                print(
-                    f"Logging out all sessions for Mock_{value} ahead of running {context.scenario.name}.\
-                        Request ID: {request_id}"
-                )
-                payload = json.dumps(
-                    {"username": "Mock_" + value, "request_id": request_id}
-                )
+                print(f"Logging out all sessions for Mock_{value} ahead of running {context.scenario.name}.\
+                        Request ID: {request_id}")
+                payload = json.dumps({"username": "Mock_" + value, "request_id": request_id})
                 # Not catching any exceptions, we want this to raise a stack if it doesn't work
                 response = requests.post(
                     f"{context.cpts_ui_base_url}/api/test-support-clear-active-session",
@@ -219,8 +209,7 @@ def count_of_scenarios_to_run(context):
         1
         for feature in context._runner.features
         for scenario in feature.walk_scenarios()
-        if isinstance(scenario, Scenario)
-        and (not tags or scenario.should_run_with_tags(tags))
+        if isinstance(scenario, Scenario) and (not tags or scenario.should_run_with_tags(tags))
     )
 
     print(f"Total scenarios to be run: {total_scenarios}")
@@ -273,9 +262,7 @@ def before_scenario(context, scenario):
                 return Promise.resolve();
             };
         """)
-        context.primary_context.tracing.start(
-            screenshots=True, snapshots=True, sources=True
-        )
+        context.primary_context.tracing.start(screenshots=True, snapshots=True, sources=True)
 
         context.concurrent_context.add_init_script("""
             window.__copiedText = "";
@@ -287,9 +274,7 @@ def before_scenario(context, scenario):
 
         if "concurrency" in scenario.effective_tags:
             # Don't create a trace file if the concurrent browser context isn't being used in the scenario
-            context.concurrent_context.tracing.start(
-                screenshots=True, snapshots=True, sources=True, title="concurrent"
-            )
+            context.concurrent_context.tracing.start(screenshots=True, snapshots=True, sources=True, title="concurrent")
 
         context.primary_page = context.primary_context.new_page()
         context.concurrent_page = context.concurrent_context.new_page()
@@ -319,10 +304,7 @@ def after_scenario(context, scenario):
                     name="playwright_failure_trace.zip",
                     attachment_type="application/zip",
                 )
-        if (
-            hasattr(context, "concurrent_context")
-            and "concurrency" in scenario.effective_tags
-        ):
+        if hasattr(context, "concurrent_context") and "concurrency" in scenario.effective_tags:
             context.concurrent_context.tracing.stop(path="/tmp/trace_concurrent.zip")
             if scenario.status == "failed":
                 allure.attach(
@@ -347,29 +329,17 @@ def before_all(context):
             context.cpts_ui_base_url = LOCALHOST_URL
 
         else:
-            context.cpts_ui_base_url = (
-                f"https://{CPTS_UI_PREFIX}" + select_aws_base_url(env)
-            )
+            context.cpts_ui_base_url = f"https://{CPTS_UI_PREFIX}" + select_aws_base_url(env)
 
-        context.eps_fhir_base_url = os.path.join(
-            select_apigee_base_url(env), EPS_FHIR_SUFFIX
-        )
-        context.eps_fhir_prescribing_base_url = os.path.join(
-            select_apigee_base_url(env), EPS_FHIR_PRESCRIBING_SUFFIX
-        )
-        context.eps_fhir_dispensing_base_url = os.path.join(
-            select_apigee_base_url(env), EPS_FHIR_DISPENSING_SUFFIX
-        )
+        context.eps_fhir_base_url = os.path.join(select_apigee_base_url(env), EPS_FHIR_SUFFIX)
+        context.eps_fhir_prescribing_base_url = os.path.join(select_apigee_base_url(env), EPS_FHIR_PRESCRIBING_SUFFIX)
+        context.eps_fhir_dispensing_base_url = os.path.join(select_apigee_base_url(env), EPS_FHIR_DISPENSING_SUFFIX)
         context.psu_base_url = os.path.join(select_apigee_base_url(env), PSU_SUFFIX)
-        context.cpts_fhir_base_url = os.path.join(
-            select_apigee_base_url(env), CPTS_FHIR_SUFFIX
-        )
+        context.cpts_fhir_base_url = os.path.join(select_apigee_base_url(env), CPTS_FHIR_SUFFIX)
 
         if "PFP-PROXYGEN" in product:
             # Don't use PFP-PROXYGEN AND PFP-APIGEE TOGETHER
-            context.pfp_base_url = os.path.join(
-                select_apigee_base_url(env), PFP_PROXYGEN_SUFFIX
-            )
+            context.pfp_base_url = os.path.join(select_apigee_base_url(env), PFP_PROXYGEN_SUFFIX)
         else:
             context.pfp_base_url = os.path.join(select_apigee_base_url(env), PFP_SUFFIX)
 
@@ -391,9 +361,7 @@ def before_all(context):
         context.browser = _playwright.chromium.launch(
             headless=HEADLESS,
             slow_mo=SLOWMO,
-            channel=(
-                None if context.config.userdata["arm64"].upper() == "TRUE" else "chrome"
-            ),
+            channel=(None if context.config.userdata["arm64"].upper() == "TRUE" else "chrome"),
         )
 
     eps_api_methods.calculate_eps_fhir_base_url(context)
@@ -413,21 +381,15 @@ def get_function_export_name(context):
     else:
         suffix = ""
 
-    context.espamCloudFormationStackName = EPSAM_STACK_NAME.replace(
-        "{{aws_pull_request_id}}", suffix
-    )
-    context.espamSlackBotFunctionName = EPSAM_SLACKBOT_FUNCTION_EXPORT_NAME.replace(
-        "{{aws_pull_request_id}}", suffix
-    )
+    context.espamCloudFormationStackName = EPSAM_STACK_NAME.replace("{{aws_pull_request_id}}", suffix)
+    context.espamSlackBotFunctionName = EPSAM_SLACKBOT_FUNCTION_EXPORT_NAME.replace("{{aws_pull_request_id}}", suffix)
 
 
 def get_url_with_pr(context, env, product):
     assert PULL_REQUEST_ID is not None
     pull_request_id = PULL_REQUEST_ID.lower()
     if product == "EPS-FHIR":
-        context.eps_fhir_base_url = os.path.join(
-            INTERNAL_DEV_BASE_URL, f"{EPS_FHIR_SUFFIX}-{pull_request_id}"
-        )
+        context.eps_fhir_base_url = os.path.join(INTERNAL_DEV_BASE_URL, f"{EPS_FHIR_SUFFIX}-{pull_request_id}")
     if product in ["EPS-FHIR-PRESCRIBING", "EPS-FHIR-DISPENSING"]:
         context.eps_fhir_prescribing_base_url = os.path.join(
             INTERNAL_DEV_BASE_URL,
@@ -438,57 +400,37 @@ def get_url_with_pr(context, env, product):
             f"{EPS_FHIR_DISPENSING_SUFFIX}-{pull_request_id}",
         )
     if product == "PFP-APIGEE":
-        context.pfp_base_url = os.path.join(
-            INTERNAL_DEV_BASE_URL, f"{PFP_SUFFIX}-{pull_request_id}"
-        )
+        context.pfp_base_url = os.path.join(INTERNAL_DEV_BASE_URL, f"{PFP_SUFFIX}-{pull_request_id}")
     if product == "PFP-PROXYGEN":
-        context.pfp_base_url = os.path.join(
-            INTERNAL_DEV_BASE_URL, f"{PFP_PROXYGEN_SUFFIX}-{pull_request_id}"
-        )
+        context.pfp_base_url = os.path.join(INTERNAL_DEV_BASE_URL, f"{PFP_PROXYGEN_SUFFIX}-{pull_request_id}")
     if product == "PSU":
-        context.psu_base_url = os.path.join(
-            INTERNAL_DEV_BASE_URL, f"{PSU_SUFFIX}-{pull_request_id}"
-        )
+        context.psu_base_url = os.path.join(INTERNAL_DEV_BASE_URL, f"{PSU_SUFFIX}-{pull_request_id}")
     if product == "PFP-AWS":
         handle_pfp_aws_pr_url(context, env)
     if product == "CPTS-UI":
         handle_cpt_ui_pr_url(context, env)
     if product == "CPTS-FHIR":
-        context.cpts_fhir_base_url = os.path.join(
-            INTERNAL_DEV_BASE_URL, f"{CPTS_FHIR_SUFFIX}-{pull_request_id}"
-        )
+        context.cpts_fhir_base_url = os.path.join(INTERNAL_DEV_BASE_URL, f"{CPTS_FHIR_SUFFIX}-{pull_request_id}")
 
 
 def handle_cpt_ui_pr_url(context, env):
     assert PULL_REQUEST_ID is not None
     pull_request_id = PULL_REQUEST_ID.lower()
-    context.cpts_ui_base_url = (
-        f"https://{CPTS_UI_PREFIX}-{pull_request_id}{select_apigee_base_url(env)}"
-    )
+    context.cpts_ui_base_url = f"https://{CPTS_UI_PREFIX}-{pull_request_id}{select_apigee_base_url(env)}"
     if env == "INTERNAL-DEV":
-        context.cpts_ui_base_url = CPTS_UI_PR_URL.replace(
-            "{{aws_pull_request_id}}", pull_request_id
-        )
+        context.cpts_ui_base_url = CPTS_UI_PR_URL.replace("{{aws_pull_request_id}}", pull_request_id)
     if env == "INTERNAL-DEV-SANDBOX":
-        context.cpts_ui_base_url = CPTS_UI_SANDBOX_PR_URL.replace(
-            "{{aws_pull_request_id}}", pull_request_id
-        )
+        context.cpts_ui_base_url = CPTS_UI_SANDBOX_PR_URL.replace("{{aws_pull_request_id}}", pull_request_id)
 
 
 def handle_pfp_aws_pr_url(context, env):
     assert PULL_REQUEST_ID is not None
     pull_request_id = PULL_REQUEST_ID.lower()
-    context.pfp_base_url = os.path.join(
-        INTERNAL_DEV_BASE_URL, f"{PFP_SUFFIX}-{pull_request_id}"
-    )
+    context.pfp_base_url = os.path.join(INTERNAL_DEV_BASE_URL, f"{PFP_SUFFIX}-{pull_request_id}")
     if env == "INTERNAL-DEV":
-        context.pfp_base_url = PFP_AWS_PR_URL.replace(
-            "{{aws_pull_request_id}}", pull_request_id
-        )
+        context.pfp_base_url = PFP_AWS_PR_URL.replace("{{aws_pull_request_id}}", pull_request_id)
     if env == "INTERNAL-DEV-SANDBOX":
-        context.pfp_base_url = PFP_AWS_SANDBOX_PR_URL.replace(
-            "{{aws_pull_request_id}}", pull_request_id
-        )
+        context.pfp_base_url = PFP_AWS_SANDBOX_PR_URL.replace("{{aws_pull_request_id}}", pull_request_id)
 
 
 def after_all(context):

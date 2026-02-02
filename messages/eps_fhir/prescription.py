@@ -33,9 +33,7 @@ class PrescriptionValues:
 class Prescription:
     def __init__(self, context: Any) -> None:
         self.values = PrescriptionValues(context)
-        self.HTTPS_ODS_ORGANIZATION_CODE = (
-            "https://fhir.nhs.uk/Id/ods-organization-code"
-        )
+        self.HTTPS_ODS_ORGANIZATION_CODE = "https://fhir.nhs.uk/Id/ods-organization-code"
         message_header = self.create_message_header()
         medication_request = self.create_medication_request()
         patient = self.create_patient()
@@ -85,9 +83,7 @@ class Prescription:
                         "value": self.values.sender_ods_code,
                     },
                 },
-                "source": {
-                    "endpoint": f"urn:nhs-uk:addressing:ods:{self.values.sender_ods_code}"
-                },
+                "source": {"endpoint": f"urn:nhs-uk:addressing:ods:{self.values.sender_ods_code}"},
             },
         }
 
@@ -155,12 +151,8 @@ class Prescription:
                         }
                     ]
                 },
-                "subject": {
-                    "reference": "urn:uuid:78d3c2eb-009e-4ec8-a358-b042954aa9b2"
-                },
-                "requester": {
-                    "reference": "urn:uuid:56166769-c1c4-4d07-afa8-132b5dfca666"
-                },
+                "subject": {"reference": "urn:uuid:78d3c2eb-009e-4ec8-a358-b042954aa9b2"},
+                "requester": {"reference": "urn:uuid:56166769-c1c4-4d07-afa8-132b5dfca666"},
                 "groupIdentifier": {
                     "extension": [
                         {
@@ -186,9 +178,7 @@ class Prescription:
                 "dosageInstruction": [
                     {
                         "text": "4 times a day - Oral",
-                        "timing": {
-                            "repeat": {"frequency": 4, "period": 1, "periodUnit": "d"}
-                        },
+                        "timing": {"repeat": {"frequency": 4, "period": 1, "periodUnit": "d"}},
                         "route": {
                             "coding": [
                                 {
@@ -223,9 +213,7 @@ class Prescription:
         }
 
         if self.values.type_code == "continuous-repeat-dispensing":
-            medication_request["resource"]["dispenseRequest"].update(
-                {"numberOfRepeatsAllowed": 6}
-            )
+            medication_request["resource"]["dispenseRequest"].update({"numberOfRepeatsAllowed": 6})
             medication_request["resource"]["courseOfTherapyType"]["coding"][0].update(
                 {
                     "system": "https://fhir.nhs.uk/CodeSystem/medicationrequest-course-of-therapy",
@@ -283,12 +271,8 @@ class Prescription:
                         "value": self.values.sds_role_id,
                     }
                 ],
-                "practitioner": {
-                    "reference": "urn:uuid:a8c85454-f8cb-498d-9629-78e2cb5fa47a"
-                },
-                "organization": {
-                    "reference": "urn:uuid:3b4b03a5-52ba-4ba6-9b82-70350aa109d8"
-                },
+                "practitioner": {"reference": "urn:uuid:a8c85454-f8cb-498d-9629-78e2cb5fa47a"},
+                "organization": {"reference": "urn:uuid:3b4b03a5-52ba-4ba6-9b82-70350aa109d8"},
                 "code": [
                     {
                         "coding": [
@@ -382,9 +366,7 @@ class Prescription:
                         "postalCode": "TA1 5DA",
                     }
                 ],
-                "telecom": [
-                    {"system": "phone", "value": "01823 333444", "use": "work"}
-                ],
+                "telecom": [{"system": "phone", "value": "01823 333444", "use": "work"}],
                 "partOf": {
                     "identifier": {
                         "system": self.HTTPS_ODS_ORGANIZATION_CODE,

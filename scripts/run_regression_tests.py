@@ -98,18 +98,14 @@ def get_workflow_runs(auth_header, run_date_filter):
         auth=auth_header,
         timeout=120,
     )
-    assert (
-        response.status_code == 200
-    ), f"Unable to get workflow runs. Expected 200, got {response.status_code}"
+    assert response.status_code == 200, f"Unable to get workflow runs. Expected 200, got {response.status_code}"
     return response.json()["workflow_runs"]
 
 
 def get_jobs_for_workflow(jobs_url, auth_header):
     print("Getting jobs for workflow...")
     response = requests.get(jobs_url, auth=auth_header, timeout=120)
-    assert (
-        response.status_code == 200
-    ), f"Unable to get workflow jobs. Expected 200, got {response.status_code}"
+    assert response.status_code == 200, f"Unable to get workflow jobs. Expected 200, got {response.status_code}"
     return response.json()["jobs"]
 
 
@@ -143,9 +139,7 @@ def find_workflow(auth_header, run_id, run_date_filter):
                     print("Not enough steps have been executed for this run yet...")
             else:
                 print("Jobs for this workflow run haven't populated yet...")
-        print(
-            "Processed all available workflows but no jobs were matching the Unique ID were found!"
-        )
+        print("Processed all available workflows but no jobs were matching the Unique ID were found!")
 
 
 def get_auth_header(is_called_from_github, token, user):
@@ -182,12 +176,8 @@ def check_job(auth_header, workflow_id):
 
     while job_status != "completed":
         if current_attempt > max_attempts:
-            raise TimeoutError(
-                f"Regression test job not completed after {current_attempt} attempts"
-            )
-        print(
-            f"Current upload results job status : {job_status} after {current_attempt} attempts"
-        )
+            raise TimeoutError(f"Regression test job not completed after {current_attempt} attempts")
+        print(f"Current upload results job status : {job_status} after {current_attempt} attempts")
         time.sleep(10)
         current_attempt = current_attempt + 1
         job = get_upload_result_job(auth_header, workflow_id)
@@ -209,9 +199,7 @@ def main():
         required=True,
         help="Please provide the environment you wish to run in.",
     )
-    parser.add_argument(
-        "--user", required=False, help="Please provide the user credentials."
-    )
+    parser.add_argument("--user", required=False, help="Please provide the user credentials.")
     parser.add_argument(
         "--is_called_from_github",
         default=False,
@@ -223,9 +211,7 @@ def main():
         required=True,
         help="Please provide the product to run the tests for.",
     )
-    parser.add_argument(
-        "--token", required=False, help="Please provide the authentication token."
-    )
+    parser.add_argument("--token", required=False, help="Please provide the authentication token.")
     parser.add_argument(
         "--regression_test_repo_tag",
         required=True,
@@ -249,9 +235,7 @@ def main():
 
     run_id = generate_unique_run_id()
     run_date_filter = generate_timestamp()
-    auth_header = get_auth_header(
-        arguments.is_called_from_github, arguments.token, arguments.user
-    )
+    auth_header = get_auth_header(arguments.is_called_from_github, arguments.token, arguments.user)
 
     pr_label = arguments.pr_label.lower()
     trigger_test_run(
@@ -274,9 +258,7 @@ def main():
         else:
             env = arguments.env.upper()
         print("The regressions test step failed! There are likely test failures.")
-        print(
-            f"See https://nhsdigital.github.io/eps-test-reports/{arguments.product}/{env}/ for allure report"
-        )
+        print(f"See https://nhsdigital.github.io/eps-test-reports/{arguments.product}/{env}/ for allure report")
         raise SystemError("Regression test failed")
 
     print("Success!")

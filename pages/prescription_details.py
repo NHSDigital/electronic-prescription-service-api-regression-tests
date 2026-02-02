@@ -10,19 +10,13 @@ class PrescriptionDetailsPage:
 
         # Site org cards
         self.dispenser_card = page.get_by_test_id("site-card-dispenser")
-        self.nominated_dispenser_card = page.get_by_test_id(
-            "site-card-nominated-dispenser"
-        )
+        self.nominated_dispenser_card = page.get_by_test_id("site-card-nominated-dispenser")
         self.prescriber_card = page.get_by_test_id("site-card-prescriber")
         self.prescribed_from_field = page.get_by_test_id("site-card-prescribed-from")
 
         # Prescribed and dispensed items cards
-        self.prescribed_items_heading = page.get_by_role(
-            "heading", name="Prescribed items"
-        )
-        self.dispensed_items_heading = page.get_by_role(
-            "heading", name="Dispensed items"
-        )
+        self.prescribed_items_heading = page.get_by_role("heading", name="Prescribed items")
+        self.dispensed_items_heading = page.get_by_role("heading", name="Dispensed items")
 
         # Cancellation warning
         self.cancellation_warning = page.get_by_test_id("cancellation-warning")
@@ -35,13 +29,7 @@ class PrescriptionDetailsPage:
 
         # Message history card
         self.message_history_timeline = page.get_by_test_id("message-history-timeline")
-        self.dispense_notification_dropdown = page.get_by_test_id(
-            "message-history-dropdown"
-        )
-        self.pending_cancellation_message = page.get_by_test_id(
-            "prescription-message"
-        ).first
+        self.dispense_notification_dropdown = page.get_by_test_id("message-history-dropdown")
+        self.pending_cancellation_message = page.get_by_test_id("prescription-message").first
         self.cancelled_status_message = page.get_by_test_id("new-status-code-tag").first
-        self.no_organisation_name_message = page.get_by_test_id(
-            "no-org-name-message"
-        ).first
+        self.no_organisation_name_message = page.get_by_test_id("no-org-name-message").first

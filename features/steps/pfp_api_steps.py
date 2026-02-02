@@ -19,10 +19,7 @@ def i_am_authenticated(context, app):
 
 @when("I request my prescriptions")
 def i_request_my_prescriptions(context):
-    if (
-        "sandbox" in context.config.userdata["env"].lower()
-        and "PFP" in context.config.userdata["product"].upper()
-    ):
+    if "sandbox" in context.config.userdata["env"].lower() and "PFP" in context.config.userdata["product"].upper():
         context.nhs_number = "9449304130"
     get_prescriptions(context)
 
@@ -37,9 +34,7 @@ def i_request_prescriptions_for_nhs_number(context, nhs_number):
 def i_check_the_prescription_item_statuses_for_status(context, status):
     json_response = json.loads(context.response.content)
     entries = json_response["entry"]
-    bundles = [
-        entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"
-    ]
+    bundles = [entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"]
 
     # Extract all status codes from MedicationRequest extensions
     status_codes = [
@@ -69,23 +64,17 @@ def i_can_see_my_prescription(context):
     assert_that(context.response.status_code).is_equal_to(200)
     json_response = json.loads(context.response.content)
     entries = json_response["entry"]
-    bundle = [
-        entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"
-    ][0]["resource"]["entry"][0]["resource"]
+    bundle = [entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"][0]["resource"]["entry"][0][
+        "resource"
+    ]
     if "sandbox" in context.config.userdata["env"].lower():
         assert_that(bundle["subject"]["identifier"]["value"]).is_equal_to("9449304130")
-        assert_that(bundle["groupIdentifier"]["value"]).is_equal_to(
-            "24F5DA-A83008-7EFE6Z"
-        )
+        assert_that(bundle["groupIdentifier"]["value"]).is_equal_to("24F5DA-A83008-7EFE6Z")
         return
     expected_nhs_number = context.nhs_number
     expected_prescription_id = context.prescription_id
-    assert_that(bundle["subject"]["identifier"]["value"]).is_equal_to(
-        expected_nhs_number
-    )
-    assert_that(bundle["groupIdentifier"]["value"]).is_equal_to(
-        expected_prescription_id
-    )
+    assert_that(bundle["subject"]["identifier"]["value"]).is_equal_to(expected_nhs_number)
+    assert_that(bundle["groupIdentifier"]["value"]).is_equal_to(expected_prescription_id)
     if context.receiver_ods_code == "FA565":
         address_texts = [
             resource["resource"]["address"][0]["text"]
@@ -120,9 +109,7 @@ def i_can_see_my_prescriptions(context, number):
     json_response = json.loads(context.response.content)
     entries = json_response["entry"]
     total = json_response["total"]
-    prescription_bundles = [
-        entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"
-    ]
+    prescription_bundles = [entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"]
 
     assert_that(total).is_equal_to(int(number))
     assert_that(len(prescription_bundles)).is_equal_to(int(number))
@@ -133,9 +120,7 @@ def i_can_see_my_prescriptions(context, number):
 def i_cannot_see_my_prescription(context):
     json_response = json.loads(context.response.content)
     entries = json_response["entry"]
-    bundle_entries = [
-        entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"
-    ]
+    bundle_entries = [entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"]
     assert_that(len(bundle_entries)).is_equal_to(0)
     assert_that(json_response["total"]).is_equal_to(0)
 
@@ -158,13 +143,9 @@ def i_validate_the_response_for_fhir_compliance(context):
 def i_do_not_see_an_erd_prescription(context):
     json_response = json.loads(context.response.content)
     entries = json_response["entry"]
-    bundle_entries = [
-        entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"
-    ]
+    bundle_entries = [entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"]
     for bundle_entry in bundle_entries:
-        prescription_type = bundle_entry["resource"]["courseOfTherapyType"]["coding"][
-            0
-        ]["code"]
+        prescription_type = bundle_entry["resource"]["courseOfTherapyType"]["coding"][0]["code"]
         assert_that(prescription_type).is_not_equal_to("continuous-repeat-dispensing")
 
 
@@ -175,31 +156,21 @@ def i_validate_the_response_prescription_matches_my_prepared_prescription(contex
 
     # Mock prescription construct builds the same "prescription" each time
     # so using 0 index is safe for asserting values
-    bundle = [
-        entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"
-    ]
+    bundle = [entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"]
 
     prescription = bundle[0]["resource"]["entry"]
 
     # Dynamically test against Medication Requests
     expected_entries = json.loads(context.prepare_body)["entry"]
     returned_medication_codeable_concepts = [
-        each
-        for each in prescription
-        if each["resource"]["resourceType"] == "MedicationRequest"
+        each for each in prescription if each["resource"]["resourceType"] == "MedicationRequest"
     ]
     expected_medication_codeable_concepts = [
-        each
-        for each in expected_entries
-        if each["resource"]["resourceType"] == "MedicationRequest"
+        each for each in expected_entries if each["resource"]["resourceType"] == "MedicationRequest"
     ]
 
-    expected_items = expected_medication_codeable_concepts[0]["resource"][
-        "medicationCodeableConcept"
-    ]["coding"]
-    returned_items = returned_medication_codeable_concepts[0]["resource"][
-        "medicationCodeableConcept"
-    ]["coding"]
+    expected_items = expected_medication_codeable_concepts[0]["resource"]["medicationCodeableConcept"]["coding"]
+    returned_items = returned_medication_codeable_concepts[0]["resource"]["medicationCodeableConcept"]["coding"]
     for item in expected_items:
         for key, value in item.items():
             if key != "system":
@@ -214,9 +185,7 @@ def set_statuses_for_pfp(context):
     context.statuses = [row["Status"] for row in context.table]
 
 
-@then(
-    "I process the status updates for the prescription items and verify they are returned"
-)
+@then("I process the status updates for the prescription items and verify they are returned")
 def process_status_updates_and_verify(context):
     # For each prescription ID in the scenario, update the status according to data table
     # Loop over all available statuses
@@ -229,11 +198,7 @@ def process_status_updates_and_verify(context):
         for prescription_id in context.prescription_ids:
             context.prescription_id = prescription_id
             print(f"Processing status update for prescription ID: {prescription_id}")
-            if (
-                status.upper() == "COLLECTED"
-                or status.upper() == "DISPENSED"
-                or status.upper() == "NOT DISPENSED"
-            ):
+            if status.upper() == "COLLECTED" or status.upper() == "DISPENSED" or status.upper() == "NOT DISPENSED":
                 terminal = "completed"
             else:
                 terminal = "in-progress"

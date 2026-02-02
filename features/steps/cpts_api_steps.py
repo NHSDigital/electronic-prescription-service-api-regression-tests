@@ -83,9 +83,7 @@ def verify_prescription_issue_details(context):
     assert_prescription_details(context.response.content, assertions)
 
 
-@step(
-    'I can see the prescription details with the correct "{reason}" non-dispensing reason'
-)
+@step('I can see the prescription details with the correct "{reason}" non-dispensing reason')
 def verify_prescription_non_dispensing_reason(context, reason):
     assertions: PrescriptionDetailsAssertions = {
         "prescription_id": context.prescription_id,
@@ -103,9 +101,7 @@ def verify_prescription_non_dispensing_reason(context, reason):
     assert_prescription_details(context.response.content, assertions)
 
 
-@step(
-    'I can see the prescription details with the correct "{reason}" cancellation reason'
-)
+@step('I can see the prescription details with the correct "{reason}" cancellation reason')
 def verify_prescription_cancellation_reason(context, reason):
     assertions: PrescriptionDetailsAssertions = {
         "prescription_id": context.prescription_id,

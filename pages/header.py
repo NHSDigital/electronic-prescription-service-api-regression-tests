@@ -18,7 +18,5 @@ class Header:
         href = self.feedback_link.get_attribute("href")
         target = self.feedback_link.get_attribute("target")
 
-        assert (
-            href is not None and "digital.nhs.uk" in href
-        ), f"Expected href to contain 'digital.nhs.uk', got: {href}"
+        assert href is not None and "digital.nhs.uk" in href, f"Expected href to contain 'digital.nhs.uk', got: {href}"
         assert target == "_blank", f"Expected target to be '_blank', got: {target}"
