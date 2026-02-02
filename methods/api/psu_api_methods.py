@@ -26,3 +26,10 @@ def check_status_updates(context, prescription_id=None, nhs_number=None, ods_cod
     context.response = get(context=context, url=url, params=params, headers=headers)
 
     return context.response
+
+
+CODING_TO_STATUS_MAP = {
+    "With Pharmacy": "in-progress",
+    "Ready to Collect": "in-progress",
+    "Collected": "completed",
+}

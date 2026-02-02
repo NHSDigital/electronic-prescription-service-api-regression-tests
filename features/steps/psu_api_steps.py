@@ -6,16 +6,10 @@ import uuid
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 
 from methods.api.psu_api_methods import send_status_update, check_status_updates
+from methods.api.psu_api_methods import CODING_TO_STATUS_MAP
 from methods.shared.common import get_auth, assert_that
 from utils.prescription_id_generator import generate_short_form_id
 from utils.random_nhs_number_generator import generate_single
-
-# Map coding types to status values
-CODING_TO_STATUS_MAP = {
-    "With Pharmacy": "in-progress",
-    "Ready to Collect": "in-progress",
-    "Collected": "completed",
-}
 
 
 @given("I am authorised to send prescription updates")
