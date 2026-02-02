@@ -64,6 +64,7 @@ def i_can_see_my_prescription_by_id(context, prescription_id):
         """)
 
 
+@then("I can see my prescription")
 @then("I can see my prescription and it has a status of '{status}'")
 def i_can_see_my_prescription_and_updates(context, status=None):
     assert_that(context.response.status_code).is_equal_to(200)
@@ -129,11 +130,6 @@ def i_can_see_my_prescription_and_updates(context, status=None):
         ]
         assert_that(urls).is_not_empty()
         assert_that(urls[0]).is_equal_to("www.pharmacy2u.co.uk")
-
-
-@then("I can see my prescription")
-def i_can_see_my_prescription(context):
-    i_can_see_my_prescription_and_updates(context)
 
 
 @then("I can see '{number}' of my prescriptions")
