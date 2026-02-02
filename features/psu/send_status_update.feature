@@ -26,6 +26,7 @@ Feature: I can send an update to PSU
   Scenario: I can see a single prescription with its updates
     Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app
     And a nominated acute prescription has been created and released to FA090
+    And status updates are enabled
     And I am authorised to send prescription updates
     When I send a 'Collected' update with a status of 'completed'
     And I am authenticated with PFP-APIGEE app

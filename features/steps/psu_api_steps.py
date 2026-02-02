@@ -21,6 +21,15 @@ def i_am_authorised_to_send_prescription_updates(context):
     context.auth_token = get_auth(env, "PSU")
 
 
+@given("status updates are enabled")
+def step_impl(context):
+    env = context.config.userdata["env"].lower()
+    if "int" == env:
+        context.config.status_updates_enabled = True
+    else:
+        context.config.status_updates_enabled = False
+
+
 def send_status_update_helper(context, coding, status):
     """Helper function to send a status update with the given coding and status values."""
     if "e2e" not in context.tags or "sandbox" in context.config.userdata["env"].lower():
