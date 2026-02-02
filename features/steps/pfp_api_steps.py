@@ -132,6 +132,10 @@ def i_can_see_my_prescription_and_updates(context, status=None):
 
 
 @then("I can see my prescription")
+def i_can_see_my_prescription(context):
+    i_can_see_my_prescription_and_updates(context)
+
+
 @then("I can see '{number}' of my prescriptions")
 def i_can_see_my_prescriptions(context, number):
     json_response = json.loads(context.response.content)
