@@ -97,7 +97,7 @@ def check_update_with_retries(context, expected_coding, expected_status):
             if items.get("PrescriptionID") == prescription_id
         ]
         if matching_items:
-            # TODO: need to handle multiple items
+            # Note that multiple items are possible, though not in any of our current tests
             item = matching_items[0]
 
             assert_that(item.get("TerminalStatus")).is_equal_to(expected_status)
