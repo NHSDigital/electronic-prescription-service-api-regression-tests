@@ -64,7 +64,7 @@ def i_can_see_my_prescription_by_id(context, prescription_id):
         """)
 
 
-@then("I can see my prescription and it has a status of {status}")
+@then("I can see my prescription and it has a status of '{status}'")
 def i_can_see_my_prescription_inc_updates(context, status=None):
     assert_that(context.response.status_code).is_equal_to(200)
     print(f"Checking prescription: {context.prescription_id} for {context.nhs_number}")
@@ -260,7 +260,7 @@ def process_status_updates_and_verify(context):
                 terminal = "in-progress"
 
             context.execute_steps(f"""
-                When I send an {status} update with a terminal status of {terminal}
+                When I send a '{status}' update with a status of '{terminal}'
                 """)
         # Call the PFP API to get the prescriptions and verify the statuses
         print(f"Verifying updated prescription statuses to be {status}")

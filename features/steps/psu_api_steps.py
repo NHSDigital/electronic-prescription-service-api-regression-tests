@@ -43,12 +43,12 @@ def send_status_update_helper(context, coding, status):
     send_status_update(context)
 
 
-@when("I send a {coding} update with a status of {status}")
+@when("I send a '{coding}' update with a status of '{status}'")
 def i_send_an_update(context, coding, status):
     send_status_update_helper(context, coding, status)
 
 
-@when("I send a {coding} update")
+@when("I send a '{coding}' update")
 def i_send_an_update_without_status(context, coding):
     if coding not in CODING_TO_STATUS_MAP:
         raise ValueError(
@@ -59,7 +59,7 @@ def i_send_an_update_without_status(context, coding):
 
 
 @then(
-    "The prescription item has a coding of {expected_coding} with a status of {expected_status}"
+    "The prescription item has a coding of '{expected_coding}' with a status of '{expected_status}'"
 )
 def verify_update_recorded(context, expected_coding, expected_status):
     if "sandbox" in context.config.userdata["env"].lower():
