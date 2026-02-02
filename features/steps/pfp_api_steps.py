@@ -65,7 +65,7 @@ def i_can_see_my_prescription_by_id(context, prescription_id):
 
 
 @then("I can see my prescription and it has a status of '{status}'")
-def i_can_see_my_prescription_inc_updates(context, status=None):
+def i_can_see_my_prescription_and_updates(context, status=None):
     assert_that(context.response.status_code).is_equal_to(200)
     print(f"Checking prescription: {context.prescription_id} for {context.nhs_number}")
     json_response = json.loads(context.response.content)
@@ -133,7 +133,7 @@ def i_can_see_my_prescription_inc_updates(context, status=None):
 
 @then("I can see my prescription")
 def i_can_see_my_prescription(context):
-    i_can_see_my_prescription_inc_updates(context)
+    i_can_see_my_prescription_and_updates(context)
 
 
 @then("I can see '{number}' of my prescriptions")
