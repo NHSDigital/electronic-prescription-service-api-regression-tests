@@ -31,9 +31,7 @@ def i_click_the_policy_link(context):
 @then("I see the smaller cookie banner")
 def i_see_smaller_cookie_banner(context):
     small_banner = context.active_page.get_by_test_id("secondaryCookieBanner")
-    expect(small_banner).to_contain_text(
-        "You can change your cookie settings at any time using our"
-    )
+    expect(small_banner).to_contain_text("You can change your cookie settings at any time using our")
 
 
 @when("I click the small banner cookie policy link")
@@ -65,9 +63,7 @@ def i_choose_cookie_option(context, option):
 
 @then("I can see the cookie banner")
 def i_can_see_cookie_banner(context):
-    context.active_page.wait_for_selector(
-        '[data-testid="eps-loading-spinner"]', state="hidden", timeout=3000
-    )
+    context.active_page.wait_for_selector('[data-testid="eps-loading-spinner"]', state="hidden", timeout=3000)
     banner = context.active_page.get_by_test_id("cookieBanner")
     expect(banner).to_be_visible
     title = context.active_page.get_by_test_id("cookieTitle")
@@ -78,9 +74,7 @@ def i_can_see_cookie_banner(context):
 def i_got_to_cookies_policy_page(context):
     expected_path = "/cookies"
     current_url = context.active_page.url
-    assert (
-        expected_path in current_url
-    ), f"Expected '{expected_path}' to be in '{current_url}'"
+    assert expected_path in current_url, f"Expected '{expected_path}' to be in '{current_url}'"
 
 
 @then("I see the table for {table_type} cookies")
@@ -94,18 +88,12 @@ def i_see_the_relevant_table(context, table_type):
 def i_go_to_cookies_selected_page(context):
     expected_path = "/site/cookies-selected"
     current_url = context.active_page.url
-    assert (
-        expected_path in current_url
-    ), f"Expected '{expected_path}' to be in '{current_url}'"
+    assert expected_path in current_url, f"Expected '{expected_path}' to be in '{current_url}'"
 
 
 def get_rum_cookies(cookies):
-    time.sleep(
-        2
-    )  # we cant be too greedy so we wait for a second before checking for cookies
-    rum_cookies = [
-        cookie for cookie in cookies if cookie.get("name") in ("cwr_s", "cwr_u")
-    ]
+    time.sleep(2)  # we cant be too greedy so we wait for a second before checking for cookies
+    rum_cookies = [cookie for cookie in cookies if cookie.get("name") in ("cwr_s", "cwr_u")]
     return rum_cookies
 
 

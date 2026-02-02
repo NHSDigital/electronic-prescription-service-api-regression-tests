@@ -13,9 +13,7 @@ class SelectYourRole:
 
         # Title and summary locators
         self.summary = page.locator("summary")
-        self.organisation_column_header = page.get_by_role(
-            "columnheader", name="Organisation"
-        )
+        self.organisation_column_header = page.get_by_role("columnheader", name="Organisation")
         self.role_column_header = page.get_by_role("columnheader", name="Role")
 
         # Roles without access
@@ -30,21 +28,11 @@ class SelectYourRole:
         self.role_card_headings = page.locator(".eps-card__org-name")
         self.role_card_descriptions = page.locator(".nhsuk-u-margin-top-2")
 
-        self.select_role_header = page.locator(
-            "span[data-testid='eps_header_selectYourRole'] > span.nhsuk-title"
-        )
-        self.select_role_subheader = page.locator(
-            "span.nhsuk-caption-l.nhsuk-caption--bottom"
-        )
+        self.select_role_header = page.locator("span[data-testid='eps_header_selectYourRole'] > span.nhsuk-title")
+        self.select_role_subheader = page.locator("span.nhsuk-caption-l.nhsuk-caption--bottom")
 
         self.no_access_header = page.locator(".nhsuk-heading-xl")
         self.no_access_message = page.get_by_text("None of the roles on your")
-        self.roles_without_access_header = page.get_by_role(
-            "heading", name="Your roles without access"
-        )
-        self.first_row_org_name_no_access = page.get_by_role(
-            "cell", name="NO ORG NAME (ODS: A21464)"
-        ).first
-        self.first_row_role_name_no_access = page.get_by_role(
-            "cell", name="General Medical Practitioner"
-        ).first
+        self.roles_without_access_header = page.get_by_role("heading", name="Your roles without access")
+        self.first_row_org_name_no_access = page.get_by_role("cell", name="NO ORG NAME (ODS: A21464)").first
+        self.first_row_role_name_no_access = page.get_by_role("cell", name="General Medical Practitioner").first
