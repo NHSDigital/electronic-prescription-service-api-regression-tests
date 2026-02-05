@@ -1,6 +1,7 @@
 @pfp_proxygen @pfp_aws @regression
 Feature: I can see my prescriptions via PFP Proxygen
 
+  @skip we don't have nhs numbers that allow this to work ATM
   @blocker @smoke @e2e @delegated_access
   Scenario: I can see a single prescription using delegated access
     Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app
