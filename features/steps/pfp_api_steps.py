@@ -95,7 +95,7 @@ def i_can_see_my_prescription_and_updates(context, status=None):
     )
 
     # only check in int as status updates are toggled off in lower environments
-    if context.config.status_updates_enabled and status:
+    if getattr(context.config, "status_updates_enabled", False) and status:
         actual_status = bundle["status"]
         print(f"Status found: {actual_status}")
         assert_that(actual_status).is_equal_to(status)
