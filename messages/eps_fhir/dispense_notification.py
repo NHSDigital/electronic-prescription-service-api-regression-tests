@@ -116,7 +116,7 @@ class DispenseNotification:
                 {
                     "coding": [
                         {
-                            "system": "https://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                            "system": "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
                             "code": "outpatient",
                             "display": "Outpatient",
                         }
