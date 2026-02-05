@@ -162,7 +162,7 @@ EPS_FHIR_SUFFIX = "electronic-prescriptions"
 EPS_FHIR_PRESCRIBING_SUFFIX = "fhir-prescribing"
 EPS_FHIR_DISPENSING_SUFFIX = "fhir-dispensing"
 PFP_SUFFIX = "prescriptions-for-patients"
-PFP_PROXYGEN_SUFFIX = "pfp-proxygen"
+PFP_PROXYGEN_SUFFIX = "prescriptions-for-patients-v2"
 PSU_SUFFIX = "prescription-status-update"
 
 EPSAM_SLACKBOT_FUNCTION_EXPORT_NAME = (
@@ -237,7 +237,8 @@ def before_feature(context, feature):
         return
     if environment in ["internal-dev", "internal-qa"]:
         for scenario in feature.walk_scenarios():
-            patch_scenario_with_autoretry(scenario, max_attempts=3)
+            max_attempts = int(os.getenv("SCENARIO_MAX_RETRIES", "3"))
+            patch_scenario_with_autoretry(scenario, max_attempts=max_attempts)
 
 
 def before_scenario(context, scenario):
@@ -265,28 +266,24 @@ def before_scenario(context, scenario):
 
         # Set primary context as default
         # Concurrent context usage is only need in concurrent scenarios
-        context.primary_context.add_init_script(
-            """
+        context.primary_context.add_init_script("""
             window.__copiedText = "";
             navigator.clipboard.writeText = (text) => {
                 window.__copiedText = text;
                 return Promise.resolve();
             };
-        """
-        )
+        """)
         context.primary_context.tracing.start(
             screenshots=True, snapshots=True, sources=True
         )
 
-        context.concurrent_context.add_init_script(
-            """
+        context.concurrent_context.add_init_script("""
             window.__copiedText = "";
             navigator.clipboard.writeText = (text) => {
                 window.__copiedText = text;
                 return Promise.resolve();
             };
-        """
-        )
+        """)
 
         if "concurrency" in scenario.effective_tags:
             # Don't create a trace file if the concurrent browser context isn't being used in the scenario

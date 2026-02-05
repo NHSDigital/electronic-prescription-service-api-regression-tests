@@ -4,7 +4,6 @@ from playwright.sync_api import expect
 
 from pages.your_selected_role import YourSelectedRole
 
-
 ############################################################################
 # GIVEN STEPS
 ############################################################################

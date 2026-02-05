@@ -1,0 +1,16 @@
+vulnerabilities:
+  - id: CVE-2026-24842
+    paths:
+      - "package-lock.json"
+    statement: downstream dependency for tar - waiting for new npm release
+    expired_at: 2026-06-01
+  - id: CVE-2026-25547
+    paths:
+      - "package-lock.json"
+    statement: downstream dependency for braces-expansion - waiting for new npm release
+    expired_at: 2026-06-01
+  - id: CVE-2026-0775
+    paths:
+      - "package-lock.json"
+    statement: waiting for new npm release
+    expired_at: 2026-06-01

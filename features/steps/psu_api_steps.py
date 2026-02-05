@@ -1,12 +1,11 @@
 import json
-import logging
 import uuid
 
 # pylint: disable=no-name-in-module
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 
-from features.steps import pfp_api_steps
-from methods.api.psu_api_methods import send_status_update
+from methods.api.psu_api_methods import send_status_update, check_status_updates
+from methods.api.psu_api_methods import CODING_TO_STATUS_MAP
 from methods.shared.common import get_auth, assert_that
 from utils.prescription_id_generator import generate_short_form_id
 from utils.random_nhs_number_generator import generate_single
@@ -21,43 +20,68 @@ def i_am_authorised_to_send_prescription_updates(context):
     context.auth_token = get_auth(env, "PSU")
 
 
-@when("I send an {status} update with a terminal status of {terminal}")
-def i_send_an_update(context, status, terminal):
+@given("status updates are enabled")
+def step_impl(context):
+    env = context.config.userdata["env"].lower()
+    if "int" == env:
+        context.config.status_updates_enabled = True
+    else:
+        context.config.status_updates_enabled = False
+
+
+def send_status_update_helper(context, coding, status):
+    """Helper function to send a status update with the given coding and status values."""
     if "e2e" not in context.tags or "sandbox" in context.config.userdata["env"].lower():
         context.receiver_ods_code = "FA565"
         context.prescription_id = generate_short_form_id(context.receiver_ods_code)
         print(f"id from here {context.prescription_id}")
         context.prescription_item_id = uuid.uuid4()
         context.nhs_number = generate_single()
-    context.terminal_status = terminal
-    context.item_status = status
+    context.terminal_status = status
+    context.item_status = coding
     print(
-        f"""Sending status update: {status} with terminal status: {terminal}
-        for prescription ID: {context.prescription_id}"""
+        f"""Sending update for prescription ID: {context.prescription_id}: coding: {coding} status: {status}"""
     )
     send_status_update(context)
 
 
-@then(
-    "The prescription item has a status of Collected with a terminal status of completed"
-)
-def prescription_has_status_with_terminal_status(context):
-    if "sandbox" in context.config.userdata["env"].lower():
-        return
-    pfp_api_steps.i_am_authenticated(context, "PFP-APIGEE")
-    pfp_api_steps.i_request_my_prescriptions(context)
-    json_response = json.loads(context.response.content)
-    logging.debug(context.response.content)
-    entries = json_response["entry"]
-    bundle = [
-        entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"
-    ][0]["resource"]["entry"][0]["resource"]
-    expected_item_id = context.prescription_item_id
-    expected_item_status = context.item_status
-    expected_terminal_status = context.terminal_status
+@when("I send a '{coding}' update with a status of '{status}'")
+def i_send_an_update(context, coding, status):
+    send_status_update_helper(context, coding, status)
 
-    assert_that(bundle["identifier"][0]["value"].lower()).is_equal_to(expected_item_id)
-    assert_that(bundle["status"]).is_equal_to(expected_terminal_status)
-    assert_that(
-        bundle["extension"][0]["extension"][0]["valueCoding"]["code"]
-    ).is_equal_to(expected_item_status)
+
+@when("I send a '{coding}' update")
+def i_send_an_update_without_status(context, coding):
+    if coding not in CODING_TO_STATUS_MAP:
+        raise ValueError(
+            f"Unknown coding '{coding}'. Supported codings: {', '.join(CODING_TO_STATUS_MAP.keys())}"
+        )
+    status = CODING_TO_STATUS_MAP[coding]
+    send_status_update_helper(context, coding, status)
+
+
+@then(
+    "The prescription item has a coding of '{expected_coding}' with a status of '{expected_status}'"
+)
+def verify_update_recorded(context, expected_coding, expected_status):
+    if "sandbox" in context.config.userdata["env"].lower():
+        print("Skipping verification in sandbox environment")
+        return
+
+    prescription_id = context.prescription_id
+
+    response = check_status_updates(context, prescription_id=prescription_id)
+    assert_that(response.status_code).is_equal_to(200)
+
+    response_data = json.loads(response.content)
+    matching_items = [
+        items
+        for items in response_data.get("items", [])
+        if items.get("PrescriptionID") == prescription_id
+    ]
+    if matching_items:
+        # Note that multiple items are possible, though not in any of our current tests
+        item = matching_items[0]
+
+        assert_that(item.get("TerminalStatus")).is_equal_to(expected_status)
+        assert_that(item.get("Status")).is_equal_to(expected_coding)
