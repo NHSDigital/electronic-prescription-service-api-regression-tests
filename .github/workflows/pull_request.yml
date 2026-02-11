@@ -50,7 +50,6 @@ jobs:
       tags: "@ping"
       environment: INTERNAL-DEV
       product: EPS-FHIR
-      id: "Pull Request Basic Regression Tests"
   tag_release:
     needs: [get_asdf_version]
     uses: NHSDigital/eps-common-workflows/.github/workflows/tag-release.yml@5ccebbf821beef2de6abdce9e392b3cbeb4999e3
