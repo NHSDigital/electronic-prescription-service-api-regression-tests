@@ -6,7 +6,11 @@ from datetime import UTC, datetime, timedelta
 # pylint: disable=no-name-in-module
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 
-from methods.api.psu_api_methods import send_status_update, check_status_updates
+from methods.api.psu_api_methods import (
+    get_status_updates,
+    send_status_update,
+    check_status_updates,
+)
 from methods.api.psu_api_methods import CODING_TO_STATUS_MAP
 from methods.shared.common import get_auth, assert_that
 from utils.prescription_id_generator import generate_short_form_id
@@ -127,7 +131,8 @@ def verify_update_recorded(context, expected_coding, expected_status):
 
     prescription_id = context.prescription_id
 
-    response = check_status_updates(context, prescription_id=prescription_id)
+    # response = check_status_updates(context, prescription_id=prescription_id)
+    response = get_status_updates(context)
     assert_that(response.status_code).is_equal_to(200)
 
     response_data = json.loads(response.content)
