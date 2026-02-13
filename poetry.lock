@@ -1685,19 +1685,19 @@ dev = ["argcomplete", "attrs (>=19.2)", "hypothesis (>=3.56)", "mock", "requests
 
 [[package]]
 name = "pytest-nhsd-apim"
-version = "6.0.6"
+version = "6.0.7"
 description = "Pytest plugin accessing NHSDigital's APIM proxies"
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "pytest_nhsd_apim-6.0.6-py3-none-any.whl", hash = "sha256:84fba4c8569a300c0b71d626cc61fff9b4b6c2ae97add5f66f7a20694933285a"},
-    {file = "pytest_nhsd_apim-6.0.6.tar.gz", hash = "sha256:2f39c15eb51e613456dd38f86241e4a14ac5bbefe6b90a710383adbdcf117a12"},
+    {file = "pytest_nhsd_apim-6.0.7-py3-none-any.whl", hash = "sha256:546683475a498c1ef49e9a2f4f195be4322edde16289ef0a847cd46343e55c1b"},
+    {file = "pytest_nhsd_apim-6.0.7.tar.gz", hash = "sha256:826f0434da78cf0eb59ea6cb5c3354b906916da741cc5002ede12594555a925e"},
 ]
 
 [package.dependencies]
 Authlib = ">=1.6.6,<2.0.0"
-cryptography = ">44.0.1"
+cryptography = ">=46.0.5"
 lxml = ">=5.3.1,<6.0.0"
 pycryptodome = ">=3.20.0,<4.0.0"
 pydantic = ">=2.9.2,<3.0.0"
@@ -2248,4 +2248,4 @@ test = ["pytest (>=6.0.0)", "setuptools (>=77)"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.13"
-content-hash = "2f313a936942867af3dad1db96399b14b119cdd63771f56dec136f8a12fb569b"
+content-hash = "20736120ce69c9a44169c65d89cf702467fee86d8133aea3498b5b92165d3105"
