@@ -8,6 +8,11 @@ These tests will automate End-to-End regression testing for:
 * [Clinical Prescription Tracker UI (CPT-UI)](https://github.com/NHSDigital/eps-prescription-tracker-ui)
 * [Clinical Prescription Tracker API (CPT-API)](https://github.com/NHSDigital/electronic-prescription-service-clinical-prescription-tracker)
 
+Key contents of this repository:
+
+* features  - Behave feature files and Python step implementation code
+* src       - EPS test support library source files, see [Package Documentation](#eps-test-support-package) section below.
+
 ## General usage
 These tests are run automatically during deployment and shouldn't need to be touched unless performing debugging or
 adding/removing/changing test cases <br />
@@ -191,3 +196,70 @@ This step has protection in place that the `@concurrency` tag is supplied on the
 ### Uptime monitoring
 During migrations it is useful to monitor responses from the API to quantify outages.
 There is a wrapper script to do this reusing the functionality of the tests at `scripts/run_uptime_monitor.py`
+
+---
+
+## EPS Test Support Package
+
+This repository also publishes the `eps-test-support` Python package to GitHub Packages, containing reusable test utilities for EPS testing.
+
+### Package Contents
+
+- **API Client Methods** - HTTP wrappers for EPS, PSU, CPTS, and PFP APIs
+- **Page Object Models** - Playwright-based UI testing components
+- **FHIR Message Builders** - Template builders for prescriptions, dispense notifications, cancellations, etc.
+- **Test Utilities** - Prescription ID generators, NHS number generators, signing utilities
+
+Full documentation: [src/eps_test_support/README.md](src/eps_test_support/README.md)
+
+### Installation for Consumers
+
+To use the `eps-test-support` package in your own test project:
+
+#### 1. Configure Poetry to use GitHub Packages
+
+```bash
+poetry config repositories.github-packages https://pypi.pkg.github.com/NHSDigital/electronic-prescription-service-api-regression-tests/simple
+```
+
+#### 2. Authenticate with GitHub
+
+Create a [Personal Access Token (PAT)](https://github.com/settings/tokens) with `read:packages` permission, then:
+
+```bash
+poetry config http-basic.github-packages <your-github-username> <your-github-pat>
+```
+
+#### 3. Add the package to your project
+
+```bash
+poetry add eps-test-support --source github-packages
+```
+
+Or add to your `pyproject.toml`:
+
+```toml
+[tool.poetry.dependencies]
+eps-test-support = {version = "^0.1.0", source = "github-packages"}
+
+[[tool.poetry.source]]
+name = "github-packages"
+url = "https://pypi.pkg.github.com/NHSDigital/electronic-prescription-service-api-regression-tests/simple"
+priority = "supplemental"
+```
+
+### Usage Example
+
+```python
+from eps_test_support.api.eps_api_methods import create_signed_prescription
+from eps_test_support.messages.eps_fhir.prescription import Prescription
+from eps_test_support.shared.common import get_auth, assert_that
+
+# Authenticate
+auth_token = get_auth(env="int", app="EPS-FHIR")
+
+# Build and send prescription
+prescription = Prescription(context)
+response = create_signed_prescription(context)
+assert_that(response.status_code).is_equal_to(201)
+```

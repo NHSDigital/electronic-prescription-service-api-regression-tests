@@ -2,7 +2,7 @@
 from behave import when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
 
-from pages.header import Header
+from eps_test_support.pages.header import Header
 
 
 @when('I click the "Select Your Role" link')

@@ -1,11 +1,11 @@
 # pylint: disable=no-name-in-module
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
-from methods.shared import common
-from methods.api.common_api_methods import request_ping
-from methods.api.common_api_methods import request_metadata
+from eps_test_support.shared import common
+from eps_test_support.api.common_api_methods import request_ping
+from eps_test_support.api.common_api_methods import request_metadata
 
 from features.environment import AWS_ROLES
-from methods.shared.common import assert_that
+from eps_test_support.shared.common import assert_that
 from playwright.sync_api import Route
 
 TAG_TO_LOGIN_MAP = {
@@ -37,8 +37,7 @@ def login_by_access_tag(context):
     # If no matching tag found, raise an error
     available_tags = ", ".join(f"@{tag}" for tag in TAG_TO_LOGIN_MAP.keys())
     raise AssertionError(
-        f"No valid access tag found in scenario tags: {current_tags}. "
-        f"Available tags: {available_tags}"
+        f"No valid access tag found in scenario tags: {current_tags}. " f"Available tags: {available_tags}"
     )
 
 
@@ -201,13 +200,9 @@ def step_given(context):
     product = "eps-assist-me"
     role_arn = AWS_ROLES[product]["role_id"]
     if role_arn is None:
-        raise ValueError(
-            f"Role ARN for '{product}' is not set in environment variables"
-        )
+        raise ValueError(f"Role ARN for '{product}' is not set in environment variables")
 
-    context.aws_credentials = common.assume_aws_role(
-        role_arn=role_arn, session_name="regression_tests"
-    )
+    context.aws_credentials = common.assume_aws_role(role_arn=role_arn, session_name="regression_tests")
 
 
 @then("the {code:d} error occurs")
@@ -226,9 +221,7 @@ def see_go_back_link_to(context, target_path):
     assert back_link is not None, "No go-back-link found on the page"
 
     href = back_link.get_attribute("href")
-    assert (
-        href and target_path in href
-    ), f"Expected go-back link to contain '{target_path}', but got '{href}'"
+    assert href and target_path in href, f"Expected go-back link to contain '{target_path}', but got '{href}'"
 
 
 @then('I should be redirected to "{expected_path}"')
@@ -237,6 +230,4 @@ def should_be_redirected_to_path(context, expected_path):
     context.active_page.wait_for_load_state("networkidle", timeout=5000)
     current_url = context.active_page.url
 
-    assert (
-        expected_path in current_url
-    ), f"Expected to be redirected to {expected_path}, but URL is: {current_url}"
+    assert expected_path in current_url, f"Expected to be redirected to {expected_path}, but URL is: {current_url}"

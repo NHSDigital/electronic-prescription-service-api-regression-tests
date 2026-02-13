@@ -1,4 +1,3 @@
-
 [project]
 python = "^3.13"
 name = "electronic-prescription-service-api-regression-tests"
@@ -6,10 +5,15 @@ name = "electronic-prescription-service-api-regression-tests"
 [tool.poetry]
 name = "electronic-prescription-service-api-regression-tests"
 version = "0.1.0"
-description = ""
+description = "Reusable test utilities for NHS Electronic Prescription Service (EPS) testing"
 authors = ["SeanSteberis <sean.steberis@airelogic.com>"]
 readme = "README.md"
-package-mode = false
+packages = [{include = "eps_test_support", from = "src"}]
+
+[[tool.poetry.source]]
+name = "github-packages"
+url = "https://pypi.pkg.github.com/NHSDigital/electronic-prescription-service-api-regression-tests/simple"
+priority = "supplemental"
 
 [tool.poetry.dependencies]
 python = "^3.13"
@@ -46,8 +50,12 @@ numpy = "^2.4.1"
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^4.5.1"
 
+[tool.black]
+line-length = 120
+target-version = ['py313']
+
 [tool.pyright]
-include = ["features", "methods", "messages", "scripts", "pages", "utils"]
+include = ["features", "src/eps_test_support", "scripts"]
 exclude = ["**/.*",
     "**/__pycache__",
     "**/venv",

@@ -3,7 +3,7 @@ from behave import given, when, then  # pyright: ignore [reportAttributeAccessIs
 from playwright.sync_api import expect
 import re
 
-from pages.search_for_a_prescription import SearchForAPrescription
+from eps_test_support.pages.search_for_a_prescription import SearchForAPrescription
 
 EMPTY_FIELD = "<empty>"
 
@@ -114,9 +114,7 @@ def click_find_patient_button(context):
 @then("I am on the prescription not found page with redirect to NhsNumSearch")
 def redirected_to_nhs_not_found(context):
     url = context.active_page.url
-    assert (
-        "site/prescription-not-found?searchType=NhsNumberSearch" in url
-    ), f"Unexpected URL: {url}"
+    assert "site/prescription-not-found?searchType=NhsNumberSearch" in url, f"Unexpected URL: {url}"
 
 
 @then('I am on the prescription list current page with NHS number "{nhs_number}"')
@@ -145,9 +143,7 @@ def assert_focus_on_input(context, field_id):
     assert active == field_id, f"Expected focus on '{field_id}', but got '{active}'"
 
 
-@when(
-    'I search using basic details: "{first}" "{last}" "{day}" "{month}" "{year}" "{postcode}"'
-)
+@when('I search using basic details: "{first}" "{last}" "{day}" "{month}" "{year}" "{postcode}"')
 def search_by_basic_details(context, first, last, day, month, year, postcode):
     page = SearchForAPrescription(context.active_page)
     page.basic_details_search_tab.click()
@@ -196,9 +192,7 @@ def dob_fields_should_have_error_class(context):
         page.basic_details_dob_year,
     ]:
         classes = field.get_attribute("class") or ""
-        assert (
-            "nhsuk-input--error" in classes
-        ), f"Expected error class on DOB field, got: {classes}"
+        assert "nhsuk-input--error" in classes, f"Expected error class on DOB field, got: {classes}"
 
 
 @then("the search form should be pre-filled with")

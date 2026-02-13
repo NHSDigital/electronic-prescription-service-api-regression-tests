@@ -2248,4 +2248,4 @@ test = ["pytest (>=6.0.0)", "setuptools (>=77)"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.13"
-content-hash = "a6f30daa901645093e5480444b7215649049dadf984b3b857be1f6e9bc9f5784"
+content-hash = "61d666e2eb7bfc33f716f6efd1fb89f34a6a527cfbd593454c249d40da21b2b1"

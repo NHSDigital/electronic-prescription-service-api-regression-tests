@@ -2,7 +2,7 @@
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
 
-from pages.logout import Logout
+from eps_test_support.pages.logout import Logout
 
 ###############################################################################
 # GIVEN
@@ -81,9 +81,7 @@ def navigate_back_browser_history(context):
 @then("I see the logout confirmation modal")
 def then_i_see_logout_confirmation_modal(context):
     logout_page = Logout(context.active_page)
-    expect(logout_page.logout_modal_content.get_by_role("heading")).to_contain_text(
-        "Are you sure you want to log out?"
-    )
+    expect(logout_page.logout_modal_content.get_by_role("heading")).to_contain_text("Are you sure you want to log out?")
     expect(logout_page.logout_modal_content.get_by_role("paragraph")).to_contain_text(
         "Logging out will end your session."
     )

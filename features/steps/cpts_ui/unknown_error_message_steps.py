@@ -1,7 +1,7 @@
 # pylint: disable=no-name-in-module
 from behave import then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
-from pages.unknown_error_message import UnknownErrorMessagePage
+from eps_test_support.pages.unknown_error_message import UnknownErrorMessagePage
 
 
 @then("I should see the unknown error message")

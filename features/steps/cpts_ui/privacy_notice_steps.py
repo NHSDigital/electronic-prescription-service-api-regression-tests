@@ -4,7 +4,7 @@ from playwright.sync_api import expect
 from cpts_ui.privacy_notice_text import (
     PRIVACY_NOTICE_TEXT,
 )  # pylint: disable=import-error
-from pages.header import Header
+from eps_test_support.pages.header import Header
 from .home_steps import goto_page
 
 
@@ -23,9 +23,7 @@ def i_am_on_the_privacy_notice_page(context):
 def i_am_on_the_cookies_page(context):
     expected_path = "/site/privacy-notice"
     current_url = context.active_page.url
-    assert (
-        expected_path in current_url
-    ), f"Expected '{expected_path}' to be in '{current_url}'"
+    assert expected_path in current_url, f"Expected '{expected_path}' to be in '{current_url}'"
 
 
 @then("I can read the full privacy notice")

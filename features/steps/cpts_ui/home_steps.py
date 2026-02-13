@@ -2,8 +2,8 @@
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
 
-from pages.header import Header
-from pages.footer import Footer
+from eps_test_support.pages.header import Header
+from eps_test_support.pages.footer import Footer
 
 
 @when("I go to the {page} page")

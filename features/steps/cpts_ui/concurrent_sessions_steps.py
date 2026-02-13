@@ -2,8 +2,8 @@
 from behave import when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
 
-from pages.session_selection import SessionSelectionPage
-from pages.session_logged_out import SessionLoggedOutPage
+from eps_test_support.pages.session_selection import SessionSelectionPage
+from eps_test_support.pages.session_logged_out import SessionLoggedOutPage
 
 
 # WHEN
@@ -63,6 +63,4 @@ def verify_concurrent_session_title(context):
     expect(logged_out_page.concurrent_description).to_be_visible()
     expect(logged_out_page.concurrent_contact).to_be_visible()
     expect(logged_out_page.nhs_service_desk_email).to_be_visible()
-    expect(logged_out_page.nhs_service_desk_email).to_have_attribute(
-        "href", "mailto:ssd.nationalservicedesk@nhs.net"
-    )
+    expect(logged_out_page.nhs_service_desk_email).to_have_attribute("href", "mailto:ssd.nationalservicedesk@nhs.net")

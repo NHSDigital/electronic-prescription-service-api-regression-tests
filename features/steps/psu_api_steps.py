@@ -4,11 +4,14 @@ import uuid
 # pylint: disable=no-name-in-module
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 
-from methods.api.psu_api_methods import send_status_update, check_status_updates
-from methods.api.psu_api_methods import CODING_TO_STATUS_MAP
-from methods.shared.common import get_auth, assert_that
-from utils.prescription_id_generator import generate_short_form_id
-from utils.random_nhs_number_generator import generate_single
+from eps_test_support.api.psu_api_methods import (
+    send_status_update,
+    check_status_updates,
+)
+from eps_test_support.api.psu_api_methods import CODING_TO_STATUS_MAP
+from eps_test_support.shared.common import get_auth, assert_that
+from eps_test_support.utils.prescription_id_generator import generate_short_form_id
+from eps_test_support.utils.random_nhs_number_generator import generate_single
 
 
 @given("I am authorised to send prescription updates")
@@ -39,9 +42,7 @@ def send_status_update_helper(context, coding, status):
         context.nhs_number = generate_single()
     context.terminal_status = status
     context.item_status = coding
-    print(
-        f"""Sending update for prescription ID: {context.prescription_id}: coding: {coding} status: {status}"""
-    )
+    print(f"""Sending update for prescription ID: {context.prescription_id}: coding: {coding} status: {status}""")
     send_status_update(context)
 
 
@@ -53,16 +54,12 @@ def i_send_an_update(context, coding, status):
 @when("I send a '{coding}' update")
 def i_send_an_update_without_status(context, coding):
     if coding not in CODING_TO_STATUS_MAP:
-        raise ValueError(
-            f"Unknown coding '{coding}'. Supported codings: {', '.join(CODING_TO_STATUS_MAP.keys())}"
-        )
+        raise ValueError(f"Unknown coding '{coding}'. Supported codings: {', '.join(CODING_TO_STATUS_MAP.keys())}")
     status = CODING_TO_STATUS_MAP[coding]
     send_status_update_helper(context, coding, status)
 
 
-@then(
-    "The prescription item has a coding of '{expected_coding}' with a status of '{expected_status}'"
-)
+@then("The prescription item has a coding of '{expected_coding}' with a status of '{expected_status}'")
 def verify_update_recorded(context, expected_coding, expected_status):
     if "sandbox" in context.config.userdata["env"].lower():
         print("Skipping verification in sandbox environment")
@@ -75,9 +72,7 @@ def verify_update_recorded(context, expected_coding, expected_status):
 
     response_data = json.loads(response.content)
     matching_items = [
-        items
-        for items in response_data.get("items", [])
-        if items.get("PrescriptionID") == prescription_id
+        items for items in response_data.get("items", []) if items.get("PrescriptionID") == prescription_id
     ]
     if matching_items:
         # Note that multiple items are possible, though not in any of our current tests

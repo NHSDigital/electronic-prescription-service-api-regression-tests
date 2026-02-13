@@ -2,8 +2,8 @@
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
 
-from pages.change_role import ChangeRole
-from pages.your_selected_role import YourSelectedRole
+from eps_test_support.pages.change_role import ChangeRole
+from eps_test_support.pages.your_selected_role import YourSelectedRole
 
 ############################################################################
 # GIVEN STEPS
@@ -94,9 +94,7 @@ def then_i_see_the_roles_without_access_table(context):
     expect(change_role_page.roles_without_access_table).to_be_visible()
 
     # Check header row
-    expect(
-        change_role_page.roles_without_access_organisation_column_header
-    ).to_be_visible()
+    expect(change_role_page.roles_without_access_organisation_column_header).to_be_visible()
     expect(change_role_page.roles_without_access_role_column_header).to_be_visible()
 
     # Check data

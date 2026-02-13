@@ -2,7 +2,7 @@
 from behave import then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
 
-from pages.patient_details_banner import PatientDetailsBanner
+from eps_test_support.pages.patient_details_banner import PatientDetailsBanner
 
 ############################################################################
 # THEN STEPS

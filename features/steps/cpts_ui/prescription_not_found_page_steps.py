@@ -2,7 +2,7 @@
 from behave import when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
 
-from pages.prescription_not_found import PrescriptionNotFound
+from eps_test_support.pages.prescription_not_found import PrescriptionNotFound
 
 
 @then("I am on the prescription not found page with redirect to {}")

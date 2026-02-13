@@ -1,7 +1,7 @@
 from behave import when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
 
-from pages.prescription_details import PrescriptionDetailsPage
+from eps_test_support.pages.prescription_details import PrescriptionDetailsPage
 from .search_for_a_prescription_steps import i_am_on_the_search_prescription_page
 from .prescription_list_steps import (
     search_context_prescription_id,
@@ -79,9 +79,7 @@ def item_card_eps_status_tag(context):
 
 @then("An item card shows a cancellation warning")
 def item_card_cancellation_warning(context):
-    warning = context.active_page.get_by_text(
-        "This item is pending cancellation."
-    ).first
+    warning = context.active_page.get_by_text("This item is pending cancellation.").first
     expect(warning).to_be_visible()
 
 
@@ -89,9 +87,7 @@ def item_card_cancellation_warning(context):
 def no_pharmacy_status_labels(context):
     page = PrescriptionDetailsPage(context.active_page)
 
-    pharmacy_status_label = page.prescription_summary.locator(
-        ".nhsuk-summary-list__key", has_text="Pharmacy status"
-    )
+    pharmacy_status_label = page.prescription_summary.locator(".nhsuk-summary-list__key", has_text="Pharmacy status")
     expect(pharmacy_status_label).to_have_count(0)
 
 

@@ -2,7 +2,7 @@
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
 
-from pages.select_your_role import SelectYourRole
+from eps_test_support.pages.select_your_role import SelectYourRole
 
 
 @given("I have selected a role")
@@ -28,9 +28,7 @@ def i_can_see_the_summary_container(context):
 @then("I cannot see the summary table body")
 def i_cannot_see_the_summary_table_body(context):
     select_your_role_page = SelectYourRole(context.active_page)
-    expect(select_your_role_page.roles_without_access_table_body).to_be_visible(
-        visible=False
-    )
+    expect(select_your_role_page.roles_without_access_table_body).to_be_visible(visible=False)
 
 
 @then("I can see the summary table body")
@@ -112,9 +110,7 @@ def i_can_see_the_no_access_table_body_data(context):
 @then("I can see the role that has been pre selected")
 def i_see_logged_in_message(context):
     select_your_role_page = SelectYourRole(context.active_page)
-    pre_selected_element = select_your_role_page.page.get_by_test_id(
-        "eps_select_your_role_pre_role_selected"
-    )
+    pre_selected_element = select_your_role_page.page.get_by_test_id("eps_select_your_role_pre_role_selected")
     expect(pre_selected_element).to_be_visible()
 
 

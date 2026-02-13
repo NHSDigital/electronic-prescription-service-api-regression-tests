@@ -3,8 +3,8 @@ from behave import when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
 import re
 
-from pages.prescription_list_page import PrescriptionListPage
-from pages.search_for_a_prescription import SearchForAPrescription
+from eps_test_support.pages.prescription_list_page import PrescriptionListPage
+from eps_test_support.pages.search_for_a_prescription import SearchForAPrescription
 
 
 @when("I search for the prescription by prescription ID")
@@ -47,31 +47,21 @@ def verify_results_count(context):
     # Since we're checking for the content pattern, we still need some text verification
     # but can make it more flexible
     count_text = prescription_list_page.results_count.text_content() or ""
-    assert (
-        "results" in count_text.lower()
-    ), f"Expected 'results' in results count text: {count_text}"
+    assert "results" in count_text.lower(), f"Expected 'results' in results count text: {count_text}"
 
 
 @then("I can see the appropriate prescription results tab headings")
 def i_see_results_headings(context):
     prescription_list_page = PrescriptionListPage(context.active_page)
-    expect(
-        prescription_list_page.current_prescriptions_results_tab_heading
-    ).to_be_visible()
-    expect(
-        prescription_list_page.future_prescriptions_results_tab_heading
-    ).to_be_visible()
-    expect(
-        prescription_list_page.past_prescriptions_results_tab_heading
-    ).to_be_visible()
+    expect(prescription_list_page.current_prescriptions_results_tab_heading).to_be_visible()
+    expect(prescription_list_page.future_prescriptions_results_tab_heading).to_be_visible()
+    expect(prescription_list_page.past_prescriptions_results_tab_heading).to_be_visible()
 
 
 @then("I can see the appropriate no prescriptions found message")
 def i_see_no_prescriptions_message(context):
     prescription_list_page = PrescriptionListPage(context.active_page)
-    no_prescriptions_message = prescription_list_page.page.locator(
-        '[data-testid="no-prescriptions-message"]'
-    )
+    no_prescriptions_message = prescription_list_page.page.locator('[data-testid="no-prescriptions-message"]')
     expect(no_prescriptions_message).to_be_visible()
 
 
@@ -84,33 +74,23 @@ def i_see_the_showing_count_text_if_relevant(context):
 
 @then('I can see the "{tab_name}" prescriptions results table')
 def i_see_prescriptions_results_table(context, tab_name):
-    context.active_page.wait_for_selector(
-        '[data-testid="eps-loading-spinner"]', state="hidden", timeout=3000
-    )
+    context.active_page.wait_for_selector('[data-testid="eps-loading-spinner"]', state="hidden", timeout=3000)
 
     tab_selector = f'[data-testid="{tab_name}-prescriptions-results-table"]'
 
-    context.active_page.wait_for_selector(
-        f'{tab_selector}, [data-testid="no-prescriptions-message"]', timeout=3000
-    )
+    context.active_page.wait_for_selector(f'{tab_selector}, [data-testid="no-prescriptions-message"]', timeout=3000)
 
     expect(context.active_page.locator(tab_selector)).to_be_visible()
 
     other_tabs = {"current", "past", "future"} - {tab_name}
     for other in other_tabs:
-        expect(
-            context.active_page.locator(
-                f'[data-testid="{other}-prescriptions-results-table"]'
-            )
-        ).not_to_be_visible()
+        expect(context.active_page.locator(f'[data-testid="{other}-prescriptions-results-table"]')).not_to_be_visible()
 
 
 @when('I click on the "{tab_name}" prescriptions tab heading')
 def i_click_on_tab_heading(context, tab_name):
     prescription_list_page = PrescriptionListPage(context.active_page)
-    tab_element = getattr(
-        prescription_list_page, f"{tab_name}_prescriptions_results_tab_heading"
-    )
+    tab_element = getattr(prescription_list_page, f"{tab_name}_prescriptions_results_tab_heading")
     tab_element.click()
 
 
@@ -149,9 +129,7 @@ def verify_redirect_to_nhs_number_tab(context):
 
 @when('I sort the table by "{column_name}"')
 def sort_table_by_column(context, column_name):
-    context.active_page.wait_for_selector(
-        '[data-testid="eps-loading-spinner"]', state="hidden", timeout=3000
-    )
+    context.active_page.wait_for_selector('[data-testid="eps-loading-spinner"]', state="hidden", timeout=3000)
 
     column_mapping = {
         "Issue date": "eps-prescription-table-sort-issueDate",
@@ -194,9 +172,7 @@ def sort_table_by_column(context, column_name):
 
 @then('the table is sorted by "{column_name}" in "{direction}" order')
 def check_table_sort_order(context, column_name, direction):
-    context.active_page.wait_for_selector(
-        '[data-testid="eps-loading-spinner"]', state="hidden", timeout=3000
-    )
+    context.active_page.wait_for_selector('[data-testid="eps-loading-spinner"]', state="hidden", timeout=3000)
     column_mapping = {
         "Issue date": "issueDate",
         "Prescription type": "prescriptionTreatmentType",
@@ -207,9 +183,7 @@ def check_table_sort_order(context, column_name, direction):
     column_key = column_mapping.get(column_name)
     assert column_key, f"Column name '{column_name}' not found in mapping"
 
-    header_locator = context.active_page.locator(
-        f'[data-testid="eps-prescription-table-header-{column_key}"]'
-    )
+    header_locator = context.active_page.locator(f'[data-testid="eps-prescription-table-header-{column_key}"]')
     header_locator.wait_for(state="visible", timeout=5000)
 
     expected_aria_sort = direction.lower()
@@ -244,9 +218,7 @@ def check_table_sort_order(context, column_name, direction):
             "selected-arrow" not in up_arrow_class
         ), f"Up arrow should not be selected for descending sort. Arrow classes: {up_arrow_class}"
 
-    all_headers = context.active_page.locator(
-        '[data-testid^="eps-prescription-table-header-"]'
-    )
+    all_headers = context.active_page.locator('[data-testid^="eps-prescription-table-header-"]')
     header_count = all_headers.count()
 
     for i in range(header_count):
@@ -264,13 +236,9 @@ def check_table_sort_order(context, column_name, direction):
 
 @when("I click on the view prescription link")
 def click_view_prescriptions_link(context):
-    context.active_page.wait_for_selector(
-        '[data-testid="eps-loading-spinner"]', state="hidden", timeout=4000
-    )
+    context.active_page.wait_for_selector('[data-testid="eps-loading-spinner"]', state="hidden", timeout=4000)
     prescription_id = context.prescription_id
-    context.active_page.get_by_test_id(
-        f"view-prescription-link-{prescription_id}"
-    ).click()
+    context.active_page.get_by_test_id(f"view-prescription-link-{prescription_id}").click()
 
 
 @then("I am taken to the correct prescription page")

@@ -1,7 +1,7 @@
 # pylint: disable=no-name-in-module
 from behave import when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
-from pages.patient_not_found import PatientNotFoundMessage
+from eps_test_support.pages.patient_not_found import PatientNotFoundMessage
 
 
 @when("I am on the patient not found page")

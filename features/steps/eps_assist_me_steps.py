@@ -8,7 +8,7 @@ bypassing slack infrastructure for reliable automated validation.
 import json
 import boto3
 from behave import given, when, then  # type: ignore
-from methods.shared.common import assert_that
+from eps_test_support.shared.common import assert_that
 
 # lambda client instance
 lambda_client = None
@@ -153,9 +153,7 @@ def validate_structured_ai_response(context):
 def validate_conversation_context(context):
     """verify session continuity maintained between queries"""
     assert_that(context.responses).is_not_empty()
-    assert (
-        len(context.responses) >= 2
-    ), "Need at least 2 responses for context validation"
+    assert len(context.responses) >= 2, "Need at least 2 responses for context validation"
 
     # verify all responses successful
     for response in context.responses:

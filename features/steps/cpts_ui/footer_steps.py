@@ -2,7 +2,7 @@
 from behave import given, then, when  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
 
-from pages.footer import Footer
+from eps_test_support.pages.footer import Footer
 
 
 @given("I can see the page footer")

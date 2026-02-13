@@ -2,7 +2,9 @@
 from behave import when, then  # pyright: ignore [reportAttributeAccessIssue]
 from playwright.sync_api import expect
 
-from pages.prescription_information_banner import PrescriptionInformationBanner
+from eps_test_support.pages.prescription_information_banner import (
+    PrescriptionInformationBanner,
+)
 
 
 @when("I go to the prescription details page without a prescription ID")
@@ -45,9 +47,7 @@ def click_copy_button(context):
 @then('The clipboard contains "{expected}"')
 def clipboard_has_text(context, expected):
     copied = context.active_page.evaluate("() => window.__copiedText")
-    assert (
-        copied == expected
-    ), f"Expected '{expected}' in mock clipboard, got '{copied}'"
+    assert copied == expected, f"Expected '{expected}' in mock clipboard, got '{copied}'"
 
 
 @then('The page shows the loading message "{expected_message}"')
