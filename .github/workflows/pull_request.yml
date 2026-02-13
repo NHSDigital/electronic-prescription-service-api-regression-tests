@@ -60,3 +60,43 @@ jobs:
       branch_name: ${{ github.event.pull_request.head.ref }}
       tag_format: ${{ needs.get_asdf_version.outputs.tag_format }}
     secrets: inherit
+
+  publish_package_dry_run:
+    needs: [tag_release, get_asdf_version]
+    runs-on: ubuntu-22.04
+    if: needs.tag_release.outputs.new_version != ''
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+
+      - name: Install asdf
+        uses: asdf-vm/actions/setup@b7bcd026f18772e44fe1026d729e1611cc435d47
+        with:
+          asdf_version: ${{ needs.get_asdf_version.outputs.asdf_version }}
+
+      - name: Install asdf dependencies
+        uses: asdf-vm/actions/install@b7bcd026f18772e44fe1026d729e1611cc435d47
+        with:
+          asdf_version: ${{ needs.get_asdf_version.outputs.asdf_version }}
+        env:
+          PYTHON_CONFIGURE_OPTS: --enable-shared
+
+      - name: Cache Virtualenv
+        uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb
+        id: cache-venv
+        with:
+          path: .venv
+          key: ${{ runner.os }}-venv-${{ hashFiles('pyproject.toml') }}
+
+      - name: Install python packages
+        if: steps.cache-venv.outputs.cache-hit != 'true'
+        run: make install
+
+      - name: Update package version
+        run: make update-package-version VERSION=${{ needs.tag_release.outputs.new_version }}
+
+      - name: Dry run - Build package only
+        run: poetry build
+
+      - name: Show build artifacts
+        run: ls -lah dist/

@@ -96,3 +96,14 @@ download-allure-report: guard-GITHUB_RUN_ID
 	gh run download ${GITHUB_RUN_ID}
 	allure generate
 	allure open
+
+update-package-version: guard-VERSION
+	@echo "Updating package version to $(VERSION)"
+	poetry version $(VERSION)
+
+publish: guard-GITHUB_TOKEN
+	@echo "Publishing eps-test-support package to GitHub Packages"
+	poetry config repositories.github-packages https://pypi.pkg.github.com/NHSDigital/electronic-prescription-service-api-regression-tests/simple
+	poetry config http-basic.github-packages __token__ $(GITHUB_TOKEN)
+	poetry build
+	poetry publish --repository github-packages
