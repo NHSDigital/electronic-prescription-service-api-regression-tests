@@ -14,3 +14,8 @@ vulnerabilities:
       - "package-lock.json"
     statement: waiting for new npm release
     expired_at: 2026-06-01
+  - id: CVE-2026-26960
+    paths:
+      - "package-lock.json"
+    statement: Can't ditch tar, we will have to wait for a fix.
+    expired_at: 2026-03-01
