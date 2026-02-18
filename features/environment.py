@@ -78,6 +78,10 @@ APIGEE_APPS = {
         "client_id": os.getenv("EPS_FHIR_DISPENSING_CLIENT_ID"),
         "client_secret": os.getenv("EPS_FHIR_DISPENSING_CLIENT_SECRET"),
     },
+    "EPS-FHIR-DISPENSING-JWT": {
+        "client_id": os.getenv("EPS_FHIR_DISPENSING_JWT_CLIENT_ID"),
+        "client_secret": None,
+    },
     "PFP-APIGEE": {
         "client_id": os.getenv("PFP_CLIENT_ID"),
         "client_secret": os.getenv("PFP_CLIENT_SECRET"),
@@ -153,6 +157,8 @@ PRIVATE_KEY = os.getenv("PRIVATE_KEY")
 PULL_REQUEST_ID = os.getenv("PULL_REQUEST_ID")
 JWT_PRIVATE_KEY = os.getenv("JWT_PRIVATE_KEY")
 JWT_KID = os.getenv("JWT_KID")
+EPS_FHIR_DISPENSING_JWT_PRIVATE_KEY = os.getenv("EPS_FHIR_DISPENSING_JWT_PRIVATE_KEY")
+EPS_FHIR_DISPENSING_JWT_KID = os.getenv("EPS_FHIR_DISPENSING_JWT_KID")
 HEADLESS = os.getenv("HEADLESS", "True").lower() in ("true", "1", "yes")
 SLOWMO = float(os.getenv("SLOWMO", "0.0"))
 
