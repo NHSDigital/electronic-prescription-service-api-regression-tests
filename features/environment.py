@@ -79,7 +79,7 @@ APIGEE_APPS = {
         "client_secret": os.getenv("EPS_FHIR_DISPENSING_CLIENT_SECRET"),
     },
     "EPS-FHIR-DISPENSING-JWT": {
-        "client_id": os.getenv("EPS_FHIR_DISPENSING_JWT_CLIENT_ID"),
+        "client_id": os.getenv("EPS_FHIR_DISPENSING_CLIENT_ID"),
         "client_secret": None,
     },
     "PFP-APIGEE": {

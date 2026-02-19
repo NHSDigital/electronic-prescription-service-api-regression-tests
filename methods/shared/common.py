@@ -47,14 +47,14 @@ def get_eps_fhir_dispensing_jwt_authenticator(env, url):
     print(
         "Getting EPS-FHIR-DISPENSING-JWT authenticator configuration from environment variables"
     )
-    client_id = APIGEE_APPS["EPS-FHIR-DISPENSING-JWT"]["client_id"]
+    client_id = APIGEE_APPS["EPS-FHIR-DISPENSING"]["client_id"]
     if (
         client_id is None
         or EPS_FHIR_DISPENSING_JWT_KID is None
         or EPS_FHIR_DISPENSING_JWT_PRIVATE_KEY is None
     ):
         raise ValueError(
-            "You must provide EPS_FHIR_DISPENSING_JWT_CLIENT_ID, "
+            "You must provide EPS_FHIR_DISPENSING_CLIENT_ID, "
             "EPS_FHIR_DISPENSING_JWT_KID and EPS_FHIR_DISPENSING_JWT_PRIVATE_KEY"
         )
     config = ClientCredentialsConfig(
