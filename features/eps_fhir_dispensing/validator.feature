@@ -22,6 +22,7 @@ Feature: I can call the validator endpoint
     Then the response indicates a success
     And the validator response has 1 information issue
 
+  @negative
   Scenario: I can call the validator endpoint with invalid fhir
     Given I am an authorised dispenser with EPS-FHIR-DISPENSING app
     When I make a invalid request to the eps_fhir_dispensing validator endpoint with show validation set to false

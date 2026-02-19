@@ -48,6 +48,7 @@ if __name__ == "__main__":
         f" -o allure-results"
         f" -f pretty features"
         f" --no-logcapture"
+        f" --no-capture"
         f" --no-skipped "
         f" --expand"
         f" --logging-level=DEBUG"
