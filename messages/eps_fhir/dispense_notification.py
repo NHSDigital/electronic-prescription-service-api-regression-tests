@@ -91,6 +91,12 @@ class DispenseNotification:
         }
 
     def medication_request(self, dn_props: DNProps):
+        course_of_therapy_system = (
+            "https://fhir.nhs.uk/CodeSystem/medicationrequest-course-of-therapy"
+            if dn_props["prescription_type"] == "eRD"
+            else "https://terminology.hl7.org/CodeSystem/medicationrequest-course-of-therapy"
+        )
+
         medication_request = {
             "resourceType": "MedicationRequest",
             "id": f"{self.medication_request_id}",
@@ -150,7 +156,7 @@ class DispenseNotification:
             "courseOfTherapyType": {
                 "coding": [
                     {
-                        "system": "https://terminology.hl7.org/CodeSystem/medicationrequest-course-of-therapy",
+                        "system": course_of_therapy_system,
                         "code": THERAPY_TYPE_MAP[dn_props["prescription_type"]]["code"],
                         "display": THERAPY_TYPE_MAP[dn_props["prescription_type"]][
                             "display"
