@@ -18,3 +18,7 @@ vulnerabilities:
     paths:
       - "package-lock.json"
     statement: Vulnerability is not relevant - we don't allow user input for anything regex.
+  - id: CVE-2026-26960
+    paths:
+      - "package-lock.json"
+    statement: Vulnerability is not relevant - we do not extract archives that can be controlled by an attacker
