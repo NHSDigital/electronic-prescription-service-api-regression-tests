@@ -18,9 +18,9 @@ Feature: I can dispense prescriptions
       | nominated     | eRD    |
       | non-nominated | eRD    |
 
-  @dispense @oauth2
+  @dispense @application-restricted
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-6097
-  Scenario: I can release a prescription using oauth2 signed JWT session
+  Scenario: I can release a prescription using application-restricted signed JWT session
     # Just the one is suffucicient to confirn that JWT is working, I reckon
     Given a nominated acute prescription has been created using proxygen apis
     And I am an authorised dispenser with EPS-FHIR-DISPENSING-JWT app
