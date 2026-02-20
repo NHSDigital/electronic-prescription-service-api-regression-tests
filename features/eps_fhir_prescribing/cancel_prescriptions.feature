@@ -23,3 +23,13 @@ Feature: I can cancel prescriptions
       | EPS-FHIR-PRESCRIBING-SHA1 | non-nominated | repeat |
       | EPS-FHIR-PRESCRIBING-SHA1 | nominated     | eRD    |
       | EPS-FHIR-PRESCRIBING-SHA1 | non-nominated | eRD    |
+
+  @testme
+  Scenario: After releasing a prescription, I can cancel it and see performer details
+    Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app
+    And I successfully prepare and sign a nominated acute prescription
+    And I release the prescription
+    When I cancel all line items on the prescription
+    Then the response indicates a success
+    And the response body indicates a successful cancel action
+    And the response body contains performer details
