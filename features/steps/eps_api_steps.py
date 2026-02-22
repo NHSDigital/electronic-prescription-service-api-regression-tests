@@ -395,6 +395,25 @@ def i_can_see_an_informational_operation_outcome_in_the_response(context):
     assert_that(json_response["issue"][0]["severity"]).is_equal_to("information")
 
 
+@then("the response body contains performer details")
+def response_body_contains_performer_details(context):
+    if "sandbox" in context.config.userdata["env"].lower():
+        return  # Dont check sandbox, cos static data has no performer details
+    json_response = json.loads(context.response.content)
+    entries = json_response.get("entry", [])
+    medication_requests = [
+        entry.get("resource", {})
+        for entry in entries
+        if entry.get("resource", {}).get("resourceType") == "MedicationRequest"
+    ]
+    performers = [
+        med_request.get("dispenseRequest", {}).get("performer")
+        for med_request in medication_requests
+        if med_request.get("dispenseRequest", {}).get("performer")
+    ]
+    assert_that(performers).is_not_empty()
+
+
 @when(
     "I make a {validity} request to the {product} validator endpoint with show validation set to {show_validation}"
 )
