@@ -42,9 +42,12 @@ aiofiles = "^25.1.0"
 wheel = "^0.46.2"
 numpy = "^2.4.2"
 
-
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^4.5.1"
+
+[tool.black]
+line-length = 120
+target-version = ['py313']
 
 [tool.pyright]
 include = ["features", "methods", "messages", "scripts", "pages", "utils"]

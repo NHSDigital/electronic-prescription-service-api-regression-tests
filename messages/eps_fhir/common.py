@@ -67,9 +67,7 @@ def create_task(
                         "postalCode": "TA1 5DA",
                     }
                 ],
-                "telecom": [
-                    {"system": "phone", "value": "01823 333444", "use": "work"}
-                ],
+                "telecom": [{"system": "phone", "value": "01823 333444", "use": "work"}],
                 "partOf": {
                     "identifier": {
                         "system": "https://fhir.nhs.uk/Id/ods-organization-code",
@@ -195,9 +193,7 @@ def create_withdraw_task(
                         "postalCode": "TA1 5DA",
                     }
                 ],
-                "telecom": [
-                    {"system": "phone", "value": "01823 333444", "use": "work"}
-                ],
+                "telecom": [{"system": "phone", "value": "01823 333444", "use": "work"}],
                 "partOf": {
                     "identifier": {
                         "system": "https://fhir.nhs.uk/Id/ods-organization-code",
@@ -323,9 +319,7 @@ def create_return_task(
                         "postalCode": "TA1 5DA",
                     }
                 ],
-                "telecom": [
-                    {"system": "phone", "value": "01823 333444", "use": "work"}
-                ],
+                "telecom": [{"system": "phone", "value": "01823 333444", "use": "work"}],
                 "partOf": {
                     "identifier": {
                         "system": "https://fhir.nhs.uk/Id/ods-organization-code",

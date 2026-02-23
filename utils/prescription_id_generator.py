@@ -34,7 +34,5 @@ def generate_check_digit(prescription_id):
 
 # Example usage:
 if __name__ == "__main__":
-    generated_prescription_id = generate_short_form_id(
-        ods_code="X26", original_short_form_id=None
-    )
+    generated_prescription_id = generate_short_form_id(ods_code="X26", original_short_form_id=None)
     print(generated_prescription_id)

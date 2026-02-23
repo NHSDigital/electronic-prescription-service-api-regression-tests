@@ -8,12 +8,8 @@ class SessionLoggedOutPage:
         self.page = page
 
         # Main containers for different scenarios
-        self.concurrent_session_container = page.get_by_test_id(
-            "session-logged-out-concurrent"
-        )
-        self.timeout_session_container = page.get_by_test_id(
-            "session-logged-out-timeout"
-        )
+        self.concurrent_session_container = page.get_by_test_id("session-logged-out-concurrent")
+        self.timeout_session_container = page.get_by_test_id("session-logged-out-timeout")
 
         # Concurrent session elements
         self.concurrent_title = page.get_by_test_id("concurrent-title")
