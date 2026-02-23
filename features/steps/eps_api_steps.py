@@ -422,11 +422,6 @@ def i_make_a_request_to_the_validator_endpoint_with_file(context, filename, prod
 @then("the validator response has {expected_issue_count} {issue_type} issue")
 def validator_response_has_n_issues_of_type(context, expected_issue_count, issue_type):
     json_response = json.loads(context.response.content)
-
-    # TODO: TEMP DEBUG: remove after investigating validator warning response shape
-    print("validator warning response body:")
-    print(json.dumps(json_response, indent=2, sort_keys=True))
-
     assert_that(json_response["resourceType"]).is_equal_to("OperationOutcome")
     actual_issue_count = sum(
         p["severity"] == issue_type for p in json_response["issue"]

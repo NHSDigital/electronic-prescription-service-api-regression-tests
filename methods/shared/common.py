@@ -186,7 +186,6 @@ def attach_api_information(context):
 
 def the_expected_response_code_is_returned(context, expected_response_code: int):
     actual_response_code = context.response.status_code
-    print(context.response.content)
     assert_that(actual_response_code).is_equal_to(expected_response_code)
 
 
