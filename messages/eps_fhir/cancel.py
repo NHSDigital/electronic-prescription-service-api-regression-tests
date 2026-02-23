@@ -27,18 +27,10 @@ class Cancel:
     def create_cancel_body(self):
         cancel_body = json.loads(self.context.prepare_body)
 
-        medication_requests = [
-            e
-            for e in cancel_body["entry"]
-            if e["resource"]["resourceType"] == "MedicationRequest"
-        ]
+        medication_requests = [e for e in cancel_body["entry"] if e["resource"]["resourceType"] == "MedicationRequest"]
         [self.cancel_medication_request(mr) for mr in medication_requests]
 
-        message_header = [
-            e
-            for e in cancel_body["entry"]
-            if e["resource"]["resourceType"] == "MessageHeader"
-        ][0]
+        message_header = [e for e in cancel_body["entry"] if e["resource"]["resourceType"] == "MessageHeader"][0]
         event_coding = message_header["resource"]["eventCoding"]
         event_coding["code"] = "prescription-order-update"
         event_coding["display"] = "Prescription Order Update"

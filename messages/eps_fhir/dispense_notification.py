@@ -39,22 +39,16 @@ class DispenseNotification:
         self.medication_request_id = uuid4()
         medication_request = self.medication_request(dn_props)
 
-        medication_dispense = self.medication_dispense(
-            dn_props, practitioner_role, medication_request
-        )
+        medication_dispense = self.medication_dispense(dn_props, practitioner_role, medication_request)
 
         message_header = self.message_header(dn_props["receiver_ods"])
         if dn_props["is_amendment"] and "previous_dn_id" in dn_props:
-            message_header["resource"]["extension"] = self.replacement_extension(
-                dn_props["previous_dn_id"]
-            )
+            message_header["resource"]["extension"] = self.replacement_extension(dn_props["previous_dn_id"])
 
         organization = self.organization(dn_props["receiver_ods"])
 
         self.dispense_notification_id = str(uuid4()).upper()
-        dispense_notification = self.dispense_notification(
-            message_header, medication_dispense, organization
-        )
+        dispense_notification = self.dispense_notification(message_header, medication_dispense, organization)
 
         self.body = json.dumps(dispense_notification)
 
@@ -158,18 +152,14 @@ class DispenseNotification:
                     {
                         "system": course_of_therapy_system,
                         "code": THERAPY_TYPE_MAP[dn_props["prescription_type"]]["code"],
-                        "display": THERAPY_TYPE_MAP[dn_props["prescription_type"]][
-                            "display"
-                        ],
+                        "display": THERAPY_TYPE_MAP[dn_props["prescription_type"]]["display"],
                     }
                 ]
             },
             "dosageInstruction": [
                 {
                     "text": "4 times a day - Oral",
-                    "timing": {
-                        "repeat": {"frequency": 4, "period": 1, "periodUnit": "d"}
-                    },
+                    "timing": {"repeat": {"frequency": 4, "period": 1, "periodUnit": "d"}},
                     "route": {
                         "coding": [
                             {
@@ -251,9 +241,7 @@ class DispenseNotification:
 
         return medication_request
 
-    def medication_dispense(
-        self, dn_props: DNProps, practitioner_role, medication_request
-    ):
+    def medication_dispense(self, dn_props: DNProps, practitioner_role, medication_request):
         medication_dispense = {
             "fullUrl": f"urn:uuid:{uuid4()}",
             "resource": {
@@ -286,12 +274,8 @@ class DispenseNotification:
                         },
                     }
                 ],
-                "performer": [
-                    {"actor": {"reference": f"#{self.practitioner_role_id}"}}
-                ],
-                "authorizingPrescription": [
-                    {"reference": f"#{self.medication_request_id}"}
-                ],
+                "performer": [{"actor": {"reference": f"#{self.practitioner_role_id}"}}],
+                "authorizingPrescription": [{"reference": f"#{self.medication_request_id}"}],
                 "quantity": {
                     "value": dn_props["quantity"],
                     "unit": dn_props["quantity_unit"],
@@ -319,17 +303,12 @@ class DispenseNotification:
             },
         }
 
-        if (
-            dn_props["line_item_status"] == "Item not dispensed"
-            and "non_dispensing_reason" in dn_props
-        ):
+        if dn_props["line_item_status"] == "Item not dispensed" and "non_dispensing_reason" in dn_props:
             medication_dispense["resource"]["statusReasonCodeableConcept"] = {
                 "coding": [
                     {
                         "system": "https://fhir.nhs.uk/CodeSystem/medicationdispense-status-reason",
-                        "code": NON_DISPENSING_REASON_MAP[
-                            dn_props["non_dispensing_reason"]
-                        ],
+                        "code": NON_DISPENSING_REASON_MAP[dn_props["non_dispensing_reason"]],
                         "display": dn_props["non_dispensing_reason"],
                     }
                 ]
@@ -412,9 +391,7 @@ class DispenseNotification:
                     }
                 ],
                 "name": "The Simple Pharmacy",
-                "telecom": [
-                    {"system": "phone", "use": "work", "value": "0113 3180277"}
-                ],
+                "telecom": [{"system": "phone", "use": "work", "value": "0113 3180277"}],
             },
         }
 
