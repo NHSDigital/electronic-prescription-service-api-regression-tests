@@ -65,10 +65,14 @@ def i_can_see_my_prescription_by_id(context, prescription_id):
 
 
 @then("I can see my prescription")
-def i_can_see_my_prescription(context):
+@then("I can see my prescription and it has a status of '{status}'")
+def i_can_see_my_prescription_and_updates(context, status=None):
     assert_that(context.response.status_code).is_equal_to(200)
+    print(f"Checking prescription: {context.prescription_id} for {context.nhs_number}")
     json_response = json.loads(context.response.content)
     entries = json_response["entry"]
+    if entries[0]:
+        print(f"Diagnostics info from response: {entries[0]}")
     bundle = [
         entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"
     ][0]["resource"]["entry"][0]["resource"]
@@ -78,6 +82,9 @@ def i_can_see_my_prescription(context):
             "24F5DA-A83008-7EFE6Z"
         )
         return
+    print(
+        f"Prescription retrieved: {bundle['groupIdentifier']['value']} for {bundle['subject']['identifier']['value']}"
+    )
     expected_nhs_number = context.nhs_number
     expected_prescription_id = context.prescription_id
     assert_that(bundle["subject"]["identifier"]["value"]).is_equal_to(
@@ -86,6 +93,13 @@ def i_can_see_my_prescription(context):
     assert_that(bundle["groupIdentifier"]["value"]).is_equal_to(
         expected_prescription_id
     )
+
+    # only check in int as status updates are toggled off in lower environments
+    if getattr(context.config, "status_updates_enabled", False) and status:
+        actual_status = bundle["status"]
+        print(f"Status found: {actual_status}")
+        assert_that(actual_status).is_equal_to(status)
+
     if context.receiver_ods_code == "FA565":
         address_texts = [
             resource["resource"]["address"][0]["text"]
@@ -96,6 +110,9 @@ def i_can_see_my_prescription(context):
             and resource["resource"]["address"]
             and "text" in resource["resource"]["address"][0]
         ]
+        print(
+            f"Address texts found: {address_texts} for ODS code {context.receiver_ods_code}"
+        )
         assert_that(address_texts).is_not_empty()
         assert_that(address_texts[0]).is_equal_to(
             "63 BRIARFIELD ROAD, TIMPERLEY, ALTRINCHAM, CHESHIRE, CHESHIRE, WA15 7DD"
@@ -239,7 +256,7 @@ def process_status_updates_and_verify(context):
                 terminal = "in-progress"
 
             context.execute_steps(f"""
-                When I send an {status} update with a terminal status of {terminal}
+                When I send a '{status}' update with a status of '{terminal}'
                 """)
         # Call the PFP API to get the prescriptions and verify the statuses
         print(f"Verifying updated prescription statuses to be {status}")
