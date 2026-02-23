@@ -47,6 +47,7 @@ def i_prepare_and_sign_a_prescription(context):
         Given I successfully prepare a nominated acute prescription
         When I sign the prescription
         """)
+    print(f"Prepared and signed prescription ID: {context.prescription_id}")
 
 
 @given("I successfully prepare and sign a {nomination} {prescription_type} prescription")
