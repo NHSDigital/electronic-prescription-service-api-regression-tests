@@ -45,9 +45,7 @@ def click_copy_button(context):
 @then('The clipboard contains "{expected}"')
 def clipboard_has_text(context, expected):
     copied = context.active_page.evaluate("() => window.__copiedText")
-    assert (
-        copied == expected
-    ), f"Expected '{expected}' in mock clipboard, got '{copied}'"
+    assert copied == expected, f"Expected '{expected}' in mock clipboard, got '{copied}'"
 
 
 @then('The page shows the loading message "{expected_message}"')

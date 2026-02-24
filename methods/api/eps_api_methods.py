@@ -35,9 +35,7 @@ def prepare_prescription(context):
     headers = get_headers(context, context.auth_method, additional_headers)
 
     context.prepare_body = Prescription(context).body
-    response = post(
-        data=context.prepare_body, url=url, context=context, headers=headers
-    )
+    response = post(data=context.prepare_body, url=url, context=context, headers=headers)
     the_expected_response_code_is_returned(context, 200)
 
     context.digest = response.json()["parameter"][0]["valueString"]

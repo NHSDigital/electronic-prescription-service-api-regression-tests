@@ -20,6 +20,8 @@ from features.environment import (
     APIGEE_APPS,
     JWT_PRIVATE_KEY,
     JWT_KID,
+    EPS_FHIR_DISPENSING_JWT_PRIVATE_KEY,
+    EPS_FHIR_DISPENSING_JWT_KID,
 )
 
 
@@ -35,6 +37,33 @@ def get_psu_authenticator(env, url):
         jwt_kid=JWT_KID,
     )
     # 2. Pass the config to the Authenticator
+    # fmt: off
+    authenticator = ClientCredentialsAuthenticator(config=config)  # pyright: ignore [reportArgumentType]
+    # fmt: on
+    return authenticator
+
+
+def get_eps_fhir_dispensing_jwt_authenticator(env, url):
+    print(
+        "Getting EPS-FHIR-DISPENSING-JWT authenticator configuration from environment variables"
+    )
+    client_id = APIGEE_APPS["EPS-FHIR-DISPENSING"]["client_id"]
+    if (
+        client_id is None
+        or EPS_FHIR_DISPENSING_JWT_KID is None
+        or EPS_FHIR_DISPENSING_JWT_PRIVATE_KEY is None
+    ):
+        raise ValueError(
+            "You must provide EPS_FHIR_DISPENSING_CLIENT_ID, "
+            "EPS_FHIR_DISPENSING_JWT_KID and EPS_FHIR_DISPENSING_JWT_PRIVATE_KEY"
+        )
+    config = ClientCredentialsConfig(
+        environment=env,
+        identity_service_base_url=url,  # pyright: ignore [reportArgumentType]
+        client_id=client_id,
+        jwt_private_key=EPS_FHIR_DISPENSING_JWT_PRIVATE_KEY,
+        jwt_kid=EPS_FHIR_DISPENSING_JWT_KID,
+    )
     # fmt: off
     authenticator = ClientCredentialsAuthenticator(config=config)  # pyright: ignore [reportArgumentType]
     # fmt: on
@@ -102,6 +131,7 @@ def get_auth(env, product, user="prescriber"):
         "EPS-FHIR-PRESCRIBING",
         "EPS-FHIR-PRESCRIBING-SHA1",
         "EPS-FHIR-DISPENSING",
+        "EPS-FHIR-DISPENSING-JWT",
         "PFP-APIGEE",
         "PFP-PROXYGEN",
         "PSU",
@@ -119,6 +149,8 @@ def get_auth(env, product, user="prescriber"):
         "EPS-FHIR-PRESCRIBING-SHA1",
     ]:
         authenticator = get_eps_fhir_authenticator(user, env, url, product)
+    if product == "EPS-FHIR-DISPENSING-JWT":
+        authenticator = get_eps_fhir_dispensing_jwt_authenticator(env, url)
     if product == "PFP-APIGEE" or product == "PFP-PROXYGEN":
         authenticator = get_pfp_apigee_authenticator(env, url)
     if product == "PSU":
@@ -126,13 +158,10 @@ def get_auth(env, product, user="prescriber"):
     if authenticator is not None:
         return get_token(authenticator)
     else:
-        raise ValueError(
-            "Authentication failed because authenticator was not generated"
-        )
+        raise ValueError("Authentication failed because authenticator was not generated")
 
 
 def get_token(authenticator):
-    # 3. Get your token
     token_response = authenticator.get_token()
     assert "access_token" in token_response
     token = token_response["access_token"]
@@ -140,9 +169,7 @@ def get_token(authenticator):
 
 
 def assert_that(actual):
-    allure.attach(
-        body=str(actual), name="Actual", attachment_type=allure.attachment_type.TEXT
-    )
+    allure.attach(body=str(actual), name="Actual", attachment_type=allure.attachment_type.TEXT)
     return assertpy_assert(val=actual)
 
 
@@ -200,14 +227,10 @@ def convert_to_uri(page_name):
 def fetch_oidc_jwt() -> str:
     # fetch GitHub environment variables to make HTTP token fetch request
     req_url = environ.get("ACTIONS_ID_TOKEN_REQUEST_URL")
-    assert (
-        req_url is not None
-    ), "expected ACTIONS_ID_TOKEN_REQUEST_URL environment variable not found"
+    assert req_url is not None, "expected ACTIONS_ID_TOKEN_REQUEST_URL environment variable not found"
 
     req_token = environ.get("ACTIONS_ID_TOKEN_REQUEST_TOKEN")
-    assert (
-        req_token is not None
-    ), "expected ACTIONS_ID_TOKEN_REQUEST_TOKEN environment variable not found"
+    assert req_token is not None, "expected ACTIONS_ID_TOKEN_REQUEST_TOKEN environment variable not found"
 
     req_url = req_url + "&audience=sts.amazonaws.com"
     # build HTTP request and execute
@@ -218,17 +241,13 @@ def fetch_oidc_jwt() -> str:
     try:
         response = urllib.request.urlopen(request)
     except HTTPError as err:
-        raise ValueError(
-            "unexpected error fetching OIDC web identity value: " + str(err.read())
-        ) from err
+        raise ValueError("unexpected error fetching OIDC web identity value: " + str(err.read())) from err
 
     # parse response, return `value` property - containing the desired web identity JWT
     try:
         token_data = json.load(response)
     except json.decoder.JSONDecodeError as exc:
-        raise ValueError(
-            "unable to fetch OIDC web identity token - malformed HTTP response"
-        ) from exc
+        raise ValueError("unable to fetch OIDC web identity token - malformed HTTP response") from exc
 
     response.close()
     return token_data.get("value", "")

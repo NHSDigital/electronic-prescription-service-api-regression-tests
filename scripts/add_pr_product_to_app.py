@@ -51,6 +51,12 @@ def get_product_config(pr_id):
             "app_id": "1427007d-7dd3-4153-901a-df027fa6e6d6",
             "app_name": "REGRESSION_INTERNAL_DEV_EPS_FHIR_DISPENSING",
             "api_product_name": f"fhir-dispensing--internal-dev--fhir-dispensing-{pr_id}--nhs-cis2-aal3",
+            "accompanying_product": "EPS-FHIR-DISPENSING-APP-LEVEL3",
+        },
+        "EPS-FHIR-DISPENSING-APP-LEVEL3": {
+            "app_id": "1427007d-7dd3-4153-901a-df027fa6e6d6",
+            "app_name": "REGRESSION_INTERNAL_DEV_EPS_FHIR_DISPENSING",
+            "api_product_name": f"fhir-dispensing--internal-dev--fhir-dispensing-{pr_id}--app-level3",
         },
         "PFP-PROXYGEN": {
             "app_id": "fa7eaadb-da69-4c4b-8821-83e21cb649f5",
@@ -84,17 +90,13 @@ def get_token():
     }
     encoded_username = urllib.parse.quote_plus(username)
     encoded_password = urllib.parse.quote_plus(password)
-    body = (
-        f"username={encoded_username}&password={encoded_password}&grant_type=password"
-    )
+    body = f"username={encoded_username}&password={encoded_password}&grant_type=password"
     response = requests.post(
         url=f"{SSO_LOGIN_URL}?mfa_token={mfa_code}",
         headers=headers,
         data=body,
     )
-    assert (
-        response.status_code == 200
-    ), f"expected 200, but got {response.status_code}\n{response.text}"
+    assert response.status_code == 200, f"expected 200, but got {response.status_code}\n{response.text}"
     return response.json()["access_token"], response.json()["refresh_token"]
 
 
@@ -107,15 +109,11 @@ def add_product_to_app(base_url, config, headers):
 
     built_url = slash_join(base_url, config["app_name"], "keys", config["consumer_key"])
     response = requests.put(url=built_url, headers=headers, data=body, timeout=60)
-    assert (
-        response.status_code == 200
-    ), f"expected 200, but got {response.status_code}\n{response.text}"
+    assert response.status_code == 200, f"expected 200, but got {response.status_code}\n{response.text}"
 
 
 def add_products_to_apps(pr, product_config, selected_product):
-    base_apps_url = (
-        f"{APIGEE_BASE_URL}companies/c4bd161b-0bc5-4a29-866e-85c81b704bd0/apps/"
-    )
+    base_apps_url = f"{APIGEE_BASE_URL}companies/c4bd161b-0bc5-4a29-866e-85c81b704bd0/apps/"
     headers = get_headers()
 
     print(f"Adding {pr} to {selected_product}")
@@ -128,9 +126,7 @@ def get_consumer_keys(config, selected_product):
 
     def get_consumer_key(url):
         response = requests.get(url=url, headers=headers)
-        assert (
-            response.status_code == 200
-        ), f"expected 200, but got {response.status_code}\n{response.text}"
+        assert response.status_code == 200, f"expected 200, but got {response.status_code}\n{response.text}"
         return response.json()["credentials"][0]["consumerKey"]
 
     print(f"Requesting consumer keys for {selected_product}")
