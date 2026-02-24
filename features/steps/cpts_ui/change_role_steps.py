@@ -94,9 +94,7 @@ def then_i_see_the_roles_without_access_table(context):
     expect(change_role_page.roles_without_access_table).to_be_visible()
 
     # Check header row
-    expect(
-        change_role_page.roles_without_access_organisation_column_header
-    ).to_be_visible()
+    expect(change_role_page.roles_without_access_organisation_column_header).to_be_visible()
     expect(change_role_page.roles_without_access_role_column_header).to_be_visible()
 
     # Check data

@@ -158,9 +158,7 @@ def get_auth(env, product, user="prescriber"):
     if authenticator is not None:
         return get_token(authenticator)
     else:
-        raise ValueError(
-            "Authentication failed because authenticator was not generated"
-        )
+        raise ValueError("Authentication failed because authenticator was not generated")
 
 
 def get_token(authenticator):
@@ -171,9 +169,7 @@ def get_token(authenticator):
 
 
 def assert_that(actual):
-    allure.attach(
-        body=str(actual), name="Actual", attachment_type=allure.attachment_type.TEXT
-    )
+    allure.attach(body=str(actual), name="Actual", attachment_type=allure.attachment_type.TEXT)
     return assertpy_assert(val=actual)
 
 
@@ -231,14 +227,10 @@ def convert_to_uri(page_name):
 def fetch_oidc_jwt() -> str:
     # fetch GitHub environment variables to make HTTP token fetch request
     req_url = environ.get("ACTIONS_ID_TOKEN_REQUEST_URL")
-    assert (
-        req_url is not None
-    ), "expected ACTIONS_ID_TOKEN_REQUEST_URL environment variable not found"
+    assert req_url is not None, "expected ACTIONS_ID_TOKEN_REQUEST_URL environment variable not found"
 
     req_token = environ.get("ACTIONS_ID_TOKEN_REQUEST_TOKEN")
-    assert (
-        req_token is not None
-    ), "expected ACTIONS_ID_TOKEN_REQUEST_TOKEN environment variable not found"
+    assert req_token is not None, "expected ACTIONS_ID_TOKEN_REQUEST_TOKEN environment variable not found"
 
     req_url = req_url + "&audience=sts.amazonaws.com"
     # build HTTP request and execute
@@ -249,17 +241,13 @@ def fetch_oidc_jwt() -> str:
     try:
         response = urllib.request.urlopen(request)
     except HTTPError as err:
-        raise ValueError(
-            "unexpected error fetching OIDC web identity value: " + str(err.read())
-        ) from err
+        raise ValueError("unexpected error fetching OIDC web identity value: " + str(err.read())) from err
 
     # parse response, return `value` property - containing the desired web identity JWT
     try:
         token_data = json.load(response)
     except json.decoder.JSONDecodeError as exc:
-        raise ValueError(
-            "unable to fetch OIDC web identity token - malformed HTTP response"
-        ) from exc
+        raise ValueError("unable to fetch OIDC web identity token - malformed HTTP response") from exc
 
     response.close()
     return token_data.get("value", "")

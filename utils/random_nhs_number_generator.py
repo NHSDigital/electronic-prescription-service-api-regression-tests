@@ -9,10 +9,7 @@ def generate_multiple(
     ),
     amount_to_generate=1,
 ):
-    numbers = [
-        next(random_nhs_number_generator(nhs_number_range))
-        for _ in range(amount_to_generate)
-    ]
+    numbers = [next(random_nhs_number_generator(nhs_number_range)) for _ in range(amount_to_generate)]
     # Keep only one of each
     unique_numbers = set(numbers)
     return unique_numbers
