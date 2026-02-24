@@ -45,7 +45,7 @@ Feature: The user is able to logout of the application
     Scenario: Direct navigation to protected routes blocked after logout
         Given I have confirmed a role
         Given I am on the logout successful page
-        When I directly navigate to "/site/search-by-prescription-id"
+        When I directly navigate to "/site/search#prescription-id"
         Then I should be redirected to the login page
 
     ############################################################################

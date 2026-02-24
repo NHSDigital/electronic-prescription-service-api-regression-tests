@@ -13,7 +13,7 @@ def goto_page(context, page):
     if page == "home":
         target = ""
     elif page == "search for a prescription":
-        target = "search-by-prescription-id"
+        target = "search#prescription-id"
     elif page == "select your role":
         target = "select-your-role"
     elif page == "login":

@@ -50,7 +50,7 @@ def click_start_new_session(context):
 
 @then("I am not able to navigate away from session selection page")
 def verify_blocked_navigation_session_selection(context):
-    context.execute_steps('when I directly navigate to "/search-by-prescription-id"')
+    context.execute_steps('when I directly navigate to "/search#prescription-id"')
     context.execute_steps('then I should be redirected to "/select-active-session"')
 
 

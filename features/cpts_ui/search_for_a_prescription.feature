@@ -118,7 +118,7 @@ Feature: I can visit the Clinical Prescription Tracker Service Website
     And I enter NHS number "8169327911" into the input
     And I click the Find a patient button
     Then I should see the prescription not found message
-    And I see a go back link to "search-by-nhs-number"
+    And I see a go back link to "search#nhs-number"
 
   @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-4787
   @single_access
