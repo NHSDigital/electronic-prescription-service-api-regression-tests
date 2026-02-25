@@ -340,7 +340,7 @@ def before_all(context):
         )
     )
     root_logger.addHandler(handler)
-    root_logger.setLevel(logging.DEBUG)
+    root_logger.setLevel(getattr(logging, os.getenv("LOG_LEVEL", "INFO").upper(), logging.INFO))
 
     product = context.config.userdata["product"].upper()
     if count_of_scenarios_to_run(context) != 0:
