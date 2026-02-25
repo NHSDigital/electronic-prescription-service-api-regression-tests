@@ -48,6 +48,10 @@ Once this is completed, everything you need to get going should now be installed
 You can now activate your virtual environment `source .venv/bin/activate`
 
 ## Developing/Debugging Tests
+You should set logging level before running any tests
+```
+export LOG_LEVEL=DEBUG
+```
 
 ## Running the tests:
 A note for Apple Silicon users, prior to running the tests locally you may find that Chrome doesn't offer an aarch64 or arm64 package.
