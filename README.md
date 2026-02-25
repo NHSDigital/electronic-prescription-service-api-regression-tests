@@ -18,35 +18,21 @@ When developing new features that need to be regression tested, you'll need to c
 ## Setup
 
 ### Environment Variables
-It is necessary to set some Environment variables in order to run any tests in your local environment. The tests will look for environment variables in the following order
-(For security, the values will not be displayed here):
-1. `.env` file
-2. OS environment variable
+It is necessary to set some Environment variables in order to run any tests in your local environment. We store all of these in secrets in the AWS dev account.
+To set these before running a test locally, use the following
+```
+make aws-login
+export AWS_PROFILE=prescription-dev
+source ./scripts/set_environment_variables_from_aws.sh INTERNAL_DEV # or other environments
+```
 
-The following environment variables may need to be set for the correct environment you wish to test against:
-* CPT_FHIR_CLIENT_ID
-* CPT_FHIR_CLIENT_SECRET
-* EPS_FHIR_CLIENT_ID
-* EPS_FHIR_CLIENT_SECRET
-* EPS_FHIR_SHA1_CLIENT_ID
-* EPS_FHIR_SHA1_CLIENT_SECRET
-* EPS_FHIR_PRESCRIBING_CLIENT_ID
-* EPS_FHIR_PRESCRIBING_CLIENT_SECRET
-* EPS_FHIR_PRESCRIBING_SHA1_CLIENT_ID
-* EPS_FHIR_PRESCRIBING_SHA1_CLIENT_SECRET
-* EPS_FHIR_DISPENSING_CLIENT_ID
-* EPS_FHIR_DISPENSING_CLIENT_SECRET
-* PFP_CLIENT_ID
-* PFP_CLIENT_SECRET
-* PSU_CLIENT_ID
-* PSU_CLIENT_SECRET
-* PRIVATE_KEY
-* CERTIFICATE
-
-
-To make this easier, a `template.env` file is located on the root. Fill in the values and rename this to `.env`
-
-Any file that begins with `.env` is automatically ignored by Git
+### Github secrets
+There are secrets stored in github for all environments that are used when the tests run on github. As we store the value for all of these in AWS secrets, you can use the following to retrieve the values from AWS and set in github
+```
+make aws-login
+export AWS_PROFILE=prescription-dev
+./scripts/set_github_secrets.sh
+```
 
 ### Preparing your development environment
 This test pack utilises the power of Docker to quickly and easily spin up a dev environment for you to work in
