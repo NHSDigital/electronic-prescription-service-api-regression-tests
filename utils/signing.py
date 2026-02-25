@@ -50,9 +50,7 @@ def get_signature(digest: str, algorithm: str):
 
     # Check if the certificate has expired
     if not verify_certificate_valid_when_signed(signature_date, x509_cert):
-        raise RuntimeError(
-            "Certificate has expired. You may need to generate a new one."
-        )
+        raise RuntimeError("Certificate has expired. You may need to generate a new one.")
 
     # check if X.509 certificate has expired
     if x509_cert.not_valid_after_utc < datetime.now(timezone.utc):
@@ -80,9 +78,7 @@ def get_signature(digest: str, algorithm: str):
     # Align format of signature with equivalent TypeScript code
     signature = base64.b64encode(signature_raw).decode("ASCII")
     # Prepare values for insertion into XML signature
-    digest_without_namespace = digest.replace(
-        'xmlns="http://www.w3.org/2000/09/xmldsig#"', ""
-    )
+    digest_without_namespace = digest.replace('xmlns="http://www.w3.org/2000/09/xmldsig#"', "")
     cert_public_bytes = x509_cert.public_bytes(encoding=Encoding.DER)
     cert_string = base64.b64encode(cert_public_bytes).decode("utf-8")
 

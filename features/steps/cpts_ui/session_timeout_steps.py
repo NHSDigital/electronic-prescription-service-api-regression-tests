@@ -21,9 +21,7 @@ def verify_timeout_logged_out_page(context):
     """Verify the timeout session logged out page is displayed"""
     logged_out_page = SessionLoggedOutPage(context.active_page)
     expect(logged_out_page.timeout_session_container).to_be_visible()
-    expect(logged_out_page.timeout_title).to_have_text(
-        "For your security, we have logged you out"
-    )
+    expect(logged_out_page.timeout_title).to_have_text("For your security, we have logged you out")
     expect(logged_out_page.timeout_description).to_be_visible()
     expect(logged_out_page.timeout_description2).to_be_visible()
 
