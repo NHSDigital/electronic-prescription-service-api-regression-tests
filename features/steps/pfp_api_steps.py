@@ -68,9 +68,9 @@ def i_can_see_my_prescription_and_updates(context, status=None):
     entries = json_response["entry"]
     if entries[0]:
         print(f"Diagnostics info from response: {entries[0]}")
-    bundle = [
-        entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"
-    ][0]["resource"]["entry"][0]["resource"]
+    bundle = [entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"][0]["resource"]["entry"][0][
+        "resource"
+    ]
     if "sandbox" in context.config.userdata["env"].lower():
         assert_that(bundle["subject"]["identifier"]["value"]).is_equal_to("9449304130")
         assert_that(bundle["groupIdentifier"]["value"]).is_equal_to("24F5DA-A83008-7EFE6Z")
@@ -80,12 +80,8 @@ def i_can_see_my_prescription_and_updates(context, status=None):
     )
     expected_nhs_number = context.nhs_number
     expected_prescription_id = context.prescription_id
-    assert_that(bundle["subject"]["identifier"]["value"]).is_equal_to(
-        expected_nhs_number
-    )
-    assert_that(bundle["groupIdentifier"]["value"]).is_equal_to(
-        expected_prescription_id
-    )
+    assert_that(bundle["subject"]["identifier"]["value"]).is_equal_to(expected_nhs_number)
+    assert_that(bundle["groupIdentifier"]["value"]).is_equal_to(expected_prescription_id)
 
     # only check in int as status updates are toggled off in lower environments
     if getattr(context.config, "status_updates_enabled", False) and status:
@@ -103,9 +99,7 @@ def i_can_see_my_prescription_and_updates(context, status=None):
             and resource["resource"]["address"]
             and "text" in resource["resource"]["address"][0]
         ]
-        print(
-            f"Address texts found: {address_texts} for ODS code {context.receiver_ods_code}"
-        )
+        print(f"Address texts found: {address_texts} for ODS code {context.receiver_ods_code}")
         assert_that(address_texts).is_not_empty()
         assert_that(address_texts[0]).is_equal_to(
             "63 BRIARFIELD ROAD, TIMPERLEY, ALTRINCHAM, CHESHIRE, CHESHIRE, WA15 7DD"
