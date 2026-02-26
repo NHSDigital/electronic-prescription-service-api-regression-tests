@@ -20,6 +20,8 @@ from features.environment import (
     APIGEE_APPS,
     JWT_PRIVATE_KEY,
     JWT_KID,
+    EPS_FHIR_DISPENSING_JWT_PRIVATE_KEY,
+    EPS_FHIR_DISPENSING_JWT_KID,
 )
 
 
@@ -35,6 +37,27 @@ def get_psu_authenticator(env, url):
         jwt_kid=JWT_KID,
     )
     # 2. Pass the config to the Authenticator
+    # fmt: off
+    authenticator = ClientCredentialsAuthenticator(config=config)  # pyright: ignore [reportArgumentType]
+    # fmt: on
+    return authenticator
+
+
+def get_eps_fhir_dispensing_jwt_authenticator(env, url):
+    print("Getting EPS-FHIR-DISPENSING-JWT authenticator configuration from environment variables")
+    client_id = APIGEE_APPS["EPS-FHIR-DISPENSING"]["client_id"]
+    if client_id is None or EPS_FHIR_DISPENSING_JWT_KID is None or EPS_FHIR_DISPENSING_JWT_PRIVATE_KEY is None:
+        raise ValueError(
+            "You must provide EPS_FHIR_DISPENSING_CLIENT_ID, "
+            "EPS_FHIR_DISPENSING_JWT_KID and EPS_FHIR_DISPENSING_JWT_PRIVATE_KEY"
+        )
+    config = ClientCredentialsConfig(
+        environment=env,
+        identity_service_base_url=url,  # pyright: ignore [reportArgumentType]
+        client_id=client_id,
+        jwt_private_key=EPS_FHIR_DISPENSING_JWT_PRIVATE_KEY,
+        jwt_kid=EPS_FHIR_DISPENSING_JWT_KID,
+    )
     # fmt: off
     authenticator = ClientCredentialsAuthenticator(config=config)  # pyright: ignore [reportArgumentType]
     # fmt: on
@@ -102,6 +125,7 @@ def get_auth(env, product, user="prescriber"):
         "EPS-FHIR-PRESCRIBING",
         "EPS-FHIR-PRESCRIBING-SHA1",
         "EPS-FHIR-DISPENSING",
+        "EPS-FHIR-DISPENSING-JWT",
         "PFP-APIGEE",
         "PFP-PROXYGEN",
         "PSU",
@@ -119,6 +143,8 @@ def get_auth(env, product, user="prescriber"):
         "EPS-FHIR-PRESCRIBING-SHA1",
     ]:
         authenticator = get_eps_fhir_authenticator(user, env, url, product)
+    if product == "EPS-FHIR-DISPENSING-JWT":
+        authenticator = get_eps_fhir_dispensing_jwt_authenticator(env, url)
     if product == "PFP-APIGEE" or product == "PFP-PROXYGEN":
         authenticator = get_pfp_apigee_authenticator(env, url)
     if product == "PSU":
@@ -130,7 +156,6 @@ def get_auth(env, product, user="prescriber"):
 
 
 def get_token(authenticator):
-    # 3. Get your token
     token_response = authenticator.get_token()
     assert "access_token" in token_response
     token = token_response["access_token"]

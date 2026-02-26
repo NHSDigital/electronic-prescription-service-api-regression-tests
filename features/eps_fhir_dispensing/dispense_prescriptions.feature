@@ -18,6 +18,16 @@ Feature: I can dispense prescriptions
       | nominated     | eRD    |
       | non-nominated | eRD    |
 
+  @dispense @application-restricted
+  @allure.tms:https://nhsd-jira.digital.nhs.uk/browse/AEA-6097
+  Scenario: I can release a prescription using application-restricted signed JWT session
+    # Just the one is suffucicient to confirn that JWT is working, I reckon
+    Given a nominated acute prescription has been created using proxygen apis
+    And I am an authorised dispenser with EPS-FHIR-DISPENSING-JWT app
+    When I release the prescription
+    Then the response indicates a success
+    And the response body indicates a successful release action
+
   @amend
   Scenario: I can amend a single dispense notification
     Given a new prescription has been dispensed using proxygen apis

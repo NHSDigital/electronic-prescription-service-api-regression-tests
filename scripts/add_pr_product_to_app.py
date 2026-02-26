@@ -44,13 +44,19 @@ def get_product_config(pr_id):
         "EPS-FHIR-PRESCRIBING-SHA1": {
             "app_id": "1122eb42-c783-4748-84b7-47e20446306d",
             "app_name": "REGRESSION_INTERNAL_DEV_EPS_FHIR_PRESCRIBING_SHA1",
-            "api_product_name": f"fhir-dispensing--internal-dev--fhir-dispensing-{pr_id}--nhs-cis2-aal3",
+            "api_product_name": f"fhir-prescribing--internal-dev--fhir-prescribing-{pr_id}--nhs-cis2-aal3",
             "accompanying_product": "EPS-FHIR-PRESCRIBING",
         },
         "EPS-FHIR-DISPENSING": {
             "app_id": "1427007d-7dd3-4153-901a-df027fa6e6d6",
             "app_name": "REGRESSION_INTERNAL_DEV_EPS_FHIR_DISPENSING",
             "api_product_name": f"fhir-dispensing--internal-dev--fhir-dispensing-{pr_id}--nhs-cis2-aal3",
+            "accompanying_product": "EPS-FHIR-DISPENSING-APP-LEVEL3",
+        },
+        "EPS-FHIR-DISPENSING-APP-LEVEL3": {
+            "app_id": "1427007d-7dd3-4153-901a-df027fa6e6d6",
+            "app_name": "REGRESSION_INTERNAL_DEV_EPS_FHIR_DISPENSING",
+            "api_product_name": f"fhir-dispensing--internal-dev--fhir-dispensing-{pr_id}--app-level3",
         },
         "PFP-PROXYGEN": {
             "app_id": "fa7eaadb-da69-4c4b-8821-83e21cb649f5",
