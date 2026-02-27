@@ -147,8 +147,8 @@ def the_login_is_finished(context):
         valid_urls = [
             f"{context.cpts_ui_base_url}site/select-your-role",
             f"{context.cpts_ui_base_url}site/select-your-role/",
-            f"{context.cpts_ui_base_url}site/search-by-prescription-id",
-            f"{context.cpts_ui_base_url}site/search-by-prescription-id/",
+            f"{context.cpts_ui_base_url}site/search#prescription-id",
+            f"{context.cpts_ui_base_url}site/search#prescription-id/",
             f"{context.cpts_ui_base_url}site/select-active-session",  # Concurrent session page
             f"{context.cpts_ui_base_url}site/select-active-session/",
         ]

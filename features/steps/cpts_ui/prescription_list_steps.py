@@ -106,8 +106,8 @@ def verify_redirect_to_prescription_id_tab(context):
     # Use more relaxed URL checking
     current_url = context.active_page.url
     assert (
-        "site/search-by-prescription-id" in current_url
-    ), f"Expected URL to contain 'site/search-by-prescription-id', got: {current_url}"
+        "site/search#prescription-id" in current_url
+    ), f"Expected URL to contain 'site/search#prescription-id', got: {current_url}"
 
     # Use the POM to verify we're on the Prescription ID search tab
     search_page = SearchForAPrescription(context.active_page)
@@ -119,8 +119,8 @@ def verify_redirect_to_nhs_number_tab(context):
     # Use more relaxed URL checking
     current_url = context.active_page.url
     assert (
-        "site/search-by-nhs-number" in current_url
-    ), f"Expected URL to contain 'site/search-by-nhs-number', got: {current_url}"
+        "site/search#nhs-number" in current_url
+    ), f"Expected URL to contain 'site/search#nhs-number', got: {current_url}"
 
     # Use the POM to verify we're on the NHS number search tab
     search_page = SearchForAPrescription(context.active_page)
