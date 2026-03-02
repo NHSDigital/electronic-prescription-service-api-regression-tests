@@ -104,20 +104,33 @@ def slash_join(*args):
     return "/".join(arg.strip("/") for arg in args)
 
 
-def add_product_to_app(base_url, config, headers):
-    body = json.dumps({"apiProducts": [config["api_product_name"]]})
+def get_existing_api_products(base_url, config, headers):
+    built_url = slash_join(base_url, config["app_name"], "keys", config["consumer_key"])
+    response = requests.get(url=built_url, headers=headers, timeout=60)
+    assert response.status_code == 200, f"expected 200, but got {response.status_code}\n{response.text}"
+    return response.json().get("apiProducts", [])
+
+
+def add_product_to_app(base_url, config, headers, api_products):
+    body = json.dumps({"apiProducts": api_products})
 
     built_url = slash_join(base_url, config["app_name"], "keys", config["consumer_key"])
     response = requests.put(url=built_url, headers=headers, data=body, timeout=60)
     assert response.status_code == 200, f"expected 200, but got {response.status_code}\n{response.text}"
 
 
-def add_products_to_apps(pr, product_config, selected_product):
+def add_products_to_apps(pr, product_config, selected_products):
     base_apps_url = f"{APIGEE_BASE_URL}companies/c4bd161b-0bc5-4a29-866e-85c81b704bd0/apps/"
     headers = get_headers()
 
-    print(f"Adding {pr} to {selected_product}")
-    add_product_to_app(base_apps_url, product_config[selected_product], headers)
+    primary_product = selected_products[0]
+    print(f"Adding {pr} to {', '.join(selected_products)}")
+
+    existing_products = get_existing_api_products(base_apps_url, product_config[primary_product], headers)
+    requested_products = [product_config[product]["api_product_name"] for product in selected_products]
+    merged_products = list(dict.fromkeys(existing_products + requested_products))
+
+    add_product_to_app(base_apps_url, product_config[primary_product], headers, merged_products)
 
 
 def get_consumer_keys(config, selected_product):
@@ -170,5 +183,6 @@ if __name__ == "__main__":
 
     for product in products_to_run:
         product_configs = get_consumer_keys(product_configs, product)
-        add_products_to_apps(pr_id, product_configs, product)
+
+    add_products_to_apps(pr_id, product_configs, products_to_run)
     print("Finished!")
