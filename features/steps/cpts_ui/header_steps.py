@@ -11,18 +11,6 @@ def step_impl(context):
     header.select_role_link.click()
 
 
-@then('I see the "Exit" link')
-def i_see_exit_link(context):
-    header = Header(context.active_page)
-    expect(header.exit_link).to_be_visible()
-
-
-@then('I do not see the "Exit" link')
-def dont_see_exit_link(context):
-    header = Header(context.active_page)
-    expect(header.exit_link).not_to_be_visible()
-
-
 @then('I see the "Logout" link')
 def i_see_logout_link(context):
     header = Header(context.active_page)

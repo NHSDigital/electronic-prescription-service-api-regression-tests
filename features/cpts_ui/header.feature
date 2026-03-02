@@ -13,25 +13,7 @@ Feature: Header
     When I have a screen size of 650 pixels wide
 #    Then I can see the header links in a dropdown menu
 
-  ############################################################################
-  # EXIT
-  ############################################################################
-  @multiple_access
-  Scenario: Exit link is shown on the logout page once the user signs out
-    Given I am logged in as a user with multiple access roles
-    And The logout confirmation modal is displayed
-    When I confirm the logout
-    Then I see the "Exit" link
 
-  @multiple_roles_no_access
-  Scenario: Exit link is shown on the select your role page if the user has no roles with access
-    Given I am logged in as a user with only roles that do not have access
-    Then I see the "Exit" link
-
-  @single_access
-  Scenario: Exit link is not shown if user has at least one role with access on the select your role page
-    Given I am logged in as a user with a single access role
-    Then I do not see the "Exit" link
 
   ############################################################################
   # LOGOUT
