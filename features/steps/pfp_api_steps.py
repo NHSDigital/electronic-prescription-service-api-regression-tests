@@ -110,16 +110,28 @@ def i_can_see_my_prescription_and_updates(context, status=None):
             "63 BRIARFIELD ROAD, TIMPERLEY, ALTRINCHAM, CHESHIRE, CHESHIRE, WA15 7DD"
         )
     elif context.receiver_ods_code == "FLM49":
+        organization_telecoms = [
+            resource["resource"].get("telecom", [])
+            for entry in entries
+            for resource in entry["resource"]["entry"]
+            if resource["resource"]["resourceType"] == "Organization"
+        ]
         urls = [
-            resource["resource"]["telecom"][0]["value"]
+            telecom_entry["value"]
             for entry in entries
             for resource in entry["resource"]["entry"]
             if resource["resource"]["resourceType"] == "Organization"
             and "telecom" in resource["resource"]
             and resource["resource"]["telecom"]
-            and "system" in resource["resource"]["telecom"][0]
-            and resource["resource"]["telecom"][0]["system"] == "url"
+            for telecom_entry in resource["resource"]["telecom"]
+            if telecom_entry.get("system") == "url" and "value" in telecom_entry
         ]
+        logger.debug(
+            "Urls extracted from Telecoms found for ODS code %s: telecoms=%s, urls=%s",
+            context.receiver_ods_code,
+            organization_telecoms,
+            urls,
+        )
         assert_that(urls).is_not_empty()
         assert_that(urls[0]).is_equal_to("www.pharmacy2u.co.uk")
 
