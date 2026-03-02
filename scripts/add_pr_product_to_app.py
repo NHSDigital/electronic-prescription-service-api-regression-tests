@@ -111,6 +111,19 @@ def get_existing_api_products(base_url, config, headers):
     return response.json().get("apiProducts", [])
 
 
+def normalize_api_products(api_products):
+    normalized = []
+    for item in api_products:
+        if isinstance(item, str):
+            normalized.append(item)
+            continue
+        if isinstance(item, dict):
+            name = item.get("apiproduct") or item.get("name")
+            if name:
+                normalized.append(name)
+    return normalized
+
+
 def add_product_to_app(base_url, config, headers, api_products):
     body = json.dumps({"apiProducts": api_products})
 
@@ -126,7 +139,9 @@ def add_products_to_apps(pr, product_config, selected_products):
     primary_product = selected_products[0]
     print(f"Adding {pr} to {', '.join(selected_products)}")
 
-    existing_products = get_existing_api_products(base_apps_url, product_config[primary_product], headers)
+    existing_products = normalize_api_products(
+        get_existing_api_products(base_apps_url, product_config[primary_product], headers)
+    )
     requested_products = [product_config[product]["api_product_name"] for product in selected_products]
     merged_products = list(dict.fromkeys(existing_products + requested_products))
 
