@@ -1,4 +1,5 @@
 import json
+import logging
 
 # pylint: disable=no-name-in-module
 from behave import when, then, step  # pyright: ignore [reportAttributeAccessIssue]
@@ -7,6 +8,8 @@ from methods.api.pfp_api_methods import get_prescriptions
 from methods.shared.common import assert_that, get_auth
 from methods.api.eps_api_methods import call_validator
 from messages.eps_fhir.prescription import Prescription
+
+logger = logging.getLogger(__name__)
 
 
 @step("I am authenticated with {app} app")
@@ -63,11 +66,11 @@ def i_can_see_my_prescription_by_id(context, prescription_id):
 @then("I can see my prescription and it has a status of '{status}'")
 def i_can_see_my_prescription_and_updates(context, status=None):
     assert_that(context.response.status_code).is_equal_to(200)
-    print(f"Checking prescription: {context.prescription_id} for {context.nhs_number}")
+    logger.debug("Checking prescription: %s for %s", context.prescription_id, context.nhs_number)
     json_response = json.loads(context.response.content)
     entries = json_response["entry"]
     if entries[0]:
-        print(f"Diagnostics info from response: {entries[0]}")
+        logger.debug("Diagnostics info from response: %s", entries[0])
     bundle = [entry for entry in entries if entry["resource"]["resourceType"] == "Bundle"][0]["resource"]["entry"][0][
         "resource"
     ]
@@ -75,8 +78,10 @@ def i_can_see_my_prescription_and_updates(context, status=None):
         assert_that(bundle["subject"]["identifier"]["value"]).is_equal_to("9449304130")
         assert_that(bundle["groupIdentifier"]["value"]).is_equal_to("24F5DA-A83008-7EFE6Z")
         return
-    print(
-        f"Prescription retrieved: {bundle['groupIdentifier']['value']} for {bundle['subject']['identifier']['value']}"
+    logger.debug(
+        "Prescription retrieved: %s for %s",
+        bundle["groupIdentifier"]["value"],
+        bundle["subject"]["identifier"]["value"],
     )
     expected_nhs_number = context.nhs_number
     expected_prescription_id = context.prescription_id
@@ -86,7 +91,7 @@ def i_can_see_my_prescription_and_updates(context, status=None):
     # only check in int as status updates are toggled off in lower environments
     if getattr(context.config, "status_updates_enabled", False) and status:
         actual_status = bundle["status"]
-        print(f"Status found: {actual_status}")
+        logger.debug("Status found: %s", actual_status)
         assert_that(actual_status).is_equal_to(status)
 
     if context.receiver_ods_code == "FA565":
@@ -99,7 +104,7 @@ def i_can_see_my_prescription_and_updates(context, status=None):
             and resource["resource"]["address"]
             and "text" in resource["resource"]["address"][0]
         ]
-        print(f"Address texts found: {address_texts} for ODS code {context.receiver_ods_code}")
+        logger.debug("Address texts found: %s for ODS code %s", address_texts, context.receiver_ods_code)
         assert_that(address_texts).is_not_empty()
         assert_that(address_texts[0]).is_equal_to(
             "63 BRIARFIELD ROAD, TIMPERLEY, ALTRINCHAM, CHESHIRE, CHESHIRE, WA15 7DD"
@@ -149,9 +154,7 @@ def i_validate_the_response_for_fhir_compliance(context):
 
     call_validator(context, "eps_fhir_dispensing", "true", validate_body)
 
-    print("validation response:")
-    print(context.response.content)
-    print(context.response.status_code)
+    logger.debug("validation response, %s: %s", context.response.status_code, context.response.content)
 
 
 @then("I do not see an eRD prescription")
@@ -206,25 +209,25 @@ def process_status_updates_and_verify(context):
     # Loop over all available statuses
     # DON'T COPY THIS -- It's crude for now until we come back to it.
     for status in context.statuses:
-        print(f"Processing status update to {status} for all prescription IDs")
+        logger.debug("Processing status update to %s for all prescription IDs", status)
         context.execute_steps("""
             When I am authorised to send prescription updates
             """)
         for prescription_id in context.prescription_ids:
             context.prescription_id = prescription_id
-            print(f"Processing status update for prescription ID: {prescription_id}")
+            logger.debug("Processing status update for prescription ID: %s", prescription_id)
             if status.upper() == "COLLECTED" or status.upper() == "DISPENSED" or status.upper() == "NOT DISPENSED":
                 terminal = "completed"
             else:
                 terminal = "in-progress"
 
-            context.execute_steps(f"""
+            context.execute_steps("""
                 When I send a '{status}' update with a status of '{terminal}'
-                """)
+                """.format(status=status, terminal=terminal))
         # Call the PFP API to get the prescriptions and verify the statuses
-        print(f"Verifying updated prescription statuses to be {status}")
-        context.execute_steps(f"""
+        logger.debug("Verifying updated prescription statuses to be %s", status)
+        context.execute_steps("""
             When I am authenticated with PFP-APIGEE app
             And I request my prescriptions
             And I check the prescription item statuses for '{status}'
-            """)
+            """.format(status=status))
