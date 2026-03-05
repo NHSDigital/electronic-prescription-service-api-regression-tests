@@ -51,9 +51,7 @@ def get_status_updates(context):
     }
 
     headers = get_headers(context, "oauth2")
-    context.response = post(
-        data=json.dumps(body), url=url, context=context, headers=headers
-    )
+    context.response = post(data=json.dumps(body), url=url, context=context, headers=headers)
 
     # Pretty print response to timestamp file
     if context.response.status_code == 200:

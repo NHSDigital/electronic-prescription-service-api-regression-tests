@@ -1,7 +1,8 @@
+from datetime import UTC, datetime, timedelta
 import json
+import logging
 import time
 import uuid
-from datetime import UTC, datetime, timedelta
 
 # pylint: disable=no-name-in-module
 from behave import given, when, then  # pyright: ignore [reportAttributeAccessIssue]
@@ -15,6 +16,8 @@ from methods.api.psu_api_methods import CODING_TO_STATUS_MAP
 from methods.shared.common import get_auth, assert_that
 from utils.prescription_id_generator import generate_short_form_id
 from utils.random_nhs_number_generator import generate_single
+
+logger = logging.getLogger(__name__)
 
 
 @given("I am authorised to send prescription updates")
@@ -40,12 +43,14 @@ def send_status_update_helper(context, coding, status):
     if "e2e" not in context.tags or "sandbox" in context.config.userdata["env"].lower():
         context.receiver_ods_code = "FA565"
         context.prescription_id = generate_short_form_id(context.receiver_ods_code)
-        print(f"id from here {context.prescription_id}")
+        logger.debug(f"id from here {context.prescription_id}")
         context.prescription_item_id = uuid.uuid4()
         context.nhs_number = generate_single()
     context.terminal_status = status
     context.item_status = coding
-    print(f"""Sending update for prescription ID: {context.prescription_id}: coding: {coding} status: {status}""")
+    logger.debug(
+        f"""Sending update for prescription ID: {context.prescription_id}: coding: {coding} status: {status}"""
+    )
     send_status_update(context)
 
 
@@ -76,7 +81,7 @@ def i_send_a_postdated_update(context, coding):
     # Calculate future timestamp
     context.post_dated_timestamp = (datetime.now(UTC) + timedelta(seconds=post_dated_delay)).isoformat()
 
-    print(f"Sending post-dated update with lastModified: {context.post_dated_timestamp}")
+    logger.debug(f"Sending post-dated update with lastModified: {context.post_dated_timestamp}")
     send_status_update_helper(context, coding, status)
 
 
@@ -84,7 +89,7 @@ def i_send_a_postdated_update(context, coding):
 def advance_clock_beyond_postdated(context):
     """Poll the API until the post-dated time has passed and status update takes effect."""
     if "sandbox" in context.config.userdata["env"].lower():
-        print("Skipping clock advancement in sandbox environment")
+        logger.debug("Skipping clock advancement in sandbox environment")
         return
 
     prescription_id = context.prescription_id
@@ -95,7 +100,7 @@ def advance_clock_beyond_postdated(context):
     period = 5  # Poll every 5 seconds
     mustend = time.time() + timeout
 
-    print(f"Polling for status update to take effect (timeout: {timeout}s, interval: {period}s)")
+    logger.debug(f"Polling for status update to take effect (timeout: {timeout}s, interval: {period}s)")
 
     while time.time() < mustend:
         response = check_status_updates(context, prescription_id=prescription_id)
@@ -109,11 +114,11 @@ def advance_clock_beyond_postdated(context):
             if matching_items:
                 item = matching_items[0]
                 current_status = item.get("Status")
-                print(f"Current status: {current_status}, Expected: {expected_coding}")
+                logger.debug(f"Current status: {current_status}, Expected: {expected_coding}")
 
                 # Check if the post-dated update has taken effect
                 if current_status == expected_coding:
-                    print(f"Post-dated status update has taken effect: {expected_coding}")
+                    logger.debug(f"Post-dated status update has taken effect: {expected_coding}")
                     return
 
         time.sleep(period)
@@ -126,7 +131,7 @@ def advance_clock_beyond_postdated(context):
 @then("The prescription item has a coding of '{expected_coding}' with a status of '{expected_status}'")
 def verify_update_recorded(context, expected_coding, expected_status):
     if "sandbox" in context.config.userdata["env"].lower():
-        print("Skipping verification in sandbox environment")
+        logger.debug("Skipping verification in sandbox environment")
         return
 
     prescription_id = context.prescription_id
