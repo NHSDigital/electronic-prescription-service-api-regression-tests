@@ -1,4 +1,5 @@
 import json
+import logging
 
 # pylint: disable=no-name-in-module
 from behave import (
@@ -26,6 +27,8 @@ from messages.eps_fhir.prescription import Prescription
 from messages.eps_fhir.common_maps import THERAPY_TYPE_MAP, INTENT_MAP
 from messages.eps_fhir.dispense_notification import DNProps
 
+logger = logging.getLogger(__name__)
+
 
 def setup_new_prescription(context, nomination, prescription_type, generate_nhs_number=True):
     if generate_nhs_number:
@@ -47,7 +50,7 @@ def i_prepare_and_sign_a_prescription(context):
         Given I successfully prepare a nominated acute prescription
         When I sign the prescription
         """)
-    print(f"Prepared and signed prescription ID: {context.prescription_id}")
+    logger.warning(f"Prepared and signed prescription ID: {context.prescription_id}")
 
 
 @given("I successfully prepare and sign a {nomination} {prescription_type} prescription")
@@ -190,7 +193,7 @@ def i_sign_a_new_prescription(context):
 def i_release_all_prescriptions(context):
     for prescription_id in context.prescription_ids:
         context.prescription_id = prescription_id
-        print(f"Releasing prescription ID: {prescription_id}")
+        logger.info("Releasing prescription ID: %s", prescription_id)
         release_signed_prescription(context)
 
 
