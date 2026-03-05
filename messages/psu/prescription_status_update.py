@@ -1,4 +1,5 @@
 import json
+from datetime import UTC, datetime
 from typing import Any
 from uuid import uuid4
 
@@ -11,6 +12,7 @@ class StatusUpdatesValues:
         self.item_status = context.item_status
         self.receiver_ods_code = context.receiver_ods_code
         self.nhs_number = context.nhs_number
+        self.post_dated_timestamp = getattr(context, "post_dated_timestamp", None)
 
 
 class StatusUpdate:
@@ -26,6 +28,11 @@ class StatusUpdate:
             "type": "transaction",
             "entry": [],
         }
+
+        # Add meta.lastUpdated when post-dated timestamp is provided
+        if self.values.post_dated_timestamp:
+            fhir_resource["meta"] = {"lastUpdated": datetime.now(UTC).isoformat()}
+
         fhir_resource["entry"].extend(entries)
         return json.dumps(fhir_resource)
 
@@ -66,7 +73,11 @@ class StatusUpdate:
                         "value": f"{self.values.nhs_number}",
                     }
                 },
-                "lastModified": "2024-08-19T16:11:13Z",
+                "lastModified": (
+                    self.values.post_dated_timestamp
+                    if self.values.post_dated_timestamp
+                    else datetime.now(UTC).isoformat()
+                ),
                 "owner": {
                     "identifier": {
                         "system": "https://fhir.nhs.uk/Id/ods-organization-code",
