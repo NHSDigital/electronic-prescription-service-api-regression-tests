@@ -1,3 +1,5 @@
+import logging
+
 from features.environment import CIS2_USERS
 from messages.eps_fhir.cancel import Cancel
 from messages.eps_fhir.dispense_notification import DispenseNotification
@@ -12,6 +14,8 @@ from messages.eps_fhir.withdraw_dispense_notification import (
 from messages.eps_fhir.dispense_notification import DNProps
 from methods.api.common_api_methods import get_headers, post
 from methods.shared.common import the_expected_response_code_is_returned
+
+logger = logging.getLogger(__name__)
 
 PRESCRIBING_BASE_URL = ""
 DISPENSING_BASE_URL = ""
@@ -59,6 +63,7 @@ def create_signed_prescription(context):
     context.signed_body = SignedPrescription(context).body
     post(data=context.signed_body, url=url, context=context, headers=headers)
     the_expected_response_code_is_returned(context, 200)
+    logger.info("Signed prescription created successfully with ID: %s", context.prescription_id)
 
 
 def release_signed_prescription(context):

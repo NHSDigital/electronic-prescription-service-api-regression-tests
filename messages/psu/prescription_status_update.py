@@ -1,7 +1,10 @@
 import json
 from datetime import UTC, datetime
+import logging
 from typing import Any
 from uuid import uuid4
+
+logger = logging.getLogger(__name__)
 
 
 class StatusUpdatesValues:
@@ -29,11 +32,12 @@ class StatusUpdate:
             "entry": [],
         }
 
-        # Add meta.lastUpdated when post-dated timestamp is provided
+        # If post-dated timestamp is provided, add meta field to denote it but value is _now_
         if self.values.post_dated_timestamp:
             fhir_resource["meta"] = {"lastUpdated": datetime.now(UTC).isoformat()}
 
         fhir_resource["entry"].extend(entries)
+        logger.debug("Created FHIR bundle for status update: %s", json.dumps(fhir_resource, indent=2))
         return json.dumps(fhir_resource)
 
     def create_task(self):

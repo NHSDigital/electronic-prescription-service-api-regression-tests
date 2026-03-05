@@ -43,13 +43,12 @@ def send_status_update_helper(context, coding, status):
     if "e2e" not in context.tags or "sandbox" in context.config.userdata["env"].lower():
         context.receiver_ods_code = "FA565"
         context.prescription_id = generate_short_form_id(context.receiver_ods_code)
-        logger.debug(f"id from here {context.prescription_id}")
         context.prescription_item_id = uuid.uuid4()
         context.nhs_number = generate_single()
     context.terminal_status = status
     context.item_status = coding
     logger.debug(
-        f"""Sending update for prescription ID: {context.prescription_id}: coding: {coding} status: {status}"""
+        "Sending update for prescription ID: %s: coding: %s status: %s", context.prescription_id, coding, status
     )
     send_status_update(context)
 
@@ -81,7 +80,7 @@ def i_send_a_postdated_update(context, coding):
     # Calculate future timestamp
     context.post_dated_timestamp = (datetime.now(UTC) + timedelta(seconds=post_dated_delay)).isoformat()
 
-    logger.debug(f"Sending post-dated update with lastModified: {context.post_dated_timestamp}")
+    logger.debug("Sending post-dated update for %s at: %s", context.prescription_id, context.post_dated_timestamp)
     send_status_update_helper(context, coding, status)
 
 
@@ -150,3 +149,23 @@ def verify_update_recorded(context, expected_coding, expected_status):
 
         assert_that(item.get("TerminalStatus")).is_equal_to(expected_status)
         assert_that(item.get("Status")).is_equal_to(expected_coding)
+
+
+# TODO not yet working
+@then("'{expected_count:d}' updates are returned from get-status-updates endpoint")
+def verify_updates_count(context, expected_count):
+    if "sandbox" in context.config.userdata["env"].lower():
+        logger.debug("Skipping verification in sandbox environment")
+        return
+
+    prescription_id = context.prescription_id
+
+    response = get_status_updates(context)
+    assert_that(response.status_code).is_equal_to(200)
+
+    response_data = json.loads(response.content)
+    matching_items = [
+        items for items in response_data.get("items", []) if items.get("PrescriptionID") == prescription_id
+    ]
+
+    assert_that(len(matching_items)).is_equal_to(expected_count)
