@@ -261,6 +261,15 @@ When I should see the session selection page
 
 When the session expires because of automatic timeout
 
+When I set lastActivityTime to be 13 minutes ago
+    Call the test support endpoint to set lastActivityTime to 13 minutes in the past
+
+When I fast forward 1 minute so that updateTracker event happens
+    Fast forward 1 minute to trigger the updateTracker periodic check
+
+When I fast forward 3 minutes so that updateTracker event happens
+    Wait 2 minutes for natural session timeout
+
 When I switch the browser context to &quot;{browser}&quot; and login again
 
 When I switch the browser context to &quot;{browser}&quot;
@@ -600,6 +609,12 @@ Then I should see the concurrent session logged out page
 
 Then I should see the timeout session logged out page
     Verify the timeout session logged out page is displayed
+
+Then I should see the timeout session modal
+    Verify the timeout session modal is displayed
+
+Then I am redirected to the logged out for inactivity page
+    Verify that the session has timed out and user is redirected to session-logged-out URL
 
 Then I switch the browser context to &quot;{browser}&quot;
 
