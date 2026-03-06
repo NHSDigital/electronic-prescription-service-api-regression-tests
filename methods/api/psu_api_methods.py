@@ -7,9 +7,7 @@ def send_status_update(context):
 
     headers = get_headers(context, "oauth2")
     context.send_update_body = StatusUpdate(context).body
-    context.response = post(
-        data=context.send_update_body, url=url, context=context, headers=headers
-    )
+    context.response = post(data=context.send_update_body, url=url, context=context, headers=headers)
 
 
 def check_status_updates(context, prescription_id=None, nhs_number=None, ods_code=None):

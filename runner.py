@@ -1,4 +1,5 @@
 import argparse
+import os
 import subprocess
 
 if __name__ == "__main__":
@@ -38,6 +39,7 @@ if __name__ == "__main__":
     PRODUCT = f" -D product={argument.product}"
     ENV = f" -D env={argument.env}"
     ARM64 = f" -D arm64={argument.arm64}"
+    LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
 
     # complete command
     command = (
@@ -50,7 +52,7 @@ if __name__ == "__main__":
         f" --no-logcapture"
         f" --no-skipped "
         f" --expand"
-        f" --logging-level=DEBUG"
+        f" --logging-level={LOG_LEVEL}"
         f" {" ".join(f"--tags {tag}" for tag in tags)}"
     )
     print(f"Running subprocess with command: '{command}'")
