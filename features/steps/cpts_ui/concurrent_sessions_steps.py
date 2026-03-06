@@ -63,6 +63,4 @@ def verify_concurrent_session_title(context):
     expect(logged_out_page.concurrent_description).to_be_visible()
     expect(logged_out_page.concurrent_contact).to_be_visible()
     expect(logged_out_page.nhs_service_desk_email).to_be_visible()
-    expect(logged_out_page.nhs_service_desk_email).to_have_attribute(
-        "href", "mailto:ssd.nationalservicedesk@nhs.net"
-    )
+    expect(logged_out_page.nhs_service_desk_email).to_have_attribute("href", "mailto:ssd.nationalservicedesk@nhs.net")

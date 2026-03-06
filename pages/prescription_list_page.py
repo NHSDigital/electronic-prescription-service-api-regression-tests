@@ -14,9 +14,7 @@ class PrescriptionListPage:
         self.heading = page.get_by_test_id("prescription-list-heading")
         self.results_count = page.get_by_test_id("results-count")
         self.back_link = page.get_by_test_id("go-back-link")
-        self.prescription_results_list = page.get_by_test_id(
-            "prescription-results-list"
-        )
+        self.prescription_results_list = page.get_by_test_id("prescription-results-list")
 
         self.page_container = page.get_by_test_id("prescription-list-page")
         self.breadcrumb = page.get_by_test_id("prescription-list-breadcrumb")
@@ -36,9 +34,5 @@ class PrescriptionListPage:
         self.current_prescriptions_results_tab_table = page.get_by_test_id(
             "prescription-results-list-tab-table current"
         )
-        self.past_prescriptions_results_tab_table = page.get_by_test_id(
-            "prescription-results-list-tab-table past"
-        )
-        self.future_prescriptions_results_tab_table = page.get_by_test_id(
-            "prescription-results-list-tab-table future"
-        )
+        self.past_prescriptions_results_tab_table = page.get_by_test_id("prescription-results-list-tab-table past")
+        self.future_prescriptions_results_tab_table = page.get_by_test_id("prescription-results-list-tab-table future")

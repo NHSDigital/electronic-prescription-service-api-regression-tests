@@ -14,7 +14,5 @@ class SessionTimeoutModal:
         self.countdown_time = page.locator("strong[aria-live='polite']")
 
         # Alternative selectors in case the main ones don't work
-        self.eps_modal_wrapper = page.locator(
-            '[data-testid="session-timeout-modal"]'
-        ).locator("..")
+        self.eps_modal_wrapper = page.locator('[data-testid="session-timeout-modal"]').locator("..")
         self.modal_content_by_text = page.locator("text=For your security")

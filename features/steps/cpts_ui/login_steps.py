@@ -63,9 +63,7 @@ def login_single_role(context):
 
 @given("I am logged in as a user with only roles that do not have access")
 def login_without_access(context):
-    context.execute_steps(
-        "when I log in as a user with only roles that do not have access"
-    )
+    context.execute_steps("when I log in as a user with only roles that do not have access")
 
 
 @given("I am logged in as a user with a pre selected role")
@@ -75,9 +73,7 @@ def login_pre_role_selected(context):
 
 @given("I am logged in with a single access role and multiple without access")
 def login_single_role_with_access_multiple_without(context):
-    context.execute_steps(
-        "when I log in with a single access role and multiple without access"
-    )
+    context.execute_steps("when I log in with a single access role and multiple without access")
 
 
 @given("I am logged in as a user with multiple access roles")
@@ -124,9 +120,7 @@ def login_with_single_role_with_access_multiple_without(context):
     assert (
         "multiple_roles_single_access" in current_tags
     ), "Trying to use MOCK_CIS2_LOGIN_ID_SINGLE_ROLE_WITH_ACCESS_MULTIPLE_WITHOUT in a test not tagged @multiple_roles_single_access"  # noqa: E501
-    login_with_retries(
-        context, MOCK_CIS2_LOGIN_ID_SINGLE_ROLE_WITH_ACCESS_MULTIPLE_WITHOUT
-    )
+    login_with_retries(context, MOCK_CIS2_LOGIN_ID_SINGLE_ROLE_WITH_ACCESS_MULTIPLE_WITHOUT)
 
 
 @when("I log in as a user with a pre selected role")
@@ -135,9 +129,7 @@ def login_with_pre_role_selected(context):
     assert (
         "multiple_access_pre_selected" in current_tags
     ), "Trying to use MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES_WITH_SELECTED_ROLE in a test not tagged @multiple_access_pre_selected"  # noqa: E501
-    login_with_retries(
-        context, MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES_WITH_SELECTED_ROLE
-    )
+    login_with_retries(context, MOCK_CIS2_LOGIN_ID_MULTIPLE_ACCESS_ROLES_WITH_SELECTED_ROLE)
 
 
 @when("I log in as a user with a single access role")

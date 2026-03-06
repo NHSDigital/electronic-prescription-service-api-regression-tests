@@ -149,6 +149,8 @@ jobs:
           EPS_FHIR_PRESCRIBING_SHA1_CLIENT_SECRET: ${{ secrets.EPS_FHIR_PRESCRIBING_SHA1_CLIENT_SECRET }}
           EPS_FHIR_DISPENSING_CLIENT_ID: ${{ secrets.EPS_FHIR_DISPENSING_CLIENT_ID }}
           EPS_FHIR_DISPENSING_CLIENT_SECRET: ${{ secrets.EPS_FHIR_DISPENSING_CLIENT_SECRET }}
+          EPS_FHIR_DISPENSING_JWT_PRIVATE_KEY: ${{ secrets.EPS_FHIR_DISPENSING_JWT_PRIVATE_KEY }}
+          EPS_FHIR_DISPENSING_JWT_KID: ${{ secrets.EPS_FHIR_DISPENSING_JWT_KID }}
           PFP_CLIENT_ID: ${{ secrets.PFP_CLIENT_ID }}
           PFP_CLIENT_SECRET: ${{ secrets.PFP_CLIENT_SECRET }}
           PSU_CLIENT_ID: ${{ secrets.PSU_CLIENT_ID }}
@@ -238,7 +240,7 @@ jobs:
 
       - name: Upload CSV Artifact
         if: always() && steps.run-monitor.outputs.csv_exists == 'true'
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
         with:
           name: uptime-monitor-csv
           path: ${{ steps.run-monitor.outputs.csv_path }}

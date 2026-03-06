@@ -21,9 +21,7 @@ def verify_timeout_logged_out_page(context):
     """Verify the timeout session logged out page is displayed"""
     logged_out_page = SessionLoggedOutPage(context.active_page)
     expect(logged_out_page.timeout_session_container).to_be_visible()
-    expect(logged_out_page.timeout_title).to_have_text(
-        "For your security, we have logged you out"
-    )
+    expect(logged_out_page.timeout_title).to_have_text("For your security, we have logged you out")
     expect(logged_out_page.timeout_description).to_be_visible()
     expect(logged_out_page.timeout_description2).to_be_visible()
 
@@ -58,9 +56,7 @@ def set_last_activity_time_13_minutes_ago(context):
         raise Exception("No valid account tag found for setting lastActivityTime")
 
     request_id = str(uuid.uuid4())
-    print(
-        f"Setting lastActivityTime to 13 minutes ago for {username}. Request ID: {request_id}"
-    )
+    print(f"Setting lastActivityTime to 13 minutes ago for {username}. Request ID: {request_id}")
 
     payload = json.dumps({"username": username, "request_id": request_id})
 
@@ -76,9 +72,7 @@ def set_last_activity_time_13_minutes_ago(context):
     )
 
     if response.status_code != 200:
-        print(
-            f"Failed to set lastActivityTime. Response: {response.status_code} - {response.text}"
-        )
+        print(f"Failed to set lastActivityTime. Response: {response.status_code} - {response.text}")
         raise Exception(f"Failed to set lastActivityTime: {response.status_code}")
 
     # fast forward clock by 13 minutes to make frontend think time has passed

@@ -58,9 +58,7 @@ class Release:
                         "postalCode": "TA1 5DA",
                     }
                 ],
-                "telecom": [
-                    {"system": "phone", "value": "01823 333444", "use": "work"}
-                ],
+                "telecom": [{"system": "phone", "value": "01823 333444", "use": "work"}],
             },
         }
 

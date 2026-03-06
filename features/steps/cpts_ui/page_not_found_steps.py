@@ -68,9 +68,7 @@ def i_am_redirected_to_site_and_sent_to_the_login_page(context):
     )
 
 
-@then(
-    "I am redirected correctly to the site, with URI of '{target}' correctly forwarded"
-)
+@then("I am redirected correctly to the site, with URI of '{target}' correctly forwarded")
 def i_am_redirected_to_site_with_uri_forwarded(context, target):
     uri = convert_to_uri(target)
 
