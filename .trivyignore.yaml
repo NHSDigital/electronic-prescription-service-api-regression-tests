@@ -28,3 +28,6 @@ vulnerabilities:
   - id: CVE-2026-27904
     statement: minimatch vulnerability accepted as risk - dependency of various packages
     expired_at: 2026-04-01
+  - id: CVE-2026-29786  
+    statement: downstream dependency for tar - waiting for new npm release
+    expired_at: 2026-06-01
