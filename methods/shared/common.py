@@ -45,6 +45,7 @@ def get_psu_authenticator(env, url):
 
 def get_eps_fhir_dispensing_jwt_authenticator(env, url):
     print("Getting EPS-FHIR-DISPENSING-JWT authenticator configuration from environment variables")
+    print(url)
     client_id = APIGEE_APPS["EPS-FHIR-DISPENSING"]["client_id"]
     if client_id is None or EPS_FHIR_DISPENSING_JWT_KID is None or EPS_FHIR_DISPENSING_JWT_PRIVATE_KEY is None:
         raise ValueError(
