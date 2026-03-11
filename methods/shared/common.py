@@ -151,7 +151,7 @@ def get_auth(env, product, user="prescriber"):
         # use the real endpoint too.
         if env in ["int", "ref"]:
             url = f"https://{env}.api.service.nhs.uk/oauth2"
-            print(f"Using {url} for EPS-FHIR-DISPENSING-JWT authentication in {env} environment")
+        print(f"Using {url} for EPS-FHIR-DISPENSING-JWT authentication in {env} environment")
         authenticator = get_eps_fhir_dispensing_jwt_authenticator(env, url)
     if product == "PFP-APIGEE" or product == "PFP-PROXYGEN":
         authenticator = get_pfp_apigee_authenticator(env, url)
