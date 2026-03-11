@@ -53,8 +53,6 @@ def get_eps_fhir_dispensing_jwt_authenticator(env, url):
             "EPS_FHIR_DISPENSING_JWT_KID and EPS_FHIR_DISPENSING_JWT_PRIVATE_KEY"
         )
 
-    print("EPS_FHIR_DISPENSING_JWT_PRIVATE_KEY: ", EPS_FHIR_DISPENSING_JWT_PRIVATE_KEY[100])
-    print("EPS_FHIR_DISPENSING_JWT_KID:", EPS_FHIR_DISPENSING_JWT_KID)
     config = ClientCredentialsConfig(
         environment=env,
         identity_service_base_url=url,  # pyright: ignore [reportArgumentType]
