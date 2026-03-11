@@ -107,11 +107,7 @@ class Report:
     async def get_avg_response_time(self) -> float:
         """Thread-safe retrieval of current statistics."""
         async with self._lock:
-            return (
-                sum(self.response_times) / len(self.response_times)
-                if self.response_times
-                else 0.0
-            )
+            return sum(self.response_times) / len(self.response_times) if self.response_times else 0.0
 
     @property
     def uptime_pct(self) -> float:
@@ -167,9 +163,7 @@ class EndpointResult:
     response_time_ms: float
     error_message: str = ""
     success: bool = field(init=False)
-    timestamp: str = field(
-        init=False, default_factory=lambda: datetime.datetime.now().isoformat()
-    )
+    timestamp: str = field(init=False, default_factory=lambda: datetime.datetime.now().isoformat())
 
     def __post_init__(self):
         self.success = True if self.status == Status.PASS else False
@@ -195,9 +189,7 @@ def get_endpoint_url(product: str, env: str) -> str:
     """Get the endpoint URL for the specified product and environment."""
     if product == "PFP-APIGEE":
         return f"https://{env}.api.service.nhs.uk/prescriptions-for-patients"
-    raise ValueError(
-        f"Unsupported product: {product}. Only PFP-APIGEE is currently supported."
-    )
+    raise ValueError(f"Unsupported product: {product}. Only PFP-APIGEE is currently supported.")
 
 
 def validate_env(product: str, options: Dict):
@@ -205,9 +197,7 @@ def validate_env(product: str, options: Dict):
         print("Error: Cannot specify both --interval and --rpm")
         sys.exit(1)
 
-    product_key = (
-        product.replace("-", "_").replace("APIGEE", "").replace("AWS", "").strip("_")
-    )
+    product_key = product.replace("-", "_").replace("APIGEE", "").replace("AWS", "").strip("_")
 
     client_id_key = f"{product_key}_CLIENT_ID"
     client_secret_key = f"{product_key}_CLIENT_SECRET"
@@ -262,9 +252,7 @@ def display_summary_statistics(
         print(f"  99th Percentile:   {p99:.2f}ms")
         print("\nThroughput:")
         print(f"  Target Interval:   {target_interval:.2f}s ({target_rpm:.1f} req/min)")
-        print(
-            f"  Actual Interval:   {report.actual_interval:.2f}s ({report.actual_rpm:.1f} req/min)"
-        )
+        print(f"  Actual Interval:   {report.actual_interval:.2f}s ({report.actual_rpm:.1f} req/min)")
         print(f"  Total Duration:    {report.actual_duration:.1f}s")
         print(f"\nDetailed log saved to: {csv_filename}")
         print(f"{separator}\n")
@@ -324,15 +312,13 @@ def get_config() -> Dict:
     parser.add_argument(
         "--interval",
         type=float,
-        help="Request interval in seconds (e.g., 1.0 for 1 request per second). "
-        "Mutually exclusive with --rpm",
+        help="Request interval in seconds (e.g., 1.0 for 1 request per second). " "Mutually exclusive with --rpm",
     )
 
     parser.add_argument(
         "--rpm",
         type=int,
-        help="Requests per minute (e.g., 30 for 30 requests/minute). "
-        "Mutually exclusive with --interval",
+        help="Requests per minute (e.g., 30 for 30 requests/minute). " "Mutually exclusive with --interval",
     )
 
     parser.add_argument(
@@ -370,9 +356,7 @@ def get_interval(options: Dict) -> float:
 def init_report_file(product: str, output_dir: str) -> str:
     timestamp_str = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     product_slug = product.replace("-", "_").lower()
-    csv_filename = os.path.join(
-        output_dir, f"uptime_monitor_{product_slug}_{timestamp_str}.csv"
-    )
+    csv_filename = os.path.join(output_dir, f"uptime_monitor_{product_slug}_{timestamp_str}.csv")
 
     os.makedirs(output_dir, exist_ok=True)
 
@@ -418,9 +402,7 @@ async def execute_request(
         )
 
         try:
-            stdout, stderr = await asyncio.wait_for(
-                process.communicate(), timeout=timeout
-            )
+            stdout, stderr = await asyncio.wait_for(process.communicate(), timeout=timeout)
             return_code = process.returncode
 
             endpoint_result = EndpointResult(
@@ -432,9 +414,7 @@ async def execute_request(
             if return_code != 0 or logger.isEnabledFor(logging.DEBUG):
                 logger.debug("Request #%s stdout: %s", request_number, stdout.decode())
                 logger.debug("Request #%s stderr: %s", request_number, stderr.decode())
-            await report.record_result(
-                endpoint_result.success, endpoint_result.response_time_ms
-            )
+            await report.record_result(endpoint_result.success, endpoint_result.response_time_ms)
 
         except asyncio.TimeoutError:
             process.kill()
@@ -513,9 +493,7 @@ async def run_monitoring_loop_async(
         while True:
             request_number = await report.increment_request_count()
 
-            _ = asyncio.create_task(
-                execute_request(command, report, csv_filename, request_number)
-            )
+            _ = asyncio.create_task(execute_request(command, report, csv_filename, request_number))
             await asyncio.sleep(interval)
     except asyncio.CancelledError:  # NOSONAR
         # Wait for pending requests to complete

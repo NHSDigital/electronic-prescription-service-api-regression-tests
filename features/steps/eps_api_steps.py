@@ -27,9 +27,7 @@ from messages.eps_fhir.common_maps import THERAPY_TYPE_MAP, INTENT_MAP
 from messages.eps_fhir.dispense_notification import DNProps
 
 
-def setup_new_prescription(
-    context, nomination, prescription_type, generate_nhs_number=True
-):
+def setup_new_prescription(context, nomination, prescription_type, generate_nhs_number=True):
     if generate_nhs_number:
         context.nhs_number = generate_single()
     if nomination == "non-nominated":
@@ -43,29 +41,21 @@ def setup_new_prescription(
 
 @step("I successfully prepare and sign a prescription")
 def i_prepare_and_sign_a_prescription(context):
-    if (
-        "sandbox" in context.config.userdata["env"].lower()
-        and context.config.userdata["product"].upper() != "EPS-FHIR"
-    ):
+    if "sandbox" in context.config.userdata["env"].lower() and context.config.userdata["product"].upper() != "EPS-FHIR":
         return
-    context.execute_steps(
-        """
+    context.execute_steps("""
         Given I successfully prepare a nominated acute prescription
         When I sign the prescription
-        """
-    )
+        """)
+    print(f"Prepared and signed prescription ID: {context.prescription_id}")
 
 
-@given(
-    "I successfully prepare and sign a {nomination} {prescription_type} prescription"
-)
+@given("I successfully prepare and sign a {nomination} {prescription_type} prescription")
 def i_prepare_and_sign_a_type_prescription(context, nomination, prescription_type):
-    context.execute_steps(
-        f"""
+    context.execute_steps(f"""
         Given I successfully prepare a {nomination} {prescription_type} prescription
         When I sign the prescription
-        """
-    )
+        """)
 
 
 @given("a {nomination} {prescription_type} prescription has been created")
@@ -73,12 +63,8 @@ def a_proxygen_prescription_has_been_created(context, nomination, prescription_t
     a_prescription_has_been_created(context, nomination, prescription_type, "proxygen")
 
 
-@given(
-    "a {nomination} {prescription_type} prescription has been created using {deployment_method} apis"
-)
-def a_prescription_has_been_created(
-    context, nomination, prescription_type, deployment_method
-):
+@given("a {nomination} {prescription_type} prescription has been created using {deployment_method} apis")
+def a_prescription_has_been_created(context, nomination, prescription_type, deployment_method):
     if "sandbox" in context.config.userdata["env"].lower():
         return
     if deployment_method == "apim":
@@ -87,51 +73,31 @@ def a_prescription_has_been_created(
         prescribe_product = "EPS-FHIR-PRESCRIBING"
     else:
         raise ValueError(f"Unknown deployment_method {deployment_method}")
-    context.execute_steps(
-        f"""
+    context.execute_steps(f"""
         Given I am an authorised prescriber with {prescribe_product} app
         And I successfully prepare a {nomination} {prescription_type} prescription
         When I sign the prescription
-        """
-    )
+        """)
 
 
 @given("a {nomination} {prescription_type} prescription has been created and released")
-def a_proxygen_prescription_has_been_created_and_released(
-    context, nomination, prescription_type
-):
-    a_prescription_has_been_created_and_released(
-        context, nomination, prescription_type, "proxygen"
-    )
+def a_proxygen_prescription_has_been_created_and_released(context, nomination, prescription_type):
+    a_prescription_has_been_created_and_released(context, nomination, prescription_type, "proxygen")
 
 
-@given(
-    "a {nomination} {prescription_type} prescription has been created and released to {receiver_ods_code}"
-)
-def a_proxygen_prescription_has_been_created_and_released_to(
-    context, nomination, prescription_type, receiver_ods_code
-):
-    context.execute_steps(
-        f"Given a {nomination} {prescription_type} prescription has been created using proxygen apis"
-    )
+@given("a {nomination} {prescription_type} prescription has been created and released to {receiver_ods_code}")
+def a_proxygen_prescription_has_been_created_and_released_to(context, nomination, prescription_type, receiver_ods_code):
+    context.execute_steps(f"Given a {nomination} {prescription_type} prescription has been created using proxygen apis")
     context.receiver_ods_code = receiver_ods_code
-    context.execute_steps(
-        "Given the prescription has been released using proxygen apis"
-    )
+    context.execute_steps("Given the prescription has been released using proxygen apis")
 
 
-@given(
-    "a {nomination} {prescription_type} prescription has been created and released using {deployment_method} apis"
-)
-def a_prescription_has_been_created_and_released(
-    context, nomination, prescription_type, deployment_method
-):
-    context.execute_steps(
-        f"""
+@given("a {nomination} {prescription_type} prescription has been created and released using {deployment_method} apis")
+def a_prescription_has_been_created_and_released(context, nomination, prescription_type, deployment_method):
+    context.execute_steps(f"""
         Given a {nomination} {prescription_type} prescription has been created using {deployment_method} apis
         And the prescription has been released using {deployment_method} apis
-        """
-    )
+        """)
 
 
 @given("the prescription has been released using {deployment_method} apis")
@@ -144,12 +110,10 @@ def the_prescription_has_been_released(context, deployment_method):
         dispense_product = "EPS-FHIR-DISPENSING"
     else:
         raise ValueError(f"Unknown deployment_method {deployment_method}")
-    context.execute_steps(
-        f"""
+    context.execute_steps(f"""
         Given I am an authorised dispenser with {dispense_product} app
         When I release the prescription
-        """
-    )
+        """)
 
 
 @given("a new prescription has been dispensed")
@@ -161,22 +125,18 @@ def a_proxygen_prescription_has_been_dispensed(context):
 def a_new_prescription_has_been_dispensed(context, deployment_method):
     if "sandbox" in context.config.userdata["env"].lower():
         return
-    context.execute_steps(
-        f"""
+    context.execute_steps(f"""
         Given a nominated acute prescription has been created and released using {deployment_method} apis
         When I dispense the prescription
-        """
-    )
+        """)
 
 
 @given("the prescription has been cancelled")
 def the_proxygen_prescription_has_been_cancelled(context):
-    context.execute_steps(
-        """
+    context.execute_steps("""
         Given I am an authorised prescriber with EPS-FHIR-PRESCRIBING app
         When I cancel all line items on the prescription
-        """
-    )
+        """)
 
 
 @step("I am an authorised {user} with {app} app")
@@ -194,12 +154,8 @@ def i_am_an_authorised_user(context, user, app):
         context.auth_method = "oauth2"
 
 
-@given(
-    "I successfully prepare and sign '{count:d}' {nomination} {prescription_type} prescriptions"
-)
-def i_successfully_prepare_and_sign_prescriptions(
-    context, count, nomination, prescription_type
-):
+@given("I successfully prepare and sign '{count:d}' {nomination} {prescription_type} prescriptions")
+def i_successfully_prepare_and_sign_prescriptions(context, count, nomination, prescription_type):
     context.nhs_number = generate_single()
     prescription_ids = []
     for _ in range(count):
@@ -365,15 +321,9 @@ def body_indicates_successful_action(context, action_type):
 
     def _cancel_assertion():
         entries = json_response["entry"]
-        medication_request = [
-            entry
-            for entry in entries
-            if entry["resource"]["resourceType"] == "MedicationRequest"
-        ][0]
+        medication_request = [entry for entry in entries if entry["resource"]["resourceType"] == "MedicationRequest"][0]
         assert_that(
-            medication_request["resource"]["extension"][0]["extension"][0][
-                "valueCoding"
-            ]["display"]
+            medication_request["resource"]["extension"][0]["extension"][0]["valueCoding"]["display"]
         ).is_equal_to("Prescription/item was cancelled")
 
     def _dispense_assertion():
@@ -408,12 +358,8 @@ def i_can_see_an_informational_operation_outcome_in_the_response(context):
     assert_that(json_response["issue"][0]["severity"]).is_equal_to("information")
 
 
-@when(
-    "I make a {validity} request to the {product} validator endpoint with show validation set to {show_validation}"
-)
-def i_make_a_request_to_the_validator_endpoint(
-    context, validity, product, show_validation
-):
+@when("I make a {validity} request to the {product} validator endpoint with show validation set to {show_validation}")
+def i_make_a_request_to_the_validator_endpoint(context, validity, product, show_validation):
     if validity == "valid":
         context.nhs_number = generate_single()
         context.nomination_code = "0004"
@@ -436,9 +382,7 @@ def i_make_a_request_to_the_validator_endpoint_with_file(context, filename, prod
 def validator_response_has_n_issues_of_type(context, expected_issue_count, issue_type):
     json_response = json.loads(context.response.content)
     assert_that(json_response["resourceType"]).is_equal_to("OperationOutcome")
-    actual_issue_count = sum(
-        p["severity"] == issue_type for p in json_response["issue"]
-    )
+    actual_issue_count = sum(p["severity"] == issue_type for p in json_response["issue"])
     if expected_issue_count == "many":
         assert_that(actual_issue_count).is_greater_than(0)
     else:
@@ -451,8 +395,7 @@ def validator_response_has_error_issue_with_diagnostic(context, diagnostic):
     assert_that(json_response["resourceType"]).is_equal_to("OperationOutcome")
     print(f"expected diagnostic: {diagnostic}")
     actual_issue_count = sum(
-        p["severity"] == "error" and diagnostic in p["diagnostics"]
-        for p in json_response["issue"]
+        p["severity"] == "error" and diagnostic in p["diagnostics"] for p in json_response["issue"]
     )
     assert_that(actual_issue_count).is_equal_to(1)
 

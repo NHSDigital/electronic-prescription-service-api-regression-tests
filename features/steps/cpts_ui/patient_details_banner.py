@@ -4,7 +4,6 @@ from playwright.sync_api import expect
 
 from pages.patient_details_banner import PatientDetailsBanner
 
-
 ############################################################################
 # THEN STEPS
 ############################################################################

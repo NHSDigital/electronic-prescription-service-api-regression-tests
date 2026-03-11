@@ -34,12 +34,8 @@ def trigger_run():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument(
-        "--token", required=True, help="An authorised token is required"
-    )
-    parser.add_argument(
-        "--run_id", required=True, help="The ID of the workflow Run is Required"
-    )
+    parser.add_argument("--token", required=True, help="An authorised token is required")
+    parser.add_argument("--run_id", required=True, help="The ID of the workflow Run is Required")
     arguments = parser.parse_args()
     run_id = arguments.run_id
 
