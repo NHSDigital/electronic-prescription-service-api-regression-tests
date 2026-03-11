@@ -51,6 +51,7 @@ def get_eps_fhir_dispensing_jwt_authenticator(env, url):
             "You must provide EPS_FHIR_DISPENSING_CLIENT_ID, "
             "EPS_FHIR_DISPENSING_JWT_KID and EPS_FHIR_DISPENSING_JWT_PRIVATE_KEY"
         )
+
     config = ClientCredentialsConfig(
         environment=env,
         identity_service_base_url=url,  # pyright: ignore [reportArgumentType]
@@ -144,6 +145,13 @@ def get_auth(env, product, user="prescriber"):
     ]:
         authenticator = get_eps_fhir_authenticator(user, env, url, product)
     if product == "EPS-FHIR-DISPENSING-JWT":
+        # The application-restricted access in int uses a different endpoint
+        # I don't want to change the difference for other products, as they currently work
+        # when using the mock endpoint.
+        # We don't run tests against REF as a matter of course, but if we do, then they should
+        # use the real endpoint too.
+        if env in ["int", "ref"]:
+            url = f"https://{env}.api.service.nhs.uk/oauth2"
         authenticator = get_eps_fhir_dispensing_jwt_authenticator(env, url)
     if product == "PFP-APIGEE" or product == "PFP-PROXYGEN":
         authenticator = get_pfp_apigee_authenticator(env, url)
