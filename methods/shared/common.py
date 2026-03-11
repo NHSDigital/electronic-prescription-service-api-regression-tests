@@ -1,3 +1,4 @@
+import hashlib
 import json
 from os import environ
 import urllib.request
@@ -52,6 +53,9 @@ def get_eps_fhir_dispensing_jwt_authenticator(env, url):
             "You must provide EPS_FHIR_DISPENSING_CLIENT_ID, "
             "EPS_FHIR_DISPENSING_JWT_KID and EPS_FHIR_DISPENSING_JWT_PRIVATE_KEY"
         )
+
+    key_hash = hashlib.sha256(EPS_FHIR_DISPENSING_JWT_PRIVATE_KEY.encode("utf-8")).hexdigest()
+    print(f"EPS-FHIR-DISPENSING-JWT private key SHA256 prefix: {key_hash[:8]}")
 
     config = ClientCredentialsConfig(
         environment=env,
